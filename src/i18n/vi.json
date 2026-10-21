@@ -341,5 +341,181 @@
     "medium": "Kỹ thuật số · vẽ tự do",
     "saved": "Đã lưu vào bộ sưu tập",
     "savedXp": "+{{xp}} XP vì hoàn thành một tác phẩm"
+  },
+  "practice": {
+    "eyebrow": "Luyện tập",
+    "titleA": "Chọn một bản nét,",
+    "titleB": "thổi hồn",
+    "titleC": "cho nó",
+    "lede": "Đồ nét và tô màu những bản vẽ gốc, rồi gửi cho giám khảo AI để nhận điểm số tử tế, thẳng thắn và ba mẹo cho lần sau.",
+    "note": "bạn đang ở cấp {{level}} — mẫu mới sẽ mở khi bạn tiến bộ",
+    "medium": "Kỹ thuật số · bút dạ & màu nước",
+    "backToLibrary": "Quay lại thư viện mẫu",
+    "count_one": "{{count}} mẫu",
+    "count_other": "{{count}} mẫu",
+    "categories": {
+      "animals": "Động vật",
+      "landscapes": "Phong cảnh",
+      "portraits": "Chân dung",
+      "objects": "Đồ vật",
+      "flowers": "Hoa",
+      "architecture": "Kiến trúc",
+      "fantasy": "Kỳ ảo",
+      "patterns": "Hoa văn & mandala",
+      "food": "Ẩm thực"
+    },
+    "filters": {
+      "category": "Lọc theo chủ đề",
+      "difficulty": "Lọc theo độ khó",
+      "anyLevel": "Mọi cấp độ",
+      "search": "Tìm mẫu",
+      "searchPlaceholder": "Tìm cáo, mandala, phở…",
+      "notDone": "Chưa hoàn thành"
+    },
+    "sort": {
+      "popular": "Phổ biến nhất",
+      "new": "Mới nhất",
+      "easiest": "Dễ trước"
+    },
+    "empty": {
+      "title": "Không có mẫu phù hợp",
+      "body": "Thử chủ đề khác hoặc xóa từ khóa tìm kiếm.",
+      "note": "trang trắng đang đợi ở nơi khác…",
+      "reset": "Xóa bộ lọc"
+    },
+    "card": {
+      "best": "Điểm cao nhất của bạn",
+      "reachLevel": "Đạt cấp {{level}}",
+      "new": "mới với bạn"
+    },
+    "daily": {
+      "eyebrow": "Thử thách hằng ngày",
+      "badge": "Hôm nay",
+      "title": "Bức tranh hôm nay: {{title}}",
+      "body": "Tô màu mẫu nổi bật hôm nay để nhận thêm XP và giữ ngọn lửa chuỗi cháy sáng.",
+      "done": "Bạn đã tô bức tranh hôm nay rồi — thật đẹp. Thử lại để đạt điểm cao hơn nhé?",
+      "cta": "Bắt đầu bức tranh hôm nay",
+      "again": "Vẽ lại lần nữa",
+      "resets": "Thử thách mới sau {{time}}",
+      "bonus": "+{{xp}} XP thưởng",
+      "note": "mới mỗi sáng ✦"
+    },
+    "studio": {
+      "infoTab": "Hình mẫu",
+      "reference": "Bản nét gốc",
+      "referenceAlt": "Bản nét tham khảo của {{title}}",
+      "showLines": "Hiện nét",
+      "hideLines": "Ẩn nét",
+      "ghost": "Gợi ý mờ",
+      "coverage": "Đã tô được",
+      "coverageLow": "Còn nhiều khoảng trắng để khám phá.",
+      "coverageMid": "Trông đáng yêu lắm — tiếp tục tô các hình nhé.",
+      "coverageHigh": "Hầu hết các hình đã có màu. Sẵn sàng gặp giám khảo chưa?",
+      "difficulty": "Độ khó",
+      "time": "Thời gian ước tính",
+      "category": "Chủ đề",
+      "tip": "mẹo: tô các hình lớn bằng thùng sơn, rồi đổ bóng bằng màu nước trên lớp Đồ nét",
+      "submit": "Nộp cho Giám khảo AI",
+      "submitShort": "Nộp bài",
+      "description": "Khung tô màu cho mẫu “{{title}}”. Nét mẫu nằm trên lớp trên cùng đã khóa, nên màu luôn nằm dưới đường viền.",
+      "notFound": "Không tìm thấy mẫu đó",
+      "notFoundBody": "Có thể nó đã được chuyển sang một bức tường khác của phòng tranh.",
+      "lockedTitle": "Mẫu này mở khóa ở cấp {{level}}",
+      "lockedBody": "Hiện bạn ở cấp {{level}}. Tô thêm vài mẫu, hoàn thành bài học và nhận thưởng thử thách để lên cấp.",
+      "howToLevel": "Làm sao để lên cấp?"
+    },
+    "confirm": {
+      "title": "Sẵn sàng gặp giám khảo?",
+      "previewAlt": "Xem trước tác phẩm của bạn",
+      "body": "Giám khảo AI sẽ xem bạn bám nét tốt đến đâu và dùng màu thế nào, rồi đưa ra nhận xét ấm áp, thẳng thắn.",
+      "lowCoverage": "Mới khoảng {{pct}}% các hình có màu. Bạn vẫn có thể nộp — hoặc tô thêm để đạt điểm cao hơn.",
+      "keep": "Vẽ tiếp",
+      "submit": "Nộp bài"
+    }
+  },
+  "ceremony": {
+    "label": "Giám khảo AI đang xem tác phẩm của bạn",
+    "note": "giám khảo là một người thầy tử tế nhưng thẳng thắn",
+    "lines": {
+      "linework": "Đang xem nét vẽ của bạn…",
+      "proportions": "Đang đo tỷ lệ…",
+      "harmony": "Đang đọc sự hài hòa màu sắc…",
+      "masters": "Đang hỏi ý các bậc thầy…",
+      "notes": "Đang viết vài lời nhắn cho bạn…"
+    },
+    "errorTitle": "Giám khảo vừa ra ngoài một chút",
+    "keepDrawing": "Quay lại xưởng vẽ"
+  },
+  "result": {
+    "breadcrumb": "Đường dẫn",
+    "eyebrow": "Phán quyết của giám khảo",
+    "overallAria": "Tổng điểm {{score}} trên 100",
+    "stampRing": "Art Spark ✦ Giám khảo AI",
+    "similarity": "Độ giống",
+    "colour": "Màu sắc",
+    "radarTitle": "Phân tích điểm theo sáu tiêu chí",
+    "sub": {
+      "lineAccuracy": "Độ chính xác nét",
+      "composition": "Bố cục",
+      "proportion": "Tỷ lệ",
+      "harmony": "Hài hòa",
+      "suitability": "Phù hợp",
+      "aesthetics": "Thẩm mỹ"
+    },
+    "rank": {
+      "starter": "Khởi đầu sổ phác",
+      "rising": "Cọ vẽ đang lên",
+      "steady": "Bàn tay vững vàng",
+      "gallery": "Xứng tầm triển lãm",
+      "masterpiece": "Kiệt tác"
+    },
+    "headline": {
+      "starter": "Một khởi đầu dũng cảm.",
+      "rising": "Điều gì đó đang thành hình.",
+      "steady": "Một bàn tay vững vàng, tự tin.",
+      "gallery": "Bức này xứng đáng được treo lên tường.",
+      "masterpiece": "Một kiệt tác thật sự."
+    },
+    "headlineGreatA": "Hãy treo nó trong",
+    "headlineGreatB": "khung vàng.",
+    "strengths": "Điểm mạnh",
+    "improve": "Điều cần cải thiện",
+    "nothingToImprove": "Thật lòng? Rất ít. Lần tới thử mẫu khó hơn nhé.",
+    "tips": "Mẹo cho lần sau",
+    "judgeSignature": "giám khảo AI của bạn",
+    "rewards": "Phần thưởng",
+    "streakUp_one": "Chuỗi tăng lên {{count}} ngày!",
+    "streakUp_other": "Chuỗi tăng lên {{count}} ngày!",
+    "streakSame_one": "Chuỗi {{count}} ngày — hôm nay đã được tính.",
+    "streakSame_other": "Chuỗi {{count}} ngày — hôm nay đã được tính.",
+    "heatmap": "Hiện bản đồ nhiệt độ phủ",
+    "heatmapHint": "Nơi màu của bạn khớp với các hình của mẫu.",
+    "heatmapLegend": "Chú giải bản đồ nhiệt",
+    "heat": {
+      "matched": "Khớp",
+      "partial": "Một phần",
+      "missed": "Bỏ sót"
+    },
+    "compare": "Kéo để so sánh tác phẩm với bản gốc",
+    "yours": "Của bạn",
+    "original": "Bản gốc",
+    "originalAlt": "Bản nét gốc của mẫu",
+    "artworkAlt": "Tác phẩm đã tô màu của bạn",
+    "labelBy": "Bạn · {{date}}",
+    "labelScore": "Điểm giám khảo {{score}}/100",
+    "saveFavourite": "Thêm vào yêu thích",
+    "inFavourites": "Đã yêu thích",
+    "savedFavourite": "Đã thêm vào yêu thích",
+    "unfavourited": "Đã bỏ khỏi yêu thích",
+    "tryAgain": "Thử lại",
+    "askChat": "Hỏi nàng thơ ý tưởng",
+    "next": "Tiếp theo: {{title}}",
+    "savedNote": "Tác phẩm của bạn đã được lưu trong",
+    "shareCopied": "Đã sao chép liên kết",
+    "shareFailed": "Không thể sao chép liên kết",
+    "shareNote": "Chia sẻ đang ở chế độ xem trước — liên kết hoạt động trên thiết bị này cho tới khi tài khoản được đồng bộ.",
+    "chatPrompt": "Mình vừa đạt {{score}} điểm với “{{title}}”. Điểm yếu nhất là {{area}}. Lần tới mình nên cải thiện thế nào?",
+    "notFound": "Không tìm thấy kết quả đó",
+    "notFoundBody": "Có thể nó đã bị xóa khỏi bộ sưu tập."
   }
 }

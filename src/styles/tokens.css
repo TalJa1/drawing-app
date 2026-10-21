@@ -36,6 +36,18 @@
   --desk: #e9e0cf;
   --glow: transparent;
 
+  /* Data viz — validated (dataviz validator, all-pairs) on the Atelier surface #fbf8f1 */
+  --viz-1: #e4572e; /* overall */
+  --viz-2: #3a3fa8; /* similarity */
+  --viz-3: #1a9e8f; /* colour */
+  --viz-grid: rgb(27 26 23 / 0.08);
+  /* sequential teal ramp (activity heatmap), near-zero → strong */
+  --seq-0: #ece6da;
+  --seq-1: #bfe3dc;
+  --seq-2: #7fcbbd;
+  --seq-3: #36a796;
+  --seq-4: #137a6e;
+
   --shadow-paper: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(60 40 20 / 0.06),
     0 6px 18px -8px rgb(60 40 20 / 0.18);
   --shadow-lift: 0 2px 4px rgb(60 40 20 / 0.06), 0 18px 40px -16px rgb(60 40 20 / 0.32);
@@ -62,6 +74,17 @@
   --focus: #f2a93b;
   --desk: #0d0c0a;
   --glow: rgb(242 169 59 / 0.08);
+
+  /* Data viz — dark steps validated on the Gallery Night surface #1c1814 */
+  --viz-1: #e5603a;
+  --viz-2: #7a7fe6;
+  --viz-3: #1fa596;
+  --viz-grid: rgb(243 235 221 / 0.08);
+  --seq-0: #2a251f;
+  --seq-1: #1d4a43;
+  --seq-2: #1f6e62;
+  --seq-3: #26957f;
+  --seq-4: #4cc7ad;
 
   --vermilion: #ec6a42;
   --saffron: #f5b552;

@@ -58,3 +58,21 @@ export function presentReward(r: RewardSummary | null | undefined): void {
   for (const badgeId of r.newBadges) items.push({ kind: 'badge', badgeId })
   if (items.length) useCelebrations.getState().enqueue(items)
 }
+
+/* ---------- Fresh practice result (studio → result page hand-off) ---------- */
+
+interface LastResultState {
+  artworkId: string | null
+  reward: RewardSummary | null
+  celebrated: boolean
+  set: (artworkId: string, reward: RewardSummary | null) => void
+  markCelebrated: () => void
+}
+
+export const useLastResult = create<LastResultState>()((set) => ({
+  artworkId: null,
+  reward: null,
+  celebrated: false,
+  set: (artworkId, reward) => set({ artworkId, reward, celebrated: false }),
+  markCelebrated: () => set({ celebrated: true }),
+}))

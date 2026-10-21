@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
@@ -38,6 +39,7 @@ export function LanguageSwitch({ className }: { className?: string }) {
   const { t } = useTranslation()
   const lang = useSettings((s) => s.language)
   const setLanguage = useSettings((s) => s.setLanguage)
+  const pillId = useId()
   return (
     <div
       role="group"
@@ -57,7 +59,7 @@ export function LanguageSwitch({ className }: { className?: string }) {
           )}
         >
           {lang === l && (
-            <motion.span layoutId="lang-pill" className="absolute inset-0 -z-10 rounded-full bg-ink" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
+            <motion.span layoutId={`lang-pill-${pillId}`} className="absolute inset-0 -z-10 rounded-full bg-ink" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
           )}
           {l}
         </button>

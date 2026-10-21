@@ -341,5 +341,181 @@
     "medium": "Digital · free draw",
     "saved": "Saved to your collection",
     "savedXp": "+{{xp}} XP for finishing a piece"
+  },
+  "practice": {
+    "eyebrow": "Practice",
+    "titleA": "Choose a line drawing,",
+    "titleB": "bring it",
+    "titleC": "to life",
+    "lede": "Trace and colour original line art, then hand it to the AI judge for a kind, honest score and three tips for next time.",
+    "note": "you're level {{level}} — new templates unlock as you grow",
+    "medium": "Digital · marker & watercolour",
+    "backToLibrary": "Back to the template library",
+    "count_one": "{{count}} template",
+    "count_other": "{{count}} templates",
+    "categories": {
+      "animals": "Animals",
+      "landscapes": "Landscapes",
+      "portraits": "Portraits",
+      "objects": "Objects",
+      "flowers": "Flowers",
+      "architecture": "Architecture",
+      "fantasy": "Fantasy",
+      "patterns": "Patterns & mandalas",
+      "food": "Food"
+    },
+    "filters": {
+      "category": "Filter by category",
+      "difficulty": "Filter by difficulty",
+      "anyLevel": "Any level",
+      "search": "Search templates",
+      "searchPlaceholder": "Search fox, mandala, phở…",
+      "notDone": "Not yet completed"
+    },
+    "sort": {
+      "popular": "Most popular",
+      "new": "Newest",
+      "easiest": "Easiest first"
+    },
+    "empty": {
+      "title": "No templates match",
+      "body": "Try another category or clear your search.",
+      "note": "the blank canvas is waiting elsewhere…",
+      "reset": "Clear filters"
+    },
+    "card": {
+      "best": "Your best score",
+      "reachLevel": "Reach Level {{level}}",
+      "new": "new for you"
+    },
+    "daily": {
+      "eyebrow": "Daily challenge",
+      "badge": "Today",
+      "title": "Today's canvas: {{title}}",
+      "body": "Colour today's featured template to earn bonus XP and keep your streak flame burning.",
+      "done": "You've already coloured today's canvas — beautiful. Want another go for a higher score?",
+      "cta": "Start today's canvas",
+      "again": "Paint it again",
+      "resets": "New challenge in {{time}}",
+      "bonus": "+{{xp}} bonus XP",
+      "note": "fresh every morning ✦"
+    },
+    "studio": {
+      "infoTab": "Reference",
+      "reference": "Original line art",
+      "referenceAlt": "Reference line art of {{title}}",
+      "showLines": "Show lines",
+      "hideLines": "Hide lines",
+      "ghost": "Ghost hint",
+      "coverage": "Coloured so far",
+      "coverageLow": "Plenty of white space left to explore.",
+      "coverageMid": "Looking lovely — keep filling those shapes.",
+      "coverageHigh": "Nearly every shape has colour. Ready for the judge?",
+      "difficulty": "Difficulty",
+      "time": "Estimated time",
+      "category": "Category",
+      "tip": "tip: fill big shapes with the bucket, then add shading with watercolour on the Trace layer",
+      "submit": "Submit to AI Judge",
+      "submitShort": "Submit",
+      "description": "Colouring canvas for the template “{{title}}”. The line art sits on a locked top layer, so colour stays underneath the outlines.",
+      "notFound": "We couldn't find that template",
+      "notFoundBody": "It may have moved to another wall of the gallery.",
+      "lockedTitle": "This template unlocks at level {{level}}",
+      "lockedBody": "You're level {{level}} right now. Colour a few more templates, finish lessons and claim challenges to level up.",
+      "howToLevel": "How do I level up?"
+    },
+    "confirm": {
+      "title": "Ready for the judge?",
+      "previewAlt": "Preview of your artwork",
+      "body": "The AI judge will look at how closely you followed the lines and how you used colour, then give you warm, honest feedback.",
+      "lowCoverage": "Only about {{pct}}% of the shapes have colour so far. You can submit anyway — or keep painting for a higher score.",
+      "keep": "Keep drawing",
+      "submit": "Submit"
+    }
+  },
+  "ceremony": {
+    "label": "The AI judge is studying your artwork",
+    "note": "the judge is a kind but honest teacher",
+    "lines": {
+      "linework": "Studying your linework…",
+      "proportions": "Measuring proportions…",
+      "harmony": "Reading your colour harmony…",
+      "masters": "Consulting the old masters…",
+      "notes": "Writing a little note for you…"
+    },
+    "errorTitle": "The judge stepped out for a moment",
+    "keepDrawing": "Back to the studio"
+  },
+  "result": {
+    "breadcrumb": "Breadcrumb",
+    "eyebrow": "The judge's verdict",
+    "overallAria": "Overall score {{score}} out of 100",
+    "stampRing": "Art Spark ✦ AI Judge",
+    "similarity": "Similarity",
+    "colour": "Colour",
+    "radarTitle": "Score breakdown across six criteria",
+    "sub": {
+      "lineAccuracy": "Line accuracy",
+      "composition": "Composition",
+      "proportion": "Proportion",
+      "harmony": "Harmony",
+      "suitability": "Suitability",
+      "aesthetics": "Aesthetics"
+    },
+    "rank": {
+      "starter": "Sketchbook Starter",
+      "rising": "Rising Brush",
+      "steady": "Steady Hand",
+      "gallery": "Gallery Worthy",
+      "masterpiece": "Masterpiece"
+    },
+    "headline": {
+      "starter": "A brave beginning.",
+      "rising": "Something is taking shape.",
+      "steady": "A steady, confident hand.",
+      "gallery": "This belongs on a wall.",
+      "masterpiece": "A true masterpiece."
+    },
+    "headlineGreatA": "Hang it in the",
+    "headlineGreatB": "golden frame.",
+    "strengths": "Strengths",
+    "improve": "Things to improve",
+    "nothingToImprove": "Honestly? Very little. Try a harder template next.",
+    "tips": "Next-time tips",
+    "judgeSignature": "your AI judge",
+    "rewards": "Rewards earned",
+    "streakUp_one": "Streak extended to {{count}} day!",
+    "streakUp_other": "Streak extended to {{count}} days!",
+    "streakSame_one": "{{count}}-day streak — already counted today.",
+    "streakSame_other": "{{count}}-day streak — already counted today.",
+    "heatmap": "Show coverage heatmap",
+    "heatmapHint": "Where your colour matched the template's shapes.",
+    "heatmapLegend": "Heatmap legend",
+    "heat": {
+      "matched": "Matched",
+      "partial": "Partly",
+      "missed": "Missed"
+    },
+    "compare": "Drag to compare your artwork with the original",
+    "yours": "Yours",
+    "original": "Original",
+    "originalAlt": "Original template line art",
+    "artworkAlt": "Your coloured artwork",
+    "labelBy": "You · {{date}}",
+    "labelScore": "Judge's score {{score}}/100",
+    "saveFavourite": "Add to favourites",
+    "inFavourites": "In favourites",
+    "savedFavourite": "Added to your favourites",
+    "unfavourited": "Removed from favourites",
+    "tryAgain": "Try again",
+    "askChat": "Ask the muse for ideas",
+    "next": "Next: {{title}}",
+    "savedNote": "Your artwork is already saved in your",
+    "shareCopied": "Link copied",
+    "shareFailed": "Couldn't copy the link",
+    "shareNote": "Sharing is a preview — links work on this device until accounts sync.",
+    "chatPrompt": "I just scored {{score}} on “{{title}}”. My weakest area was {{area}}. How can I improve next time?",
+    "notFound": "We couldn't find that result",
+    "notFoundBody": "It may have been deleted from your collection."
   }
 }
