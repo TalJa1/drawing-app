@@ -61,10 +61,12 @@ export function blobToDataUrl(blob: Blob): Promise<string> {
  * Colour a line-art template by giving its white-filled shapes pigment fills.
  * Used for demo artworks and the landing page showcase.
  */
-export function colouriseTemplate(svg: string, palette: string[], rng: () => number, coverage = 1): string {
+export function colouriseTemplate(svg: string, palette: string[], rng: () => number, coverage = 1, sequence?: string[]): string {
   let i = 0
   return svg.replace(/<(path|circle|ellipse|rect|polygon)\b(?![^>]*\bfill=)/g, (m) => {
     i++
+    // an explicit colour per shape (in document order) wins over random picks
+    if (sequence?.[i - 1]) return `${m} fill="${sequence[i - 1]}"`
     if (rng() > coverage) return m
     const colour = palette[Math.floor(rng() * palette.length)] ?? palette[i % palette.length]
     return `${m} fill="${colour}"`

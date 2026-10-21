@@ -1104,5 +1104,134 @@
       "lesson_one": "Bài học · {{count}} phút",
       "lesson_other": "Bài học · {{count}} phút"
     }
+  },
+  "home": {
+    "eyebrow": "Xưởng vẽ riêng của bạn",
+    "h1a": "Vẽ.",
+    "h1b": "Tô màu.",
+    "h1c": "Truyền cảm hứng.",
+    "lede": "Đồ theo những bản nét đẹp, tô theo cách của bạn, và nhận nhận xét ấm áp, thẳng thắn từ giám khảo AI. Rồi dạo quanh Atlas Nghệ thuật — mọi cách con người từng tạo nên nghệ thuật.",
+    "ctaDraw": "Bắt đầu vẽ",
+    "ctaLearn": "Khám phá nghệ thuật",
+    "ctaFree": "Mở một trang trắng",
+    "social": "Cùng hàng nghìn người vẽ mỗi ngày một chút (minh họa)",
+    "heroArtAlt": "Chú cáo đã tô màu trong khung vàng",
+    "doodleLabel": "Bảng vẽ nháp — vẽ bằng chuột hoặc ngón tay",
+    "doodleHint": "vẽ thử ở đây — mực sẽ khô dần",
+    "doodleArrow": "thử mình đi!",
+    "howEyebrow": "Cách hoạt động",
+    "howTitleA": "Từ trang trắng",
+    "howTitleB": "tới bức tường phòng tranh",
+    "howLede": "Năm bước nhẹ nhàng biến vài phút rảnh rỗi thành thói quen sáng tạo.",
+    "steps": [
+      {
+        "title": "Chọn một mẫu",
+        "body": "Chọn trong 27 bản nét gốc — cáo, mandala, đèn lồng, một tô phở."
+      },
+      {
+        "title": "Vẽ & tô màu",
+        "body": "Cọ thật sự: màu nước, phấn, cọ phun, thùng sơn thông minh, lớp và hoàn tác."
+      },
+      {
+        "title": "Nộp cho giám khảo AI",
+        "body": "Gửi tác phẩm cho một nghi thức chấm điểm xứng tầm bảo tàng."
+      },
+      {
+        "title": "Nhận điểm & nhận xét",
+        "body": "Độ giống, độ hài hòa màu, điểm mạnh và ba mẹo cho lần sau."
+      },
+      {
+        "title": "Khám phá & sáng tác tiếp",
+        "body": "Học một kỹ thuật, trò chuyện với nàng thơ, sưu tầm huy hiệu, giữ chuỗi ngày."
+      }
+    ],
+    "featuresEyebrow": "Bên trong xưởng vẽ",
+    "featuresTitleA": "Mọi thứ họa sĩ cần,",
+    "featuresTitleB": "không thừa thứ gì",
+    "featuresNote": "di chuột vào tính năng để xem thử",
+    "features": {
+      "practice": {
+        "title": "Luyện tập",
+        "body": "Tô màu các mẫu gốc, rồi nhận điểm khích lệ cùng mẹo cụ thể."
+      },
+      "freeDraw": {
+        "title": "Vẽ tự do",
+        "body": "Khung vẽ trắng với cọ thật, lớp và xuất PNG/JPG."
+      },
+      "learn": {
+        "title": "Học vẽ",
+        "body": "Atlas với 20 loại hình, 31 trào lưu, 33 nghệ sĩ và 26 bài học có trắc nghiệm."
+      },
+      "chat": {
+        "title": "Nàng thơ AI",
+        "body": "Ý tưởng, bảng màu, hướng dẫn bố cục và lịch sử nghệ thuật luôn sẵn sàng."
+      },
+      "collection": {
+        "title": "Bộ sưu tập",
+        "body": "Bức tường phòng tranh, lịch sử điểm số, chuỗi ngày và lịch sáng tạo."
+      }
+    },
+    "mock": {
+      "lessonTitle": "Quy tắc một phần ba",
+      "q1": "Chính giữa",
+      "q2": "Nơi các đường lưới giao nhau",
+      "chatQ": "Màu nào hợp với xanh mòng két?",
+      "chatA": "Xanh mòng két là màu nền tuyệt vời — thử điểm nhấn san hô để rực rỡ nhất.",
+      "chatPalette": "Xanh mòng két bổ túc"
+    },
+    "judgeEyebrow": "Giám khảo AI",
+    "judgeTitleA": "Một người thầy tử tế,",
+    "judgeTitleB": "một đôi mắt thẳng thắn",
+    "judgeLede": "Mỗi bài nộp được xem xét độ chính xác nét, bố cục, tỷ lệ và độ hài hòa màu — rồi chấm điểm bằng sự ấm áp và ba mẹo cụ thể.",
+    "judgeArtAlt": "Ngôi nhà nấm đã tô màu trong khung vàng",
+    "judgeQuote": "Các bậc thầy xưa hẳn sẽ gật gù trước bức này. Hoan hô!",
+    "gameEyebrow": "Vừa chơi vừa tiến bộ",
+    "gameTitleA": "Chuỗi ngày, huy hiệu",
+    "gameTitleB": "& khung vàng",
+    "gameLede": "Luyện tập như chơi game: nhận XP, thăng hạng qua bảy danh hiệu và săn 46 huy hiệu ánh kim — có cả huy hiệu bí mật.",
+    "gamePoints": [
+      "Chuỗi ngày với thẻ đóng băng",
+      "Thử thách hằng ngày, hằng tuần và theo mùa",
+      "Ăn mừng khung vàng cho điểm 85+",
+      "Bảng xếp hạng thân thiện (minh họa)"
+    ],
+    "xpRing": "Tiến độ cấp minh họa",
+    "rankSample": "Họa sĩ minh họa",
+    "wallEyebrow": "Bức tường phòng tranh",
+    "wallTitleA": "Được tạo với",
+    "wallTitleB": "Art Spark",
+    "wallLede": "Một bức tường tác phẩm mẫu — mẫu đã tô màu và tranh mang tinh thần các trào lưu lớn.",
+    "wallLabels": [
+      "Bến cảng buổi sáng",
+      "Cá koi lúc chiều tà",
+      "Con sóng lặng",
+      "Mandala hoa sen",
+      "Khu vườn vàng",
+      "Tĩnh vật, vỡ mảnh"
+    ],
+    "sampleArtwork": "Tác phẩm mẫu",
+    "voicesEyebrow": "Cảm nhận",
+    "voicesTitleA": "Thói quen nhỏ,",
+    "voicesTitleB": "niềm vui lớn",
+    "voicesNote": "lời chứng thực minh họa — tên là hư cấu",
+    "finalA": "Mọi kiệt tác đều bắt đầu",
+    "finalB": "từ một nét vẽ dũng cảm.",
+    "finalLede": "Không cần kinh nghiệm. Chọn một mẫu, chọn một màu và để lại dấu ấn đầu tiên ngay hôm nay.",
+    "newsletterLabel": "Email của bạn",
+    "newsletterPlaceholder": "ban@vidu.com",
+    "newsletterButton": "Nhận đề bài hằng tuần",
+    "newsletterThanks": "Bạn đã có tên trong danh sách!",
+    "newsletterNote": "Đây là bản xem trước — sẽ không có email nào thật sự được gửi.",
+    "newsletterHand": "một tia sáng tạo mỗi thứ Hai"
+  },
+  "notFound": {
+    "eyebrow": "Lỗi 404",
+    "titleA": "Khung tranh này",
+    "titleB": "còn trống.",
+    "body": "Trang bạn tìm chưa được vẽ — hoặc đã được chuyển sang một gian khác của phòng tranh.",
+    "paint": "Vẽ gì đó ở đây",
+    "labelTitle": "Không đề (Không tìm thấy trang)",
+    "labelLine": "Khung trống · 2026",
+    "note": "rất tối giản đấy"
   }
 }

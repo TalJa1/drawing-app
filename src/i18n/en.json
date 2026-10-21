@@ -1104,5 +1104,134 @@
       "lesson_one": "Lesson · {{count}} min",
       "lesson_other": "Lesson · {{count}} min"
     }
+  },
+  "home": {
+    "eyebrow": "Your personal art studio",
+    "h1a": "Draw.",
+    "h1b": "Colour.",
+    "h1c": "Get inspired.",
+    "lede": "Trace beautiful line art, paint it your way, and get warm, honest feedback from an AI art judge. Then wander the Art Atlas — every way humans have ever made art.",
+    "ctaDraw": "Start drawing",
+    "ctaLearn": "Explore art",
+    "ctaFree": "Open a blank canvas",
+    "social": "Join thousands of everyday artists practising a little each day (sample)",
+    "heroArtAlt": "A coloured fox in a golden frame",
+    "doodleLabel": "Doodle pad — draw with your mouse or finger",
+    "doodleHint": "doodle here — the ink dries away",
+    "doodleArrow": "try me!",
+    "howEyebrow": "How it works",
+    "howTitleA": "From blank page",
+    "howTitleB": "to gallery wall",
+    "howLede": "Five gentle steps that turn a few spare minutes into a creative habit.",
+    "steps": [
+      {
+        "title": "Choose a template",
+        "body": "Pick from 27 original line drawings — foxes, mandalas, lanterns, a bowl of phở."
+      },
+      {
+        "title": "Draw & colour",
+        "body": "Real brushes: watercolour, chalk, airbrush, a smart paint bucket, layers and undo."
+      },
+      {
+        "title": "Submit to the AI judge",
+        "body": "Hand it over for a scoring ceremony worthy of a museum."
+      },
+      {
+        "title": "Get score & feedback",
+        "body": "Similarity, colour harmony, strengths, and three tips for next time."
+      },
+      {
+        "title": "Explore & keep creating",
+        "body": "Learn a technique, chat with the muse, collect badges, keep your streak."
+      }
+    ],
+    "featuresEyebrow": "Inside the studio",
+    "featuresTitleA": "Everything an artist",
+    "featuresTitleB": "needs, nothing they don't",
+    "featuresNote": "hover a feature to peek inside",
+    "features": {
+      "practice": {
+        "title": "Practice",
+        "body": "Colour original templates, then get an encouraging score and concrete tips."
+      },
+      "freeDraw": {
+        "title": "Free Draw",
+        "body": "A blank canvas with real brushes, layers and PNG/JPG export."
+      },
+      "learn": {
+        "title": "Learn Art",
+        "body": "An Atlas of 20 art forms, 31 movements, 33 artists and 26 lessons with quizzes."
+      },
+      "chat": {
+        "title": "AI Muse",
+        "body": "Ideas, colour palettes, composition coaching and art history on tap."
+      },
+      "collection": {
+        "title": "Collection",
+        "body": "Your gallery wall, score history, streaks and a calendar of creativity."
+      }
+    },
+    "mock": {
+      "lessonTitle": "The Rule of Thirds",
+      "q1": "In the exact centre",
+      "q2": "Where the grid lines cross",
+      "chatQ": "Which colours go well with teal?",
+      "chatA": "Teal is a wonderful anchor colour — try a coral accent for maximum glow.",
+      "chatPalette": "Complementary teal"
+    },
+    "judgeEyebrow": "The AI judge",
+    "judgeTitleA": "A kind teacher,",
+    "judgeTitleB": "an honest eye",
+    "judgeLede": "Every submission is studied for line accuracy, composition, proportion and colour harmony — then scored with warmth and three concrete tips.",
+    "judgeArtAlt": "A coloured mushroom house in a golden frame",
+    "judgeQuote": "The old masters would nod at this. Bravo!",
+    "gameEyebrow": "Play while you grow",
+    "gameTitleA": "Streaks, badges",
+    "gameTitleB": "& golden frames",
+    "gameLede": "Practice feels like a game: earn XP, level up through seven ranks and chase 46 foil badges — some of them secret.",
+    "gamePoints": [
+      "Daily streaks with freeze tokens",
+      "Daily, weekly and seasonal challenges",
+      "Golden-frame celebrations for 85+ scores",
+      "A friendly leaderboard (sample)"
+    ],
+    "xpRing": "Sample level progress",
+    "rankSample": "Illustrator",
+    "wallEyebrow": "The gallery wall",
+    "wallTitleA": "Made with",
+    "wallTitleB": "Art Spark",
+    "wallLede": "A wall of sample pieces — coloured templates and paintings in the spirit of the great movements.",
+    "wallLabels": [
+      "Morning Harbour",
+      "Koi at Dusk",
+      "The Quiet Wave",
+      "Lotus Mandala",
+      "Golden Garden",
+      "Still Life, Fractured"
+    ],
+    "sampleArtwork": "Sample artwork",
+    "voicesEyebrow": "Voices",
+    "voicesTitleA": "Little habits,",
+    "voicesTitleB": "big joy",
+    "voicesNote": "sample testimonials — names are fictional",
+    "finalA": "Every masterpiece begins",
+    "finalB": "with one brave line.",
+    "finalLede": "No experience needed. Pick a template, choose a colour and make your first mark today.",
+    "newsletterLabel": "Your email",
+    "newsletterPlaceholder": "you@example.com",
+    "newsletterButton": "Get weekly prompts",
+    "newsletterThanks": "You're on the list!",
+    "newsletterNote": "This is a preview — no email will actually be sent.",
+    "newsletterHand": "one creative spark every Monday"
+  },
+  "notFound": {
+    "eyebrow": "Error 404",
+    "titleA": "This canvas",
+    "titleB": "is blank.",
+    "body": "The page you're looking for hasn't been painted yet — or it was moved to another wing of the gallery.",
+    "paint": "Paint something here",
+    "labelTitle": "Untitled (Page Not Found)",
+    "labelLine": "Empty frame · 2026",
+    "note": "it's very minimalist"
   }
 }
