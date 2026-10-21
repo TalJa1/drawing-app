@@ -23,11 +23,8 @@
 
 .paper {
   background-color: var(--card);
-  background-image: var(--fibres), var(--noise);
-  background-size:
-    400px 400px,
-    220px 220px;
-  background-blend-mode: multiply;
+  background-image: var(--fibres);
+  background-size: 400px 400px;
 }
 [data-theme='dark'] .paper {
   background-image: var(--noise);

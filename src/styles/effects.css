@@ -64,8 +64,8 @@
 .wash {
   position: absolute;
   border-radius: 50%;
-  filter: url(#wash-edge) blur(18px);
-  opacity: 0.38;
+  filter: blur(42px);
+  opacity: 0.4;
   mix-blend-mode: multiply;
   animation: drift 26s ease-in-out infinite alternate;
   pointer-events: none;

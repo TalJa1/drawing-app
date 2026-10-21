@@ -63,11 +63,11 @@ export const SPECIAL_EVENTS: (Challenge & { months: number[]; theme: string[] })
 ]
 
 export const RANKS: Rank[] = [
-  { id: 'doodler', minLevel: 1, name: { en: 'Doodler', vi: 'Người vẽ nguệch ngoạc' }, perk: { en: 'All beginner templates and the core brushes.', vi: 'Mọi mẫu cơ bản và bộ cọ chính.' } },
-  { id: 'sketcher', minLevel: 3, name: { en: 'Sketcher', vi: 'Người phác thảo' }, perk: { en: 'Unlocks intermediate templates and the Chalk brush.', vi: 'Mở khóa mẫu trung cấp và cọ Phấn.' } },
-  { id: 'colourist', minLevel: 5, name: { en: 'Colourist', vi: 'Người phối màu' }, perk: { en: 'Unlocks advanced templates and the Walnut frame.', vi: 'Mở khóa mẫu nâng cao và khung Gỗ óc chó.' } },
-  { id: 'illustrator', minLevel: 8, name: { en: 'Illustrator', vi: 'Họa sĩ minh họa' }, perk: { en: 'Unlocks master templates and the Gilded frame.', vi: 'Mở khóa mẫu bậc thầy và khung Mạ vàng.' } },
-  { id: 'artisan', minLevel: 12, name: { en: 'Artisan', vi: 'Nghệ nhân' }, perk: { en: 'A second streak-freeze token every week.', vi: 'Thêm một thẻ đóng băng chuỗi mỗi tuần.' } },
-  { id: 'master', minLevel: 18, name: { en: 'Master', vi: 'Bậc thầy' }, perk: { en: 'Holographic name on the leaderboard.', vi: 'Tên ánh hologram trên bảng xếp hạng.' } },
-  { id: 'grandmaster', minLevel: 25, name: { en: 'Grandmaster', vi: 'Đại sư' }, perk: { en: 'Your work hangs in the Hall of Fame.', vi: 'Tác phẩm của bạn được treo ở Đại sảnh Danh vọng.' } },
+  { id: 'doodler', minLevel: 1, name: { en: 'Doodler', vi: 'Người vẽ nguệch ngoạc' }, perk: { en: 'Every beginner template, every brush and the whole Art Atlas.', vi: 'Mọi mẫu cơ bản, mọi cọ vẽ và toàn bộ Atlas Nghệ thuật.' } },
+  { id: 'sketcher', minLevel: 2, name: { en: 'Sketcher', vi: 'Người phác thảo' }, perk: { en: 'Unlocks intermediate templates — mandalas, koi, phở and more.', vi: 'Mở khóa mẫu trung cấp — mandala, cá koi, phở và hơn thế.' } },
+  { id: 'colourist', minLevel: 5, name: { en: 'Colourist', vi: 'Người phối màu' }, perk: { en: 'Unlocks advanced templates like the portrait and the star mandala.', vi: 'Mở khóa mẫu nâng cao như chân dung và mandala ngôi sao.' } },
+  { id: 'illustrator', minLevel: 8, name: { en: 'Illustrator', vi: 'Họa sĩ minh họa' }, perk: { en: 'Unlocks master templates: the dragon, the hand and the sun mandala.', vi: 'Mở khóa mẫu bậc thầy: chú rồng, bàn tay và mandala mặt trời.' } },
+  { id: 'artisan', minLevel: 12, name: { en: 'Artisan', vi: 'Nghệ nhân' }, perk: { en: 'You have tried most of the atelier. Time to master it.', vi: 'Bạn đã thử gần hết xưởng vẽ. Giờ là lúc làm chủ nó.' } },
+  { id: 'master', minLevel: 18, name: { en: 'Master', vi: 'Bậc thầy' }, perk: { en: 'Fellow artists look to your gallery for inspiration.', vi: 'Các họa sĩ khác tìm cảm hứng từ phòng tranh của bạn.' } },
+  { id: 'grandmaster', minLevel: 25, name: { en: 'Grandmaster', vi: 'Đại sư' }, perk: { en: 'The highest rank in the atelier. Bravo.', vi: 'Danh hiệu cao nhất của xưởng vẽ. Hoan hô.' } },
 ]
