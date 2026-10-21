@@ -22,7 +22,7 @@ export function DailyChallengeBanner({ template, done }: { template: Template; d
       className="relative isolate overflow-hidden rounded-[30px] border border-line bg-[#1b1a17] text-[#f6f1e7] shadow-lift"
     >
       <Washes
-        className="opacity-80"
+        className="h-full opacity-80"
         washes={[
           { color: '#F2A93B', size: '38rem', top: '-40%', left: '-10%' },
           { color: '#C93C6B', size: '30rem', bottom: '-50%', right: '10%', delay: -9 },

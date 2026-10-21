@@ -43,7 +43,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
         variant === 'paper' && 'paper border border-line text-ink shadow-paper hover:shadow-lift',
         variant === 'ink' && 'bg-ink text-paper hover:opacity-90',
         active && 'bg-ink text-paper shadow-[0_6px_16px_-8px_rgb(0_0_0/0.6)] hover:bg-ink hover:text-paper',
-        className,
+        noTooltip && className,
       )}
       {...rest}
     >
@@ -52,7 +52,8 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
   )
   if (noTooltip) return btn
   return (
-    <Tooltip label={label} shortcut={shortcut} side={tooltipSide}>
+    // layout classes (visibility, positioning) belong on the outer wrapper
+    <Tooltip label={label} shortcut={shortcut} side={tooltipSide} className={className}>
       {btn}
     </Tooltip>
   )

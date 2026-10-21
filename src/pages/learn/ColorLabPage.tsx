@@ -133,7 +133,7 @@ export default function ColorLabPage() {
                       style={{ background: c, color: readableOn(c) }}
                       aria-label={t('learn.copyColour', { hex: c })}
                     >
-                      <span className="font-mono text-[11px] font-semibold opacity-80">{c.toUpperCase()}</span>
+                      <span className="font-mono text-[11px] font-semibold">{c.toUpperCase()}</span>
                     </button>
                   ))}
                 </div>

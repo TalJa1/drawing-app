@@ -23,6 +23,14 @@ import { BADGES } from '@/mocks/badges'
 import { toast } from '@/store/ui'
 import { burst } from '@/lib/confetti'
 import type { GenStyle } from '@/types'
+import { RadarChart } from '@/components/charts/RadarChart'
+import { LineChart } from '@/components/charts/LineChart'
+import { CalendarHeatmap } from '@/components/charts/CalendarHeatmap'
+import { ColourWheel } from '@/components/ColourWheel'
+import { Markdown } from '@/components/Markdown'
+import { Magnetic } from '@/components/Magnetic'
+import { Muse } from '@/features/chat/Muse'
+import { addDays, dayKey } from '@/lib/date'
 
 const PIGMENTS = [
   ['vermilion', '#E4572E'],
@@ -61,6 +69,8 @@ export default function StyleguidePage() {
   const [slider, setSlider] = useState(40)
   const [sw, setSw] = useState(true)
   const [q, setQ] = useState('')
+  const [wheel, setWheel] = useState('#2f80c4')
+  const [activity] = useState(() => Object.fromEntries(Array.from({ length: 60 }, (_, i) => [addDays(dayKey(), -i), (i * 7) % 5])))
 
   return (
     <Page>
@@ -242,6 +252,45 @@ export default function StyleguidePage() {
             <Button variant="outline" onClick={() => setModal(true)}>Modal</Button>
             <Button variant="outline" onClick={() => setSheet(true)}>Sheet</Button>
             <Button variant="gold" onClick={() => burst(0.5, 0.6, true)}>Confetti</Button>
+          </div>
+        </Block>
+
+        <Block title={t('styleguide.charts')}>
+          <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr]">
+            <RadarChart
+              title="Radar"
+              axes={[
+                { label: 'Line', value: 82 },
+                { label: 'Composition', value: 74 },
+                { label: 'Proportion', value: 90 },
+                { label: 'Harmony', value: 68 },
+                { label: 'Suitability', value: 77 },
+                { label: 'Aesthetics', value: 85 },
+              ]}
+            />
+            <div className="space-y-8">
+              <LineChart
+                title="Scores over time"
+                labels={['1', '2', '3', '4', '5', '6']}
+                series={[
+                  { id: 'a', label: 'Overall', color: 'var(--viz-1)', values: [52, 61, 58, 70, 76, 84] },
+                  { id: 'b', label: 'Similarity', color: 'var(--viz-2)', dash: '6 4', values: [60, 64, 66, 72, 80, 88] },
+                  { id: 'c', label: 'Colour', color: 'var(--viz-3)', dash: '2 4', values: [44, 57, 50, 67, 71, 79] },
+                ]}
+              />
+              <CalendarHeatmap activity={activity} weeks={12} title="Activity" locale="en-GB" lessLabel="Less" moreLabel="More" countLabel={(n) => `${n} activities`} />
+            </div>
+          </div>
+        </Block>
+
+        <Block title={t('styleguide.more')}>
+          <div className="flex flex-wrap items-center gap-10">
+            <ColourWheel value={wheel} onChange={setWheel} size={200} />
+            <Muse size={140} />
+            <Magnetic>
+              <Button variant="pigment">Magnetic</Button>
+            </Magnetic>
+            <Markdown className="max-w-xs text-ink-soft" text={['**Markdown** renderer:', '', '- safe *inline* styles', '- lists and `code`'].join('\n')} />
           </div>
         </Block>
 

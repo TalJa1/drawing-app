@@ -1,8 +1,8 @@
 /* Route-level code splitting. Each loader is also used to preload a page
    when a link is hovered (see preloadRoute). */
 
+/** Lazily loaded pages (the landing page ships in the main bundle). */
 export const pages = {
-  home: () => import('@/pages/home/HomePage'),
   practice: () => import('@/pages/practice/PracticeLibraryPage'),
   practiceStudio: () => import('@/pages/practice/PracticeStudioPage'),
   practiceResult: () => import('@/pages/practice/PracticeResultPage'),
@@ -26,7 +26,7 @@ export const pages = {
   notFound: () => import('@/pages/NotFoundPage'),
 } as const
 
-export type PageKey = keyof typeof pages
+export type PageKey = keyof typeof pages | 'home'
 
 const prefixes: [RegExp, PageKey][] = [
   [/^\/$/, 'home'],
@@ -57,7 +57,8 @@ const preloaded = new Set<PageKey>()
 export function preloadRoute(path: string): void {
   const clean = path.split(/[?#]/)[0]
   const hit = prefixes.find(([re]) => re.test(clean))
-  if (!hit || preloaded.has(hit[1])) return
-  preloaded.add(hit[1])
-  void pages[hit[1]]().catch(() => preloaded.delete(hit[1]))
+  if (!hit || hit[1] === 'home' || preloaded.has(hit[1])) return
+  const key = hit[1]
+  preloaded.add(key)
+  void pages[key]().catch(() => preloaded.delete(key))
 }

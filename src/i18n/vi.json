@@ -176,7 +176,9 @@
     "generative": "Tranh tạo sinh (20 phong cách)",
     "feedback": "Tiến độ, phản hồi & lớp phủ",
     "badges": "Huy chương",
-    "decor": "Trang trí: vệt màu, đường chia, băng chạy, trạng thái trống"
+    "decor": "Trang trí: vệt màu, đường chia, băng chạy, trạng thái trống",
+    "charts": "Biểu đồ (bảng màu trực quan đã kiểm định)",
+    "more": "Vòng màu, nàng thơ, nút từ tính, markdown"
   },
   "colour": {
     "hue": "Sắc màu",

@@ -58,7 +58,7 @@ export function CalendarHeatmap({
   return (
     <figure className={cn('relative', className)}>
       <div className="no-scrollbar overflow-x-auto">
-        <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} role="img" aria-label={title} className="block">
+        <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} aria-hidden className="block">
           {monthLabels.map((m, i) =>
             m ? (
               <text key={i} x={24 + i * (cell + gap)} y={10} className="fill-ink-faint text-[10px]">
@@ -90,8 +90,6 @@ export function CalendarHeatmap({
                   fillOpacity={isFrozen ? 0.35 : 1}
                   stroke={k === today ? 'var(--ink)' : 'none'}
                   strokeWidth={k === today ? 1.5 : 0}
-                  tabIndex={-1}
-                  aria-label={`${parseDayKey(k).toLocaleDateString(locale)}: ${countLabel(n)}`}
                   onPointerEnter={() => setHover({ key: k, x: x + cell / 2, y })}
                   onPointerLeave={() => setHover(null)}
                 />
@@ -110,6 +108,20 @@ export function CalendarHeatmap({
           {parseDayKey(hover.key).toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' })}
         </div>
       )}
+      <table className="sr-only">
+        <caption>{title}</caption>
+        <tbody>
+          {cols
+            .flat()
+            .filter((k) => k <= today && (activity[k] ?? 0) > 0)
+            .map((k) => (
+              <tr key={k}>
+                <th scope="row">{parseDayKey(k).toLocaleDateString(locale)}</th>
+                <td>{countLabel(activity[k])}</td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
       <div className="mt-2 flex items-center justify-end gap-1.5 text-[11px] text-ink-faint" aria-hidden>
         {lessLabel}
         {STEPS.map((s) => (

@@ -70,7 +70,7 @@ function LevelHero() {
           {nr && <p className="hand mt-3 text-xl text-accent-ink">{t('achievements.nextRank', { rank: L(nr.name), level: nr.minLevel, xp: xpForLevel(nr.minLevel) - xp })}</p>}
         </div>
       </div>
-      <ol className="no-scrollbar mt-8 flex gap-2 overflow-x-auto" aria-label={t('achievements.ladder')}>
+      <ol className="no-scrollbar mt-8 flex gap-2 overflow-x-auto" aria-label={t('achievements.ladder')} tabIndex={0}>
         {RANKS.map((r) => {
           const reached = level >= r.minLevel
           return (
@@ -134,7 +134,7 @@ function Challenges() {
                 <span className="tabular-nums">
                   {Math.min(c.progress, c.challenge.target)} / {c.challenge.target}
                 </span>
-                <span className="font-semibold text-gold-deep dark:text-gold">+{c.challenge.xp} XP</span>
+                <span className={cn('font-semibold', special ? 'text-gold' : 'text-gold-deep dark:text-gold')}>+{c.challenge.xp} XP</span>
               </div>
               <div className={cn('h-2 overflow-hidden rounded-full', special ? 'bg-white/15' : 'bg-paper-3')} role="progressbar" aria-valuenow={Math.round(pct * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={L(c.challenge.title)}>
                 <div className="h-full rounded-full bg-gradient-to-r from-saffron to-vermilion transition-[width] duration-700" style={{ width: `${pct * 100}%` }} />

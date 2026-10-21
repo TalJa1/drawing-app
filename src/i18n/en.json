@@ -176,7 +176,9 @@
     "generative": "Generative paintings (20 styles)",
     "feedback": "Progress, feedback & overlays",
     "badges": "Badge medals",
-    "decor": "Decor: splatters, dividers, marquee, empty state"
+    "decor": "Decor: splatters, dividers, marquee, empty state",
+    "charts": "Charts (validated data-viz palette)",
+    "more": "Colour wheel, muse, magnetic button, markdown"
   },
   "colour": {
     "hue": "Hue",

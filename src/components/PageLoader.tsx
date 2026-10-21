@@ -7,7 +7,7 @@ export function PageLoader({ full = true }: { full?: boolean }) {
     <div
       role="status"
       aria-live="polite"
-      className={full ? 'flex min-h-[70dvh] items-center justify-center' : 'flex items-center justify-center py-16'}
+      className={full ? 'flex min-h-dvh items-center justify-center' : 'flex items-center justify-center py-16'}
     >
       <div className="flex flex-col items-center gap-4">
         <div className="flex gap-2.5" aria-hidden>

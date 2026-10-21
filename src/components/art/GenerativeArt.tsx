@@ -29,7 +29,7 @@ function impressionist({ rng, p, W, H }: Ctx) {
     <rect key="ground" y={horizon} width={W} height={H - horizon} fill={p[3]} />,
     <circle key="sun" cx={W * r(rng, 0.2, 0.8)} cy={horizon * 0.45} r={W * 0.07} fill={p[4]} opacity="0.85" />,
   ]
-  for (let i = 0; i < 520; i++) {
+  for (let i = 0; i < 380; i++) {
     const y = rng() * H
     const sky = y < horizon
     const col = sky ? pick(rng, [p[0], p[1], p[2], p[5], '#ffffff']) : pick(rng, [p[3], p[4], p[2], p[5], p[1]])
@@ -53,11 +53,11 @@ function impressionist({ rng, p, W, H }: Ctx) {
 function pointillist({ rng, p, W, H }: Ctx) {
   const out: ReactNode[] = [<rect key="bg" width={W} height={H} fill="#fbf7ee" />]
   const horizon = H * 0.55
-  for (let i = 0; i < 1700; i++) {
+  for (let i = 0; i < 950; i++) {
     const x = rng() * W
     const y = rng() * H
     const zone = y < horizon ? [p[0], p[5], p[1]] : y < horizon + 40 ? [p[2], p[1], p[3]] : [p[2], p[3], p[4], p[1]]
-    out.push(<circle key={i} cx={x} cy={y} r={r(rng, 1.4, 3)} fill={pick(rng, zone)} />)
+    out.push(<circle key={i} cx={x} cy={y} r={r(rng, 1.8, 3.8)} fill={pick(rng, zone)} />)
   }
   return out
 }

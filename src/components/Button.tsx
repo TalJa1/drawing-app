@@ -18,7 +18,7 @@ const base =
 const variants: Record<ButtonVariant, string> = {
   ink: 'bg-ink text-paper shadow-[0_2px_0_rgb(0_0_0/0.25),0_10px_24px_-12px_rgb(0_0_0/0.5)] hover:shadow-[0_3px_0_rgb(0_0_0/0.25),0_16px_30px_-12px_rgb(0_0_0/0.55)]',
   pigment:
-    'bg-vermilion-deep text-ivory shadow-[0_2px_0_#8f2c12,0_12px_26px_-12px_rgb(199_67_31/0.7)] hover:bg-vermilion dark:text-inkwell dark:bg-vermilion',
+    'bg-vermilion-deep text-ivory shadow-[0_2px_0_#8a2a10,0_12px_26px_-12px_rgb(188_62_27/0.7)] hover:bg-vermilion dark:text-inkwell dark:bg-vermilion',
   gold: 'bg-gold text-inkwell shadow-[0_2px_0_#9c7c17,0_12px_26px_-12px_rgb(212_175_55/0.8)] hover:brightness-105',
   ghost: 'text-ink hover:bg-ink/5 dark:hover:bg-ink/10',
   outline: 'border border-line-strong text-ink hover:border-ink hover:bg-ink/[0.03]',

@@ -20,7 +20,6 @@ import { HeroDoodle } from '@/features/home/HeroDoodle'
 import { RankStamp } from '@/features/practice/ResultParts'
 import { BadgeMedal } from '@/features/gamification/BadgeMedal'
 import { LessonDiagram } from '@/features/learn/LessonDiagram'
-import { ChatCardView } from '@/features/chat/ChatCards'
 import { TemplateImage } from '@/features/practice/TemplateCard'
 import { BADGE_MAP } from '@/mocks/badges'
 import { TEMPLATE_MAP } from '@/mocks/templates'
@@ -60,7 +59,7 @@ function Hero() {
       <Washes />
       <PaintSplatter seed="hero-a" color="var(--vermilion)" className="absolute -left-10 top-24 h-48 w-48 opacity-25" />
       <PaintSplatter seed="hero-b" color="var(--cerulean)" className="absolute bottom-10 right-[38%] h-36 w-36 opacity-20" />
-      <div className="container-art grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
+      <div className="container-art grid items-start gap-12 lg:grid-cols-[1.15fr_1fr]">
         <div className="relative">
           <p className="eyebrow flex items-center gap-3">
             <Sparkles size={14} className="text-accent-ink" /> {t('home.eyebrow')}
@@ -94,7 +93,7 @@ function Hero() {
           </div>
         </div>
 
-        <div className="relative h-[460px] sm:h-[520px]">
+        <div className="relative h-[460px] sm:h-[520px] lg:mt-6">
           <motion.div style={{ y: y1 }} className="absolute right-0 top-0 w-[62%]">
             <div className="float-y" style={{ '--r': '3deg', '--d': '7s' } as React.CSSProperties}>
               <Frame tone="gold" frameWidth={12} matWidth={12}>
@@ -184,7 +183,7 @@ function FeatureMock({ k }: { k: (typeof FEATURES)[number]['key'] }) {
             <div className="aspect-[4/3] p-1">
               <TemplateImage template={TEMPLATE_MAP[id]} />
             </div>
-            <p className="truncate px-1.5 pb-1 font-display text-[11px]">{L(TEMPLATE_MAP[id].title)}</p>
+            <p className="truncate px-1.5 pb-1 font-display text-[11px] text-inkwell">{L(TEMPLATE_MAP[id].title)}</p>
             {i === 0 && <span className="sr-only">{t('practice.daily.badge')}</span>}
           </div>
         ))}
@@ -234,7 +233,14 @@ function FeatureMock({ k }: { k: (typeof FEATURES)[number]['key'] }) {
       <div className="space-y-3 p-4">
         <div className="ml-auto w-fit rounded-[18px] rounded-tr-md bg-ink px-4 py-2 text-sm text-paper">{t('home.mock.chatQ')}</div>
         <div className="w-fit max-w-[90%] rounded-[18px] rounded-tl-md border border-line bg-card px-4 py-2 text-sm text-ink-soft">{t('home.mock.chatA')}</div>
-        <ChatCardView card={{ type: 'palette', name: t('home.mock.chatPalette'), colors: ['#1F8A8A', '#E4572E', '#F2A93B', '#F6F1E7', '#1B1A17'] }} />
+        <div className="w-full max-w-sm rounded-2xl border border-line bg-card p-3 shadow-paper">
+          <p className="mb-2 text-sm font-semibold">{t('home.mock.chatPalette')}</p>
+          <div className="flex h-12 overflow-hidden rounded-xl ring-1 ring-line-strong">
+            {['#1F8A8A', '#E4572E', '#F2A93B', '#F6F1E7', '#1B1A17'].map((c) => (
+              <span key={c} className="flex-1" style={{ background: c }} />
+            ))}
+          </div>
+        </div>
       </div>
     )
   return (
@@ -507,7 +513,7 @@ function FinalCta() {
   return (
     <section className="container-art pb-16">
       <div className="relative isolate overflow-hidden rounded-[36px] bg-[#1b1a17] px-6 py-16 text-center text-[#f6f1e7] sm:px-12 sm:py-24">
-        <Washes washes={[{ color: '#E4572E', size: '30rem', top: '-30%', left: '-10%' }, { color: '#2F80C4', size: '26rem', bottom: '-40%', right: '-5%', delay: -6 }, { color: '#F2A93B', size: '22rem', top: '10%', right: '30%', delay: -12 }]} />
+        <Washes className="h-full" washes={[{ color: '#E4572E', size: '30rem', top: '-30%', left: '-10%' }, { color: '#2F80C4', size: '26rem', bottom: '-40%', right: '-5%', delay: -6 }, { color: '#F2A93B', size: '22rem', top: '10%', right: '30%', delay: -12 }]} />
         <h2 className="display-lg mx-auto max-w-3xl text-[#f6f1e7]">
           {t('home.finalA')} <em>{t('home.finalB')}</em>
         </h2>

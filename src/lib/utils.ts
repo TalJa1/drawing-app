@@ -1,7 +1,14 @@
 import { clsx, type ClassValue } from 'clsx'
+import { extendTailwindMerge } from 'tailwind-merge'
 
+// teach tailwind-merge about our custom shadow tokens so they aren't mistaken for colours
+const twMerge = extendTailwindMerge({
+  extend: { classGroups: { shadow: [{ shadow: ['paper', 'lift', 'frame'] }] } },
+})
+
+/** clsx + tailwind-merge: later utilities win over conflicting earlier ones. */
 export function cn(...inputs: ClassValue[]): string {
-  return clsx(inputs)
+  return twMerge(clsx(inputs))
 }
 
 export const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))

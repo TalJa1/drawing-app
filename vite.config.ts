@@ -10,6 +10,26 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        // a few long-lived vendor chunks instead of dozens of tiny ones (e.g. one per icon)
+        codeSplitting: {
+          minSize: 20_000,
+          groups: [
+            {
+              name: 'react',
+              // react-dom/server is only used (lazily) by the demo-data seeder
+              test: /node_modules[\\/](react|scheduler|react-router|react-router-dom|@remix-run)[\\/]|node_modules[\\/]react-dom[\\/](?!server|cjs[\\/]react-dom-server)/,
+              priority: 40,
+            },
+            { name: 'motion', test: /node_modules[\\/](framer-motion|motion-dom|motion-utils)[\\/]/, priority: 30 },
+            { name: 'icons', test: /node_modules[\\/]lucide-react[\\/]/, priority: 20 },
+          ],
+        },
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,

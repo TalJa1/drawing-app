@@ -19,7 +19,8 @@ const DEFAULT: WashSpec[] = [
 /** Slowly drifting watercolour blobs for page backgrounds. */
 export function Washes({ washes = DEFAULT, className }: { washes?: WashSpec[]; className?: string }) {
   return (
-    <div aria-hidden className={cn('pointer-events-none absolute inset-0 -z-10 overflow-hidden', className)}>
+    // fixed (viewport-based) height so percentage positions don't move as the page grows (no layout shift)
+    <div aria-hidden className={cn('pointer-events-none absolute inset-x-0 top-0 -z-10 h-[140vh] overflow-hidden', className)}>
       {washes.map((w, i) => (
         <span
           key={i}
