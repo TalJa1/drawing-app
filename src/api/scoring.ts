@@ -68,18 +68,25 @@ export function buildScore(artworkId: string, a: ArtworkAnalysis): ScoreResult {
   const overall = r1(0.55 * similarity + 0.45 * colour)
   const rank = rankForScore(overall)
   const rng = seeded(`${artworkId}:fb`)
-  const pick = <T,>(arr: T[]) => arr[Math.floor(rng() * arr.length)]
+  const pick = <T>(arr: T[]) => arr[Math.floor(rng() * arr.length)]
 
   const entries = (Object.keys(sub) as SubKey[]).map((k) => [k, sub[k]] as const)
   const sorted = [...entries].sort((x, y) => y[1] - x[1])
-  const strengths: Localized[] = sorted.filter(([, v]) => v >= 72).slice(0, 2).map(([k]) => pick(STRENGTHS[k]))
+  const strengths: Localized[] = sorted
+    .filter(([, v]) => v >= 72)
+    .slice(0, 2)
+    .map(([k]) => pick(STRENGTHS[k]))
   if (!strengths.length) {
     strengths.push({
       en: 'You showed up and made marks — that’s the hardest step, and you took it.',
       vi: 'Bạn đã bắt tay vào vẽ — đó là bước khó nhất, và bạn đã làm được.',
     })
   }
-  const weaknesses: Localized[] = [...sorted].reverse().filter(([, v]) => v < 68).slice(0, 2).map(([k]) => pick(WEAKNESSES[k]))
+  const weaknesses: Localized[] = [...sorted]
+    .reverse()
+    .filter(([, v]) => v < 68)
+    .slice(0, 2)
+    .map(([k]) => pick(WEAKNESSES[k]))
   // three concrete tips from the weakest areas (always 3, even for great work)
   const tipKeys = [...sorted].reverse().map(([k]) => k)
   const tips: Localized[] = []
@@ -95,8 +102,14 @@ export function buildScore(artworkId: string, a: ArtworkAnalysis): ScoreResult {
   const feedback: Localized[] = [
     pick(GENERAL[rank]),
     simWeak < colWeak
-      ? { en: 'Your colour sense is ahead of your linework right now — focus on completing and cleaning up the shapes.', vi: 'Cảm quan màu sắc của bạn đang đi trước nét vẽ — hãy tập trung hoàn thiện và làm gọn các hình.' }
-      : { en: 'Your shapes are well handled — the biggest gains now will come from colour choices and contrast.', vi: 'Các hình được xử lý tốt — tiến bộ lớn nhất lúc này sẽ đến từ lựa chọn màu và độ tương phản.' },
+      ? {
+          en: 'Your colour sense is ahead of your linework right now — focus on completing and cleaning up the shapes.',
+          vi: 'Cảm quan màu sắc của bạn đang đi trước nét vẽ — hãy tập trung hoàn thiện và làm gọn các hình.',
+        }
+      : {
+          en: 'Your shapes are well handled — the biggest gains now will come from colour choices and contrast.',
+          vi: 'Các hình được xử lý tốt — tiến bộ lớn nhất lúc này sẽ đến từ lựa chọn màu và độ tương phản.',
+        },
   ]
 
   return {

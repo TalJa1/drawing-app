@@ -26,7 +26,10 @@ function newRound(n: number): Round {
   const rng = () => Math.random()
   const answer = MOVEMENTS[Math.floor(rng() * MOVEMENTS.length)]
   // distractors never share the answer's visual style, so every question is fair
-  const others = shuffle(rng, MOVEMENTS.filter((m) => m.genStyle !== answer.genStyle))
+  const others = shuffle(
+    rng,
+    MOVEMENTS.filter((m) => m.genStyle !== answer.genStyle),
+  )
   const picked: ArtMovement[] = []
   for (const m of others) if (!picked.some((p) => p.genStyle === m.genStyle) && picked.length < 3) picked.push(m)
   return { answer, options: shuffle(rng, [answer, ...picked]), seed: `${answer.slug}-${n}-${Math.floor(rng() * 1e6)}` }
@@ -69,7 +72,16 @@ export default function SpotTheStylePage() {
         <Link to="/learn#tools" className="inline-flex items-center gap-2 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft size={16} /> {t('learn.backToAtlas')}
         </Link>
-        <SectionHeading className="mt-6" eyebrow={t('learn.spot.eyebrow')} title={<>{t('learn.spot.titleA')} <em>{t('learn.spot.titleB')}</em></>} lede={t('learn.spot.lede')} />
+        <SectionHeading
+          className="mt-6"
+          eyebrow={t('learn.spot.eyebrow')}
+          title={
+            <>
+              {t('learn.spot.titleA')} <em>{t('learn.spot.titleB')}</em>
+            </>
+          }
+          lede={t('learn.spot.lede')}
+        />
         <div className="mt-6 flex gap-6 text-sm">
           <span className="inline-flex items-center gap-2 font-semibold">
             <Flame size={16} className="text-vermilion" /> {t('learn.spot.streak', { count: streak })}
@@ -81,7 +93,13 @@ export default function SpotTheStylePage() {
         <div className="mt-8 grid items-start gap-10 lg:grid-cols-[1.3fr_1fr]">
           <Frame frameWidth={14} matWidth={16} tone={picked && right ? 'gold' : 'wood'}>
             <div className="aspect-[4/3]">
-              <GenerativeArt key={round.seed} style={round.answer.genStyle} seed={round.seed} palette={round.answer.palette} title={t('learn.spot.mystery')} />
+              <GenerativeArt
+                key={round.seed}
+                style={round.answer.genStyle}
+                seed={round.seed}
+                palette={round.answer.palette}
+                title={t('learn.spot.mystery')}
+              />
             </div>
           </Frame>
           <div>

@@ -47,15 +47,7 @@ export function BrushUnderline({
 }
 
 /** Wrap a word in a heading to give it a painted underline. */
-export function Highlight({
-  children,
-  color,
-  variant = 0,
-}: {
-  children: React.ReactNode
-  color?: string
-  variant?: 0 | 1 | 2
-}) {
+export function Highlight({ children, color, variant = 0 }: { children: React.ReactNode; color?: string; variant?: 0 | 1 | 2 }) {
   return (
     <span className="relative isolate inline-block whitespace-nowrap">
       {children}

@@ -47,8 +47,26 @@ const PIGMENTS = [
 ] as const
 
 const STYLES: GenStyle[] = [
-  'impressionist', 'pointillist', 'cubist', 'abstract', 'pop', 'minimal', 'surreal', 'ukiyoe', 'expressionist', 'renaissance',
-  'geometric', 'dots', 'ink', 'lacquer', 'folk', 'baroque', 'cave', 'mosaic', 'fauve', 'digital',
+  'impressionist',
+  'pointillist',
+  'cubist',
+  'abstract',
+  'pop',
+  'minimal',
+  'surreal',
+  'ukiyoe',
+  'expressionist',
+  'renaissance',
+  'geometric',
+  'dots',
+  'ink',
+  'lacquer',
+  'folk',
+  'baroque',
+  'cave',
+  'mosaic',
+  'fauve',
+  'digital',
 ]
 
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
@@ -118,16 +136,26 @@ export default function StyleguidePage() {
 
         <Block title={t('styleguide.buttons')}>
           <div className="flex flex-wrap items-center gap-3">
-            <Button variant="ink" icon={<Brush size={18} />}>Ink</Button>
+            <Button variant="ink" icon={<Brush size={18} />}>
+              Ink
+            </Button>
             <Button variant="pigment">Pigment</Button>
-            <Button variant="gold" icon={<Sparkles size={18} />}>Gold</Button>
+            <Button variant="gold" icon={<Sparkles size={18} />}>
+              Gold
+            </Button>
             <Button variant="outline">Outline</Button>
             <Button variant="ghost">Ghost</Button>
             <Button variant="paper">Paper</Button>
-            <Button variant="ink" size="sm">Small</Button>
-            <Button variant="pigment" size="lg">Large</Button>
+            <Button variant="ink" size="sm">
+              Small
+            </Button>
+            <Button variant="pigment" size="lg">
+              Large
+            </Button>
             <Button disabled>Disabled</Button>
-            <ButtonLink to="/practice" variant="outline">Link</ButtonLink>
+            <ButtonLink to="/practice" variant="outline">
+              Link
+            </ButtonLink>
           </div>
           <div className="mt-6 flex flex-wrap items-center gap-2">
             <IconButton label="Brush" icon={<Brush size={18} />} shortcut="B" />
@@ -247,11 +275,21 @@ export default function StyleguidePage() {
             <Skeleton className="h-24" />
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Button variant="outline" onClick={() => toast({ title: 'Saved to your gallery', tone: 'success' })}>Toast</Button>
-            <Button variant="outline" onClick={() => toast({ title: 'Masterpiece!', description: 'Gold tone toast', tone: 'gold' })}>Gold toast</Button>
-            <Button variant="outline" onClick={() => setModal(true)}>Modal</Button>
-            <Button variant="outline" onClick={() => setSheet(true)}>Sheet</Button>
-            <Button variant="gold" onClick={() => burst(0.5, 0.6, true)}>Confetti</Button>
+            <Button variant="outline" onClick={() => toast({ title: 'Saved to your gallery', tone: 'success' })}>
+              Toast
+            </Button>
+            <Button variant="outline" onClick={() => toast({ title: 'Masterpiece!', description: 'Gold tone toast', tone: 'gold' })}>
+              Gold toast
+            </Button>
+            <Button variant="outline" onClick={() => setModal(true)}>
+              Modal
+            </Button>
+            <Button variant="outline" onClick={() => setSheet(true)}>
+              Sheet
+            </Button>
+            <Button variant="gold" onClick={() => burst(0.5, 0.6, true)}>
+              Confetti
+            </Button>
           </div>
         </Block>
 
@@ -278,7 +316,15 @@ export default function StyleguidePage() {
                   { id: 'c', label: 'Colour', color: 'var(--viz-3)', dash: '2 4', values: [44, 57, 50, 67, 71, 79] },
                 ]}
               />
-              <CalendarHeatmap activity={activity} weeks={12} title="Activity" locale="en-GB" lessLabel="Less" moreLabel="More" countLabel={(n) => `${n} activities`} />
+              <CalendarHeatmap
+                activity={activity}
+                weeks={12}
+                title="Activity"
+                locale="en-GB"
+                lessLabel="Less"
+                moreLabel="More"
+                countLabel={(n) => `${n} activities`}
+              />
             </div>
           </div>
         </Block>
@@ -290,7 +336,10 @@ export default function StyleguidePage() {
             <Magnetic>
               <Button variant="pigment">Magnetic</Button>
             </Magnetic>
-            <Markdown className="max-w-xs text-ink-soft" text={['**Markdown** renderer:', '', '- safe *inline* styles', '- lists and `code`'].join('\n')} />
+            <Markdown
+              className="max-w-xs text-ink-soft"
+              text={['**Markdown** renderer:', '', '- safe *inline* styles', '- lists and `code`'].join('\n')}
+            />
           </div>
         </Block>
 

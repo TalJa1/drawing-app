@@ -67,10 +67,7 @@ function DownloadMenu({ ctx }: { ctx: StudioContext }) {
         <span className="hidden sm:inline">{t('common.download')}</span>
       </Button>
       {open && (
-        <div
-          role="menu"
-          className="paper absolute right-0 top-[calc(100%+8px)] z-30 w-44 rounded-2xl border border-line p-1.5 shadow-lift"
-        >
+        <div role="menu" className="paper absolute right-0 top-[calc(100%+8px)] z-30 w-44 rounded-2xl border border-line p-1.5 shadow-lift">
           {(['png', 'jpg'] as const).map((k) => (
             <button
               key={k}
@@ -93,9 +90,7 @@ export default function FreeDrawPage() {
   const L = useL()
   const navigate = useNavigate()
   const [params] = useSearchParams()
-  const [preset, setPreset] = useState<Preset>(
-    (params.get('size') as Preset) in PRESETS ? (params.get('size') as Preset) : 'classic',
-  )
+  const [preset, setPreset] = useState<Preset>((params.get('size') as Preset) in PRESETS ? (params.get('size') as Preset) : 'classic')
   const [bg, setBg] = useState<BackgroundKind>('white')
   const [prompt, setPrompt] = useState(() => {
     const p = params.get('prompt')
@@ -156,9 +151,7 @@ export default function FreeDrawPage() {
     <div className="flex flex-col gap-6">
       <section className="rounded-2xl border border-line bg-paper-2/50 p-4">
         <p className="eyebrow">{t('freeDraw.inspiration')}</p>
-        <p className="mt-2 font-display text-xl leading-snug">
-          {prompt ? `“${L(prompt)}”` : t('freeDraw.inspirationEmpty')}
-        </p>
+        <p className="mt-2 font-display text-xl leading-snug">{prompt ? `“${L(prompt)}”` : t('freeDraw.inspirationEmpty')}</p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button size="sm" variant="ink" icon={<Dices size={15} />} onClick={inspire}>
             {t('freeDraw.needInspiration')}
@@ -168,11 +161,7 @@ export default function FreeDrawPage() {
             variant="outline"
             icon={<MessageCircle size={15} />}
             onClick={() => {
-              setDraftChat(
-                prompt
-                  ? t('freeDraw.chatAboutPrompt', { prompt: L(prompt) })
-                  : t('freeDraw.chatAsk'),
-              )
+              setDraftChat(prompt ? t('freeDraw.chatAboutPrompt', { prompt: L(prompt) }) : t('freeDraw.chatAsk'))
               navigate('/chat')
             }}
           >
@@ -203,9 +192,7 @@ export default function FreeDrawPage() {
                   k === 'transparent' && 'checker',
                   k === 'kraft' && 'kraft',
                 )}
-                style={
-                  k !== 'transparent' && k !== 'kraft' ? { background: BACKGROUNDS[k]! } : undefined
-                }
+                style={k !== 'transparent' && k !== 'kraft' ? { background: BACKGROUNDS[k]! } : undefined}
               />
               {t(`freeDraw.bg.${k}`)}
             </button>
@@ -265,13 +252,7 @@ export default function FreeDrawPage() {
         key={preset}
         mode="free"
         title={t('freeDraw.title')}
-        subtitle={
-          pending
-            ? t('freeDraw.withPalette', { name: pending.name })
-            : prompt
-              ? L(prompt)
-              : t('freeDraw.subtitle')
-        }
+        subtitle={pending ? t('freeDraw.withPalette', { name: pending.name }) : prompt ? L(prompt) : t('freeDraw.subtitle')}
         width={w}
         height={h}
         background={bg}
@@ -282,25 +263,14 @@ export default function FreeDrawPage() {
         description={t('freeDraw.description')}
         primary={(ctx) => (
           <>
-            <Button
-              size="sm"
-              variant="outline"
-              icon={<Save size={16} />}
-              onClick={() => setSaving(ctx)}
-              disabled={ctx.engine.isEmpty()}
-            >
+            <Button size="sm" variant="outline" icon={<Save size={16} />} onClick={() => setSaving(ctx)} disabled={ctx.engine.isEmpty()}>
               <span className="hidden sm:inline">{t('freeDraw.saveToCollection')}</span>
             </Button>
             <DownloadMenu ctx={ctx} />
           </>
         )}
       />
-      <Modal
-        open={!!saving}
-        onClose={() => setSaving(null)}
-        title={t('freeDraw.saveTitle')}
-        size="sm"
-      >
+      <Modal open={!!saving} onClose={() => setSaving(null)} title={t('freeDraw.saveTitle')} size="sm">
         <form
           onSubmit={(e) => {
             e.preventDefault()

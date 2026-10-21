@@ -73,9 +73,7 @@ function cubist({ rng, p, W, H }: Ctx) {
       const a = (k / n) * Math.PI * 2 + rng()
       return `${cx + Math.cos(a) * s},${cy + Math.sin(a) * s * r(rng, 0.6, 1.2)}`
     }).join(' ')
-    out.push(
-      <polygon key={i} points={pts} fill={pick(rng, p)} opacity={r(rng, 0.7, 0.95)} stroke="#2a2522" strokeWidth={r(rng, 1, 3)} />,
-    )
+    out.push(<polygon key={i} points={pts} fill={pick(rng, p)} opacity={r(rng, 0.7, 0.95)} stroke="#2a2522" strokeWidth={r(rng, 1, 3)} />)
   }
   out.push(<circle key="eye" cx={W * 0.55} cy={H * 0.4} r={10} fill="none" stroke="#2a2522" strokeWidth="3" />)
   out.push(<path key="g" d={`M${W * 0.35} ${H * 0.2} L${W * 0.5} ${H * 0.8}`} stroke="#2a2522" strokeWidth="3" />)
@@ -129,7 +127,10 @@ function abstract({ rng, p, W, H }: Ctx) {
 
 function pop({ rng, p, W, H, id }: Ctx) {
   const bg = pick(rng, [p[0], p[2], p[1]])
-  const shape = pick(rng, [p[1], p[0], p[5]].filter((c) => c !== bg))
+  const shape = pick(
+    rng,
+    [p[1], p[0], p[5]].filter((c) => c !== bg),
+  )
   const cx = W / 2
   const cy = H / 2
   const pts = Array.from({ length: 16 }, (_, k) => {
@@ -155,7 +156,10 @@ function pop({ rng, p, W, H, id }: Ctx) {
 
 function minimal({ rng, p, W, H, id }: Ctx) {
   const top = pick(rng, p)
-  const bottom = pick(rng, p.filter((c) => c !== top))
+  const bottom = pick(
+    rng,
+    p.filter((c) => c !== top),
+  )
   return [
     <defs key="d">
       <filter id={`${id}-soft`}>
@@ -183,9 +187,22 @@ function surreal({ rng, p, W, H, id }: Ctx) {
     <ellipse key="sh" cx={cx + 50} cy={hz + 36} rx="70" ry="8" fill={p[5]} opacity="0.45" />,
     <ellipse key="egg" cx={cx} cy={hz - 50} rx="28" ry="38" fill={p[4]} />,
     <ellipse key="egg-s" cx={cx + 8} cy={hz - 44} rx="18" ry="30" fill="#000" opacity="0.08" />,
-    <path key="ladder" d={`M${W * 0.15} ${H} L${W * 0.22} ${hz - 90} M${W * 0.2} ${H} L${W * 0.27} ${hz - 90}`} stroke={p[5]} strokeWidth="3" />,
+    <path
+      key="ladder"
+      d={`M${W * 0.15} ${H} L${W * 0.22} ${hz - 90} M${W * 0.2} ${H} L${W * 0.27} ${hz - 90}`}
+      stroke={p[5]}
+      strokeWidth="3"
+    />,
     ...Array.from({ length: 8 }, (_, i) => (
-      <line key={`r${i}`} x1={W * 0.155 + i * 0.009 * W} y1={H - i * 22} x2={W * 0.205 + i * 0.009 * W} y2={H - i * 22} stroke={p[5]} strokeWidth="2" />
+      <line
+        key={`r${i}`}
+        x1={W * 0.155 + i * 0.009 * W}
+        y1={H - i * 22}
+        x2={W * 0.205 + i * 0.009 * W}
+        y2={H - i * 22}
+        stroke={p[5]}
+        strokeWidth="2"
+      />
     )),
     <path key="clock" d={`M${W * 0.72} ${hz + 10} q 30 -20 50 0 q 6 30 -6 60 q -10 -30 -44 -60z`} fill={p[3]} opacity="0.9" />,
     <circle key="moon" cx={W * 0.82} cy={H * 0.2} r="16" fill={p[4]} opacity="0.9" />,
@@ -195,7 +212,13 @@ function surreal({ rng, p, W, H, id }: Ctx) {
 function ukiyoe({ rng, p, W, H }: Ctx) {
   const out: ReactNode[] = [<rect key="bg" width={W} height={H} fill={p[0]} />]
   out.push(<polygon key="fuji" points={`${W * 0.55},${H * 0.62} ${W * 0.7},${H * 0.36} ${W * 0.85},${H * 0.62}`} fill={p[2]} />)
-  out.push(<polygon key="snow" points={`${W * 0.66},${H * 0.43} ${W * 0.7},${H * 0.36} ${W * 0.74},${H * 0.43} ${W * 0.71},${H * 0.41} ${W * 0.69},${H * 0.44}`} fill="#fff" />)
+  out.push(
+    <polygon
+      key="snow"
+      points={`${W * 0.66},${H * 0.43} ${W * 0.7},${H * 0.36} ${W * 0.74},${H * 0.43} ${W * 0.71},${H * 0.41} ${W * 0.69},${H * 0.44}`}
+      fill="#fff"
+    />,
+  )
   for (let k = 0; k < 4; k++) {
     const base = H * (0.62 + k * 0.1)
     const amp = 26 - k * 4
@@ -217,7 +240,13 @@ function ukiyoe({ rng, p, W, H }: Ctx) {
   for (let i = 0; i < 26; i++) {
     const t = i / 26
     out.push(
-      <circle key={`f${i}`} cx={W * (0.12 + t * 0.36)} cy={H * (0.3 - Math.sin(t * Math.PI) * 0.1) + rng() * 8} r={r(rng, 2, 5)} fill="#fff" />,
+      <circle
+        key={`f${i}`}
+        cx={W * (0.12 + t * 0.36)}
+        cy={H * (0.3 - Math.sin(t * Math.PI) * 0.1) + rng() * 8}
+        r={r(rng, 2, 5)}
+        fill="#fff"
+      />,
     )
   }
   out.push(<rect key="seal" x={W - 34} y={14} width="18" height="26" fill={p[4]} />)
@@ -231,7 +260,14 @@ function expressionist({ rng, p, W, H }: Ctx) {
     for (let x = 0; x <= W + 40; x += 40) d += ` Q ${x + 20} ${(k / 9) * H + r(rng, -30, 30)} ${x + 40} ${(k / 9) * H + r(rng, -10, 10)}`
     out.push(<path key={k} d={d} fill="none" stroke={pick(rng, p)} strokeWidth={r(rng, 18, 34)} strokeLinecap="round" opacity="0.92" />)
   }
-  out.push(<path key="fig" d={`M${W * 0.45} ${H} C ${W * 0.42} ${H * 0.7}, ${W * 0.4} ${H * 0.55}, ${W * 0.5} ${H * 0.5} C ${W * 0.6} ${H * 0.55}, ${W * 0.58} ${H * 0.7}, ${W * 0.56} ${H}Z`} fill="#1b1a17" opacity="0.85" />)
+  out.push(
+    <path
+      key="fig"
+      d={`M${W * 0.45} ${H} C ${W * 0.42} ${H * 0.7}, ${W * 0.4} ${H * 0.55}, ${W * 0.5} ${H * 0.5} C ${W * 0.6} ${H * 0.55}, ${W * 0.58} ${H * 0.7}, ${W * 0.56} ${H}Z`}
+      fill="#1b1a17"
+      opacity="0.85"
+    />,
+  )
   out.push(<ellipse key="head" cx={W * 0.5} cy={H * 0.43} rx="20" ry="28" fill={p[5]} />)
   out.push(<ellipse key="m" cx={W * 0.5} cy={H * 0.48} rx="5" ry="8" fill="#1b1a17" />)
   return out
@@ -251,10 +287,27 @@ function renaissance({ p, W, H, id }: Ctx) {
       </radialGradient>
     </defs>,
     <rect key="bg" width={W} height={H} fill={p[0]} />,
-    <path key="arch" d={`M${W * 0.18} ${H} V${H * 0.35} A ${W * 0.32} ${W * 0.32} 0 0 1 ${W * 0.82} ${H * 0.35} V${H}Z`} fill={`url(#${id}-l)`} />,
-    <path key="hills" d={`M${W * 0.18} ${H * 0.6} q ${W * 0.15} -40 ${W * 0.3} 0 t ${W * 0.34} 0 V${H} H${W * 0.18}Z`} fill={p[3]} opacity="0.8" />,
-    <path key="robe" d={`M${W * 0.32} ${H} C ${W * 0.34} ${H * 0.6}, ${W * 0.4} ${H * 0.5}, ${W * 0.5} ${H * 0.5} C ${W * 0.6} ${H * 0.5}, ${W * 0.66} ${H * 0.6}, ${W * 0.68} ${H}Z`} fill={p[4]} />,
-    <path key="cloak" d={`M${W * 0.4} ${H} C ${W * 0.42} ${H * 0.7}, ${W * 0.46} ${H * 0.55}, ${W * 0.5} ${H * 0.55} C ${W * 0.56} ${H * 0.6}, ${W * 0.58} ${H * 0.75}, ${W * 0.6} ${H}Z`} fill="#8c2f2f" />,
+    <path
+      key="arch"
+      d={`M${W * 0.18} ${H} V${H * 0.35} A ${W * 0.32} ${W * 0.32} 0 0 1 ${W * 0.82} ${H * 0.35} V${H}Z`}
+      fill={`url(#${id}-l)`}
+    />,
+    <path
+      key="hills"
+      d={`M${W * 0.18} ${H * 0.6} q ${W * 0.15} -40 ${W * 0.3} 0 t ${W * 0.34} 0 V${H} H${W * 0.18}Z`}
+      fill={p[3]}
+      opacity="0.8"
+    />,
+    <path
+      key="robe"
+      d={`M${W * 0.32} ${H} C ${W * 0.34} ${H * 0.6}, ${W * 0.4} ${H * 0.5}, ${W * 0.5} ${H * 0.5} C ${W * 0.6} ${H * 0.5}, ${W * 0.66} ${H * 0.6}, ${W * 0.68} ${H}Z`}
+      fill={p[4]}
+    />,
+    <path
+      key="cloak"
+      d={`M${W * 0.4} ${H} C ${W * 0.42} ${H * 0.7}, ${W * 0.46} ${H * 0.55}, ${W * 0.5} ${H * 0.55} C ${W * 0.56} ${H * 0.6}, ${W * 0.58} ${H * 0.75}, ${W * 0.6} ${H}Z`}
+      fill="#8c2f2f"
+    />,
     <ellipse key="face" cx={W * 0.5} cy={H * 0.4} rx={W * 0.06} ry={W * 0.075} fill={`url(#${id}-f)`} />,
     <circle key="halo" cx={W * 0.5} cy={H * 0.38} r={W * 0.1} fill="none" stroke="#d4af37" strokeWidth="3" opacity="0.8" />,
   ]
@@ -274,7 +327,17 @@ function geometric({ p, W, H }: Ctx) {
     for (let x = 0; x <= W + s; x += s) {
       out.push(<polygon key={i++} points={star(x, y, s * 0.48)} fill={p[1]} stroke={p[2]} strokeWidth="2" />)
       out.push(<polygon key={i++} points={star(x, y, s * 0.24)} fill={(x / s + y / s) % 2 ? p[4] : p[3]} />)
-      out.push(<rect key={i++} x={x + s / 2 - 6} y={y + s / 2 - 6} width="12" height="12" transform={`rotate(45 ${x + s / 2} ${y + s / 2})`} fill={p[2]} />)
+      out.push(
+        <rect
+          key={i++}
+          x={x + s / 2 - 6}
+          y={y + s / 2 - 6}
+          width="12"
+          height="12"
+          transform={`rotate(45 ${x + s / 2} ${y + s / 2})`}
+          fill={p[2]}
+        />,
+      )
     }
   return out
 }
@@ -301,7 +364,8 @@ function dots({ rng, p, W, H }: Ctx) {
       out.push(<circle key={k++} cx={a.x + (b.x - a.x) * t} cy={a.y + (b.y - a.y) * t + Math.sin(t * 9) * 8} r="2" fill={p[3]} />)
     }
   }
-  for (let i = 0; i < 260; i++) out.push(<circle key={k++} cx={rng() * W} cy={rng() * H} r="1.4" fill={pick(rng, p.slice(1))} opacity="0.7" />)
+  for (let i = 0; i < 260; i++)
+    out.push(<circle key={k++} cx={rng() * W} cy={rng() * H} r="1.4" fill={pick(rng, p.slice(1))} opacity="0.7" />)
   return out
 }
 
@@ -322,10 +386,21 @@ function ink({ rng, p, W, H, id }: Ctx) {
     out.push(<path key={k} d={d} fill={p[1]} opacity={0.12 + k * 0.17} filter={`url(#${id}-mist)`} />)
   }
   const bx = W * 0.15
-  out.push(<path key="branch" d={`M${bx} ${H * 0.12} q 60 20 120 6 q 40 -8 70 10`} stroke={p[1]} strokeWidth="5" fill="none" strokeLinecap="round" />)
+  out.push(
+    <path
+      key="branch"
+      d={`M${bx} ${H * 0.12} q 60 20 120 6 q 40 -8 70 10`}
+      stroke={p[1]}
+      strokeWidth="5"
+      fill="none"
+      strokeLinecap="round"
+    />,
+  )
   for (let i = 0; i < 18; i++) {
     const x = bx + 20 + i * 9
-    out.push(<line key={`n${i}`} x1={x} y1={H * 0.14} x2={x + r(rng, -8, 8)} y2={H * 0.14 + r(rng, 10, 22)} stroke={p[1]} strokeWidth="1.6" />)
+    out.push(
+      <line key={`n${i}`} x1={x} y1={H * 0.14} x2={x + r(rng, -8, 8)} y2={H * 0.14 + r(rng, 10, 22)} stroke={p[1]} strokeWidth="1.6" />,
+    )
   }
   out.push(<rect key="seal" x={W - 40} y={H - 56} width="20" height="20" fill={p[4]} />)
   return out
@@ -336,7 +411,9 @@ function lacquer({ rng, p, W, H }: Ctx) {
   for (let i = 0; i < 6; i++) {
     const cx = rng() * W
     const cy = rng() * H
-    out.push(<ellipse key={`r${i}`} cx={cx} cy={cy} rx={r(rng, 30, 90)} ry={r(rng, 20, 60)} fill={pick(rng, [p[1], p[4]])} opacity="0.85" />)
+    out.push(
+      <ellipse key={`r${i}`} cx={cx} cy={cy} rx={r(rng, 30, 90)} ry={r(rng, 20, 60)} fill={pick(rng, [p[1], p[4]])} opacity="0.85" />,
+    )
   }
   for (let i = 0; i < 120; i++) {
     const x = rng() * W
@@ -351,7 +428,15 @@ function lacquer({ rng, p, W, H }: Ctx) {
       />,
     )
   }
-  out.push(<path key="gold" d={`M0 ${H * 0.7} C ${W * 0.3} ${H * 0.55}, ${W * 0.6} ${H * 0.85}, ${W} ${H * 0.65}`} stroke={p[2]} strokeWidth="6" fill="none" />)
+  out.push(
+    <path
+      key="gold"
+      d={`M0 ${H * 0.7} C ${W * 0.3} ${H * 0.55}, ${W * 0.6} ${H * 0.85}, ${W} ${H * 0.65}`}
+      stroke={p[2]}
+      strokeWidth="6"
+      fill="none"
+    />,
+  )
   out.push(<circle key="moon" cx={W * 0.78} cy={H * 0.25} r="26" fill={p[2]} opacity="0.9" />)
   return out
 }
@@ -365,7 +450,13 @@ function folk({ p, W, H }: Ctx) {
     <ellipse key="body" cx={cx} cy={cy} rx={W * 0.24} ry={H * 0.22} fill={p[1]} stroke={p[4]} strokeWidth="5" />,
     <circle key="head" cx={cx + W * 0.22} cy={cy - H * 0.16} r={H * 0.1} fill={p[1]} stroke={p[4]} strokeWidth="5" />,
     <path key="comb" d={`M${cx + W * 0.19} ${cy - H * 0.26} q 10 -18 18 0 q 8 -16 16 2`} fill={p[1]} stroke={p[4]} strokeWidth="4" />,
-    <path key="tail" d={`M${cx - W * 0.22} ${cy - 10} C ${cx - W * 0.4} ${cy - H * 0.4}, ${cx - W * 0.1} ${cy - H * 0.45}, ${cx - W * 0.12} ${cy - H * 0.12}`} fill={p[2]} stroke={p[4]} strokeWidth="5" />,
+    <path
+      key="tail"
+      d={`M${cx - W * 0.22} ${cy - 10} C ${cx - W * 0.4} ${cy - H * 0.4}, ${cx - W * 0.1} ${cy - H * 0.45}, ${cx - W * 0.12} ${cy - H * 0.12}`}
+      fill={p[2]}
+      stroke={p[4]}
+      strokeWidth="5"
+    />,
     <path key="swirl" d={`M${cx - 30} ${cy} a 20 20 0 1 1 30 18 a 10 10 0 1 1 -12 -14`} fill="none" stroke={p[3]} strokeWidth="6" />,
     <circle key="eye" cx={cx + W * 0.24} cy={cy - H * 0.17} r="4" fill={p[4]} />,
     <path key="legs" d={`M${cx - 20} ${cy + H * 0.2} v 36 M${cx + 20} ${cy + H * 0.2} v 36`} stroke={p[4]} strokeWidth="5" />,
@@ -389,7 +480,13 @@ function baroque({ rng, p, W, H, id }: Ctx) {
   ]
   for (let i = 0; i < 7; i++) {
     out.push(
-      <circle key={`f${i}`} cx={W * (0.36 + rng() * 0.24)} cy={H * (0.58 + rng() * 0.1)} r={r(rng, 14, 24)} fill={pick(rng, [p[2], p[4], p[5], p[3]])} />,
+      <circle
+        key={`f${i}`}
+        cx={W * (0.36 + rng() * 0.24)}
+        cy={H * (0.58 + rng() * 0.1)}
+        r={r(rng, 14, 24)}
+        fill={pick(rng, [p[2], p[4], p[5], p[3]])}
+      />,
     )
   }
   out.push(<ellipse key="hl" cx={W * 0.44} cy={H * 0.58} rx="6" ry="4" fill="#fff" opacity="0.5" />)
@@ -484,12 +581,26 @@ function digital({ rng, p, W, H, id }: Ctx) {
     <rect key="bg" width={W} height={H} fill={p[0]} />,
     <circle key="sun" cx={W / 2} cy={H * 0.5} r={H * 0.24} fill={`url(#${id}-sun)`} />,
   ]
-  for (let i = 0; i < 5; i++) out.push(<rect key={`cut${i}`} x={W / 2 - H * 0.25} y={H * 0.5 + i * 9} width={H * 0.5} height={2 + i} fill={p[0]} />)
+  for (let i = 0; i < 5; i++)
+    out.push(<rect key={`cut${i}`} x={W / 2 - H * 0.25} y={H * 0.5 + i * 9} width={H * 0.5} height={2 + i} fill={p[0]} />)
   const hz = H * 0.62
   out.push(<rect key="floor" y={hz} width={W} height={H - hz} fill={p[0]} />)
-  for (let i = 0; i < 8; i++) out.push(<line key={`h${i}`} x1="0" x2={W} y1={hz + i * i * 2.4} y2={hz + i * i * 2.4} stroke={p[2]} strokeWidth="1" opacity="0.8" />)
-  for (let i = -8; i <= 8; i++) out.push(<line key={`v${i}`} x1={W / 2 + i * 12} y1={hz} x2={W / 2 + i * 60} y2={H} stroke={p[2]} strokeWidth="1" opacity="0.8" />)
-  for (let i = 0; i < 10; i++) out.push(<rect key={`g${i}`} x={rng() * W} y={rng() * hz} width={r(rng, 10, 60)} height={r(rng, 2, 6)} fill={pick(rng, [p[1], p[2], p[5]])} opacity="0.7" />)
+  for (let i = 0; i < 8; i++)
+    out.push(<line key={`h${i}`} x1="0" x2={W} y1={hz + i * i * 2.4} y2={hz + i * i * 2.4} stroke={p[2]} strokeWidth="1" opacity="0.8" />)
+  for (let i = -8; i <= 8; i++)
+    out.push(<line key={`v${i}`} x1={W / 2 + i * 12} y1={hz} x2={W / 2 + i * 60} y2={H} stroke={p[2]} strokeWidth="1" opacity="0.8" />)
+  for (let i = 0; i < 10; i++)
+    out.push(
+      <rect
+        key={`g${i}`}
+        x={rng() * W}
+        y={rng() * hz}
+        width={r(rng, 10, 60)}
+        height={r(rng, 2, 6)}
+        fill={pick(rng, [p[1], p[2], p[5]])}
+        opacity="0.7"
+      />,
+    )
   return out
 }
 

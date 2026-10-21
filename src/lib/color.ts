@@ -20,7 +20,11 @@ export const clamp = (n: number, min = 0, max = 1) => Math.min(max, Math.max(min
 
 export function normalizeHex(input: string): string | null {
   let s = input.trim().replace(/^#/, '')
-  if (/^[0-9a-f]{3}$/i.test(s)) s = s.split('').map((c) => c + c).join('')
+  if (/^[0-9a-f]{3}$/i.test(s))
+    s = s
+      .split('')
+      .map((c) => c + c)
+      .join('')
   if (!/^[0-9a-f]{6}$/i.test(s)) return null
   return `#${s.toLowerCase()}`
 }
@@ -32,7 +36,10 @@ export function hexToRgb(hex: string): RGB {
 }
 
 export function rgbToHex({ r, g, b }: RGB): string {
-  const h = (x: number) => Math.round(clamp(x, 0, 255)).toString(16).padStart(2, '0')
+  const h = (x: number) =>
+    Math.round(clamp(x, 0, 255))
+      .toString(16)
+      .padStart(2, '0')
   return `#${h(r)}${h(g)}${h(b)}`
 }
 
@@ -155,8 +162,7 @@ export function mixPigments(a: string, b: string, t = 0.5): string {
   const toAbs = (c: number) => 1 - c / 255
   const fromAbs = (x: number) => (1 - x) * 255
   // geometric mean of absorbances (subtractive) blended with additive average
-  const sub = (x: number, y: number) =>
-    fromAbs(Math.pow(Math.max(0.0001, toAbs(x)), 1 - t) * Math.pow(Math.max(0.0001, toAbs(y)), t))
+  const sub = (x: number, y: number) => fromAbs(Math.pow(Math.max(0.0001, toAbs(x)), 1 - t) * Math.pow(Math.max(0.0001, toAbs(y)), t))
   const add = (x: number, y: number) => x * (1 - t) + y * t
   const mixC = (x: number, y: number) => sub(x, y) * 0.65 + add(x, y) * 0.35
   // Special-case blue + yellow style mixes by nudging toward green via hue average

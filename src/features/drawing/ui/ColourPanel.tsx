@@ -81,8 +81,15 @@ export function ColourPanel({ suggested }: { suggested?: string[] }) {
       {pending && (
         <section className="rounded-2xl border border-gold/50 bg-gold/10 p-3">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gold-deep dark:text-gold">{t('colour.fromElsewhere', { name: pending.name })}</h3>
-            <button type="button" aria-label={t('common.dismiss')} onClick={() => setPending(null)} className="text-ink-faint hover:text-ink">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gold-deep dark:text-gold">
+              {t('colour.fromElsewhere', { name: pending.name })}
+            </h3>
+            <button
+              type="button"
+              aria-label={t('common.dismiss')}
+              onClick={() => setPending(null)}
+              className="text-ink-faint hover:text-ink"
+            >
               <X size={14} />
             </button>
           </div>
@@ -128,7 +135,10 @@ export function ColourPanel({ suggested }: { suggested?: string[] }) {
                     onClick={() => commit(c.toLowerCase())}
                     aria-label={`${L(p.name)} ${c}`}
                     title={c}
-                    className={cn('h-8 flex-1 transition-[flex] hover:flex-[1.6]', c.toLowerCase() === color && 'outline outline-2 -outline-offset-2 outline-white')}
+                    className={cn(
+                      'h-8 flex-1 transition-[flex] hover:flex-[1.6]',
+                      c.toLowerCase() === color && 'outline outline-2 -outline-offset-2 outline-white',
+                    )}
                     style={{ background: c }}
                   />
                 ))}

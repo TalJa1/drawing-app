@@ -32,8 +32,12 @@ export function BeforeAfter({ image, template, heatmap }: { image: string; templ
         aria-label={t('result.compare')}
         className="absolute inset-0 h-full w-full cursor-ew-resize opacity-0"
       />
-      <span className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-ink/75 px-2 py-0.5 text-[11px] font-semibold text-paper">{t('result.yours')}</span>
-      <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-ink/75 px-2 py-0.5 text-[11px] font-semibold text-paper">{t('result.original')}</span>
+      <span className="pointer-events-none absolute bottom-2 left-2 rounded-full bg-ink/75 px-2 py-0.5 text-[11px] font-semibold text-paper">
+        {t('result.yours')}
+      </span>
+      <span className="pointer-events-none absolute bottom-2 right-2 rounded-full bg-ink/75 px-2 py-0.5 text-[11px] font-semibold text-paper">
+        {t('result.original')}
+      </span>
     </div>
   )
 }
@@ -43,7 +47,11 @@ export function HeatmapOverlay({ grid }: { grid: number[][] }) {
   const rows = grid.length
   const cols = grid[0]?.length ?? 0
   return (
-    <div className="pointer-events-none absolute inset-0 grid mix-blend-multiply" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gridTemplateRows: `repeat(${rows}, 1fr)` }} aria-hidden>
+    <div
+      className="pointer-events-none absolute inset-0 grid mix-blend-multiply"
+      style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gridTemplateRows: `repeat(${rows}, 1fr)` }}
+      aria-hidden
+    >
       {grid.flat().map((v, i) => (
         <div
           key={i}
@@ -89,7 +97,13 @@ export function RankStamp({ rank, label, ringText, big }: { rank: RankLabel; lab
           </textPath>
         </text>
       </svg>
-      <span className={cn('relative px-4 text-center font-display font-semibold uppercase leading-none tracking-wide', big ? 'text-[15px]' : 'text-[12.5px]')} style={{ filter: 'url(#rough)' }}>
+      <span
+        className={cn(
+          'relative px-4 text-center font-display font-semibold uppercase leading-none tracking-wide',
+          big ? 'text-[15px]' : 'text-[12.5px]',
+        )}
+        style={{ filter: 'url(#rough)' }}
+      >
         {label}
       </span>
     </motion.div>
@@ -100,7 +114,11 @@ export function RankStamp({ rank, label, ringText, big }: { rank: RankLabel; lab
 export function JudgeNote({ children, signature }: { children: ReactNode; signature: string }) {
   return (
     <figure className="paper relative rotate-[-1.2deg] rounded-sm p-6 pt-8 shadow-lift">
-      <span aria-hidden className="absolute -top-3 left-1/2 h-6 w-24 -translate-x-1/2 rotate-[3deg] bg-saffron/60" style={{ clipPath: 'polygon(4% 0,100% 6%,96% 100%,0 92%)' }} />
+      <span
+        aria-hidden
+        className="absolute -top-3 left-1/2 h-6 w-24 -translate-x-1/2 rotate-[3deg] bg-saffron/60"
+        style={{ clipPath: 'polygon(4% 0,100% 6%,96% 100%,0 92%)' }}
+      />
       <blockquote className="hand text-[1.7rem] leading-snug text-ink">{children}</blockquote>
       <figcaption className="hand mt-3 text-right text-xl text-accent-ink">— {signature}</figcaption>
     </figure>

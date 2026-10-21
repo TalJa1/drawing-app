@@ -42,7 +42,9 @@ interface StudioState {
   setColor: (c: string) => void
   commitColor: (c: string) => void
   setToolSetting: (t: ToolId, p: Partial<ToolSettings>) => void
-  set: (p: Partial<Pick<StudioState, 'smoothing' | 'pressure' | 'symmetry' | 'tolerance' | 'shapeFill' | 'sampleAllLayers' | 'panel'>>) => void
+  set: (
+    p: Partial<Pick<StudioState, 'smoothing' | 'pressure' | 'symmetry' | 'tolerance' | 'shapeFill' | 'sampleAllLayers' | 'panel'>>,
+  ) => void
   setPendingPalette: (p: StudioState['pendingPalette']) => void
 }
 
@@ -71,8 +73,7 @@ export const useStudio = create<StudioState>()(
       pendingPalette: null,
       setTool: (tool) => set({ tool }),
       setColor: (color) => set({ color }),
-      commitColor: (color) =>
-        set((s) => ({ color, recent: [color, ...s.recent.filter((c) => c !== color)].slice(0, 14) })),
+      commitColor: (color) => set((s) => ({ color, recent: [color, ...s.recent.filter((c) => c !== color)].slice(0, 14) })),
       setToolSetting: (t, p) => set((s) => ({ settings: { ...s.settings, [t]: { ...s.settings[t], ...p } } })),
       set: (p) => set(p),
       setPendingPalette: (pendingPalette) => set({ pendingPalette }),

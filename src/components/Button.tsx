@@ -1,10 +1,4 @@
-import {
-  forwardRef,
-  useState,
-  type ButtonHTMLAttributes,
-  type PointerEvent as ReactPointerEvent,
-  type ReactNode,
-} from 'react'
+import { forwardRef, useState, type ButtonHTMLAttributes, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
 import { Link, type LinkProps } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { preloadRoute } from '@/app/routes'

@@ -84,12 +84,31 @@ export function OnboardingTour({ mode }: { mode: 'template' | 'free' }) {
         <defs>
           <mask id="tour-mask">
             <rect width="100%" height="100%" fill="white" />
-            {rect && <rect x={rect.left - pad} y={rect.top - pad} width={rect.width + pad * 2} height={rect.height + pad * 2} rx="18" fill="black" />}
+            {rect && (
+              <rect
+                x={rect.left - pad}
+                y={rect.top - pad}
+                width={rect.width + pad * 2}
+                height={rect.height + pad * 2}
+                rx="18"
+                fill="black"
+              />
+            )}
           </mask>
         </defs>
         <rect width="100%" height="100%" fill="rgba(13,11,9,0.62)" mask="url(#tour-mask)" />
         {rect && (
-          <rect x={rect.left - pad} y={rect.top - pad} width={rect.width + pad * 2} height={rect.height + pad * 2} rx="18" fill="none" stroke="#F2A93B" strokeWidth="2.5" strokeDasharray="6 5" />
+          <rect
+            x={rect.left - pad}
+            y={rect.top - pad}
+            width={rect.width + pad * 2}
+            height={rect.height + pad * 2}
+            rx="18"
+            fill="none"
+            stroke="#F2A93B"
+            strokeWidth="2.5"
+            strokeDasharray="6 5"
+          />
         )}
       </svg>
       <motion.div
@@ -137,7 +156,9 @@ export function RestoreDraftModal({
     <Modal open={open} onClose={onRestore} title={t('studio.restore.title')} size="sm" hideClose>
       <p className="text-ink-soft">
         {t('studio.restore.body', {
-          when: savedAt ? new Date(savedAt).toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' }) : '',
+          when: savedAt
+            ? new Date(savedAt).toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' })
+            : '',
         })}
       </p>
       <p className="hand mt-3 text-xl text-accent-ink">{t('studio.restore.note')}</p>

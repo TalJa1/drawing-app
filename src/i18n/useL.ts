@@ -14,7 +14,7 @@ export function useL() {
 
 export function useLL() {
   const lang = useLang()
-  return useCallback((x: LocalizedList | undefined | null) => (x ? x[lang] ?? x.en : []), [lang])
+  return useCallback((x: LocalizedList | undefined | null) => (x ? (x[lang] ?? x.en) : []), [lang])
 }
 
 export const pickL = (x: Localized, lang: Lang) => x[lang] || x.en

@@ -76,7 +76,9 @@ export function Footer() {
           </nav>
         </div>
         <div className="mt-14 flex flex-col gap-2 border-t border-line pt-6 text-sm text-ink-faint sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Art Spark · {t('footer.prototype')}</p>
+          <p>
+            © {new Date().getFullYear()} Art Spark · {t('footer.prototype')}
+          </p>
           <p className="hand text-lg">{t('footer.madeWith')}</p>
         </div>
       </div>

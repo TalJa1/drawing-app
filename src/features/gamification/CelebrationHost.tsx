@@ -54,7 +54,9 @@ export function CelebrationHost() {
               <span className="font-display text-6xl leading-none">{current.level}</span>
             </div>
           </motion.div>
-          <h2 className="display-md">{rankUp ? t('celebrate.newRank', { rank: L(rank.name) }) : t('celebrate.reachedLevel', { level: current.level })}</h2>
+          <h2 className="display-md">
+            {rankUp ? t('celebrate.newRank', { rank: L(rank.name) }) : t('celebrate.reachedLevel', { level: current.level })}
+          </h2>
           <p className="mt-3 text-ink-soft">{rankUp ? L(rank.perk) : t('celebrate.levelBody')}</p>
           <Button variant="gold" size="lg" className="mt-8 w-full" onClick={shift} data-autofocus>
             {t('celebrate.continue')}

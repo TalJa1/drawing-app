@@ -13,10 +13,11 @@ describe('i18n dictionaries', () => {
   })
 
   it('have no empty strings', () => {
-    const empty = (o: Record<string, unknown>) => keys(o).filter((k) => {
-      const v = k.split('.').reduce<unknown>((acc, p) => (acc as Record<string, unknown>)[p], o)
-      return typeof v === 'string' && !v.trim()
-    })
+    const empty = (o: Record<string, unknown>) =>
+      keys(o).filter((k) => {
+        const v = k.split('.').reduce<unknown>((acc, p) => (acc as Record<string, unknown>)[p], o)
+        return typeof v === 'string' && !v.trim()
+      })
     expect(empty(en)).toEqual([])
     expect(empty(vi)).toEqual([])
   })

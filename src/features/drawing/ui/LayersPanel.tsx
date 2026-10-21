@@ -18,7 +18,9 @@ function Thumb({ layer, version }: { layer: Layer; version: number }) {
     ctx.clearRect(0, 0, c.width, c.height)
     ctx.drawImage(layer.canvas, 0, 0, c.width, c.height)
   }, [layer, version])
-  return <canvas ref={ref} width={56} height={42} className="checker h-[42px] w-[56px] shrink-0 rounded-md border border-line" aria-hidden />
+  return (
+    <canvas ref={ref} width={56} height={42} className="checker h-[42px] w-[56px] shrink-0 rounded-md border border-line" aria-hidden />
+  )
 }
 
 export function LayersPanel({ engine }: { engine: DrawingEngine }) {
@@ -34,10 +36,32 @@ export function LayersPanel({ engine }: { engine: DrawingEngine }) {
       <div className="flex items-center justify-between">
         <p className="text-xs text-ink-faint">{t('studio.layers.count', { count: engine.layers.length, max: 6 })}</p>
         <div className="flex gap-1">
-          <IconButton size="sm" label={t('studio.layers.add')} icon={<Plus size={16} />} onClick={() => engine.addLayer(t('studio.layers.defaultName', { n: engine.layers.length + 1 }))} disabled={!engine.canAddLayer()} />
-          <IconButton size="sm" label={t('studio.layers.moveUp')} icon={<ArrowUp size={16} />} onClick={() => active && engine.moveLayer(active.id, 1)} />
-          <IconButton size="sm" label={t('studio.layers.moveDown')} icon={<ArrowDown size={16} />} onClick={() => active && engine.moveLayer(active.id, -1)} />
-          <IconButton size="sm" label={t('studio.layers.delete')} icon={<Trash2 size={16} />} onClick={() => active && engine.removeLayer(active.id)} disabled={engine.layers.length <= 1} />
+          <IconButton
+            size="sm"
+            label={t('studio.layers.add')}
+            icon={<Plus size={16} />}
+            onClick={() => engine.addLayer(t('studio.layers.defaultName', { n: engine.layers.length + 1 }))}
+            disabled={!engine.canAddLayer()}
+          />
+          <IconButton
+            size="sm"
+            label={t('studio.layers.moveUp')}
+            icon={<ArrowUp size={16} />}
+            onClick={() => active && engine.moveLayer(active.id, 1)}
+          />
+          <IconButton
+            size="sm"
+            label={t('studio.layers.moveDown')}
+            icon={<ArrowDown size={16} />}
+            onClick={() => active && engine.moveLayer(active.id, -1)}
+          />
+          <IconButton
+            size="sm"
+            label={t('studio.layers.delete')}
+            icon={<Trash2 size={16} />}
+            onClick={() => active && engine.removeLayer(active.id)}
+            disabled={engine.layers.length <= 1}
+          />
         </div>
       </div>
 
@@ -162,7 +186,11 @@ export function LayersPanel({ engine }: { engine: DrawingEngine }) {
               ))}
             </select>
           </label>
-          <button type="button" onClick={() => setRenaming(active.id)} className="text-xs font-medium text-accent-ink underline underline-offset-2">
+          <button
+            type="button"
+            onClick={() => setRenaming(active.id)}
+            className="text-xs font-medium text-accent-ink underline underline-offset-2"
+          >
             {t('studio.layers.rename')}
           </button>
         </div>

@@ -34,9 +34,7 @@ export function useLatest<T>(value: T) {
 }
 
 export function useMediaQuery(query: string): boolean {
-  const [match, setMatch] = useState(() =>
-    typeof window === 'undefined' ? false : window.matchMedia(query).matches,
-  )
+  const [match, setMatch] = useState(() => (typeof window === 'undefined' ? false : window.matchMedia(query).matches))
   useEffect(() => {
     const mq = window.matchMedia(query)
     const on = () => setMatch(mq.matches)

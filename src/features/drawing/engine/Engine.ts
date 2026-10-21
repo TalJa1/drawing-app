@@ -1045,7 +1045,11 @@ export class DrawingEngine {
     const px = this.read(sample, full)
     const barrier = this.lineart?.visible !== false ? this.inkBarrierMask() : null
     const tol = Math.round((brush.tolerance / 100) * 255)
-    const res = floodFillMask(px.data, this.width, this.height, x, y, { tolerance: tol, barrier: barrier ?? undefined, bleed: barrier ? 2 : 1 })
+    const res = floodFillMask(px.data, this.width, this.height, x, y, {
+      tolerance: tol,
+      barrier: barrier ?? undefined,
+      bleed: barrier ? 2 : 1,
+    })
     if (!res.count) {
       this.opts.onToolHint?.('fill-none')
       return

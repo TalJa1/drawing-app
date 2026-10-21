@@ -63,18 +63,40 @@ function LevelHero() {
                 {current} / {needed} · {t('achievements.toNext', { level: level + 1 })}
               </span>
             </div>
-            <div className="h-3 overflow-hidden rounded-full bg-paper-3" role="progressbar" aria-valuenow={Math.round(ratio * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={t('achievements.toNext', { level: level + 1 })}>
-              <motion.div className="h-full rounded-full bg-gradient-to-r from-saffron via-gold to-vermilion" initial={{ width: 0 }} animate={{ width: `${ratio * 100}%` }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }} />
+            <div
+              className="h-3 overflow-hidden rounded-full bg-paper-3"
+              role="progressbar"
+              aria-valuenow={Math.round(ratio * 100)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={t('achievements.toNext', { level: level + 1 })}
+            >
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-saffron via-gold to-vermilion"
+                initial={{ width: 0 }}
+                animate={{ width: `${ratio * 100}%` }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+              />
             </div>
           </div>
-          {nr && <p className="hand mt-3 text-xl text-accent-ink">{t('achievements.nextRank', { rank: L(nr.name), level: nr.minLevel, xp: xpForLevel(nr.minLevel) - xp })}</p>}
+          {nr && (
+            <p className="hand mt-3 text-xl text-accent-ink">
+              {t('achievements.nextRank', { rank: L(nr.name), level: nr.minLevel, xp: xpForLevel(nr.minLevel) - xp })}
+            </p>
+          )}
         </div>
       </div>
       <ol className="no-scrollbar mt-8 flex gap-2 overflow-x-auto" aria-label={t('achievements.ladder')} tabIndex={0}>
         {RANKS.map((r) => {
           const reached = level >= r.minLevel
           return (
-            <li key={r.id} className={cn('min-w-[132px] flex-1 rounded-2xl border p-3 text-sm', reached ? 'border-gold/60 bg-gold/10' : 'border-line opacity-70')}>
+            <li
+              key={r.id}
+              className={cn(
+                'min-w-[132px] flex-1 rounded-2xl border p-3 text-sm',
+                reached ? 'border-gold/60 bg-gold/10' : 'border-line opacity-70',
+              )}
+            >
               <p className="flex items-center gap-1.5 font-semibold">
                 {reached && <Check size={14} className="text-viridian" />}
                 {L(r.name)}
@@ -117,7 +139,12 @@ function Challenges() {
               </div>
             )}
             <div className="flex items-start gap-3">
-              <span className={cn('flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl', special ? 'bg-white/10 text-gold' : 'bg-ink/[0.06] text-ink')}>
+              <span
+                className={cn(
+                  'flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl',
+                  special ? 'bg-white/10 text-gold' : 'bg-ink/[0.06] text-ink',
+                )}
+              >
                 <BadgeIcon name={c.challenge.icon} size={20} />
               </span>
               <div className="min-w-0 flex-1">
@@ -136,8 +163,18 @@ function Challenges() {
                 </span>
                 <span className={cn('font-semibold', special ? 'text-gold' : 'text-gold-deep dark:text-gold')}>+{c.challenge.xp} XP</span>
               </div>
-              <div className={cn('h-2 overflow-hidden rounded-full', special ? 'bg-white/15' : 'bg-paper-3')} role="progressbar" aria-valuenow={Math.round(pct * 100)} aria-valuemin={0} aria-valuemax={100} aria-label={L(c.challenge.title)}>
-                <div className="h-full rounded-full bg-gradient-to-r from-saffron to-vermilion transition-[width] duration-700" style={{ width: `${pct * 100}%` }} />
+              <div
+                className={cn('h-2 overflow-hidden rounded-full', special ? 'bg-white/15' : 'bg-paper-3')}
+                role="progressbar"
+                aria-valuenow={Math.round(pct * 100)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={L(c.challenge.title)}
+              >
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-saffron to-vermilion transition-[width] duration-700"
+                  style={{ width: `${pct * 100}%` }}
+                />
               </div>
             </div>
             <div className="mt-4">
@@ -243,16 +280,40 @@ function BadgeWall() {
             const got = !!b.unlockedAt
             const hidden = b.secret && !got
             return (
-              <motion.li key={b.id} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: (i % 12) * 0.03 }}>
+              <motion.li
+                key={b.id}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: (i % 12) * 0.03 }}
+              >
                 <button
                   type="button"
                   onClick={() => setOpen(b)}
-                  className={cn('group flex h-full w-full flex-col items-center rounded-[22px] border p-4 text-center transition-shadow', got ? 'paper border-line shadow-paper hover:shadow-lift' : 'border-dashed border-line-strong')}
-                  aria-label={hidden ? t('achievements.secretBadge') : `${L(b.name)} — ${got ? t('achievements.unlocked') : t('achievements.locked')}`}
+                  className={cn(
+                    'group flex h-full w-full flex-col items-center rounded-[22px] border p-4 text-center transition-shadow',
+                    got ? 'paper border-line shadow-paper hover:shadow-lift' : 'border-dashed border-line-strong',
+                  )}
+                  aria-label={
+                    hidden ? t('achievements.secretBadge') : `${L(b.name)} — ${got ? t('achievements.unlocked') : t('achievements.locked')}`
+                  }
                 >
-                  <BadgeMedal badge={b} unlocked={got} size={76} className="transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3" />
+                  <BadgeMedal
+                    badge={b}
+                    unlocked={got}
+                    size={76}
+                    className="transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3"
+                  />
                   <p className={cn('mt-3 font-display text-base leading-tight', !got && 'text-ink-faint')}>{hidden ? '???' : L(b.name)}</p>
-                  <p className={cn('mt-1 text-[10.5px] font-semibold uppercase tracking-wider', `rarity-${b.rarity}`, got ? 'text-gold-deep dark:text-gold' : 'text-ink-faint')}>{t(`rarity.${b.rarity}`)}</p>
+                  <p
+                    className={cn(
+                      'mt-1 text-[10.5px] font-semibold uppercase tracking-wider',
+                      `rarity-${b.rarity}`,
+                      got ? 'text-gold-deep dark:text-gold' : 'text-ink-faint',
+                    )}
+                  >
+                    {t(`rarity.${b.rarity}`)}
+                  </p>
                 </button>
               </motion.li>
             )
@@ -270,7 +331,11 @@ function BadgeWall() {
             <p className="mt-3 text-sm font-semibold uppercase tracking-widest text-gold-deep dark:text-gold">
               {t(`rarity.${open.rarity}`)} · +{open.xp} XP
             </p>
-            <p className="mt-2 text-sm text-ink-faint">{open.unlockedAt ? t('achievements.unlockedOn', { date: formatDate(open.unlockedAt, i18n.language) }) : t('achievements.notYet')}</p>
+            <p className="mt-2 text-sm text-ink-faint">
+              {open.unlockedAt
+                ? t('achievements.unlockedOn', { date: formatDate(open.unlockedAt, i18n.language) })
+                : t('achievements.notYet')}
+            </p>
           </div>
         )}
       </Modal>
@@ -286,8 +351,26 @@ function Leaderboard() {
   return (
     <Card className="p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Tabs ariaLabel={t('achievements.leaderboard')} value={scope} onChange={setScope} size="sm" items={[{ id: 'weekly', label: t('achievements.weekly') }, { id: 'all', label: t('achievements.allTime') }]} />
-        <Tabs ariaLabel={t('achievements.audience')} value={filter} onChange={setFilter} size="sm" items={[{ id: 'global', label: t('achievements.global') }, { id: 'friends', label: t('achievements.friends'), icon: <Users size={14} /> }]} />
+        <Tabs
+          ariaLabel={t('achievements.leaderboard')}
+          value={scope}
+          onChange={setScope}
+          size="sm"
+          items={[
+            { id: 'weekly', label: t('achievements.weekly') },
+            { id: 'all', label: t('achievements.allTime') },
+          ]}
+        />
+        <Tabs
+          ariaLabel={t('achievements.audience')}
+          value={filter}
+          onChange={setFilter}
+          size="sm"
+          items={[
+            { id: 'global', label: t('achievements.global') },
+            { id: 'friends', label: t('achievements.friends'), icon: <Users size={14} /> },
+          ]}
+        />
       </div>
       {isLoading || !data ? (
         <div className="mt-5 space-y-2">
@@ -306,14 +389,23 @@ function Leaderboard() {
               )}
               aria-current={e.isCurrentUser ? 'true' : undefined}
             >
-              <span className={cn('w-7 text-center font-display text-lg tabular-nums', i === 0 ? 'text-gold-deep dark:text-gold' : 'text-ink-faint')}>{i + 1}</span>
+              <span
+                className={cn(
+                  'w-7 text-center font-display text-lg tabular-nums',
+                  i === 0 ? 'text-gold-deep dark:text-gold' : 'text-ink-faint',
+                )}
+              >
+                {i + 1}
+              </span>
               <Avatar seed={e.avatarSeed} size={34} />
               <span className="min-w-0 flex-1 truncate font-medium">
                 {e.name}
                 {e.isCurrentUser && <span className="ml-2 text-xs font-semibold text-accent-ink">{t('achievements.you')}</span>}
               </span>
               <span className="hidden text-xs text-ink-faint sm:inline">{t('gamification.level', { level: e.level })}</span>
-              <span className="w-20 text-right text-sm font-semibold tabular-nums">{(scope === 'weekly' ? e.weeklyXp : e.xp).toLocaleString()} XP</span>
+              <span className="w-20 text-right text-sm font-semibold tabular-nums">
+                {(scope === 'weekly' ? e.weeklyXp : e.xp).toLocaleString()} XP
+              </span>
             </li>
           ))}
         </ol>

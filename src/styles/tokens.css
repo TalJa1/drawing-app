@@ -48,11 +48,9 @@
   --seq-3: #36a796;
   --seq-4: #137a6e;
 
-  --shadow-paper: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(60 40 20 / 0.06),
-    0 6px 18px -8px rgb(60 40 20 / 0.18);
+  --shadow-paper: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(60 40 20 / 0.06), 0 6px 18px -8px rgb(60 40 20 / 0.18);
   --shadow-lift: 0 2px 4px rgb(60 40 20 / 0.06), 0 18px 40px -16px rgb(60 40 20 / 0.32);
-  --shadow-frame: 0 1px 1px rgb(0 0 0 / 0.08), 0 12px 24px -10px rgb(40 25 10 / 0.45),
-    0 30px 60px -30px rgb(40 25 10 / 0.35);
+  --shadow-frame: 0 1px 1px rgb(0 0 0 / 0.08), 0 12px 24px -10px rgb(40 25 10 / 0.45), 0 30px 60px -30px rgb(40 25 10 / 0.35);
 }
 
 [data-theme='dark'] {
@@ -94,9 +92,7 @@
   --rose: #db5583;
   --ochre: #d89c3c;
 
-  --shadow-paper: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 1px 2px rgb(0 0 0 / 0.4),
-    0 8px 22px -10px rgb(0 0 0 / 0.7);
+  --shadow-paper: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 22px -10px rgb(0 0 0 / 0.7);
   --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 22px 48px -16px rgb(0 0 0 / 0.85);
-  --shadow-frame: 0 0 0 1px rgb(167 132 73 / 0.25), 0 14px 30px -10px rgb(0 0 0 / 0.8),
-    0 0 80px -20px rgb(242 169 59 / 0.12);
+  --shadow-frame: 0 0 0 1px rgb(167 132 73 / 0.25), 0 14px 30px -10px rgb(0 0 0 / 0.8), 0 0 80px -20px rgb(242 169 59 / 0.12);
 }

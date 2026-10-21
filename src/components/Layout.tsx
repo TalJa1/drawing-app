@@ -33,11 +33,7 @@ export function SectionHeading({
         </p>
       )}
       <h2 className="display-lg mt-4">{title}</h2>
-      {lede && (
-        <p className={cn('mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft', align === 'center' && 'mx-auto')}>
-          {lede}
-        </p>
-      )}
+      {lede && <p className={cn('mt-5 max-w-2xl text-lg leading-relaxed text-ink-soft', align === 'center' && 'mx-auto')}>{lede}</p>}
       {note && <p className="hand mt-3 rotate-[-2deg] text-2xl text-accent-ink">{note}</p>}
     </header>
   )
@@ -114,15 +110,7 @@ export function EmptyState({
   )
 }
 
-export function Marquee({
-  children,
-  duration = 40,
-  className,
-}: {
-  children: ReactNode
-  duration?: number
-  className?: string
-}) {
+export function Marquee({ children, duration = 40, className }: { children: ReactNode; duration?: number; className?: string }) {
   return (
     <div className={cn('marquee overflow-hidden', className)}>
       <div className="marquee-track" style={{ '--marquee-duration': `${duration}s` } as React.CSSProperties}>

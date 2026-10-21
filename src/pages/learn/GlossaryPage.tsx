@@ -32,7 +32,10 @@ export default function GlossaryPage() {
 
   useEffect(() => {
     if (!focus || !data) return
-    const id = window.setTimeout(() => document.getElementById(`term-${focus}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200)
+    const id = window.setTimeout(
+      () => document.getElementById(`term-${focus}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+      200,
+    )
     return () => window.clearTimeout(id)
   }, [focus, data])
 
@@ -67,7 +70,13 @@ export default function GlossaryPage() {
         />
         <div className="sticky top-[76px] z-30 mt-8 space-y-3 rounded-[24px] border border-line bg-card/85 p-3 shadow-paper backdrop-blur-xl md:top-[92px]">
           <div className="flex flex-col gap-3 md:flex-row md:items-center">
-            <SearchBar className="flex-1" value={q} onChange={setQ} label={t('learn.glossary.search')} placeholder={t('learn.glossary.searchPlaceholder')} />
+            <SearchBar
+              className="flex-1"
+              value={q}
+              onChange={setQ}
+              label={t('learn.glossary.search')}
+              placeholder={t('learn.glossary.searchPlaceholder')}
+            />
             <ButtonLink to="/learn/flashcards" variant="ink" icon={<GalleryVerticalEnd size={16} />}>
               {t('learn.glossary.study')}
             </ButtonLink>
@@ -81,7 +90,11 @@ export default function GlossaryPage() {
           </div>
           <nav aria-label={t('learn.glossary.az')} className="no-scrollbar flex gap-1 overflow-x-auto">
             {groups.map(([letter]) => (
-              <a key={letter} href={`#letter-${letter}`} className="inline-flex h-7 min-w-7 items-center justify-center rounded-full px-1 font-display text-sm text-ink-soft hover:bg-ink/5 hover:text-ink">
+              <a
+                key={letter}
+                href={`#letter-${letter}`}
+                className="inline-flex h-7 min-w-7 items-center justify-center rounded-full px-1 font-display text-sm text-ink-soft hover:bg-ink/5 hover:text-ink"
+              >
                 {letter}
               </a>
             ))}
@@ -101,11 +114,16 @@ export default function GlossaryPage() {
                     <div
                       key={g.id}
                       id={`term-${g.id}`}
-                      className={cn('scroll-mt-64 rounded-2xl border p-5 transition-colors', focus === g.id ? 'border-saffron bg-saffron/10' : 'border-line bg-card')}
+                      className={cn(
+                        'scroll-mt-64 rounded-2xl border p-5 transition-colors',
+                        focus === g.id ? 'border-saffron bg-saffron/10' : 'border-line bg-card',
+                      )}
                     >
                       <dt className="flex items-baseline justify-between gap-3">
                         <span className="font-display text-xl">{L(g.term)}</span>
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">{t(`learn.glossary.cats.${g.category}`)}</span>
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+                          {t(`learn.glossary.cats.${g.category}`)}
+                        </span>
                       </dt>
                       <dd className="mt-1.5 text-ink-soft">{L(g.definition)}</dd>
                     </div>

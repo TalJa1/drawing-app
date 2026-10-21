@@ -59,7 +59,11 @@ export function LanguageSwitch({ className }: { className?: string }) {
           )}
         >
           {lang === l && (
-            <motion.span layoutId={`lang-pill-${pillId}`} className="absolute inset-0 -z-10 rounded-full bg-ink" transition={{ type: 'spring', stiffness: 500, damping: 35 }} />
+            <motion.span
+              layoutId={`lang-pill-${pillId}`}
+              className="absolute inset-0 -z-10 rounded-full bg-ink"
+              transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+            />
           )}
           {l}
         </button>

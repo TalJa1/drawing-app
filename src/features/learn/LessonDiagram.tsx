@@ -101,7 +101,15 @@ export function LessonDiagram({ kind }: { kind: DiagramKind }) {
             const R = 95
             const r = 45
             const p = (a: number, rad: number) => `${200 + Math.cos(a) * rad} ${120 + Math.sin(a) * rad}`
-            return <path key={i} d={`M${p(a0, r)} L ${p(a0, R)} A ${R} ${R} 0 0 1 ${p(a1, R)} L ${p(a1, r)} A ${r} ${r} 0 0 0 ${p(a0, r)} Z`} fill={`hsl(${i * 30} 70% 52%)`} stroke="var(--card)" strokeWidth="2" />
+            return (
+              <path
+                key={i}
+                d={`M${p(a0, r)} L ${p(a0, R)} A ${R} ${R} 0 0 1 ${p(a1, R)} L ${p(a1, r)} A ${r} ${r} 0 0 0 ${p(a0, r)} Z`}
+                fill={`hsl(${i * 30} 70% 52%)`}
+                stroke="var(--card)"
+                strokeWidth="2"
+              />
+            )
           })}
           <circle cx="200" cy="120" r="40" fill="var(--card)" />
           <Label x={200} y={124} anchor="middle">
@@ -115,7 +123,16 @@ export function LessonDiagram({ kind }: { kind: DiagramKind }) {
       body = (
         <>
           {Array.from({ length: 7 }, (_, i) => (
-            <rect key={i} x={30 + i * 49} y="50" width="47" height="90" fill={`hsl(25 10% ${95 - i * 14}%)`} stroke={INK} strokeWidth="1.5" />
+            <rect
+              key={i}
+              x={30 + i * 49}
+              y="50"
+              width="47"
+              height="90"
+              fill={`hsl(25 10% ${95 - i * 14}%)`}
+              stroke={INK}
+              strokeWidth="1.5"
+            />
           ))}
           <Label x={30} y={165}>
             {L('light')}
@@ -304,10 +321,21 @@ export function LessonDiagram({ kind }: { kind: DiagramKind }) {
             <g key={b}>
               <rect x={20 + b * 74} y="50" width="66" height="110" fill="var(--card)" stroke={INK} strokeWidth="1.5" />
               {Array.from({ length: b * 6 }, (_, i) => (
-                <line key={i} x1={20 + b * 74} y1={50 + (i % 12) * 10 + (b > 2 ? 3 : 0)} x2={86 + b * 74} y2={50 + (i % 12) * 10 + (b > 2 ? 3 : 0) + (i >= 12 ? -30 : 0)} stroke={INK} strokeWidth="1" opacity="0.8" />
+                <line
+                  key={i}
+                  x1={20 + b * 74}
+                  y1={50 + (i % 12) * 10 + (b > 2 ? 3 : 0)}
+                  x2={86 + b * 74}
+                  y2={50 + (i % 12) * 10 + (b > 2 ? 3 : 0) + (i >= 12 ? -30 : 0)}
+                  stroke={INK}
+                  strokeWidth="1"
+                  opacity="0.8"
+                />
               ))}
               {b >= 3 &&
-                Array.from({ length: 8 }, (_, i) => <line key={`v${i}`} x1={24 + b * 74 + i * 8} y1="50" x2={24 + b * 74 + i * 8} y2="160" stroke={INK} strokeWidth="1" />)}
+                Array.from({ length: 8 }, (_, i) => (
+                  <line key={`v${i}`} x1={24 + b * 74 + i * 8} y1="50" x2={24 + b * 74 + i * 8} y2="160" stroke={INK} strokeWidth="1" />
+                ))}
             </g>
           ))}
         </>
@@ -341,11 +369,23 @@ export function LessonDiagram({ kind }: { kind: DiagramKind }) {
         <>
           <rect x="20" y="40" width="110" height="140" rx="8" fill="var(--paper-2)" stroke={INK} />
           {Array.from({ length: 50 }, (_, i) => (
-            <path key={i} d={`M${30 + (i % 10) * 10} ${55 + Math.floor(i / 10) * 25} q 4 -8 8 -14`} fill="none" stroke="var(--umber)" strokeWidth="1.5" />
+            <path
+              key={i}
+              d={`M${30 + (i % 10) * 10} ${55 + Math.floor(i / 10) * 25} q 4 -8 8 -14`}
+              fill="none"
+              stroke="var(--umber)"
+              strokeWidth="1.5"
+            />
           ))}
           <rect x="145" y="40" width="110" height="140" rx="8" fill="#c9a77c" stroke={INK} />
           {Array.from({ length: 7 }, (_, i) => (
-            <path key={i} d={`M${152 + i * 15} 45 C ${160 + i * 15} 90 ${145 + i * 15} 130 ${155 + i * 15} 175`} fill="none" stroke="var(--umber)" strokeWidth="2" />
+            <path
+              key={i}
+              d={`M${152 + i * 15} 45 C ${160 + i * 15} 90 ${145 + i * 15} 130 ${155 + i * 15} 175`}
+              fill="none"
+              stroke="var(--umber)"
+              strokeWidth="2"
+            />
           ))}
           <rect x="270" y="40" width="110" height="140" rx="8" fill="#a9c2d4" stroke={INK} />
           <path d="M290 60 L 320 50 M300 80 L 360 60" stroke="#fff" strokeWidth="5" strokeLinecap="round" />
@@ -394,7 +434,16 @@ export function LessonDiagram({ kind }: { kind: DiagramKind }) {
         <>
           <rect x="150" y="110" width="90" height="90" rx="22" {...LINE} fill="var(--paper-2)" />
           {[0, 1, 2, 3].map((i) => (
-            <rect key={i} x={152 + i * 23} y={[46, 30, 38, 56][i]} width="20" height={[70, 86, 78, 60][i]} rx="10" {...LINE} fill="var(--paper-2)" />
+            <rect
+              key={i}
+              x={152 + i * 23}
+              y={[46, 30, 38, 56][i]}
+              width="20"
+              height={[70, 86, 78, 60][i]}
+              rx="10"
+              {...LINE}
+              fill="var(--paper-2)"
+            />
           ))}
           <rect x="118" y="120" width="22" height="64" rx="11" transform="rotate(-35 129 152)" {...LINE} fill="var(--paper-2)" />
           <path d="M152 110 Q 197 92 244 112" {...GUIDE} />
@@ -427,7 +476,11 @@ export function LessonDiagram({ kind }: { kind: DiagramKind }) {
         <>
           <rect x="20" y="170" width="360" height="40" fill="var(--paper-3)" />
           <ellipse cx="240" cy="172" rx="70" ry="8" fill="#000" opacity="0.15" />
-          <path d="M150 170 C 120 120 130 80 150 70 L 150 55 L 180 55 L 180 70 C 200 80 210 120 180 170 Z" fill="var(--cerulean)" {...{ stroke: INK, strokeWidth: 2.5 }} />
+          <path
+            d="M150 170 C 120 120 130 80 150 70 L 150 55 L 180 55 L 180 70 C 200 80 210 120 180 170 Z"
+            fill="var(--cerulean)"
+            {...{ stroke: INK, strokeWidth: 2.5 }}
+          />
           <circle cx="240" cy="148" r="24" fill="var(--vermilion)" stroke={INK} strokeWidth="2.5" />
           <circle cx="285" cy="152" r="20" fill="var(--saffron)" stroke={INK} strokeWidth="2.5" />
           <circle cx="60" cy="40" r="12" fill="var(--saffron)" />
@@ -466,7 +519,12 @@ export function LessonDiagram({ kind }: { kind: DiagramKind }) {
       body = (
         <>
           <rect x="20" y="20" width="360" height="200" fill="var(--ink)" />
-          <path d="M200 220 V 120 M200 150 C 150 140 120 100 130 70 C 170 80 195 110 200 150 M200 130 C 250 120 280 80 270 50 C 230 60 205 90 200 130" fill="var(--card)" stroke="var(--card)" strokeWidth="6" />
+          <path
+            d="M200 220 V 120 M200 150 C 150 140 120 100 130 70 C 170 80 195 110 200 150 M200 130 C 250 120 280 80 270 50 C 230 60 205 90 200 130"
+            fill="var(--card)"
+            stroke="var(--card)"
+            strokeWidth="6"
+          />
         </>
       )
       break

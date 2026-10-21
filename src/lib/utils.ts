@@ -55,12 +55,7 @@ export function slugify(s: string): string {
 
 /** Lower-case, strip diacritics (works for Vietnamese) for matching. */
 export function normalizeText(x: string): string {
-  return x
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/đ/gi, 'd')
-    .replace(/[’‘]/g, "'")
-    .toLowerCase()
+  return x.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').replace(/[’‘]/g, "'").toLowerCase()
 }
 
 /** Accent-insensitive "contains" used by every search box. */
@@ -71,7 +66,9 @@ export function fuzzyIncludes(haystack: string, needle: string): boolean {
 /** Accent-insensitive whole-word/phrase match ("hi" does not match "something"). */
 export function matchesPhrase(haystack: string, phrase: string): boolean {
   const h = ` ${normalizeText(haystack).replace(/[^a-z0-9']+/g, ' ')} `
-  const p = normalizeText(phrase.trim()).replace(/[^a-z0-9']+/g, ' ').trim()
+  const p = normalizeText(phrase.trim())
+    .replace(/[^a-z0-9']+/g, ' ')
+    .trim()
   return p.length > 0 && h.includes(` ${p} `)
 }
 

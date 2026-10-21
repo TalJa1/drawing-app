@@ -19,17 +19,24 @@ Conventions
 
 ## Auth — `src/api/auth.ts`
 
-| Function | Method & path | Request | Response |
-|---|---|---|---|
-| `login(req)` | `POST /auth/login` | `{ email, password }` | `AuthResponse { user: User, token }` |
-| `register(req)` | `POST /auth/register` | `{ email, password, displayName }` | `AuthResponse` |
-| `logout()` | `POST /auth/logout` | – | `204` |
-| `updateProfile(p)` | `PATCH /me` | `{ displayName?, bio?, avatarSeed? }` | `User` |
+| Function           | Method & path         | Request                               | Response                             |
+| ------------------ | --------------------- | ------------------------------------- | ------------------------------------ |
+| `login(req)`       | `POST /auth/login`    | `{ email, password }`                 | `AuthResponse { user: User, token }` |
+| `register(req)`    | `POST /auth/register` | `{ email, password, displayName }`    | `AuthResponse`                       |
+| `logout()`         | `POST /auth/logout`   | –                                     | `204`                                |
+| `updateProfile(p)` | `PATCH /me`           | `{ displayName?, bio?, avatarSeed? }` | `User`                               |
 
 ```json
 // User
-{ "id": "u_123", "email": "lan@example.com", "displayName": "Lan", "bio": "",
-  "avatarSeed": "lan", "createdAt": "2026-10-21T08:00:00.000Z", "isGuest": false }
+{
+  "id": "u_123",
+  "email": "lan@example.com",
+  "displayName": "Lan",
+  "bio": "",
+  "avatarSeed": "lan",
+  "createdAt": "2026-10-21T08:00:00.000Z",
+  "isGuest": false
+}
 ```
 
 Guests can use everything; on first login the server should merge the guest's local
@@ -37,30 +44,40 @@ gallery/progress (the client can upload `GET /me/export` output).
 
 ## Templates — `src/api/templates.ts`
 
-| Function | Method & path | Response |
-|---|---|---|
-| `getTemplates()` | `GET /templates` | `Template[]` |
-| `getTemplate(id)` | `GET /templates/:id` | `Template` |
+| Function                | Method & path                                    | Response                  |
+| ----------------------- | ------------------------------------------------ | ------------------------- |
+| `getTemplates()`        | `GET /templates`                                 | `Template[]`              |
+| `getTemplate(id)`       | `GET /templates/:id`                             | `Template`                |
 | `dailyTemplateId(date)` | `GET /challenges/daily-template?date=YYYY-MM-DD` | `{ "templateId": "fox" }` |
 
 ```json
 // Template (svg may be replaced by imageUrl to a 1200×900 transparent PNG/SVG)
-{ "id": "fox", "title": { "en": "Sitting Fox", "vi": "Cáo ngồi" }, "category": "animals",
-  "difficulty": "beginner", "minutes": 10, "unlockLevel": 1, "svg": "<svg …/>",
-  "imageUrl": null, "suggestedPalette": ["#E4572E", "#F6F1E7"], "popularity": 96,
-  "createdAt": "2026-01-01T00:00:00.000Z", "tags": ["fox"] }
+{
+  "id": "fox",
+  "title": { "en": "Sitting Fox", "vi": "Cáo ngồi" },
+  "category": "animals",
+  "difficulty": "beginner",
+  "minutes": 10,
+  "unlockLevel": 1,
+  "svg": "<svg …/>",
+  "imageUrl": null,
+  "suggestedPalette": ["#E4572E", "#F6F1E7"],
+  "popularity": 96,
+  "createdAt": "2026-01-01T00:00:00.000Z",
+  "tags": ["fox"]
+}
 ```
 
 ## Artworks — `src/api/artworks.ts`
 
-| Function | Method & path | Request | Response |
-|---|---|---|---|
-| `saveArtwork(req)` / `submitArtwork(req)` | `POST /artworks` (or `PUT /artworks/:id` when `id` given) | `multipart/form-data`: `image` (PNG), `thumbnail` (JPEG), `meta` (JSON below) | `Artwork` |
-| `listArtworks()` | `GET /artworks` | – | `Artwork[]` (newest first) |
-| `getArtwork(id)` | `GET /artworks/:id` | – | `Artwork` |
-| `updateArtwork(id, p)` | `PATCH /artworks/:id` | `{ favourite?, title? }` | `Artwork` |
-| `deleteArtwork(id)` | `DELETE /artworks/:id` | – | `204` |
-| `getImageUrl(key)` | (signed URL from `Artwork.imageKey` / `thumbKey`) | – | URL string |
+| Function                                  | Method & path                                             | Request                                                                       | Response                   |
+| ----------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------- |
+| `saveArtwork(req)` / `submitArtwork(req)` | `POST /artworks` (or `PUT /artworks/:id` when `id` given) | `multipart/form-data`: `image` (PNG), `thumbnail` (JPEG), `meta` (JSON below) | `Artwork`                  |
+| `listArtworks()`                          | `GET /artworks`                                           | –                                                                             | `Artwork[]` (newest first) |
+| `getArtwork(id)`                          | `GET /artworks/:id`                                       | –                                                                             | `Artwork`                  |
+| `updateArtwork(id, p)`                    | `PATCH /artworks/:id`                                     | `{ favourite?, title? }`                                                      | `Artwork`                  |
+| `deleteArtwork(id)`                       | `DELETE /artworks/:id`                                    | –                                                                             | `204`                      |
+| `getImageUrl(key)`                        | (signed URL from `Artwork.imageKey` / `thumbKey`)         | –                                                                             | URL string                 |
 
 ```json
 // meta
@@ -81,8 +98,8 @@ but it is cheap to send and useful as model features or for the heatmap.
 
 ## AI scoring — `src/api/scoring.ts`
 
-| Function | Method & path | Response |
-|---|---|---|
+| Function                  | Method & path              | Response      |
+| ------------------------- | -------------------------- | ------------- |
 | `scoreArtwork(artworkId)` | `POST /artworks/:id/score` | `ScoreResult` |
 
 ```json
@@ -104,13 +121,13 @@ Expected latency 2–6 s; the UI shows a "scoring ceremony" while waiting. Rank 
 
 ## Progress & gamification — `src/api/progress.ts`
 
-| Function | Method & path | Request | Response |
-|---|---|---|---|
-| `recordActivity(event)` | `POST /progress/events` | `ProgressEvent` | `RewardSummary` |
-| `getChallenges()` | `GET /challenges` | – | `ChallengeStatus[]` |
-| `claimChallenge(id, periodKey)` | `POST /challenges/:id/claim` | `{ periodKey }` | `RewardSummary` |
-| `getAchievements()` | `GET /achievements` | – | `{ badges: (Badge & { unlockedAt?: ISODate })[] }` |
-| `getLeaderboard(scope, filter)` | `GET /leaderboard?scope=weekly\|all&filter=global\|friends` | – | `LeaderboardEntry[]` (sorted) |
+| Function                        | Method & path                                               | Request         | Response                                           |
+| ------------------------------- | ----------------------------------------------------------- | --------------- | -------------------------------------------------- |
+| `recordActivity(event)`         | `POST /progress/events`                                     | `ProgressEvent` | `RewardSummary`                                    |
+| `getChallenges()`               | `GET /challenges`                                           | –               | `ChallengeStatus[]`                                |
+| `claimChallenge(id, periodKey)` | `POST /challenges/:id/claim`                                | `{ periodKey }` | `RewardSummary`                                    |
+| `getAchievements()`             | `GET /achievements`                                         | –               | `{ badges: (Badge & { unlockedAt?: ISODate })[] }` |
+| `getLeaderboard(scope, filter)` | `GET /leaderboard?scope=weekly\|all&filter=global\|friends` | –               | `LeaderboardEntry[]` (sorted)                      |
 
 `ProgressEvent` is a tagged union (`features/gamification/types.ts`), e.g.
 
@@ -123,9 +140,17 @@ Expected latency 2–6 s; the UI shows a "scoring ceremony" while waiting. Rank 
 
 ```json
 // RewardSummary
-{ "xpGained": 145, "xpBefore": 480, "xpAfter": 625, "levelBefore": 2, "levelAfter": 3,
-  "newBadges": ["first-masterpiece"], "streak": 4, "streakExtended": true,
-  "completedChallenges": ["d-high-score"] }
+{
+  "xpGained": 145,
+  "xpBefore": 480,
+  "xpAfter": 625,
+  "levelBefore": 2,
+  "levelAfter": 3,
+  "newBadges": ["first-masterpiece"],
+  "streak": 4,
+  "streakExtended": true,
+  "completedChallenges": ["d-high-score"]
+}
 ```
 
 The server must run the **same pure rules** as `features/gamification/rules.ts`
@@ -135,24 +160,24 @@ user's local timezone (send `X-Timezone`).
 
 ## Learning content — `src/api/learn.ts`
 
-| Function | Method & path | Response |
-|---|---|---|
-| `getLessons()` / `getLesson(slug)` | `GET /lessons`, `GET /lessons/:slug` | `Lesson[]` / `Lesson` |
-| `getMovements()` / `getMovement(slug)` | `GET /movements[/:slug]` | `ArtMovement[]` / `ArtMovement` |
-| `getArtists()` / `getArtist(slug)` | `GET /artists[/:slug]` | `Artist[]` / `Artist` |
-| `getArtForms()` / `getArtForm(slug)` | `GET /art-forms[/:slug]` | `ArtForm[]` / `ArtForm` |
-| `getGlossary()` | `GET /glossary` | `GlossaryTerm[]` |
-| `saveLessonProgress(slug, progress)` | `PUT /lessons/:slug/progress` `{ progress: 0–1 }` | `204` |
-| `completeLesson(slug)` | `POST /lessons/:slug/complete` | `RewardSummary \| null` |
-| `submitQuiz(slug, answers)` | `POST /lessons/:slug/quiz` `{ answers: number[] }` | `{ correct, total, passed, reward }` |
+| Function                               | Method & path                                      | Response                             |
+| -------------------------------------- | -------------------------------------------------- | ------------------------------------ |
+| `getLessons()` / `getLesson(slug)`     | `GET /lessons`, `GET /lessons/:slug`               | `Lesson[]` / `Lesson`                |
+| `getMovements()` / `getMovement(slug)` | `GET /movements[/:slug]`                           | `ArtMovement[]` / `ArtMovement`      |
+| `getArtists()` / `getArtist(slug)`     | `GET /artists[/:slug]`                             | `Artist[]` / `Artist`                |
+| `getArtForms()` / `getArtForm(slug)`   | `GET /art-forms[/:slug]`                           | `ArtForm[]` / `ArtForm`              |
+| `getGlossary()`                        | `GET /glossary`                                    | `GlossaryTerm[]`                     |
+| `saveLessonProgress(slug, progress)`   | `PUT /lessons/:slug/progress` `{ progress: 0–1 }`  | `204`                                |
+| `completeLesson(slug)`                 | `POST /lessons/:slug/complete`                     | `RewardSummary \| null`              |
+| `submitQuiz(slug, answers)`            | `POST /lessons/:slug/quiz` `{ answers: number[] }` | `{ correct, total, passed, reward }` |
 
 Artist works and movement examples carry an optional `imageUrl` — today they are rendered
 as generative SVG placeholders; a CMS can supply licensed/public-domain images.
 
 ## AI chat — `src/api/chat.ts`
 
-| Function | Method & path | Request | Response |
-|---|---|---|---|
+| Function                       | Method & path                            | Request                                        | Response                    |
+| ------------------------------ | ---------------------------------------- | ---------------------------------------------- | --------------------------- |
 | `streamChatReply(req, signal)` | `POST /chat/stream` (Server-Sent Events) | `{ message, mode, lang, attachments?, seed? }` | stream of `ChatStreamEvent` |
 
 ```text
@@ -168,8 +193,8 @@ Conversations are stored client-side today; a `GET/POST /conversations` resource
 
 ## Account & dev — `src/api/account.ts`, `src/api/demo.ts`
 
-| Function | Method & path | Response |
-|---|---|---|
-| `exportData()` | `GET /me/export` | JSON file (user, settings, artworks, progress, learning, conversations) |
-| `deleteAllData()` | `DELETE /me` | `204` |
-| `seedDemoData()` / `clearDemoData()` | dev only (`POST/DELETE /dev/demo-data`) | `204` |
+| Function                             | Method & path                           | Response                                                                |
+| ------------------------------------ | --------------------------------------- | ----------------------------------------------------------------------- |
+| `exportData()`                       | `GET /me/export`                        | JSON file (user, settings, artworks, progress, learning, conversations) |
+| `deleteAllData()`                    | `DELETE /me`                            | `204`                                                                   |
+| `seedDemoData()` / `clearDemoData()` | dev only (`POST/DELETE /dev/demo-data`) | `204`                                                                   |

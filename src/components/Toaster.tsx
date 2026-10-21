@@ -45,9 +45,7 @@ function ToastItem({ toast }: { toast: Toast }) {
       <div className="min-w-0">
         <p className="font-medium leading-snug">{toast.title}</p>
         {toast.description && (
-          <p className={cn('mt-0.5 text-sm', toast.tone === 'gold' ? 'text-[#f6f1e7]/75' : 'text-ink-soft')}>
-            {toast.description}
-          </p>
+          <p className={cn('mt-0.5 text-sm', toast.tone === 'gold' ? 'text-[#f6f1e7]/75' : 'text-ink-soft')}>{toast.description}</p>
         )}
       </div>
       <button

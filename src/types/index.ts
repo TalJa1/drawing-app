@@ -33,15 +33,7 @@ export interface User {
 /* ---------- Templates ---------- */
 
 export type TemplateCategory =
-  | 'animals'
-  | 'landscapes'
-  | 'portraits'
-  | 'objects'
-  | 'flowers'
-  | 'architecture'
-  | 'fantasy'
-  | 'patterns'
-  | 'food'
+  'animals' | 'landscapes' | 'portraits' | 'objects' | 'flowers' | 'architecture' | 'fantasy' | 'patterns' | 'food'
 
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced' | 'master'
 
@@ -144,14 +136,7 @@ export interface ScoreResult {
 
 /* ---------- Gamification ---------- */
 
-export type BadgeCategory =
-  | 'practice'
-  | 'score'
-  | 'streak'
-  | 'learning'
-  | 'colour'
-  | 'exploration'
-  | 'secret'
+export type BadgeCategory = 'practice' | 'score' | 'streak' | 'learning' | 'colour' | 'exploration' | 'secret'
 export type Rarity = 'common' | 'rare' | 'epic' | 'legendary'
 
 export interface Badge {
@@ -322,16 +307,7 @@ export interface Artist {
 }
 
 export type LessonTrack = 'beginner' | 'colour' | 'history'
-export type LessonTopic =
-  | 'composition'
-  | 'colour'
-  | 'light'
-  | 'perspective'
-  | 'drawing'
-  | 'technique'
-  | 'figure'
-  | 'subject'
-  | 'history'
+export type LessonTopic = 'composition' | 'colour' | 'light' | 'perspective' | 'drawing' | 'technique' | 'figure' | 'subject' | 'history'
 
 export type DiagramKind =
   | 'thirds'
@@ -458,10 +434,7 @@ export interface Conversation {
   updatedAt: ISODate
 }
 
-export type ChatStreamEvent =
-  | { type: 'token'; text: string }
-  | { type: 'card'; card: ChatCard }
-  | { type: 'done' }
+export type ChatStreamEvent = { type: 'token'; text: string } | { type: 'card'; card: ChatCard } | { type: 'done' }
 
 /* ---------- Misc ---------- */
 

@@ -99,33 +99,32 @@ export function Switch({
 
 /* ---------- Select ---------- */
 
-export const Select = forwardRef<
-  HTMLSelectElement,
-  SelectHTMLAttributes<HTMLSelectElement> & { label?: string; hideLabel?: boolean }
->(function Select({ label, hideLabel, className, children, id, ...rest }, ref) {
-  const autoId = useId()
-  const sid = id ?? autoId
-  return (
-    <div className={cn('flex flex-col gap-1.5', className)}>
-      {label && (
-        <label htmlFor={sid} className={cn('text-xs font-medium text-ink-soft', hideLabel && 'sr-only')}>
-          {label}
-        </label>
-      )}
-      <div className="relative">
-        <select
-          ref={ref}
-          id={sid}
-          className="h-10 w-full appearance-none rounded-full border border-line-strong bg-card pl-4 pr-9 text-sm text-ink hover:border-ink/50"
-          {...rest}
-        >
-          {children}
-        </select>
-        <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement> & { label?: string; hideLabel?: boolean }>(
+  function Select({ label, hideLabel, className, children, id, ...rest }, ref) {
+    const autoId = useId()
+    const sid = id ?? autoId
+    return (
+      <div className={cn('flex flex-col gap-1.5', className)}>
+        {label && (
+          <label htmlFor={sid} className={cn('text-xs font-medium text-ink-soft', hideLabel && 'sr-only')}>
+            {label}
+          </label>
+        )}
+        <div className="relative">
+          <select
+            ref={ref}
+            id={sid}
+            className="h-10 w-full appearance-none rounded-full border border-line-strong bg-card pl-4 pr-9 text-sm text-ink hover:border-ink/50"
+            {...rest}
+          >
+            {children}
+          </select>
+          <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+        </div>
       </div>
-    </div>
-  )
-})
+    )
+  },
+)
 
 /* ---------- Text input ---------- */
 

@@ -94,7 +94,11 @@ export default function LessonPage() {
 
   return (
     <Page>
-      <motion.div aria-hidden className="fixed inset-x-0 top-0 z-[90] h-1 origin-left bg-gradient-to-r from-saffron via-vermilion to-rose" style={{ scaleX: scrollYProgress }} />
+      <motion.div
+        aria-hidden
+        className="fixed inset-x-0 top-0 z-[90] h-1 origin-left bg-gradient-to-r from-saffron via-vermilion to-rose"
+        style={{ scaleX: scrollYProgress }}
+      />
       <div className="container-art">
         <div className="mx-auto max-w-3xl">
           <Link to="/learn#lessons" className="inline-flex items-center gap-2 text-sm text-ink-faint hover:text-ink">
@@ -167,7 +171,10 @@ export default function LessonPage() {
             <Quiz quiz={lesson.quiz} />
           </Card>
 
-          <Link to={`/learn/lessons/${next.slug}`} className="group flex items-center justify-between rounded-[22px] border border-line p-6 transition-colors hover:bg-ink/[0.03]">
+          <Link
+            to={`/learn/lessons/${next.slug}`}
+            className="group flex items-center justify-between rounded-[22px] border border-line p-6 transition-colors hover:bg-ink/[0.03]"
+          >
             <div>
               <p className="eyebrow">{t('learn.nextLesson')}</p>
               <p className="mt-2 font-display text-2xl">{L(next.title)}</p>

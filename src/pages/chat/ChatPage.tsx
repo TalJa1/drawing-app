@@ -87,7 +87,10 @@ function ConversationList({ onPick }: { onPick?: () => void }) {
       <ul className="mt-2 flex-1 space-y-1 overflow-y-auto scrollbar-thin">
         {conversations.length === 0 && <li className="px-2 py-3 text-sm text-ink-faint">{t('chat.noHistory')}</li>}
         {conversations.map((c) => (
-          <li key={c.id} className={cn('group flex items-center gap-1 rounded-xl', c.id === activeId ? 'bg-ink/[0.07]' : 'hover:bg-ink/[0.04]')}>
+          <li
+            key={c.id}
+            className={cn('group flex items-center gap-1 rounded-xl', c.id === activeId ? 'bg-ink/[0.07]' : 'hover:bg-ink/[0.04]')}
+          >
             {editing === c.id ? (
               <input
                 autoFocus
@@ -183,7 +186,11 @@ function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () =>
         <ul className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
           {data.slice(0, 16).map((a) => (
             <li key={a.id}>
-              <button type="button" onClick={() => void pickArtwork(a.id, a.thumbKey, a.title)} className="block w-full rounded-xl border border-line p-1 hover:border-ink">
+              <button
+                type="button"
+                onClick={() => void pickArtwork(a.id, a.thumbKey, a.title)}
+                className="block w-full rounded-xl border border-line p-1 hover:border-ink"
+              >
                 <ThumbImage k={a.thumbKey} alt={a.title} />
                 <span className="mt-1 block truncate text-xs">{a.title}</span>
               </button>
@@ -206,7 +213,11 @@ function ThumbImage({ k, alt }: { k: string; alt: string }) {
       alive = false
     }
   }, [k])
-  return src ? <img src={src} alt={alt} className="aspect-[4/3] w-full rounded-lg object-cover" /> : <div className="skeleton aspect-[4/3] w-full rounded-lg" />
+  return src ? (
+    <img src={src} alt={alt} className="aspect-[4/3] w-full rounded-lg object-cover" />
+  ) : (
+    <div className="skeleton aspect-[4/3] w-full rounded-lg" />
+  )
 }
 
 export default function ChatPage() {
@@ -264,7 +275,12 @@ export default function ChatPage() {
 
   return (
     <Page className="!pb-24 md:!pb-10">
-      <Washes washes={[{ color: 'var(--rose)', size: '34vmax', top: '-10%', right: '-10%' }, { color: 'var(--cerulean)', size: '28vmax', bottom: '-10%', left: '-12%', delay: -10 }]} />
+      <Washes
+        washes={[
+          { color: 'var(--rose)', size: '34vmax', top: '-10%', right: '-10%' },
+          { color: 'var(--cerulean)', size: '28vmax', bottom: '-10%', left: '-12%', delay: -10 },
+        ]}
+      />
       <div className="container-art">
         <div className="grid h-[calc(100dvh-12rem)] min-h-[560px] gap-6 md:h-[calc(100dvh-11rem)] lg:grid-cols-[280px_1fr]">
           {desktop && (
@@ -272,7 +288,10 @@ export default function ChatPage() {
               <ConversationList />
             </aside>
           )}
-          <section className="paper relative flex min-h-0 flex-col overflow-hidden rounded-[26px] border border-line shadow-paper" aria-label={t('chat.title')}>
+          <section
+            className="paper relative flex min-h-0 flex-col overflow-hidden rounded-[26px] border border-line shadow-paper"
+            aria-label={t('chat.title')}
+          >
             {/* header */}
             <header className="flex items-center gap-2 border-b border-line px-3 py-3 sm:px-5">
               {!desktop && <IconButton label={t('chat.history')} icon={<PanelLeft size={18} />} onClick={() => setSidebar(true)} />}
@@ -313,7 +332,12 @@ export default function ChatPage() {
               ) : (
                 <ol className="mx-auto max-w-3xl space-y-6">
                   {active.messages.map((m) => (
-                    <motion.li key={m.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={cn('flex gap-3', m.role === 'user' && 'flex-row-reverse')}>
+                    <motion.li
+                      key={m.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={cn('flex gap-3', m.role === 'user' && 'flex-row-reverse')}
+                    >
                       {m.role === 'user' ? (
                         <Avatar seed={user.avatarSeed} size={34} className="mt-1" />
                       ) : (
@@ -323,17 +347,31 @@ export default function ChatPage() {
                       )}
                       <div className={cn('flex min-w-0 max-w-[85%] flex-col gap-2', m.role === 'user' && 'items-end')}>
                         {m.attachments.map((a) => (
-                          <img key={a.src.slice(-24)} src={a.src} alt={a.name} className="max-h-48 rounded-2xl border border-line object-contain shadow-paper" />
+                          <img
+                            key={a.src.slice(-24)}
+                            src={a.src}
+                            alt={a.name}
+                            className="max-h-48 rounded-2xl border border-line object-contain shadow-paper"
+                          />
                         ))}
                         {(m.content || m.pending) && (
-                          <div className={cn('rounded-[20px] px-4 py-3', m.role === 'user' ? 'rounded-tr-md bg-ink text-paper' : 'rounded-tl-md border border-line bg-card')}>
+                          <div
+                            className={cn(
+                              'rounded-[20px] px-4 py-3',
+                              m.role === 'user' ? 'rounded-tr-md bg-ink text-paper' : 'rounded-tl-md border border-line bg-card',
+                            )}
+                          >
                             {m.role === 'user' ? (
                               <p className="whitespace-pre-wrap">{m.content}</p>
                             ) : m.pending && !m.content ? (
                               <p className="flex items-center gap-2 text-ink-faint">
                                 <span className="flex gap-1" aria-hidden>
                                   {[0, 1, 2].map((d) => (
-                                    <span key={d} className="h-2 w-2 rounded-full bg-saffron" style={{ animation: `float-y 1s ${d * 0.15}s ease-in-out infinite` }} />
+                                    <span
+                                      key={d}
+                                      className="h-2 w-2 rounded-full bg-saffron"
+                                      style={{ animation: `float-y 1s ${d * 0.15}s ease-in-out infinite` }}
+                                    />
                                   ))}
                                 </span>
                                 <span className="hand text-lg">{t('chat.thinking')}</span>
@@ -346,7 +384,12 @@ export default function ChatPage() {
                         {m.error && (
                           <div className="flex items-center gap-2 rounded-2xl border border-vermilion/40 bg-vermilion/10 px-3 py-2 text-sm">
                             {t('chat.error')}
-                            <Button size="sm" variant="ghost" icon={<RefreshCw size={14} />} onClick={() => active && void regenerate(active.id, m.id, currentMode)}>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              icon={<RefreshCw size={14} />}
+                              onClick={() => active && void regenerate(active.id, m.id, currentMode)}
+                            >
                               {t('common.retry')}
                             </Button>
                           </div>
@@ -366,12 +409,35 @@ export default function ChatPage() {
                               size="sm"
                               label={t('common.copy')}
                               icon={<Copy size={14} />}
-                              onClick={async () => toast({ title: (await copyText(m.content)) ? t('common.copied') : t('learn.lab.copyFailed'), tone: 'success' })}
+                              onClick={async () =>
+                                toast({
+                                  title: (await copyText(m.content)) ? t('common.copied') : t('learn.lab.copyFailed'),
+                                  tone: 'success',
+                                })
+                              }
                             />
-                            <IconButton size="sm" label={t('chat.helpful')} active={m.rating === 'up'} icon={<ThumbsUp size={14} />} onClick={() => active && updateMessage(active.id, m.id, { rating: m.rating === 'up' ? undefined : 'up' })} />
-                            <IconButton size="sm" label={t('chat.notHelpful')} active={m.rating === 'down'} icon={<ThumbsDown size={14} />} onClick={() => active && updateMessage(active.id, m.id, { rating: m.rating === 'down' ? undefined : 'down' })} />
+                            <IconButton
+                              size="sm"
+                              label={t('chat.helpful')}
+                              active={m.rating === 'up'}
+                              icon={<ThumbsUp size={14} />}
+                              onClick={() => active && updateMessage(active.id, m.id, { rating: m.rating === 'up' ? undefined : 'up' })}
+                            />
+                            <IconButton
+                              size="sm"
+                              label={t('chat.notHelpful')}
+                              active={m.rating === 'down'}
+                              icon={<ThumbsDown size={14} />}
+                              onClick={() => active && updateMessage(active.id, m.id, { rating: m.rating === 'down' ? undefined : 'down' })}
+                            />
                             {m.id === lastAssistant?.id && (
-                              <IconButton size="sm" label={t('chat.regenerate')} icon={<RefreshCw size={14} />} onClick={() => active && void regenerate(active.id, m.id, currentMode)} disabled={busy} />
+                              <IconButton
+                                size="sm"
+                                label={t('chat.regenerate')}
+                                icon={<RefreshCw size={14} />}
+                                onClick={() => active && void regenerate(active.id, m.id, currentMode)}
+                                disabled={busy}
+                              />
                             )}
                           </div>
                         )}
@@ -388,7 +454,13 @@ export default function ChatPage() {
               {(!active || active.messages.length < 2) && (
                 <div className="no-scrollbar mb-3 flex gap-2 overflow-x-auto" role="group" aria-label={t('chat.suggestions')}>
                   {suggestions.map((s) => (
-                    <button key={s} type="button" onClick={() => void submit(undefined, s)} disabled={busy} className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line-strong bg-card px-3 py-1.5 text-sm text-ink-soft transition-colors hover:border-ink hover:text-ink">
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => void submit(undefined, s)}
+                      disabled={busy}
+                      className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line-strong bg-card px-3 py-1.5 text-sm text-ink-soft transition-colors hover:border-ink hover:text-ink"
+                    >
                       <Compass size={13} className="text-accent-ink" /> {s}
                     </button>
                   ))}
@@ -396,11 +468,21 @@ export default function ChatPage() {
               )}
               <AnimatePresence>
                 {attachments.length > 0 && (
-                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-2 flex gap-2">
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-2 flex gap-2"
+                  >
                     {attachments.map((a, i) => (
                       <span key={i} className="relative">
                         <img src={a.src} alt={a.name} className="h-16 w-20 rounded-xl border border-line object-cover" />
-                        <button type="button" aria-label={t('chat.removeAttachment')} onClick={() => setAttachments((x) => x.filter((_, j) => j !== i))} className="absolute -right-1.5 -top-1.5 rounded-full bg-ink p-0.5 text-paper">
+                        <button
+                          type="button"
+                          aria-label={t('chat.removeAttachment')}
+                          onClick={() => setAttachments((x) => x.filter((_, j) => j !== i))}
+                          className="absolute -right-1.5 -top-1.5 rounded-full bg-ink p-0.5 text-paper"
+                        >
                           <X size={12} />
                         </button>
                       </span>
@@ -409,7 +491,12 @@ export default function ChatPage() {
                 )}
               </AnimatePresence>
               <form onSubmit={(e) => void submit(e)} className="flex items-end gap-2">
-                <IconButton label={t('chat.attach.button')} icon={<Paperclip size={18} />} onClick={() => setPicker(true)} variant="paper" />
+                <IconButton
+                  label={t('chat.attach.button')}
+                  icon={<Paperclip size={18} />}
+                  onClick={() => setPicker(true)}
+                  variant="paper"
+                />
                 <label className="sr-only" htmlFor="chat-input">
                   {t('chat.placeholder')}
                 </label>
@@ -432,7 +519,13 @@ export default function ChatPage() {
                 {busy ? (
                   <IconButton label={t('chat.stop')} icon={<Square size={16} />} variant="ink" onClick={stop} />
                 ) : (
-                  <IconButton label={t('chat.send')} icon={<Send size={17} />} variant="ink" type="submit" disabled={!text.trim() && !attachments.length} />
+                  <IconButton
+                    label={t('chat.send')}
+                    icon={<Send size={17} />}
+                    variant="ink"
+                    type="submit"
+                    disabled={!text.trim() && !attachments.length}
+                  />
                 )}
               </form>
               <p className="mt-2 flex items-center gap-1.5 text-[11px] text-ink-faint">

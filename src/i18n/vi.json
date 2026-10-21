@@ -1041,41 +1041,25 @@
         "name": "Tạo ý tưởng",
         "short": "Ý tưởng",
         "intro": "Bí ý tưởng vẽ? Hỏi mình để có đề bài, thử thách và những tia lửa sáng tạo nhỏ.",
-        "prompts": [
-          "Cho mình 5 ý tưởng vẽ cho người mới bắt đầu",
-          "Tạo cho mình thử thách vẽ 7 ngày",
-          "Hôm nay mình nên vẽ gì?"
-        ]
+        "prompts": ["Cho mình 5 ý tưởng vẽ cho người mới bắt đầu", "Tạo cho mình thử thách vẽ 7 ngày", "Hôm nay mình nên vẽ gì?"]
       },
       "colour": {
         "name": "Cố vấn màu sắc",
         "short": "Màu sắc",
         "intro": "Cho mình một màu hoặc một tâm trạng, mình sẽ pha bảng màu cho bạn — rồi gửi thẳng tới xưởng vẽ.",
-        "prompts": [
-          "Màu nào hợp với xanh mòng két?",
-          "Cho mình một bảng màu gợi hoài niệm",
-          "Những màu hợp với hồng"
-        ]
+        "prompts": ["Màu nào hợp với xanh mòng két?", "Cho mình một bảng màu gợi hoài niệm", "Những màu hợp với hồng"]
       },
       "composition": {
         "name": "Huấn luyện bố cục",
         "short": "Bố cục",
         "intro": "Cùng làm bức tranh của bạn cân bằng và sống động hơn — quy tắc một phần ba, đường dẫn, tiêu điểm.",
-        "prompts": [
-          "Làm sao để cải thiện bố cục?",
-          "Nên đặt đường chân trời ở đâu?",
-          "Làm sao tạo tiêu điểm?"
-        ]
+        "prompts": ["Làm sao để cải thiện bố cục?", "Nên đặt đường chân trời ở đâu?", "Làm sao tạo tiêu điểm?"]
       },
       "history": {
         "name": "Sử gia nghệ thuật",
         "short": "Lịch sử",
         "intro": "Hỏi mình về bất kỳ trào lưu hay nghệ sĩ nào — từ tranh hang động đến tranh Đông Hồ đến Pop Art.",
-        "prompts": [
-          "Giải thích trường phái Ấn tượng cho trẻ 12 tuổi",
-          "Tranh dân gian Đông Hồ là gì?",
-          "Kể mình nghe về Lập thể"
-        ]
+        "prompts": ["Giải thích trường phái Ấn tượng cho trẻ 12 tuổi", "Tranh dân gian Đông Hồ là gì?", "Kể mình nghe về Lập thể"]
       }
     },
     "emptyTitle": "Xin chào, {{name}}! Mình là nàng thơ của bạn.",
@@ -1203,14 +1187,7 @@
     "wallTitleA": "Được tạo với",
     "wallTitleB": "Art Spark",
     "wallLede": "Một bức tường tác phẩm mẫu — mẫu đã tô màu và tranh mang tinh thần các trào lưu lớn.",
-    "wallLabels": [
-      "Bến cảng buổi sáng",
-      "Cá koi lúc chiều tà",
-      "Con sóng lặng",
-      "Mandala hoa sen",
-      "Khu vườn vàng",
-      "Tĩnh vật, vỡ mảnh"
-    ],
+    "wallLabels": ["Bến cảng buổi sáng", "Cá koi lúc chiều tà", "Con sóng lặng", "Mandala hoa sen", "Khu vườn vàng", "Tĩnh vật, vỡ mảnh"],
     "sampleArtwork": "Tác phẩm mẫu",
     "voicesEyebrow": "Cảm nhận",
     "voicesTitleA": "Thói quen nhỏ,",

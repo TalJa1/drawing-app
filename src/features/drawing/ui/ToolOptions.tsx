@@ -61,19 +61,57 @@ export function ToolOptions({ className }: { className?: string }) {
       <span className="shrink-0 font-display text-sm italic text-ink">{t(`studio.tools.${s.tool}`)}</span>
       {!any && <span className="text-xs text-ink-faint">{t(`studio.toolHints.${s.tool}`, { defaultValue: '' })}</span>}
       {opts.size && (
-        <MiniSlider label={t('studio.size')} value={ts.size} min={1} max={s.tool === 'airbrush' || s.tool === 'watercolour' ? 200 : 120} onChange={(v) => s.setToolSetting(s.tool, { size: v })} format={(v) => `${v}px`} />
+        <MiniSlider
+          label={t('studio.size')}
+          value={ts.size}
+          min={1}
+          max={s.tool === 'airbrush' || s.tool === 'watercolour' ? 200 : 120}
+          onChange={(v) => s.setToolSetting(s.tool, { size: v })}
+          format={(v) => `${v}px`}
+        />
       )}
       {opts.opacity && (
-        <MiniSlider label={t('studio.opacity')} value={ts.opacity} min={0.05} max={1} step={0.01} onChange={(v) => s.setToolSetting(s.tool, { opacity: v })} format={pct} />
+        <MiniSlider
+          label={t('studio.opacity')}
+          value={ts.opacity}
+          min={0.05}
+          max={1}
+          step={0.01}
+          onChange={(v) => s.setToolSetting(s.tool, { opacity: v })}
+          format={pct}
+        />
       )}
       {opts.hardness && (
-        <MiniSlider label={t('studio.hardness')} value={ts.hardness} min={0.05} max={1} step={0.01} onChange={(v) => s.setToolSetting(s.tool, { hardness: v })} format={pct} />
+        <MiniSlider
+          label={t('studio.hardness')}
+          value={ts.hardness}
+          min={0.05}
+          max={1}
+          step={0.01}
+          onChange={(v) => s.setToolSetting(s.tool, { hardness: v })}
+          format={pct}
+        />
       )}
       {opts.smoothing && (
-        <MiniSlider label={t('studio.smoothing')} value={s.smoothing} min={0} max={1} step={0.01} onChange={(v) => s.set({ smoothing: v })} format={pct} />
+        <MiniSlider
+          label={t('studio.smoothing')}
+          value={s.smoothing}
+          min={0}
+          max={1}
+          step={0.01}
+          onChange={(v) => s.set({ smoothing: v })}
+          format={pct}
+        />
       )}
       {opts.tolerance && (
-        <MiniSlider label={t('studio.tolerance')} value={s.tolerance} min={0} max={80} onChange={(v) => s.set({ tolerance: v })} format={(v) => `${v}`} />
+        <MiniSlider
+          label={t('studio.tolerance')}
+          value={s.tolerance}
+          min={0}
+          max={80}
+          onChange={(v) => s.set({ tolerance: v })}
+          format={(v) => `${v}`}
+        />
       )}
       {opts.symmetry && (
         <label className="flex shrink-0 items-center gap-2 text-xs font-medium text-ink-soft">
@@ -93,19 +131,34 @@ export function ToolOptions({ className }: { className?: string }) {
       )}
       {opts.symmetry && (
         <label className="flex shrink-0 cursor-pointer items-center gap-2 text-xs font-medium text-ink-soft">
-          <input type="checkbox" checked={s.pressure} onChange={(e) => s.set({ pressure: e.target.checked })} className="h-4 w-4 accent-[var(--vermilion)]" />
+          <input
+            type="checkbox"
+            checked={s.pressure}
+            onChange={(e) => s.set({ pressure: e.target.checked })}
+            className="h-4 w-4 accent-[var(--vermilion)]"
+          />
           {t('studio.pressure')}
         </label>
       )}
       {opts.shapeFill && (
         <label className="flex shrink-0 cursor-pointer items-center gap-2 text-xs font-medium text-ink-soft">
-          <input type="checkbox" checked={s.shapeFill} onChange={(e) => s.set({ shapeFill: e.target.checked })} className="h-4 w-4 accent-[var(--vermilion)]" />
+          <input
+            type="checkbox"
+            checked={s.shapeFill}
+            onChange={(e) => s.set({ shapeFill: e.target.checked })}
+            className="h-4 w-4 accent-[var(--vermilion)]"
+          />
           {t('studio.shapeFill')}
         </label>
       )}
       {opts.sampleAll && (
         <label className="flex shrink-0 cursor-pointer items-center gap-2 text-xs font-medium text-ink-soft">
-          <input type="checkbox" checked={s.sampleAllLayers} onChange={(e) => s.set({ sampleAllLayers: e.target.checked })} className="h-4 w-4 accent-[var(--vermilion)]" />
+          <input
+            type="checkbox"
+            checked={s.sampleAllLayers}
+            onChange={(e) => s.set({ sampleAllLayers: e.target.checked })}
+            className="h-4 w-4 accent-[var(--vermilion)]"
+          />
           {t('studio.sampleAll')}
         </label>
       )}

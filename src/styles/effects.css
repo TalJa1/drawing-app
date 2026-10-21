@@ -5,8 +5,7 @@
   position: relative;
   padding: var(--frame-w, 12px);
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 0.12), transparent 40%),
-    linear-gradient(315deg, rgb(0 0 0 / 0.35), transparent 50%),
+    linear-gradient(135deg, rgb(255 255 255 / 0.12), transparent 40%), linear-gradient(315deg, rgb(0 0 0 / 0.35), transparent 50%),
     var(--frame);
   border-radius: 3px;
   box-shadow:
@@ -25,8 +24,7 @@
 .frame-gold {
   --frame: #8a6a1c;
   --frame-edge: #f1d47a;
-  background:
-    linear-gradient(135deg, #f7e7a6 0%, #c9a032 28%, #8a6a1c 50%, #d8b44a 72%, #fff1b8 100%);
+  background: linear-gradient(135deg, #f7e7a6 0%, #c9a032 28%, #8a6a1c 50%, #d8b44a 72%, #fff1b8 100%);
 }
 .frame-light {
   --frame: #e8dcc6;

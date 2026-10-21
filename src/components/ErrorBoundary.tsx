@@ -26,9 +26,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode; compact?: bo
       <div
         role="alert"
         className={
-          this.props.compact
-            ? 'p-6 text-center'
-            : 'container-art flex min-h-[70dvh] flex-col items-center justify-center py-24 text-center'
+          this.props.compact ? 'p-6 text-center' : 'container-art flex min-h-[70dvh] flex-col items-center justify-center py-24 text-center'
         }
       >
         <div className="relative mb-6 h-40 w-40">

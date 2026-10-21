@@ -29,7 +29,12 @@ export default function NotFoundPage() {
           </div>
         </div>
         <div className="relative mx-auto w-full max-w-md">
-          <Frame frameWidth={16} matWidth={22} tilt={2} label={<WallLabel title={t('notFound.labelTitle')} lines={[t('notFound.labelLine')]} />}>
+          <Frame
+            frameWidth={16}
+            matWidth={22}
+            tilt={2}
+            label={<WallLabel title={t('notFound.labelTitle')} lines={[t('notFound.labelLine')]} />}
+          >
             <div className="relative aspect-[4/5] bg-white">
               <span className="absolute inset-0 flex items-center justify-center font-display text-[7rem] italic text-ink/[0.06]">404</span>
             </div>

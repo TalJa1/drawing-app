@@ -100,12 +100,7 @@ function pairHarmony(d: number): number {
   return Math.max(0, 1 - best / 28)
 }
 
-export function analyse(
-  paint: Uint8ClampedArray,
-  regions: Regions,
-  suggestedPalette: string[],
-  strokes: number,
-): ArtworkAnalysis {
+export function analyse(paint: Uint8ClampedArray, regions: Regions, suggestedPalette: string[], strokes: number): ArtworkAnalysis {
   const { w, h, inside, outside, ink } = regions
   const n = w * h
   let painted = 0
@@ -184,7 +179,11 @@ export function analyse(
   }
 
   const dominant = bucketRgb
-    .map((acc, slot) => ({ slot, count: acc[3], hex: acc[3] ? rgbToHex({ r: acc[0] / acc[3], g: acc[1] / acc[3], b: acc[2] / acc[3] }) : '' }))
+    .map((acc, slot) => ({
+      slot,
+      count: acc[3],
+      hex: acc[3] ? rgbToHex({ r: acc[0] / acc[3], g: acc[1] / acc[3], b: acc[2] / acc[3] }) : '',
+    }))
     .filter((d) => d.count > 0)
     .sort((a, b) => b.count - a.count)
     .slice(0, 5)

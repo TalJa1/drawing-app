@@ -1,4 +1,17 @@
-import { contrastRatio, hexToHsv, hexToRgb, hsvToHex, hueBucket, hueDistance, mixPigments, normalizeHex, readableOn, rgbToHex, rotateHue, scheme } from './color'
+import {
+  contrastRatio,
+  hexToHsv,
+  hexToRgb,
+  hsvToHex,
+  hueBucket,
+  hueDistance,
+  mixPigments,
+  normalizeHex,
+  readableOn,
+  rgbToHex,
+  rotateHue,
+  scheme,
+} from './color'
 
 describe('colour utilities', () => {
   it('normalises hex input', () => {

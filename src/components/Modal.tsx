@@ -6,8 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useScrollLock } from '@/lib/hooks'
 
-const FOCUSABLE =
-  'a[href],button:not([disabled]),textarea,input:not([disabled]),select,[tabindex]:not([tabindex="-1"])'
+const FOCUSABLE = 'a[href],button:not([disabled]),textarea,input:not([disabled]),select,[tabindex]:not([tabindex="-1"])'
 
 function useFocusTrap(open: boolean, onClose: () => void) {
   const ref = useRef<HTMLDivElement>(null)
@@ -20,8 +19,7 @@ function useFocusTrap(open: boolean, onClose: () => void) {
     const prev = document.activeElement as HTMLElement | null
     const node = ref.current
     const t = window.setTimeout(() => {
-      const first =
-        node?.querySelector<HTMLElement>('[data-autofocus]') ?? node?.querySelector<HTMLElement>(FOCUSABLE)
+      const first = node?.querySelector<HTMLElement>('[data-autofocus]') ?? node?.querySelector<HTMLElement>(FOCUSABLE)
       ;(first ?? node)?.focus()
     }, 30)
     const onKey = (e: KeyboardEvent) => {
@@ -30,9 +28,7 @@ function useFocusTrap(open: boolean, onClose: () => void) {
         closeRef.current()
       }
       if (e.key !== 'Tab' || !node) return
-      const els = Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-        (el) => el.offsetParent !== null,
-      )
+      const els = Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((el) => el.offsetParent !== null)
       if (!els.length) return
       const first = els[0]
       const last = els[els.length - 1]
@@ -148,8 +144,7 @@ export function Sheet({
   const { t } = useTranslation()
   const ref = useFocusTrap(open, onClose)
   useScrollLock(open)
-  const from =
-    side === 'bottom' ? { y: '100%' } : side === 'right' ? { x: '100%' } : { x: '-100%' }
+  const from = side === 'bottom' ? { y: '100%' } : side === 'right' ? { x: '100%' } : { x: '-100%' }
   return createPortal(
     <AnimatePresence>
       {open && (

@@ -85,7 +85,12 @@ export default function ArtistPage() {
                   label={<WallLabel title={L(w.title)} lines={[`${a.name}, ${w.year}`, t('learn.generativeNote')]} />}
                 >
                   <div className="aspect-[4/3]">
-                    <GenerativeArt style={w.genStyle} seed={`${a.slug}-${wi}`} palette={w.palette.length ? w.palette : undefined} title={L(w.title)} />
+                    <GenerativeArt
+                      style={w.genStyle}
+                      seed={`${a.slug}-${wi}`}
+                      palette={w.palette.length ? w.palette : undefined}
+                      title={L(w.title)}
+                    />
                   </div>
                 </Frame>
                 <p className="mt-4 text-ink-soft">{L(w.description)}</p>
@@ -94,7 +99,10 @@ export default function ArtistPage() {
           </div>
         </section>
 
-        <Link to={`/learn/artists/${next.slug}`} className="mt-16 flex items-center justify-between gap-6 rounded-[26px] border border-line p-6 transition-colors hover:bg-ink/[0.03]">
+        <Link
+          to={`/learn/artists/${next.slug}`}
+          className="mt-16 flex items-center justify-between gap-6 rounded-[26px] border border-line p-6 transition-colors hover:bg-ink/[0.03]"
+        >
           <div>
             <p className="eyebrow">{t('learn.nextArtist')}</p>
             <p className="mt-2 font-display text-3xl">{next.name}</p>

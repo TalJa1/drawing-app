@@ -26,7 +26,20 @@ import { LESSONS, TRACKS } from '@/mocks/lessons'
 import { useL } from '@/i18n/useL'
 import { cn } from '@/lib/utils'
 
-const AVATAR_SEEDS = ['ink-fox', 'saffron-sun', 'umber-owl', 'rose-koi', 'viridian-leaf', 'cerulean-sea', 'ochre-hill', 'ultramarine-night', 'lotus', 'lantern', 'mandala', 'charcoal']
+const AVATAR_SEEDS = [
+  'ink-fox',
+  'saffron-sun',
+  'umber-owl',
+  'rose-koi',
+  'viridian-leaf',
+  'cerulean-sea',
+  'ochre-hill',
+  'ultramarine-night',
+  'lotus',
+  'lantern',
+  'mandala',
+  'charcoal',
+]
 
 export default function ProfilePage() {
   const { t } = useTranslation()
@@ -135,13 +148,22 @@ export default function ProfilePage() {
                     aria-pressed={seed === s}
                     aria-label={t('profile.avatarOption', { name: s })}
                     onClick={() => setSeed(s)}
-                    className={cn('rounded-full p-0.5 transition-transform hover:scale-105', seed === s ? 'ring-2 ring-ink ring-offset-2 ring-offset-card' : '')}
+                    className={cn(
+                      'rounded-full p-0.5 transition-transform hover:scale-105',
+                      seed === s ? 'ring-2 ring-ink ring-offset-2 ring-offset-card' : '',
+                    )}
                   >
                     <Avatar seed={s} size={44} />
                   </button>
                 ))}
               </div>
-              <Button size="sm" variant="ghost" className="mt-2" icon={<Dices size={15} />} onClick={() => setSeed(`seed-${Math.random().toString(36).slice(2, 8)}`)}>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="mt-2"
+                icon={<Dices size={15} />}
+                onClick={() => setSeed(`seed-${Math.random().toString(36).slice(2, 8)}`)}
+              >
                 {t('profile.randomAvatar')}
               </Button>
             </fieldset>
@@ -199,7 +221,11 @@ export default function ProfilePage() {
             <Card className="space-y-5 p-6 sm:p-8">
               <h2 className="font-display text-2xl">{t('profile.appearance')}</h2>
               <div className="grid gap-4 sm:grid-cols-3">
-                <Select label={t('profile.language')} value={settings.language} onChange={(e) => settings.setLanguage(e.target.value as 'en' | 'vi')}>
+                <Select
+                  label={t('profile.language')}
+                  value={settings.language}
+                  onChange={(e) => settings.setLanguage(e.target.value as 'en' | 'vi')}
+                >
                   <option value="en">English</option>
                   <option value="vi">Tiếng Việt</option>
                 </Select>
@@ -208,27 +234,58 @@ export default function ProfilePage() {
                   <option value="light">{t('profile.themes.light')}</option>
                   <option value="dark">{t('profile.themes.dark')}</option>
                 </Select>
-                <Select label={t('profile.motion')} value={settings.motion} onChange={(e) => settings.setMotion(e.target.value as MotionPref)}>
+                <Select
+                  label={t('profile.motion')}
+                  value={settings.motion}
+                  onChange={(e) => settings.setMotion(e.target.value as MotionPref)}
+                >
                   <option value="system">{t('profile.motions.system')}</option>
                   <option value="reduce">{t('profile.motions.reduce')}</option>
                   <option value="full">{t('profile.motions.full')}</option>
                 </Select>
               </div>
-              <Switch checked={settings.sound} onChange={settings.setSound} label={t('profile.sound')} description={t('profile.soundHint')} />
-              <Switch checked={settings.customCursor} onChange={settings.setCustomCursor} label={t('profile.cursor')} description={t('profile.cursorHint')} />
+              <Switch
+                checked={settings.sound}
+                onChange={settings.setSound}
+                label={t('profile.sound')}
+                description={t('profile.soundHint')}
+              />
+              <Switch
+                checked={settings.customCursor}
+                onChange={settings.setCustomCursor}
+                label={t('profile.cursor')}
+                description={t('profile.cursorHint')}
+              />
             </Card>
 
             <Card className="space-y-5 p-6 sm:p-8">
               <h2 className="font-display text-2xl">{t('profile.drawing')}</h2>
-              <Select label={t('profile.defaultBrush')} value={settings.drawing.defaultTool} onChange={(e) => setDrawing({ defaultTool: e.target.value as DrawingPrefs['defaultTool'] })}>
+              <Select
+                label={t('profile.defaultBrush')}
+                value={settings.drawing.defaultTool}
+                onChange={(e) => setDrawing({ defaultTool: e.target.value as DrawingPrefs['defaultTool'] })}
+              >
                 {(['pencil', 'pen', 'marker', 'watercolour'] as const).map((tool) => (
                   <option key={tool} value={tool}>
                     {t(`studio.tools.${tool}`)}
                   </option>
                 ))}
               </Select>
-              <Switch checked={settings.drawing.pressure} onChange={(v) => setDrawing({ pressure: v })} label={t('studio.pressure')} description={t('profile.pressureHint')} />
-              <Slider label={t('studio.smoothing')} value={settings.drawing.smoothing} min={0} max={1} step={0.05} onChange={(v) => setDrawing({ smoothing: v })} format={(v) => `${Math.round(v * 100)}%`} />
+              <Switch
+                checked={settings.drawing.pressure}
+                onChange={(v) => setDrawing({ pressure: v })}
+                label={t('studio.pressure')}
+                description={t('profile.pressureHint')}
+              />
+              <Slider
+                label={t('studio.smoothing')}
+                value={settings.drawing.smoothing}
+                min={0}
+                max={1}
+                step={0.05}
+                onChange={(v) => setDrawing({ smoothing: v })}
+                format={(v) => `${Math.round(v * 100)}%`}
+              />
               <Switch
                 checked={!settings.onboardingDone}
                 onChange={(v) => settings.setOnboardingDone(!v)}
@@ -239,8 +296,18 @@ export default function ProfilePage() {
 
             <Card className="space-y-5 p-6 sm:p-8">
               <h2 className="font-display text-2xl">{t('profile.data')}</h2>
-              <Switch checked={demoOn} onChange={(v) => void toggleDemo(v)} label={t('profile.demo')} description={demoBusy ? t('common.loading') : t('profile.demoHint')} />
-              <Switch checked={settings.simulateErrors} onChange={settings.setSimulateErrors} label={t('profile.simulateErrors')} description={t('profile.simulateErrorsHint')} />
+              <Switch
+                checked={demoOn}
+                onChange={(v) => void toggleDemo(v)}
+                label={t('profile.demo')}
+                description={demoBusy ? t('common.loading') : t('profile.demoHint')}
+              />
+              <Switch
+                checked={settings.simulateErrors}
+                onChange={settings.setSimulateErrors}
+                label={t('profile.simulateErrors')}
+                description={t('profile.simulateErrorsHint')}
+              />
               <div className="flex flex-wrap gap-3 pt-2">
                 <Button variant="outline" icon={<Download size={16} />} onClick={() => void doExport()}>
                   {t('profile.export')}
@@ -253,7 +320,13 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title={t('profile.deleteTitle')} description={t('profile.deleteBody')} size="sm">
+      <Modal
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title={t('profile.deleteTitle')}
+        description={t('profile.deleteBody')}
+        size="sm"
+      >
         <div className="flex gap-3">
           <Button variant="outline" className="flex-1" onClick={() => setConfirmDelete(false)}>
             {t('common.cancel')}

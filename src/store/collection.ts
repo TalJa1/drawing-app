@@ -25,8 +25,7 @@ export const useCollection = create<CollectionState>()(
           next[i] = a
           return { artworks: next }
         }),
-      patch: (id, p) =>
-        set((s) => ({ artworks: s.artworks.map((a) => (a.id === id ? { ...a, ...p } : a)) })),
+      patch: (id, p) => set((s) => ({ artworks: s.artworks.map((a) => (a.id === id ? { ...a, ...p } : a)) })),
       remove: (id) => set((s) => ({ artworks: s.artworks.filter((a) => a.id !== id) })),
       removeWhere: (pred) => set((s) => ({ artworks: s.artworks.filter((a) => !pred(a)) })),
       clear: () => set({ artworks: [] }),

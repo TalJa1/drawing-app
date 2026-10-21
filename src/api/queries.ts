@@ -4,17 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getTemplate, getTemplates } from './templates'
 import { deleteArtwork, getArtwork, listArtworks, updateArtwork } from './artworks'
 import { getAchievements, getChallenges, getLeaderboard, claimChallenge } from './progress'
-import {
-  getArtForm,
-  getArtForms,
-  getArtist,
-  getArtists,
-  getGlossary,
-  getLesson,
-  getLessons,
-  getMovement,
-  getMovements,
-} from './learn'
+import { getArtForm, getArtForms, getArtist, getArtists, getGlossary, getLesson, getLessons, getMovement, getMovements } from './learn'
 
 const forever = { staleTime: Infinity, gcTime: Infinity }
 
@@ -77,7 +67,8 @@ export const useLeaderboard = (scope: 'weekly' | 'all', filter: 'global' | 'frie
 export const useLessons = () => useQuery({ queryKey: qk.lessons, queryFn: getLessons, ...forever })
 export const useLesson = (slug: string) => useQuery({ queryKey: qk.lesson(slug), queryFn: () => getLesson(slug), ...forever, retry: 0 })
 export const useMovements = () => useQuery({ queryKey: qk.movements, queryFn: getMovements, ...forever })
-export const useMovement = (slug: string) => useQuery({ queryKey: qk.movement(slug), queryFn: () => getMovement(slug), ...forever, retry: 0 })
+export const useMovement = (slug: string) =>
+  useQuery({ queryKey: qk.movement(slug), queryFn: () => getMovement(slug), ...forever, retry: 0 })
 export const useArtists = () => useQuery({ queryKey: qk.artists, queryFn: getArtists, ...forever })
 export const useArtist = (slug: string) => useQuery({ queryKey: qk.artist(slug), queryFn: () => getArtist(slug), ...forever, retry: 0 })
 export const useArtForms = () => useQuery({ queryKey: qk.artForms, queryFn: getArtForms, ...forever })

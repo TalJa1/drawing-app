@@ -171,7 +171,13 @@ function PracticeStudio({ template }: { template: Template }) {
           </ProgressRing>
           <div>
             <p className="font-medium">{t('practice.studio.coverage')}</p>
-            <p className="text-sm text-ink-faint">{coverage < 0.5 ? t('practice.studio.coverageLow') : coverage < 0.85 ? t('practice.studio.coverageMid') : t('practice.studio.coverageHigh')}</p>
+            <p className="text-sm text-ink-faint">
+              {coverage < 0.5
+                ? t('practice.studio.coverageLow')
+                : coverage < 0.85
+                  ? t('practice.studio.coverageMid')
+                  : t('practice.studio.coverageHigh')}
+            </p>
           </div>
         </section>
         <section className="space-y-2 rounded-2xl border border-line p-3 text-sm">
@@ -232,7 +238,11 @@ function PracticeStudio({ template }: { template: Template }) {
           <div>
             <div className="frame mx-auto max-w-sm" style={{ '--frame-w': '9px' } as React.CSSProperties}>
               <div className="mat" style={{ '--mat-w': '9px' } as React.CSSProperties}>
-                <img src={confirm.preview} alt={t('practice.confirm.previewAlt')} className="art aspect-[4/3] w-full bg-white object-contain" />
+                <img
+                  src={confirm.preview}
+                  alt={t('practice.confirm.previewAlt')}
+                  className="art aspect-[4/3] w-full bg-white object-contain"
+                />
               </div>
             </div>
             <p className="mt-5 text-center text-ink-soft">

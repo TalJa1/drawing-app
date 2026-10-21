@@ -55,7 +55,12 @@ export default function MovementPage() {
 
   return (
     <Page>
-      <Washes washes={[{ color: m.palette[1], size: '40vmax', top: '-18%', left: '-12%' }, { color: m.palette[2] ?? m.palette[0], size: '28vmax', top: '30%', right: '-14%', delay: -8 }]} />
+      <Washes
+        washes={[
+          { color: m.palette[1], size: '40vmax', top: '-18%', left: '-12%' },
+          { color: m.palette[2] ?? m.palette[0], size: '28vmax', top: '30%', right: '-14%', delay: -8 },
+        ]}
+      />
       <div className="container-art">
         <Link to="/learn#timeline" className="inline-flex items-center gap-2 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft size={16} /> {t('learn.backToTimeline')}
@@ -68,7 +73,13 @@ export default function MovementPage() {
             <h1 className="display-xl mt-4">{L(m.name)}</h1>
             <p className="mt-6 text-xl leading-relaxed text-ink-soft">{L(m.summary)}</p>
           </div>
-          <Frame tone={m.tradition === 'global' ? 'wood' : 'gold'} frameWidth={16} matWidth={18} tilt={-1} label={<WallLabel title={t('learn.inTheStyleOf', { name: L(m.name) })} lines={[t('learn.generativeNote')]} />}>
+          <Frame
+            tone={m.tradition === 'global' ? 'wood' : 'gold'}
+            frameWidth={16}
+            matWidth={18}
+            tilt={-1}
+            label={<WallLabel title={t('learn.inTheStyleOf', { name: L(m.name) })} lines={[t('learn.generativeNote')]} />}
+          >
             <div className="aspect-[4/3]">
               <GenerativeArt style={m.genStyle} seed={m.slug} palette={m.palette} title={t('learn.inTheStyleOf', { name: L(m.name) })} />
             </div>
@@ -122,7 +133,9 @@ export default function MovementPage() {
                   style={{ background: c }}
                   aria-label={t('learn.copyColour', { hex: c })}
                 >
-                  <span className="rounded bg-black/30 px-1.5 py-0.5 font-mono text-[11px] text-white opacity-0 transition-opacity group-hover:opacity-100">{c}</span>
+                  <span className="rounded bg-black/30 px-1.5 py-0.5 font-mono text-[11px] text-white opacity-0 transition-opacity group-hover:opacity-100">
+                    {c}
+                  </span>
                 </button>
               ))}
             </div>
@@ -138,7 +151,11 @@ export default function MovementPage() {
                   <Link to={`/learn/artists/${a.slug}`} className="group block">
                     <Frame frameWidth={7} matWidth={8}>
                       <div className="aspect-[4/3]">
-                        <GenerativeArt style={a.works[0].genStyle} seed={`${a.slug}-0`} palette={a.works[0].palette.length ? a.works[0].palette : undefined} />
+                        <GenerativeArt
+                          style={a.works[0].genStyle}
+                          seed={`${a.slug}-0`}
+                          palette={a.works[0].palette.length ? a.works[0].palette : undefined}
+                        />
                       </div>
                     </Frame>
                     <p className="mt-3 font-display text-xl">{a.name}</p>
@@ -152,7 +169,10 @@ export default function MovementPage() {
 
         <div className="mt-16 grid gap-4 sm:grid-cols-2">
           {prev ? (
-            <Link to={`/learn/movements/${prev.slug}`} className="group rounded-[22px] border border-line p-5 transition-colors hover:bg-ink/[0.03]">
+            <Link
+              to={`/learn/movements/${prev.slug}`}
+              className="group rounded-[22px] border border-line p-5 transition-colors hover:bg-ink/[0.03]"
+            >
               <p className="eyebrow flex items-center gap-2">
                 <ArrowLeft size={14} /> {t('learn.earlier')}
               </p>
@@ -162,7 +182,10 @@ export default function MovementPage() {
             <span />
           )}
           {next && (
-            <Link to={`/learn/movements/${next.slug}`} className="group rounded-[22px] border border-line p-5 text-right transition-colors hover:bg-ink/[0.03]">
+            <Link
+              to={`/learn/movements/${next.slug}`}
+              className="group rounded-[22px] border border-line p-5 text-right transition-colors hover:bg-ink/[0.03]"
+            >
               <p className="eyebrow flex items-center justify-end gap-2">
                 {t('learn.later')} <ArrowRight size={14} />
               </p>

@@ -2,7 +2,22 @@ import { useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion'
-import { ArrowRight, BookOpen, Brush, Flame, GalleryVerticalEnd, Layers, MessageCircle, Palette, Send, Shapes, Sparkles, Star, Trophy, WandSparkles } from 'lucide-react'
+import {
+  ArrowRight,
+  BookOpen,
+  Brush,
+  Flame,
+  GalleryVerticalEnd,
+  Layers,
+  MessageCircle,
+  Palette,
+  Send,
+  Shapes,
+  Sparkles,
+  Star,
+  Trophy,
+  WandSparkles,
+} from 'lucide-react'
 import type { GenStyle } from '@/types'
 import { ButtonLink, Button } from '@/components/Button'
 import { Magnetic } from '@/components/Magnetic'
@@ -119,7 +134,13 @@ function Hero() {
             <p className="hand absolute -left-24 top-6 hidden -rotate-6 text-xl text-accent-ink sm:block">
               {t('home.doodleArrow')}
               <svg viewBox="0 0 80 30" className="ml-10 mt-1 h-6 w-16" aria-hidden>
-                <path d="M2 6 C 30 4 50 10 74 24 M74 24 l-10 -1 M74 24 l-3 -9" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                <path
+                  d="M2 6 C 30 4 50 10 74 24 M74 24 l-10 -1 M74 24 l-3 -9"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                />
               </svg>
             </p>
           </motion.div>
@@ -139,18 +160,44 @@ function HowItWorks() {
   const colours = ['var(--vermilion)', 'var(--saffron)', 'var(--viridian)', 'var(--cerulean)', 'var(--rose)']
   return (
     <section className="container-art py-24">
-      <SectionHeading index="01" eyebrow={t('home.howEyebrow')} title={<>{t('home.howTitleA')} <em>{t('home.howTitleB')}</em></>} lede={t('home.howLede')} />
+      <SectionHeading
+        index="01"
+        eyebrow={t('home.howEyebrow')}
+        title={
+          <>
+            {t('home.howTitleA')} <em>{t('home.howTitleB')}</em>
+          </>
+        }
+        lede={t('home.howLede')}
+      />
       <ol className="relative mt-14 grid gap-8 md:grid-cols-5 md:gap-4">
-        <svg aria-hidden className="draw-in pointer-events-none absolute left-0 top-9 hidden h-8 w-full md:block" viewBox="0 0 1000 30" preserveAspectRatio="none">
-          <path d="M40 15 C 200 0 300 30 500 15 S 800 0 960 15" fill="none" stroke="var(--line-strong)" strokeWidth="2.5" strokeDasharray="0" style={{ ['--len' as string]: 1000 }} />
+        <svg
+          aria-hidden
+          className="draw-in pointer-events-none absolute left-0 top-9 hidden h-8 w-full md:block"
+          viewBox="0 0 1000 30"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M40 15 C 200 0 300 30 500 15 S 800 0 960 15"
+            fill="none"
+            stroke="var(--line-strong)"
+            strokeWidth="2.5"
+            strokeDasharray="0"
+            style={{ ['--len' as string]: 1000 }}
+          />
         </svg>
         {steps.map((s, i) => {
           const Icon = STEP_ICONS[i]
           return (
             <Reveal key={s.title} as="li" delay={i * 0.12} className="relative">
-              <div className="relative mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full border-2 border-card shadow-lift md:mx-0" style={{ background: colours[i] }}>
+              <div
+                className="relative mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full border-2 border-card shadow-lift md:mx-0"
+                style={{ background: colours[i] }}
+              >
                 <Icon size={28} className="text-white" />
-                <span className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-ink font-display text-sm text-paper">{i + 1}</span>
+                <span className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-ink font-display text-sm text-paper">
+                  {i + 1}
+                </span>
               </div>
               <h3 className="mt-5 text-center font-display text-2xl md:text-left">{s.title}</h3>
               <p className="mt-2 text-center text-ink-soft md:text-left">{s.body}</p>
@@ -194,7 +241,10 @@ function FeatureMock({ k }: { k: (typeof FEATURES)[number]['key'] }) {
       <div className="flex gap-3 p-4">
         <div className="paper flex flex-col gap-2 rounded-2xl border border-line p-2 shadow-paper">
           {[Brush, Palette, Layers, Shapes, Sparkles].map((I, i) => (
-            <span key={i} className={cn('flex h-9 w-9 items-center justify-center rounded-xl', i === 0 ? 'bg-ink text-paper' : 'text-ink-soft')}>
+            <span
+              key={i}
+              className={cn('flex h-9 w-9 items-center justify-center rounded-xl', i === 0 ? 'bg-ink text-paper' : 'text-ink-soft')}
+            >
               <I size={16} />
             </span>
           ))}
@@ -220,7 +270,10 @@ function FeatureMock({ k }: { k: (typeof FEATURES)[number]['key'] }) {
           <p className="mt-2 font-display text-xl leading-tight">{t('home.mock.lessonTitle')}</p>
           <div className="mt-4 space-y-2">
             {[t('home.mock.q1'), t('home.mock.q2')].map((q, i) => (
-              <div key={q} className={cn('rounded-xl border px-3 py-2 text-xs', i === 1 ? 'border-viridian bg-viridian/12' : 'border-line')}>
+              <div
+                key={q}
+                className={cn('rounded-xl border px-3 py-2 text-xs', i === 1 ? 'border-viridian bg-viridian/12' : 'border-line')}
+              >
                 {q}
               </div>
             ))}
@@ -232,7 +285,9 @@ function FeatureMock({ k }: { k: (typeof FEATURES)[number]['key'] }) {
     return (
       <div className="space-y-3 p-4">
         <div className="ml-auto w-fit rounded-[18px] rounded-tr-md bg-ink px-4 py-2 text-sm text-paper">{t('home.mock.chatQ')}</div>
-        <div className="w-fit max-w-[90%] rounded-[18px] rounded-tl-md border border-line bg-card px-4 py-2 text-sm text-ink-soft">{t('home.mock.chatA')}</div>
+        <div className="w-fit max-w-[90%] rounded-[18px] rounded-tl-md border border-line bg-card px-4 py-2 text-sm text-ink-soft">
+          {t('home.mock.chatA')}
+        </div>
         <div className="w-full max-w-sm rounded-2xl border border-line bg-card p-3 shadow-paper">
           <p className="mb-2 text-sm font-semibold">{t('home.mock.chatPalette')}</p>
           <div className="flex h-12 overflow-hidden rounded-xl ring-1 ring-line-strong">
@@ -285,7 +340,15 @@ function Features() {
   return (
     <section className="relative py-24">
       <div className="container-art">
-        <SectionHeading index="02" eyebrow={t('home.featuresEyebrow')} title={<>{t('home.featuresTitleA')} <em>{t('home.featuresTitleB')}</em></>} />
+        <SectionHeading
+          index="02"
+          eyebrow={t('home.featuresEyebrow')}
+          title={
+            <>
+              {t('home.featuresTitleA')} <em>{t('home.featuresTitleB')}</em>
+            </>
+          }
+        />
         <div className="mt-12 grid items-center gap-10 lg:grid-cols-[1fr_1.25fr]">
           <ul className="space-y-2">
             {FEATURES.map(({ key, to, icon: Icon }, i) => (
@@ -297,9 +360,17 @@ function Features() {
                     preloadRoute(to)
                   }}
                   onFocus={() => setActive(key)}
-                  className={cn('group flex items-start gap-4 rounded-[22px] border p-5 transition-all duration-300', active === key ? 'border-line bg-card shadow-paper' : 'border-transparent hover:bg-ink/[0.03]')}
+                  className={cn(
+                    'group flex items-start gap-4 rounded-[22px] border p-5 transition-all duration-300',
+                    active === key ? 'border-line bg-card shadow-paper' : 'border-transparent hover:bg-ink/[0.03]',
+                  )}
                 >
-                  <span className={cn('flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-colors', active === key ? 'bg-ink text-paper' : 'bg-ink/[0.06] text-ink')}>
+                  <span
+                    className={cn(
+                      'flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-colors',
+                      active === key ? 'bg-ink text-paper' : 'bg-ink/[0.06] text-ink',
+                    )}
+                  >
                     <Icon size={22} />
                   </span>
                   <span className="min-w-0">
@@ -308,7 +379,13 @@ function Features() {
                     </span>
                     <span className="mt-1 block text-ink-soft">{t(`home.features.${key}.body`)}</span>
                   </span>
-                  <ArrowRight size={18} className={cn('ml-auto mt-3 shrink-0 transition-transform', active === key ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0')} />
+                  <ArrowRight
+                    size={18}
+                    className={cn(
+                      'ml-auto mt-3 shrink-0 transition-transform',
+                      active === key ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0',
+                    )}
+                  />
                 </Link>
               </li>
             ))}
@@ -317,7 +394,13 @@ function Features() {
             <Frame frameWidth={14} matWidth={10} tilt={-1}>
               <div className="relative min-h-[320px] bg-paper-2 sm:min-h-[360px]">
                 <AnimatePresence mode="wait">
-                  <motion.div key={active} initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.35 }}>
+                  <motion.div
+                    key={active}
+                    initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.35 }}
+                  >
                     <FeatureMock k={active} />
                   </motion.div>
                 </AnimatePresence>
@@ -338,7 +421,11 @@ function JudgePreview() {
   const cat = useMemo(() => colouredTemplate('mushroom-house', 'judge-demo'), [])
   return (
     <section className="relative overflow-hidden bg-[#141210] py-24 text-[#f6f1e7]">
-      <div aria-hidden className="absolute inset-0" style={{ background: 'radial-gradient(50% 60% at 30% 40%, rgba(242,169,59,0.16), transparent 70%)' }} />
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{ background: 'radial-gradient(50% 60% at 30% 40%, rgba(242,169,59,0.16), transparent 70%)' }}
+      />
       <div className="container-art relative grid items-center gap-12 lg:grid-cols-2">
         <Reveal>
           <Frame tone="gold" frameWidth={16} matWidth={16} tilt={-1.5}>
@@ -379,11 +466,29 @@ function Gamify() {
     <section className="container-art py-24">
       <div className="grid items-center gap-12 lg:grid-cols-2">
         <div>
-          <SectionHeading index="04" eyebrow={t('home.gameEyebrow')} title={<>{t('home.gameTitleA')} <em>{t('home.gameTitleB')}</em></>} lede={t('home.gameLede')} />
+          <SectionHeading
+            index="04"
+            eyebrow={t('home.gameEyebrow')}
+            title={
+              <>
+                {t('home.gameTitleA')} <em>{t('home.gameTitleB')}</em>
+              </>
+            }
+            lede={t('home.gameLede')}
+          />
           <ul className="mt-8 grid gap-3 sm:grid-cols-2">
             {(t('home.gamePoints', { returnObjects: true }) as string[]).map((p, i) => (
               <li key={p} className="flex items-start gap-3">
-                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/20 text-gold-deep dark:text-gold">{[<Flame key="f" size={13} />, <Trophy key="t" size={13} />, <Star key="s" size={13} />, <Sparkles key="sp" size={13} />][i % 4]}</span>
+                <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/20 text-gold-deep dark:text-gold">
+                  {
+                    [
+                      <Flame key="f" size={13} />,
+                      <Trophy key="t" size={13} />,
+                      <Star key="s" size={13} />,
+                      <Sparkles key="sp" size={13} />,
+                    ][i % 4]
+                  }
+                </span>
                 <span className="text-ink-soft">{p}</span>
               </li>
             ))}
@@ -402,7 +507,18 @@ function Gamify() {
           {ids.map((id, i) => {
             const a = (i / ids.length) * Math.PI * 2 - Math.PI / 2
             return (
-              <div key={id} className="float-y absolute" style={{ left: `calc(50% + ${Math.cos(a) * 42}% - 36px)`, top: `calc(50% + ${Math.sin(a) * 40}% - 36px)`, '--d': `${5 + i}s`, '--r': `${(i % 2 ? 1 : -1) * 8}deg` } as React.CSSProperties}>
+              <div
+                key={id}
+                className="float-y absolute"
+                style={
+                  {
+                    left: `calc(50% + ${Math.cos(a) * 42}% - 36px)`,
+                    top: `calc(50% + ${Math.sin(a) * 40}% - 36px)`,
+                    '--d': `${5 + i}s`,
+                    '--r': `${(i % 2 ? 1 : -1) * 8}deg`,
+                  } as React.CSSProperties
+                }
+              >
                 <BadgeMedal badge={BADGE_MAP[id]} unlocked size={72} />
               </div>
             )
@@ -436,19 +552,44 @@ const WALL: ({ gen: GenStyle } | { tpl: string })[] = [
 function GalleryWall() {
   const { t } = useTranslation()
   const items = useMemo(
-    () => WALL.map((w, i) => ('tpl' in w ? { kind: 'tpl' as const, src: colouredTemplate(w.tpl, `wall-${i}`), key: w.tpl } : { kind: 'gen' as const, style: w.gen, key: w.gen })),
+    () =>
+      WALL.map((w, i) =>
+        'tpl' in w
+          ? { kind: 'tpl' as const, src: colouredTemplate(w.tpl, `wall-${i}`), key: w.tpl }
+          : { kind: 'gen' as const, style: w.gen, key: w.gen },
+      ),
     [],
   )
   return (
     <section className="relative py-24">
       <div className="container-art">
-        <SectionHeading index="05" eyebrow={t('home.wallEyebrow')} title={<>{t('home.wallTitleA')} <em>{t('home.wallTitleB')}</em></>} lede={t('home.wallLede')} align="center" />
+        <SectionHeading
+          index="05"
+          eyebrow={t('home.wallEyebrow')}
+          title={
+            <>
+              {t('home.wallTitleA')} <em>{t('home.wallTitleB')}</em>
+            </>
+          }
+          lede={t('home.wallLede')}
+          align="center"
+        />
         <ul className="mt-14 columns-2 gap-6 md:columns-3 lg:columns-4">
           {items.map((it, i) => (
             <Reveal key={it.key + i} as="li" delay={(i % 4) * 0.06} className="mb-6 break-inside-avoid">
-              <Frame frameWidth={8} matWidth={8} tone={i % 5 === 0 ? 'gold' : i % 3 === 0 ? 'light' : 'wood'} tilt={((i * 17) % 5) - 2} label={<WallLabel title={t(`home.wallLabels.${i % 6}`)} lines={[t('home.sampleArtwork')]} />}>
+              <Frame
+                frameWidth={8}
+                matWidth={8}
+                tone={i % 5 === 0 ? 'gold' : i % 3 === 0 ? 'light' : 'wood'}
+                tilt={((i * 17) % 5) - 2}
+                label={<WallLabel title={t(`home.wallLabels.${i % 6}`)} lines={[t('home.sampleArtwork')]} />}
+              >
                 <div className={i % 3 === 1 ? 'aspect-[3/4]' : 'aspect-[4/3]'}>
-                  {it.kind === 'tpl' ? <img src={it.src} alt="" className="h-full w-full object-contain" /> : <GenerativeArt style={it.style} seed={`wall-${i}`} aspect={i % 3 === 1 ? 'portrait' : 'landscape'} />}
+                  {it.kind === 'tpl' ? (
+                    <img src={it.src} alt="" className="h-full w-full object-contain" />
+                  ) : (
+                    <GenerativeArt style={it.style} seed={`wall-${i}`} aspect={i % 3 === 1 ? 'portrait' : 'landscape'} />
+                  )}
                 </div>
               </Frame>
             </Reveal>
@@ -473,7 +614,16 @@ function Testimonials() {
   const L = useL()
   return (
     <section className="container-art py-24">
-      <SectionHeading index="06" eyebrow={t('home.voicesEyebrow')} title={<>{t('home.voicesTitleA')} <em>{t('home.voicesTitleB')}</em></>} note={t('home.voicesNote')} />
+      <SectionHeading
+        index="06"
+        eyebrow={t('home.voicesEyebrow')}
+        title={
+          <>
+            {t('home.voicesTitleA')} <em>{t('home.voicesTitleB')}</em>
+          </>
+        }
+        note={t('home.voicesNote')}
+      />
       <ul className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {TESTIMONIALS.map((v, i) => (
           <Reveal key={v.name} as="li" delay={i * 0.08}>
@@ -487,7 +637,9 @@ function Testimonials() {
                   <span className="block text-xs text-ink-faint">{L(v.role)}</span>
                 </span>
               </figcaption>
-              <span className="mt-4 inline-block rounded-full bg-ink/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-ink-faint">{t('common.sample')}</span>
+              <span className="mt-4 inline-block rounded-full bg-ink/[0.06] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-ink-faint">
+                {t('common.sample')}
+              </span>
             </Card>
           </Reveal>
         ))}
@@ -513,7 +665,14 @@ function FinalCta() {
   return (
     <section className="container-art pb-16">
       <div className="relative isolate overflow-hidden rounded-[36px] bg-[#1b1a17] px-6 py-16 text-center text-[#f6f1e7] sm:px-12 sm:py-24">
-        <Washes className="h-full" washes={[{ color: '#E4572E', size: '30rem', top: '-30%', left: '-10%' }, { color: '#2F80C4', size: '26rem', bottom: '-40%', right: '-5%', delay: -6 }, { color: '#F2A93B', size: '22rem', top: '10%', right: '30%', delay: -12 }]} />
+        <Washes
+          className="h-full"
+          washes={[
+            { color: '#E4572E', size: '30rem', top: '-30%', left: '-10%' },
+            { color: '#2F80C4', size: '26rem', bottom: '-40%', right: '-5%', delay: -6 },
+            { color: '#F2A93B', size: '22rem', top: '10%', right: '30%', delay: -12 },
+          ]}
+        />
         <h2 className="display-lg mx-auto max-w-3xl text-[#f6f1e7]">
           {t('home.finalA')} <em>{t('home.finalB')}</em>
         </h2>

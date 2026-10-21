@@ -135,7 +135,13 @@ export function Lightbox({
           </div>
         </div>
       )}
-      <Modal open={confirmDelete} onClose={() => setConfirmDelete(false)} title={t('collection.deleteTitle')} description={t('collection.deleteBody')} size="sm">
+      <Modal
+        open={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        title={t('collection.deleteTitle')}
+        description={t('collection.deleteBody')}
+        size="sm"
+      >
         <div className="flex gap-3">
           <Button variant="outline" className="flex-1" onClick={() => setConfirmDelete(false)}>
             {t('common.cancel')}

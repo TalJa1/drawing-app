@@ -1,5 +1,17 @@
 import type { ScoreResult } from '@/types'
-import { applyEvent, evaluateBadges, levelFromXp, levelProgress, liveStreak, rankForLevel, updateStreak, xpForLevel, xpForScore, activeChallenges, type RulesContext } from './rules'
+import {
+  applyEvent,
+  evaluateBadges,
+  levelFromXp,
+  levelProgress,
+  liveStreak,
+  rankForLevel,
+  updateStreak,
+  xpForLevel,
+  xpForScore,
+  activeChallenges,
+  type RulesContext,
+} from './rules'
 import { emptyProgress, type ProgressEvent } from './types'
 
 const ctx = (iso = '2026-10-21T15:00:00'): RulesContext => ({

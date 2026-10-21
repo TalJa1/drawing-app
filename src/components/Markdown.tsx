@@ -13,8 +13,18 @@ export function InlineMarkdown({ text }: { text: string }) {
   while ((m = re.exec(text))) {
     if (m.index > last) parts.push(<Fragment key={i++}>{text.slice(last, m.index)}</Fragment>)
     const tok = m[0]
-    if (tok.startsWith('**')) parts.push(<strong key={i++} className="font-semibold text-ink">{tok.slice(2, -2)}</strong>)
-    else if (tok.startsWith('`')) parts.push(<code key={i++} className="rounded bg-ink/[0.06] px-1 font-mono text-[0.9em]">{tok.slice(1, -1)}</code>)
+    if (tok.startsWith('**'))
+      parts.push(
+        <strong key={i++} className="font-semibold text-ink">
+          {tok.slice(2, -2)}
+        </strong>,
+      )
+    else if (tok.startsWith('`'))
+      parts.push(
+        <code key={i++} className="rounded bg-ink/[0.06] px-1 font-mono text-[0.9em]">
+          {tok.slice(1, -1)}
+        </code>,
+      )
     else parts.push(<em key={i++}>{tok.slice(1, -1)}</em>)
     last = m.index + tok.length
   }
@@ -29,7 +39,12 @@ export function Markdown({ text, className }: { text: string; className?: string
   let para: string[] = []
   let key = 0
   const flushPara = () => {
-    if (para.length) blocks.push(<p key={key++}><InlineMarkdown text={para.join(' ')} /></p>)
+    if (para.length)
+      blocks.push(
+        <p key={key++}>
+          <InlineMarkdown text={para.join(' ')} />
+        </p>,
+      )
     para = []
   }
   const flushList = () => {
@@ -41,9 +56,13 @@ export function Markdown({ text, className }: { text: string; className?: string
     ))
     blocks.push(
       list.ordered ? (
-        <ol key={key++} className="list-decimal space-y-1 pl-5 marker:text-ink-faint">{items}</ol>
+        <ol key={key++} className="list-decimal space-y-1 pl-5 marker:text-ink-faint">
+          {items}
+        </ol>
       ) : (
-        <ul key={key++} className="list-disc space-y-1 pl-5 marker:text-accent-ink">{items}</ul>
+        <ul key={key++} className="list-disc space-y-1 pl-5 marker:text-accent-ink">
+          {items}
+        </ul>
       ),
     )
     list = null
@@ -64,7 +83,11 @@ export function Markdown({ text, className }: { text: string; className?: string
     } else if (h) {
       flushPara()
       flushList()
-      blocks.push(<p key={key++} className="font-display text-lg text-ink"><InlineMarkdown text={h[2]} /></p>)
+      blocks.push(
+        <p key={key++} className="font-display text-lg text-ink">
+          <InlineMarkdown text={h[2]} />
+        </p>,
+      )
     } else if (!line.trim()) {
       flushPara()
       flushList()

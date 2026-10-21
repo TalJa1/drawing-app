@@ -42,7 +42,11 @@ export function ScoringCeremony({
       aria-busy={!error}
     >
       {/* gallery spotlight */}
-      <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(40% 50% at 50% 38%, rgba(242,169,59,0.22), transparent 70%)' }} />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ background: 'radial-gradient(40% 50% at 50% 38%, rgba(242,169,59,0.22), transparent 70%)' }}
+      />
       <div className="relative aspect-[400/520] w-[min(340px,62vw,42dvh)]">
         {/* easel legs */}
         <svg viewBox="0 0 400 520" className="absolute left-0 top-0 h-auto w-full" aria-hidden>
@@ -61,7 +65,10 @@ export function ScoringCeremony({
               <img src={image} alt="" className="h-full w-full object-contain" />
               {!error && (
                 <div className="scan-beam pointer-events-none absolute inset-x-0 top-0 h-1/3" aria-hidden>
-                  <div className="h-full w-full" style={{ background: 'linear-gradient(to bottom, transparent, rgba(242,169,59,0.45) 85%, rgba(255,241,184,0.9))' }} />
+                  <div
+                    className="h-full w-full"
+                    style={{ background: 'linear-gradient(to bottom, transparent, rgba(242,169,59,0.45) 85%, rgba(255,241,184,0.9))' }}
+                  />
                 </div>
               )}
             </div>

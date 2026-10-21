@@ -3,36 +3,16 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/app/theme'
 
-export function Card({
-  className,
-  children,
-  paper = true,
-  ...rest
-}: HTMLAttributes<HTMLDivElement> & { paper?: boolean }) {
+export function Card({ className, children, paper = true, ...rest }: HTMLAttributes<HTMLDivElement> & { paper?: boolean }) {
   return (
-    <div
-      className={cn(
-        'rounded-[22px] border border-line shadow-paper',
-        paper ? 'paper' : 'bg-card',
-        className,
-      )}
-      {...rest}
-    >
+    <div className={cn('rounded-[22px] border border-line shadow-paper', paper ? 'paper' : 'bg-card', className)} {...rest}>
       {children}
     </div>
   )
 }
 
 /** Subtle 3D tilt that follows the pointer. Disabled for reduced motion / touch. */
-export function TiltCard({
-  children,
-  className,
-  max = 7,
-}: {
-  children: ReactNode
-  className?: string
-  max?: number
-}) {
+export function TiltCard({ children, className, max = 7 }: { children: ReactNode; className?: string; max?: number }) {
   const reduced = useReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
   const x = useMotionValue(0.5)
@@ -43,8 +23,7 @@ export function TiltCard({
   const rotateX = useTransform(sy, [0, 1], [max, -max])
   const glare = useTransform(
     [sx, sy] as never,
-    ([gx, gy]: number[]) =>
-      `radial-gradient(400px circle at ${gx * 100}% ${gy * 100}%, rgb(255 255 255 / 0.18), transparent 50%)`,
+    ([gx, gy]: number[]) => `radial-gradient(400px circle at ${gx * 100}% ${gy * 100}%, rgb(255 255 255 / 0.18), transparent 50%)`,
   )
 
   if (reduced) return <div className={className}>{children}</div>

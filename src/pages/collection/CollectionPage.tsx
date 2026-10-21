@@ -55,7 +55,12 @@ function GalleryItem({ art, onOpen, index }: { art: Artwork; onOpen: () => void;
       exit={{ opacity: 0, scale: 0.95 }}
       className="mb-8 break-inside-avoid"
     >
-      <button type="button" onClick={onOpen} className="group block w-full text-left" aria-label={t('collection.openArtwork', { title: art.title })}>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="group block w-full text-left"
+        aria-label={t('collection.openArtwork', { title: art.title })}
+      >
         <div
           className={cn(
             'frame transition-transform duration-500 [transform:rotate(var(--tilt))] group-hover:[transform:translateY(-4px)]',
@@ -75,7 +80,8 @@ function GalleryItem({ art, onOpen, index }: { art: Artwork; onOpen: () => void;
               <div className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/75 to-transparent p-3 pt-8 text-[#f6f1e7] transition-transform duration-300 group-hover:translate-y-0 group-focus-visible:translate-y-0">
                 <p className="font-display text-lg leading-tight">{art.title}</p>
                 <p className="text-[11px] uppercase tracking-wider opacity-80">
-                  {art.kind === 'practice' ? t('collection.kind.practice') : t('collection.kind.free')} · {formatDate(art.createdAt, i18n.language)}
+                  {art.kind === 'practice' ? t('collection.kind.practice') : t('collection.kind.free')} ·{' '}
+                  {formatDate(art.createdAt, i18n.language)}
                 </p>
               </div>
             </div>
@@ -84,7 +90,12 @@ function GalleryItem({ art, onOpen, index }: { art: Artwork; onOpen: () => void;
         <div className="mt-3 flex items-center justify-between px-1">
           <span className="wall-label truncate">{art.title}</span>
           {art.score && (
-            <span className={cn('rounded-full px-2 py-0.5 text-xs font-bold tabular-nums', art.score.overall >= 85 ? 'bg-gold text-inkwell' : 'bg-ink/[0.07] text-ink')}>
+            <span
+              className={cn(
+                'rounded-full px-2 py-0.5 text-xs font-bold tabular-nums',
+                art.score.overall >= 85 ? 'bg-gold text-inkwell' : 'bg-ink/[0.07] text-ink',
+              )}
+            >
               {art.score.overall}
             </span>
           )}
@@ -178,7 +189,12 @@ export default function CollectionPage() {
             <StatTile icon={<Star size={14} />} label={t('collection.statBest')} value={scored.length ? best : '—'} />
             <StatTile icon={<Clock size={14} />} label={t('collection.statTime')} value={formatMinutes(totalSeconds)} />
             <StatTile icon={<Flame size={14} />} label={t('collection.statStreak')} value={streak} hint={t('collection.statDays')} />
-            <StatTile icon={<Trophy size={14} />} label={t('collection.statLongest')} value={progress.streak.longest} hint={t('collection.statDays')} />
+            <StatTile
+              icon={<Trophy size={14} />}
+              label={t('collection.statLongest')}
+              value={progress.streak.longest}
+              hint={t('collection.statDays')}
+            />
           </div>
           <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
             <Card className="p-5 sm:p-6">
@@ -195,7 +211,13 @@ export default function CollectionPage() {
                   labels={history.map((h) => new Date(h.at).toLocaleDateString(locale, { day: 'numeric', month: 'short' }))}
                   series={[
                     { id: 'overall', label: t('collection.series.overall'), color: 'var(--viz-1)', values: history.map((h) => h.overall) },
-                    { id: 'similarity', label: t('result.similarity'), color: 'var(--viz-2)', dash: '6 4', values: history.map((h) => h.similarity) },
+                    {
+                      id: 'similarity',
+                      label: t('result.similarity'),
+                      color: 'var(--viz-2)',
+                      dash: '6 4',
+                      values: history.map((h) => h.similarity),
+                    },
                     { id: 'colour', label: t('result.colour'), color: 'var(--viz-3)', dash: '2 4', values: history.map((h) => h.colour) },
                   ]}
                 />

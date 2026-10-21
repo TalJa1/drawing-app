@@ -47,15 +47,7 @@ export function Frame({
 }
 
 /** Small-caps museum wall label. */
-export function WallLabel({
-  title,
-  lines,
-  className,
-}: {
-  title: ReactNode
-  lines?: ReactNode[]
-  className?: string
-}) {
+export function WallLabel({ title, lines, className }: { title: ReactNode; lines?: ReactNode[]; className?: string }) {
   return (
     <div className={cn('wall-label border-l-2 border-ink/20 pl-3', className)}>
       <strong className="block leading-tight">{title}</strong>

@@ -16,7 +16,15 @@ export function useMuse() {
 
   const stream = useCallback(async (convId: string, text: string, mode: ChatMode, attachments: ChatAttachment[], seed?: string) => {
     const store = useChat.getState()
-    const reply: ChatMessage = { id: uid('m_'), role: 'assistant', content: '', cards: [], attachments: [], createdAt: new Date().toISOString(), pending: true }
+    const reply: ChatMessage = {
+      id: uid('m_'),
+      role: 'assistant',
+      content: '',
+      cards: [],
+      attachments: [],
+      createdAt: new Date().toISOString(),
+      pending: true,
+    }
     store.addMessage(convId, reply)
     const ctrl = new AbortController()
     abort.current = ctrl
@@ -31,7 +39,10 @@ export function useMuse() {
       useChat.getState().updateMessage(convId, reply.id, { content, cards: [...cards] })
     }
     try {
-      for await (const ev of streamChatReply({ message: text, mode, lang: useSettings.getState().language, attachments, seed }, ctrl.signal)) {
+      for await (const ev of streamChatReply(
+        { message: text, mode, lang: useSettings.getState().language, attachments, seed },
+        ctrl.signal,
+      )) {
         if (ev.type === 'token') content += ev.text
         if (ev.type === 'card') cards.push(ev.card)
         flush(ev.type !== 'token')

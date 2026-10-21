@@ -182,8 +182,20 @@ export function Studio(props: StudioProps) {
           {props.subtitle && <div className="hidden truncate text-xs text-ink-faint sm:block">{props.subtitle}</div>}
         </div>
         <div className="mx-auto hidden items-center gap-1 md:flex">
-          <IconButton label={t('studio.undo')} shortcut="Ctrl+Z" icon={<Undo2 size={18} />} onClick={() => engine.undo()} disabled={!engine.canUndo()} />
-          <IconButton label={t('studio.redo')} shortcut="Ctrl+Y" icon={<Redo2 size={18} />} onClick={() => engine.redo()} disabled={!engine.canRedo()} />
+          <IconButton
+            label={t('studio.undo')}
+            shortcut="Ctrl+Z"
+            icon={<Undo2 size={18} />}
+            onClick={() => engine.undo()}
+            disabled={!engine.canUndo()}
+          />
+          <IconButton
+            label={t('studio.redo')}
+            shortcut="Ctrl+Y"
+            icon={<Redo2 size={18} />}
+            onClick={() => engine.redo()}
+            disabled={!engine.canRedo()}
+          />
           <span className="mx-1 h-6 w-px bg-line" aria-hidden />
           <IconButton label={t('studio.zoomOut')} shortcut="-" icon={<ZoomOut size={18} />} onClick={() => engine.zoomBy(0.8)} />
           <button
@@ -200,17 +212,30 @@ export function Studio(props: StudioProps) {
           <IconButton label={t('studio.clear')} icon={<Trash2 size={17} />} onClick={() => setConfirmClear(true)} />
         </div>
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
-          <span className="hidden items-center gap-1.5 rounded-full bg-ink/[0.05] px-3 py-1.5 text-xs font-semibold tabular-nums text-ink-soft lg:inline-flex" aria-label={t('studio.timer')}>
+          <span
+            className="hidden items-center gap-1.5 rounded-full bg-ink/[0.05] px-3 py-1.5 text-xs font-semibold tabular-nums text-ink-soft lg:inline-flex"
+            aria-label={t('studio.timer')}
+          >
             <Timer size={14} /> {formatDuration(seconds)}
           </span>
           {props.topExtra}
           <IconButton
             className="hidden sm:inline-flex"
-            label={savedAt ? t('studio.savedAt', { time: new Date(savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }) : t('studio.saveDraft')}
+            label={
+              savedAt
+                ? t('studio.savedAt', { time: new Date(savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) })
+                : t('studio.saveDraft')
+            }
             icon={<Save size={18} />}
             onClick={() => handlers.onSave()}
           />
-          <IconButton className="hidden lg:inline-flex" label={t('studio.shortcuts')} shortcut="?" icon={<CircleQuestionMark size={18} />} onClick={() => setShortcuts(true)} />
+          <IconButton
+            className="hidden lg:inline-flex"
+            label={t('studio.shortcuts')}
+            shortcut="?"
+            icon={<CircleQuestionMark size={18} />}
+            onClick={() => setShortcuts(true)}
+          />
           <div data-tour="primary" className="flex items-center gap-2">
             {props.primary(ctx)}
           </div>
@@ -233,8 +258,18 @@ export function Studio(props: StudioProps) {
           <CanvasStage engine={engine} description={props.description} />
         </div>
         {desktop && (
-          <aside className="paper relative z-10 flex w-[340px] shrink-0 flex-col border-l border-line" aria-label={t('studio.panels.label')}>
-            <Tabs className="border-b border-line px-3 pt-2" items={panelTabs} value={panel} onChange={(p) => setPanel({ panel: p })} size="sm" ariaLabel={t('studio.panels.label')} />
+          <aside
+            className="paper relative z-10 flex w-[340px] shrink-0 flex-col border-l border-line"
+            aria-label={t('studio.panels.label')}
+          >
+            <Tabs
+              className="border-b border-line px-3 pt-2"
+              items={panelTabs}
+              value={panel}
+              onChange={(p) => setPanel({ panel: p })}
+              size="sm"
+              ariaLabel={t('studio.panels.label')}
+            />
             <div className="min-h-0 flex-1 overflow-y-auto p-4 scrollbar-thin">{panelBody(panel)}</div>
           </aside>
         )}
@@ -244,12 +279,34 @@ export function Studio(props: StudioProps) {
       {!desktop && (
         <div className="relative z-20 shrink-0 border-t border-line bg-card/90 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl">
           <div className="mb-2 flex items-center gap-1.5">
-            <IconButton size="md" label={t('studio.undo')} icon={<Undo2 size={18} />} onClick={() => engine.undo()} disabled={!engine.canUndo()} noTooltip />
-            <IconButton size="md" label={t('studio.redo')} icon={<Redo2 size={18} />} onClick={() => engine.redo()} disabled={!engine.canRedo()} noTooltip />
+            <IconButton
+              size="md"
+              label={t('studio.undo')}
+              icon={<Undo2 size={18} />}
+              onClick={() => engine.undo()}
+              disabled={!engine.canUndo()}
+              noTooltip
+            />
+            <IconButton
+              size="md"
+              label={t('studio.redo')}
+              icon={<Redo2 size={18} />}
+              onClick={() => engine.redo()}
+              disabled={!engine.canRedo()}
+              noTooltip
+            />
             <IconButton size="md" label={t('studio.fit')} icon={<Maximize size={17} />} onClick={() => engine.fit()} noTooltip />
-            <span className="ml-1 rounded-full bg-ink/[0.05] px-2.5 py-1 text-xs font-semibold tabular-nums text-ink-soft">{formatDuration(seconds)}</span>
+            <span className="ml-1 rounded-full bg-ink/[0.05] px-2.5 py-1 text-xs font-semibold tabular-nums text-ink-soft">
+              {formatDuration(seconds)}
+            </span>
             <div className="ml-auto flex items-center gap-1.5">
-              <IconButton size="md" label={t('studio.toolOptions')} icon={<SlidersHorizontal size={18} />} onClick={() => setSheet('options')} noTooltip />
+              <IconButton
+                size="md"
+                label={t('studio.toolOptions')}
+                icon={<SlidersHorizontal size={18} />}
+                onClick={() => setSheet('options')}
+                noTooltip
+              />
               <button
                 type="button"
                 onClick={() => setSheet('colour')}
@@ -257,7 +314,13 @@ export function Studio(props: StudioProps) {
                 className="h-10 w-10 rounded-full border-2 border-card shadow-[0_0_0_1px_var(--line-strong)]"
                 style={{ background: color }}
               />
-              <IconButton size="md" label={t('studio.panels.layers')} icon={<Layers size={18} />} onClick={() => setSheet('layers')} noTooltip />
+              <IconButton
+                size="md"
+                label={t('studio.panels.layers')}
+                icon={<Layers size={18} />}
+                onClick={() => setSheet('layers')}
+                noTooltip
+              />
               <IconButton size="md" label={props.infoLabel} icon={<Info size={18} />} onClick={() => setSheet('info')} noTooltip />
             </div>
           </div>
@@ -269,7 +332,9 @@ export function Studio(props: StudioProps) {
         <Sheet
           open={sheet !== null}
           onClose={() => setSheet(null)}
-          title={sheet === 'options' ? t('studio.toolOptions') : sheet === 'info' ? props.infoLabel : sheet ? t(`studio.panels.${sheet}`) : ''}
+          title={
+            sheet === 'options' ? t('studio.toolOptions') : sheet === 'info' ? props.infoLabel : sheet ? t(`studio.panels.${sheet}`) : ''
+          }
         >
           {sheet === 'options' ? (
             <div className="flex flex-col gap-4 [&_label]:min-w-0">
@@ -284,7 +349,13 @@ export function Studio(props: StudioProps) {
         </Sheet>
       )}
 
-      <Modal open={confirmClear} onClose={() => setConfirmClear(false)} title={t('studio.clearTitle')} description={t('studio.clearBody')} size="sm">
+      <Modal
+        open={confirmClear}
+        onClose={() => setConfirmClear(false)}
+        title={t('studio.clearTitle')}
+        description={t('studio.clearBody')}
+        size="sm"
+      >
         <div className="flex gap-3">
           <Button variant="outline" className="flex-1" onClick={() => setConfirmClear(false)}>
             {t('common.cancel')}

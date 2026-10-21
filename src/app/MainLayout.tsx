@@ -19,10 +19,7 @@ export function MainLayout() {
 
   return (
     <div className="paper-bg relative min-h-dvh">
-      <a
-        href="#main"
-        className="fixed left-4 top-3 z-[150] -translate-y-20 rounded-full bg-ink px-4 py-2 text-paper focus:translate-y-0"
-      >
+      <a href="#main" className="fixed left-4 top-3 z-[150] -translate-y-20 rounded-full bg-ink px-4 py-2 text-paper focus:translate-y-0">
         {t('a11y.skipToContent')}
       </a>
       <Navbar />

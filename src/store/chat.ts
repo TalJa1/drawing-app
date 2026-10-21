@@ -37,34 +37,26 @@ export const useChat = create<ChatState>()(
         return id
       },
       setActive: (activeId) => set({ activeId }),
-      rename: (id, title) =>
-        set((s) => ({ conversations: s.conversations.map((c) => (c.id === id ? { ...c, title } : c)) })),
+      rename: (id, title) => set((s) => ({ conversations: s.conversations.map((c) => (c.id === id ? { ...c, title } : c)) })),
       remove: (id) =>
         set((s) => {
           const conversations = s.conversations.filter((c) => c.id !== id)
           return { conversations, activeId: s.activeId === id ? (conversations[0]?.id ?? null) : s.activeId }
         }),
-      setMode: (id, mode) =>
-        set((s) => ({ conversations: s.conversations.map((c) => (c.id === id ? { ...c, mode } : c)) })),
+      setMode: (id, mode) => set((s) => ({ conversations: s.conversations.map((c) => (c.id === id ? { ...c, mode } : c)) })),
       addMessage: (id, m) =>
         set((s) => ({
-          conversations: s.conversations.map((c) =>
-            c.id === id ? { ...c, messages: [...c.messages, m], updatedAt: m.createdAt } : c,
-          ),
+          conversations: s.conversations.map((c) => (c.id === id ? { ...c, messages: [...c.messages, m], updatedAt: m.createdAt } : c)),
         })),
       updateMessage: (id, messageId, p) =>
         set((s) => ({
           conversations: s.conversations.map((c) =>
-            c.id === id
-              ? { ...c, messages: c.messages.map((m) => (m.id === messageId ? { ...m, ...p } : m)) }
-              : c,
+            c.id === id ? { ...c, messages: c.messages.map((m) => (m.id === messageId ? { ...m, ...p } : m)) } : c,
           ),
         })),
       removeMessage: (id, messageId) =>
         set((s) => ({
-          conversations: s.conversations.map((c) =>
-            c.id === id ? { ...c, messages: c.messages.filter((m) => m.id !== messageId) } : c,
-          ),
+          conversations: s.conversations.map((c) => (c.id === id ? { ...c, messages: c.messages.filter((m) => m.id !== messageId) } : c)),
         })),
       setDraft: (draft) => set({ draft }),
       reset: () => set({ conversations: [], activeId: null, draft: null }),

@@ -93,7 +93,11 @@ export default function PracticeLibraryPage() {
         {/* ---------- filters ---------- */}
         <div className="sticky top-[76px] z-30 mt-12 rounded-[26px] border border-line bg-card/85 p-3 shadow-paper backdrop-blur-xl md:top-[92px] md:p-4">
           <LayoutGroup id="cat">
-            <div className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-1" role="group" aria-label={t('practice.filters.category')}>
+            <div
+              className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
+              role="group"
+              aria-label={t('practice.filters.category')}
+            >
               <Chip selected={category === 'all'} onClick={() => setCategory('all')} layoutGroup="cat">
                 {t('common.all')}
               </Chip>
@@ -105,11 +109,22 @@ export default function PracticeLibraryPage() {
             </div>
           </LayoutGroup>
           <div className="mt-3 grid gap-3 md:grid-cols-[1fr_auto_auto_auto] md:items-center">
-            <SearchBar value={query} onChange={setQuery} label={t('practice.filters.search')} placeholder={t('practice.filters.searchPlaceholder')} />
+            <SearchBar
+              value={query}
+              onChange={setQuery}
+              label={t('practice.filters.search')}
+              placeholder={t('practice.filters.searchPlaceholder')}
+            />
             <LayoutGroup id="diff">
               <div className="no-scrollbar flex gap-1.5 overflow-x-auto" role="group" aria-label={t('practice.filters.difficulty')}>
                 {(['all', ...DIFF_ORDER] as const).map((d) => (
-                  <Chip key={d} selected={difficulty === d} onClick={() => setDifficulty(d)} layoutGroup="diff" className="!h-8 !px-3 !text-xs">
+                  <Chip
+                    key={d}
+                    selected={difficulty === d}
+                    onClick={() => setDifficulty(d)}
+                    layoutGroup="diff"
+                    className="!h-8 !px-3 !text-xs"
+                  >
                     {d === 'all' ? t('practice.filters.anyLevel') : t(`difficulty.${d}`)}
                   </Chip>
                 ))}
@@ -120,7 +135,12 @@ export default function PracticeLibraryPage() {
               <option value="new">{t('practice.sort.new')}</option>
               <option value="easiest">{t('practice.sort.easiest')}</option>
             </Select>
-            <Switch checked={notDone} onChange={setNotDone} label={<span className="text-sm">{t('practice.filters.notDone')}</span>} className="md:min-w-[200px]" />
+            <Switch
+              checked={notDone}
+              onChange={setNotDone}
+              label={<span className="text-sm">{t('practice.filters.notDone')}</span>}
+              className="md:min-w-[200px]"
+            />
           </div>
         </div>
 

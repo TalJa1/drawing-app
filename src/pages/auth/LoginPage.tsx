@@ -47,8 +47,20 @@ export default function LoginPage() {
       lede={t('auth.loginLede')}
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
-        <TextField label={t('auth.email')} type="email" autoComplete="email" {...register('email')} error={errors.email && t(errors.email.message!)} />
-        <TextField label={t('auth.password')} type="password" autoComplete="current-password" {...register('password')} error={errors.password && t(errors.password.message!)} />
+        <TextField
+          label={t('auth.email')}
+          type="email"
+          autoComplete="email"
+          {...register('email')}
+          error={errors.email && t(errors.email.message!)}
+        />
+        <TextField
+          label={t('auth.password')}
+          type="password"
+          autoComplete="current-password"
+          {...register('password')}
+          error={errors.password && t(errors.password.message!)}
+        />
         {errors.root && (
           <p role="alert" className="text-sm text-accent-ink">
             {t(errors.root.message!)}

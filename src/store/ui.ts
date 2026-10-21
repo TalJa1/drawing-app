@@ -45,8 +45,7 @@ interface CelebrationState {
 
 export const useCelebrations = create<CelebrationState>()((set) => ({
   queue: [],
-  enqueue: (cs) =>
-    set((s) => ({ queue: [...s.queue, ...cs.map((c) => ({ ...c, id: uid('cel_') }) as Celebration)] })),
+  enqueue: (cs) => set((s) => ({ queue: [...s.queue, ...cs.map((c) => ({ ...c, id: uid('cel_') }) as Celebration)] })),
   shift: () => set((s) => ({ queue: s.queue.slice(1) })),
 }))
 

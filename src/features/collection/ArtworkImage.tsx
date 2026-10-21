@@ -36,7 +36,12 @@ export function ArtworkImage({
   return (
     <div className={cn('relative w-full overflow-hidden bg-white', className)} style={{ aspectRatio: aspect }}>
       {url ? (
-        <img src={url} alt={alt} className={cn('absolute inset-0 h-full w-full', fit === 'cover' ? 'object-cover' : 'object-contain')} decoding="async" />
+        <img
+          src={url}
+          alt={alt}
+          className={cn('absolute inset-0 h-full w-full', fit === 'cover' ? 'object-cover' : 'object-contain')}
+          decoding="async"
+        />
       ) : failed ? (
         <div className="absolute inset-0 flex items-center justify-center bg-paper-2 text-xs text-ink-faint">{alt}</div>
       ) : (

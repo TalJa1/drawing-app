@@ -70,7 +70,8 @@ export default function ColorLabPage() {
     void recordActivity({ type: 'colorLab' }).then(presentReward)
   }, [base])
 
-  const copy = async (text: string, label: string) => toast({ title: (await copyText(text)) ? t('common.copied') : t('learn.lab.copyFailed'), description: label, tone: 'success' })
+  const copy = async (text: string, label: string) =>
+    toast({ title: (await copyText(text)) ? t('common.copied') : t('learn.lab.copyFailed'), description: label, tone: 'success' })
   const send = async () => {
     setPending({ name: t(`learn.lab.schemes.${kind}`), colors: palette })
     presentReward(await recordActivity({ type: 'paletteSent' }))
@@ -82,7 +83,12 @@ export default function ColorLabPage() {
 
   return (
     <Page>
-      <Washes washes={[{ color: base, size: '40vmax', top: '-16%', left: '-12%' }, { color: palette[1], size: '30vmax', top: '30%', right: '-12%', delay: -8 }]} />
+      <Washes
+        washes={[
+          { color: base, size: '40vmax', top: '-16%', left: '-12%' },
+          { color: palette[1], size: '30vmax', top: '30%', right: '-12%', delay: -8 },
+        ]}
+      />
       <div className="container-art">
         <Link to="/learn#tools" className="inline-flex items-center gap-2 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft size={16} /> {t('learn.backToAtlas')}
@@ -119,7 +125,12 @@ export default function ColorLabPage() {
           </Card>
 
           <Card className="p-6">
-            <Tabs ariaLabel={t('learn.lab.schemeLabel')} value={kind} onChange={setKind} items={SCHEMES.map((s) => ({ id: s, label: t(`learn.lab.schemes.${s}`) }))} />
+            <Tabs
+              ariaLabel={t('learn.lab.schemeLabel')}
+              value={kind}
+              onChange={setKind}
+              items={SCHEMES.map((s) => ({ id: s, label: t(`learn.lab.schemes.${s}`) }))}
+            />
             <p className="mt-3 text-sm text-ink-soft">{t(`learn.lab.explain.${kind}`)}</p>
             <div className="mt-5 grid gap-6 xl:grid-cols-[1fr_1.1fr]">
               <div>
@@ -138,10 +149,20 @@ export default function ColorLabPage() {
                   ))}
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Button size="sm" variant="outline" icon={<Copy size={15} />} onClick={() => void copy(palette.join(', '), t('learn.lab.hexList'))}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    icon={<Copy size={15} />}
+                    onClick={() => void copy(palette.join(', '), t('learn.lab.hexList'))}
+                  >
                     {t('learn.lab.copyHex')}
                   </Button>
-                  <Button size="sm" variant="outline" icon={<Code2 size={15} />} onClick={() => void copy(palette.map((c, i) => `--colour-${i + 1}: ${c};`).join('\n'), 'CSS')}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    icon={<Code2 size={15} />}
+                    onClick={() => void copy(palette.map((c, i) => `--colour-${i + 1}: ${c};`).join('\n'), 'CSS')}
+                  >
                     {t('learn.lab.copyCss')}
                   </Button>
                   <Button size="sm" variant="pigment" icon={<Send size={15} />} onClick={() => void send()}>
@@ -169,7 +190,12 @@ export default function ColorLabPage() {
                 ] as const
               ).map(([k, v, set]) => (
                 <label key={k} className="flex items-center gap-3 text-sm font-medium">
-                  <input type="color" value={v} onChange={(e) => set(e.target.value)} className="h-10 w-12 cursor-pointer rounded-lg border border-line-strong bg-card" />
+                  <input
+                    type="color"
+                    value={v}
+                    onChange={(e) => set(e.target.value)}
+                    className="h-10 w-12 cursor-pointer rounded-lg border border-line-strong bg-card"
+                  />
                   {t(`learn.lab.${k}`)}
                   <span className="font-mono text-xs text-ink-faint">{v.toUpperCase()}</span>
                 </label>
@@ -182,7 +208,9 @@ export default function ColorLabPage() {
             <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
               <span className="font-display text-3xl tabular-nums">{cr.toFixed(2)}:1</span>
               <span className="inline-flex items-center gap-1">{pass(4.5)} AA</span>
-              <span className="inline-flex items-center gap-1">{pass(3)} AA {t('learn.lab.large')}</span>
+              <span className="inline-flex items-center gap-1">
+                {pass(3)} AA {t('learn.lab.large')}
+              </span>
               <span className="inline-flex items-center gap-1">{pass(7)} AAA</span>
             </div>
           </Card>
@@ -192,23 +220,61 @@ export default function ColorLabPage() {
             <p className="mt-1 text-sm text-ink-soft">{t('learn.lab.mixLede')}</p>
             <div className="mt-6 flex items-center justify-center gap-2 sm:gap-6">
               <label className="flex flex-col items-center gap-2 text-xs text-ink-faint">
-                <input type="color" value={mixA} onChange={(e) => setMixA(e.target.value)} className="sr-only" aria-label={t('learn.lab.pigmentA')} id="mixA" />
-                <span className="h-20 w-20 rounded-full border-4 border-card shadow-lift" style={{ background: mixA, borderRadius: '58% 42% 55% 45% / 50% 60% 40% 50%' }} />
+                <input
+                  type="color"
+                  value={mixA}
+                  onChange={(e) => setMixA(e.target.value)}
+                  className="sr-only"
+                  aria-label={t('learn.lab.pigmentA')}
+                  id="mixA"
+                />
+                <span
+                  className="h-20 w-20 rounded-full border-4 border-card shadow-lift"
+                  style={{ background: mixA, borderRadius: '58% 42% 55% 45% / 50% 60% 40% 50%' }}
+                />
                 {mixA.toUpperCase()}
               </label>
               <span className="font-display text-3xl text-ink-faint">+</span>
               <label className="flex flex-col items-center gap-2 text-xs text-ink-faint">
-                <input type="color" value={mixB} onChange={(e) => setMixB(e.target.value)} className="sr-only" aria-label={t('learn.lab.pigmentB')} id="mixB" />
-                <span className="h-20 w-20 rounded-full border-4 border-card shadow-lift" style={{ background: mixB, borderRadius: '45% 55% 42% 58% / 60% 45% 55% 40%' }} />
+                <input
+                  type="color"
+                  value={mixB}
+                  onChange={(e) => setMixB(e.target.value)}
+                  className="sr-only"
+                  aria-label={t('learn.lab.pigmentB')}
+                  id="mixB"
+                />
+                <span
+                  className="h-20 w-20 rounded-full border-4 border-card shadow-lift"
+                  style={{ background: mixB, borderRadius: '45% 55% 42% 58% / 60% 45% 55% 40%' }}
+                />
                 {mixB.toUpperCase()}
               </label>
               <span className="font-display text-3xl text-ink-faint">=</span>
-              <button type="button" onClick={() => void copy(mixed, mixed.toUpperCase())} className="flex flex-col items-center gap-2 text-xs text-ink-faint" aria-label={t('learn.copyColour', { hex: mixed })}>
-                <span className="h-28 w-28 shadow-lift transition-colors duration-300" style={{ background: mixed, borderRadius: '52% 48% 60% 40% / 45% 55% 45% 55%' }} />
+              <button
+                type="button"
+                onClick={() => void copy(mixed, mixed.toUpperCase())}
+                className="flex flex-col items-center gap-2 text-xs text-ink-faint"
+                aria-label={t('learn.copyColour', { hex: mixed })}
+              >
+                <span
+                  className="h-28 w-28 shadow-lift transition-colors duration-300"
+                  style={{ background: mixed, borderRadius: '52% 48% 60% 40% / 45% 55% 45% 55%' }}
+                />
                 {mixed.toUpperCase()}
               </button>
             </div>
-            <Slider className="mt-6" label={t('learn.lab.ratio')} value={ratio} min={0} max={1} step={0.01} onChange={setRatio} format={(v) => `${Math.round((1 - v) * 100)} : ${Math.round(v * 100)}`} accent={mixed} />
+            <Slider
+              className="mt-6"
+              label={t('learn.lab.ratio')}
+              value={ratio}
+              min={0}
+              max={1}
+              step={0.01}
+              onChange={setRatio}
+              format={(v) => `${Math.round((1 - v) * 100)} : ${Math.round(v * 100)}`}
+              accent={mixed}
+            />
             <p className="hand mt-3 text-lg text-accent-ink">{t('learn.lab.mixNote')}</p>
           </Card>
         </div>

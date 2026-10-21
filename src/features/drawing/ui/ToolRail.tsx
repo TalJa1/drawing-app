@@ -47,9 +47,10 @@ export function ToolRail({ orientation = 'vertical', className }: { orientation?
               />
             )}
             <def.icon size={19} className="relative" strokeWidth={active ? 2.2 : 1.8} />
-            {active && ['pencil', 'pen', 'marker', 'watercolour', 'airbrush', 'chalk', 'bucket', 'line', 'rect', 'ellipse'].includes(def.id) && (
-              <span className="absolute bottom-1 right-1 h-2 w-2 rounded-full ring-1 ring-paper" style={{ background: color }} />
-            )}
+            {active &&
+              ['pencil', 'pen', 'marker', 'watercolour', 'airbrush', 'chalk', 'bucket', 'line', 'rect', 'ellipse'].includes(def.id) && (
+                <span className="absolute bottom-1 right-1 h-2 w-2 rounded-full ring-1 ring-paper" style={{ background: color }} />
+              )}
           </button>
         )
         return (

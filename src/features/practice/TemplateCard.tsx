@@ -9,7 +9,6 @@ import { TiltCard } from '@/components/Card'
 import { DifficultyDots } from '@/components/Chip'
 import { DIFF_LEVEL } from './constants'
 
-
 export function TemplateImage({ template, className, alt = '' }: { template: Template; className?: string; alt?: string }) {
   return (
     <img
@@ -46,7 +45,12 @@ export function TemplateCard({
         )}
       >
         <div className="relative m-3 mb-0 overflow-hidden rounded-[14px] border-[7px] border-[var(--mat)] bg-white shadow-[inset_0_0_0_1px_rgb(0_0_0/0.06),0_1px_0_rgb(0_0_0/0.05)]">
-          <div className={cn('aspect-[4/3] p-2 transition-transform duration-500 group-hover:scale-[1.035]', locked && 'opacity-40 blur-[1.5px]')}>
+          <div
+            className={cn(
+              'aspect-[4/3] p-2 transition-transform duration-500 group-hover:scale-[1.035]',
+              locked && 'opacity-40 blur-[1.5px]',
+            )}
+          >
             <TemplateImage template={template} />
           </div>
           {isDaily && (
@@ -97,7 +101,11 @@ export function TemplateCard({
   )
   if (locked)
     return (
-      <div className="group h-full cursor-not-allowed" aria-label={`${title} — ${t('practice.card.reachLevel', { level: template.unlockLevel })}`} role="group">
+      <div
+        className="group h-full cursor-not-allowed"
+        aria-label={`${title} — ${t('practice.card.reachLevel', { level: template.unlockLevel })}`}
+        role="group"
+      >
         {body}
       </div>
     )

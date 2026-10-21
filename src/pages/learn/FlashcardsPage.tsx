@@ -85,7 +85,16 @@ export default function FlashcardsPage() {
         <Link to="/learn#tools" className="inline-flex items-center gap-2 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft size={16} /> {t('learn.backToAtlas')}
         </Link>
-        <SectionHeading className="mt-6" eyebrow={t('learn.cards.eyebrow')} title={<>{t('learn.cards.titleA')} <em>{t('learn.cards.titleB')}</em></>} lede={t('learn.cards.lede')} />
+        <SectionHeading
+          className="mt-6"
+          eyebrow={t('learn.cards.eyebrow')}
+          title={
+            <>
+              {t('learn.cards.titleA')} <em>{t('learn.cards.titleB')}</em>
+            </>
+          }
+          lede={t('learn.cards.lede')}
+        />
         <div className="mt-6 flex flex-wrap gap-6 text-sm text-ink-soft">
           <span>{t('learn.cards.deck', { count: data.length })}</span>
           <span>{t('learn.cards.mastered', { count: mastered })}</span>
@@ -136,7 +145,13 @@ export default function FlashcardsPage() {
                     </div>
                   </button>
                 </div>
-                <div className={cn('mt-6 grid grid-cols-2 gap-3 transition-opacity', flipped ? 'opacity-100' : 'pointer-events-none opacity-0')} aria-hidden={!flipped}>
+                <div
+                  className={cn(
+                    'mt-6 grid grid-cols-2 gap-3 transition-opacity',
+                    flipped ? 'opacity-100' : 'pointer-events-none opacity-0',
+                  )}
+                  aria-hidden={!flipped}
+                >
                   <Button variant="outline" icon={<RotateCcw size={16} />} onClick={() => answer(false)} tabIndex={flipped ? 0 : -1}>
                     {t('learn.cards.again2')}
                   </Button>

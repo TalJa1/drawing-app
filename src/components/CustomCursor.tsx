@@ -33,7 +33,8 @@ export function CustomCursor() {
       if (!el?.closest) return
       const cursorAttr = el.closest('[data-cursor]')?.getAttribute('data-cursor')
       if (cursorAttr === 'brush' || cursorAttr === 'none') setMode('hidden')
-      else if (el.closest('input:not([type=range]):not([type=checkbox]):not([type=color]), textarea, [contenteditable="true"]')) setMode('text')
+      else if (el.closest('input:not([type=range]):not([type=checkbox]):not([type=color]), textarea, [contenteditable="true"]'))
+        setMode('text')
       else if (el.closest(INTERACTIVE)) setMode('hover')
       else setMode('dot')
     }

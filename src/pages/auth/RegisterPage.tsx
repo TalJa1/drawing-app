@@ -50,10 +50,34 @@ export default function RegisterPage() {
       lede={t('auth.registerLede')}
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
-        <TextField label={t('auth.displayName')} autoComplete="nickname" {...register('displayName')} error={errors.displayName && t(errors.displayName.message!)} />
-        <TextField label={t('auth.email')} type="email" autoComplete="email" {...register('email')} error={errors.email && t(errors.email.message!)} />
-        <TextField label={t('auth.password')} type="password" autoComplete="new-password" hint={t('auth.passwordHint')} {...register('password')} error={errors.password && t(errors.password.message!)} />
-        <TextField label={t('auth.confirm')} type="password" autoComplete="new-password" {...register('confirm')} error={errors.confirm && t(errors.confirm.message!)} />
+        <TextField
+          label={t('auth.displayName')}
+          autoComplete="nickname"
+          {...register('displayName')}
+          error={errors.displayName && t(errors.displayName.message!)}
+        />
+        <TextField
+          label={t('auth.email')}
+          type="email"
+          autoComplete="email"
+          {...register('email')}
+          error={errors.email && t(errors.email.message!)}
+        />
+        <TextField
+          label={t('auth.password')}
+          type="password"
+          autoComplete="new-password"
+          hint={t('auth.passwordHint')}
+          {...register('password')}
+          error={errors.password && t(errors.password.message!)}
+        />
+        <TextField
+          label={t('auth.confirm')}
+          type="password"
+          autoComplete="new-password"
+          {...register('confirm')}
+          error={errors.confirm && t(errors.confirm.message!)}
+        />
         {errors.root && (
           <p role="alert" className="text-sm text-accent-ink">
             {t(errors.root.message!)}

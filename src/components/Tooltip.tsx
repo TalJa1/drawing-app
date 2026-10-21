@@ -50,11 +50,7 @@ export function Tooltip({
         )}
       >
         {label}
-        {shortcut && (
-          <kbd className="rounded border border-paper/30 px-1 font-mono text-[10px] text-paper/80">
-            {shortcut}
-          </kbd>
-        )}
+        {shortcut && <kbd className="rounded border border-paper/30 px-1 font-mono text-[10px] text-paper/80">{shortcut}</kbd>}
       </span>
     </span>
   )

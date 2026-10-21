@@ -248,11 +248,7 @@ export function baseXp(e: ProgressEvent): number {
   }
 }
 
-export function applyEvent(
-  prev: ProgressData,
-  e: ProgressEvent,
-  ctx: RulesContext,
-): { data: ProgressData; reward: RewardSummary } {
+export function applyEvent(prev: ProgressData, e: ProgressEvent, ctx: RulesContext): { data: ProgressData; reward: RewardSummary } {
   const today = dayKey(ctx.now)
   const stats = { ...prev.stats }
   let streak = prev.streak
@@ -261,11 +257,7 @@ export function applyEvent(
   let scoreHistory = prev.scoreHistory
   const challenges = { ...prev.challenges }
 
-  const creative =
-    e.type === 'artworkScored' ||
-    e.type === 'artworkSaved' ||
-    e.type === 'lessonCompleted' ||
-    e.type === 'quizCompleted'
+  const creative = e.type === 'artworkScored' || e.type === 'artworkSaved' || e.type === 'lessonCompleted' || e.type === 'quizCompleted'
 
   if (creative) {
     const r = updateStreak(prev.streak, today)

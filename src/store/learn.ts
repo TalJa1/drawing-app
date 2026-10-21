@@ -47,9 +47,7 @@ export const useLearn = create<LearnState>()(
         }),
       toggleBookmark: (slug) =>
         set((s) => ({
-          bookmarks: s.bookmarks.includes(slug)
-            ? s.bookmarks.filter((b) => b !== slug)
-            : [...s.bookmarks, slug],
+          bookmarks: s.bookmarks.includes(slug) ? s.bookmarks.filter((b) => b !== slug) : [...s.bookmarks, slug],
         })),
       setFlashcard: (id, f) => set((s) => ({ flashcards: { ...s.flashcards, [id]: f } })),
       setSpotBest: (n) => set((s) => ({ spotBest: Math.max(s.spotBest, n) })),

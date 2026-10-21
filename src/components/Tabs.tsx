@@ -43,11 +43,7 @@ export function Tabs<T extends string>({
   }
 
   return (
-    <div
-      role="tablist"
-      aria-label={ariaLabel}
-      className={cn('no-scrollbar relative flex gap-1 overflow-x-auto', className)}
-    >
+    <div role="tablist" aria-label={ariaLabel} className={cn('no-scrollbar relative flex gap-1 overflow-x-auto', className)}>
       {items.map((it, i) => {
         const active = it.id === value
         return (
@@ -80,9 +76,7 @@ export function Tabs<T extends string>({
             {it.icon}
             <span className="relative">{it.label}</span>
             {it.count !== undefined && (
-              <span className="relative rounded-full bg-ink/[0.07] px-1.5 text-xs tabular-nums text-ink-soft">
-                {it.count}
-              </span>
+              <span className="relative rounded-full bg-ink/[0.07] px-1.5 text-xs tabular-nums text-ink-soft">{it.count}</span>
             )}
           </button>
         )

@@ -52,7 +52,10 @@ export function ArtWheel({ forms }: { forms: ArtForm[] }) {
           )
         })}
       </motion.div>
-      <div className="absolute inset-[22%] flex flex-col items-center justify-center rounded-full bg-card/80 p-4 text-center shadow-lift backdrop-blur" aria-live="polite">
+      <div
+        className="absolute inset-[22%] flex flex-col items-center justify-center rounded-full bg-card/80 p-4 text-center shadow-lift backdrop-blur"
+        aria-live="polite"
+      >
         <p className="eyebrow">{t('learn.wheel.artForm', { n: active + 1, total: n })}</p>
         <p className="mt-2 font-display text-2xl leading-tight sm:text-3xl">{L(sel.name)}</p>
         <p className="mt-2 line-clamp-3 text-xs text-ink-soft sm:text-sm">{L(sel.definition)}</p>

@@ -46,14 +46,21 @@ export default function ArtFormPage() {
 
   return (
     <Page>
-      <Washes washes={[{ color: form.palette[1] ?? 'var(--saffron)', size: '36vmax', top: '-12%', right: '-10%' }, { color: form.palette[0], size: '26vmax', top: '40%', left: '-14%', delay: -9 }]} />
+      <Washes
+        washes={[
+          { color: form.palette[1] ?? 'var(--saffron)', size: '36vmax', top: '-12%', right: '-10%' },
+          { color: form.palette[0], size: '26vmax', top: '40%', left: '-14%', delay: -9 },
+        ]}
+      />
       <div className="container-art">
         <Link to="/learn#forms" className="inline-flex items-center gap-2 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft size={16} /> {t('learn.backToAtlas')}
         </Link>
         <div className="mt-6 grid items-end gap-10 lg:grid-cols-[1fr_1.1fr]">
           <div>
-            <p className="eyebrow">{t('learn.kinds.artForm')} · {t(`learn.families.${form.family}`)}</p>
+            <p className="eyebrow">
+              {t('learn.kinds.artForm')} · {t(`learn.families.${form.family}`)}
+            </p>
             <h1 className="display-xl mt-4">{L(form.name)}</h1>
             <p className="mt-6 text-xl leading-relaxed text-ink-soft">{L(form.definition)}</p>
             <p className="mt-5 inline-flex items-center gap-2 text-sm text-ink-faint">
@@ -109,7 +116,12 @@ export default function ArtFormPage() {
             <div className="relative max-w-2xl">
               <p className="hand text-2xl text-[#F2A93B]">{t('learn.tryAtHome')}</p>
               <p className="mt-3 font-display text-2xl leading-snug sm:text-3xl">{L(form.exercise)}</p>
-              <ButtonLink to={`/free-draw?prompt=${encodeURIComponent(L(form.exercise))}`} variant="gold" className="mt-6" icon={<Brush size={17} />}>
+              <ButtonLink
+                to={`/free-draw?prompt=${encodeURIComponent(L(form.exercise))}`}
+                variant="gold"
+                className="mt-6"
+                icon={<Brush size={17} />}
+              >
                 {t('learn.tryInStudio')}
               </ButtonLink>
             </div>
@@ -138,7 +150,10 @@ export default function ArtFormPage() {
         )}
 
         {next && (
-          <Link to={`/learn/art-forms/${next.slug}`} className="group mt-16 flex items-center justify-between gap-6 rounded-[26px] border border-line p-6 transition-colors hover:bg-ink/[0.03]">
+          <Link
+            to={`/learn/art-forms/${next.slug}`}
+            className="group mt-16 flex items-center justify-between gap-6 rounded-[26px] border border-line p-6 transition-colors hover:bg-ink/[0.03]"
+          >
             <div>
               <p className="eyebrow">{t('learn.nextForm')}</p>
               <p className="mt-2 font-display text-3xl">{L(next.name)}</p>

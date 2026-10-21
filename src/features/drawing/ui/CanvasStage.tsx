@@ -40,7 +40,15 @@ export function CanvasStage({ engine, description }: { engine: DrawingEngine; de
 
   const brushLike = BRUSH_TOOLS.includes(tool) || SHAPE_TOOLS.includes(tool)
   const cursor =
-    tool === 'hand' ? 'grab' : tool === 'zoom' ? 'zoom-in' : tool === 'eyedropper' || tool === 'bucket' ? 'crosshair' : brushLike ? 'none' : 'default'
+    tool === 'hand'
+      ? 'grab'
+      : tool === 'zoom'
+        ? 'zoom-in'
+        : tool === 'eyedropper' || tool === 'bucket'
+          ? 'crosshair'
+          : brushLike
+            ? 'none'
+            : 'default'
 
   const moveCursor = (e: React.PointerEvent) => {
     const c = cursorRef.current

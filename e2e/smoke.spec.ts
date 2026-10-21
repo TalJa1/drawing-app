@@ -44,7 +44,11 @@ test('practice: open a template, draw, submit and see the result', async ({ page
   await page.mouse.click(box.x + box.width / 2, box.y + box.height * 0.74)
   await page.getByRole('button', { name: 'Submit to AI Judge' }).click()
   await page.getByRole('dialog').getByRole('button', { name: 'Submit' }).click()
-  await expect(page.getByText(/Studying your linework|Measuring proportions|Reading your colour harmony|Consulting the old masters|Writing a little note/)).toBeVisible()
+  await expect(
+    page.getByText(
+      /Studying your linework|Measuring proportions|Reading your colour harmony|Consulting the old masters|Writing a little note/,
+    ),
+  ).toBeVisible()
   await page.waitForURL(/\/practice\/result\//, { timeout: 20_000 })
   await expect(page.getByText("The judge's verdict")).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Strengths' })).toBeVisible()

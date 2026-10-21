@@ -88,8 +88,12 @@ export const citySkyline = (() => {
   s += star(150, 150, 5, 18, 8) + star(420, 120, 5, 14, 6) + star(760, 160, 5, 16, 7) + star(1080, 110, 5, 12, 5)
   s += `<path d="M565 200 L 565 130 M548 200 L 565 160 L 582 200 Z"/>`
   s += `<path d="M795 280 L 835 230 L 875 280 Z"/>`
-  for (const [x, y, w, h] of back) s += `<rect x="${x}" y="${y}" width="${w}" height="${h}"/>` + buildingWindows(x, y, w, Math.min(h, 220), Math.max(2, Math.floor(w / 40)), 4)
-  for (const [x, y, w, h] of front) s += `<rect x="${x}" y="${y}" width="${w}" height="${h}"/>` + buildingWindows(x, y, w, h, Math.max(2, Math.floor(w / 38)), 5)
+  for (const [x, y, w, h] of back)
+    s +=
+      `<rect x="${x}" y="${y}" width="${w}" height="${h}"/>` +
+      buildingWindows(x, y, w, Math.min(h, 220), Math.max(2, Math.floor(w / 40)), 4)
+  for (const [x, y, w, h] of front)
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}"/>` + buildingWindows(x, y, w, h, Math.max(2, Math.floor(w / 38)), 5)
   s += `<rect x="60" y="800" width="1080" height="40"/>`
   s += `<path d="M120 820 L 200 820 M330 820 L 430 820 M640 820 L 760 820 M920 820 L 1010 820" ${NONE} stroke-width="4"/>`
   s += frame()
@@ -172,7 +176,8 @@ export const lanterns = (() => {
     return s
   }
   let s = `<path d="M60 60 L 1140 60 L 1140 120 C 900 152 300 152 60 120 Z"/>`
-  for (let x = 90; x < 1140; x += 60) s += `<path d="M${x} ${118 + Math.sin((x - 600) / 300) * 4} q 30 30 60 0" fill="none" stroke-width="5"/>`
+  for (let x = 90; x < 1140; x += 60)
+    s += `<path d="M${x} ${118 + Math.sin((x - 600) / 300) * 4} q 30 30 60 0" fill="none" stroke-width="5"/>`
   // back row first so the front lanterns hide their strings
   s += lantern(410, 540, 150, 105)
   s += lantern(790, 570, 140, 100)

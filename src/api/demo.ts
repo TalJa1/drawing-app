@@ -120,14 +120,27 @@ export async function seedDemoData(): Promise<void> {
     events.push({
       at,
       run: (prog, when) =>
-        applyEvent(prog, { type: 'artworkScored', score, templateId: t.id, category: t.category, seconds: p.minutes * 60, isDaily: false, distinctHues: analysis.distinctHues }, rulesContext(when)).data,
+        applyEvent(
+          prog,
+          {
+            type: 'artworkScored',
+            score,
+            templateId: t.id,
+            category: t.category,
+            seconds: p.minutes * 60,
+            isDaily: false,
+            distinctHues: analysis.distinctHues,
+          },
+          rulesContext(when),
+        ).data,
     })
   }
 
   for (const [i, f] of FREE.entries()) {
     const id = `demo_free_${i}`
-    const svgMarkup = renderToStaticMarkup(createElement(GenerativeArt, { style: f.style, seed: id, palette: STYLE_PALETTES[f.style], grain: false }))
-      .replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900"')
+    const svgMarkup = renderToStaticMarkup(
+      createElement(GenerativeArt, { style: f.style, seed: id, palette: STYLE_PALETTES[f.style], grain: false }),
+    ).replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900"')
     const { image, thumb } = await rasterise(svgMarkup)
     await putFile(`img:${id}`, image)
     await putFile(`thumb:${id}`, thumb)
@@ -147,7 +160,10 @@ export async function seedDemoData(): Promise<void> {
       medium: 'Digital · free draw',
       demo: true,
     })
-    events.push({ at, run: (prog, when) => applyEvent(prog, { type: 'artworkSaved', kind: 'free', seconds: (20 + i * 9) * 60 }, rulesContext(when)).data })
+    events.push({
+      at,
+      run: (prog, when) => applyEvent(prog, { type: 'artworkSaved', kind: 'free', seconds: (20 + i * 9) * 60 }, rulesContext(when)).data,
+    })
   }
 
   // a few lessons to round out the history
@@ -159,7 +175,9 @@ export async function seedDemoData(): Promise<void> {
   for (const [slug, daysAgo] of lessons) {
     const at = dateAgo(daysAgo, 12)
     events.push({ at, run: (prog, when) => applyEvent(prog, { type: 'lessonCompleted', slug, xp: 40 }, rulesContext(when)).data })
-    useLearn.getState().setLessonProgress(slug, { progress: 1, completed: true, quizBest: 1, quizPassed: true, lastOpened: at.toISOString() })
+    useLearn
+      .getState()
+      .setLessonProgress(slug, { progress: 1, completed: true, quizBest: 1, quizPassed: true, lastOpened: at.toISOString() })
   }
 
   events.sort((a, b) => a.at.getTime() - b.at.getTime())

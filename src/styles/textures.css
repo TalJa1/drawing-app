@@ -57,10 +57,8 @@
 .checker {
   background-color: #fff;
   background-image:
-    linear-gradient(45deg, #e6e2da 25%, transparent 25%),
-    linear-gradient(-45deg, #e6e2da 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #e6e2da 75%),
-    linear-gradient(-45deg, transparent 75%, #e6e2da 75%);
+    linear-gradient(45deg, #e6e2da 25%, transparent 25%), linear-gradient(-45deg, #e6e2da 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e6e2da 75%), linear-gradient(-45deg, transparent 75%, #e6e2da 75%);
   background-size: 16px 16px;
   background-position:
     0 0,
@@ -71,13 +69,10 @@
 
 /* Studio "table": a soft desk vignette under the canvas */
 .desk {
-  background:
-    radial-gradient(120% 90% at 50% 45%, transparent 55%, rgb(0 0 0 / 0.14) 100%),
-    var(--desk);
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgb(0 0 0 / 0.14) 100%), var(--desk);
 }
 [data-theme='dark'] .desk {
   background:
     radial-gradient(60% 50% at 50% 45%, rgb(242 169 59 / 0.06), transparent 70%),
-    radial-gradient(120% 90% at 50% 45%, transparent 50%, rgb(0 0 0 / 0.6) 100%),
-    var(--desk);
+    radial-gradient(120% 90% at 50% 45%, transparent 50%, rgb(0 0 0 / 0.6) 100%), var(--desk);
 }

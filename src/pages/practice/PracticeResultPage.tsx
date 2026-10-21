@@ -87,16 +87,21 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
       )
     }
     timers.push(
-      window.setTimeout(() => {
-        useLastResult.getState().markCelebrated()
-        presentReward(st.reward)
-      }, great ? 3600 : 2400),
+      window.setTimeout(
+        () => {
+          useLastResult.getState().markCelebrated()
+          presentReward(st.reward)
+        },
+        great ? 3600 : 2400,
+      ),
     )
     return () => timers.forEach((id) => window.clearTimeout(id))
   }, [artwork.id, great])
 
-  const next = templates?.find((x) => x.id !== template.id && x.unlockLevel <= level && x.difficulty === template.difficulty && x.category !== template.category)
-    ?? templates?.find((x) => x.id !== template.id && x.unlockLevel <= level)
+  const next =
+    templates?.find(
+      (x) => x.id !== template.id && x.unlockLevel <= level && x.difficulty === template.difficulty && x.category !== template.category,
+    ) ?? templates?.find((x) => x.id !== template.id && x.unlockLevel <= level)
 
   const download = async () => {
     const blob = await getImageBlob(artwork.imageKey)
@@ -108,7 +113,11 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
 
   const share = async () => {
     const ok = await copyText(`${window.location.origin}/practice/result/${artwork.id}`)
-    toast({ title: ok ? t('result.shareCopied') : t('result.shareFailed'), description: t('result.shareNote'), tone: ok ? 'success' : 'info' })
+    toast({
+      title: ok ? t('result.shareCopied') : t('result.shareFailed'),
+      description: t('result.shareNote'),
+      tone: ok ? 'success' : 'info',
+    })
   }
 
   const askChat = () => {
@@ -151,7 +160,11 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
         <div className="grid items-start gap-10 lg:grid-cols-[1.25fr_1fr] lg:gap-14">
           {/* ---------- artwork ---------- */}
           <div>
-            <motion.div initial={{ opacity: 0, y: 30, rotate: -1.5 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}>
+            <motion.div
+              initial={{ opacity: 0, y: 30, rotate: -1.5 }}
+              animate={{ opacity: 1, y: 0, rotate: 0 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            >
               <Frame
                 tone={great ? 'gold' : 'wood'}
                 frameWidth={great ? 18 : 14}
@@ -168,11 +181,25 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
                   />
                 }
               >
-                {image ? <BeforeAfter image={image} template={template} heatmap={heat && artwork.analysis ? <HeatmapOverlay grid={artwork.analysis.grid} /> : undefined} /> : <Skeleton className="aspect-[4/3] rounded-none" />}
+                {image ? (
+                  <BeforeAfter
+                    image={image}
+                    template={template}
+                    heatmap={heat && artwork.analysis ? <HeatmapOverlay grid={artwork.analysis.grid} /> : undefined}
+                  />
+                ) : (
+                  <Skeleton className="aspect-[4/3] rounded-none" />
+                )}
               </Frame>
             </motion.div>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-              <Switch checked={heat} onChange={setHeat} label={t('result.heatmap')} description={t('result.heatmapHint')} className="max-w-sm" />
+              <Switch
+                checked={heat}
+                onChange={setHeat}
+                label={t('result.heatmap')}
+                description={t('result.heatmapHint')}
+                className="max-w-sm"
+              />
               {heat && (
                 <ul className="flex items-center gap-3 text-xs text-ink-soft" aria-label={t('result.heatmapLegend')}>
                   {[
@@ -193,7 +220,10 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
           <div className="relative">
             <p className="eyebrow">{t('result.eyebrow')}</p>
             <div className="mt-3 flex items-end gap-5">
-              <p className={cn('font-display text-[7.5rem] leading-[0.8] tracking-tight', great && 'gold-text')} aria-label={t('result.overallAria', { score: score.overall })}>
+              <p
+                className={cn('font-display text-[7.5rem] leading-[0.8] tracking-tight', great && 'gold-text')}
+                aria-label={t('result.overallAria', { score: score.overall })}
+              >
                 <CountUp to={score.overall} duration={1.8} />
               </p>
               <p className="pb-3 font-display text-2xl text-ink-faint">/100</p>
@@ -212,7 +242,12 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
             </h1>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
               <div>
-                <Meter value={score.similarity} label={<span className="font-semibold text-ink">{t('result.similarity')}</span>} color="var(--viz-2)" height={12} />
+                <Meter
+                  value={score.similarity}
+                  label={<span className="font-semibold text-ink">{t('result.similarity')}</span>}
+                  color="var(--viz-2)"
+                  height={12}
+                />
                 <ul className="mt-3 space-y-1 text-sm text-ink-soft">
                   {(['lineAccuracy', 'composition', 'proportion'] as const).map((k) => (
                     <li key={k} className="flex justify-between">
@@ -223,7 +258,12 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
                 </ul>
               </div>
               <div>
-                <Meter value={score.colour} label={<span className="font-semibold text-ink">{t('result.colour')}</span>} color="var(--viz-3)" height={12} />
+                <Meter
+                  value={score.colour}
+                  label={<span className="font-semibold text-ink">{t('result.colour')}</span>}
+                  color="var(--viz-3)"
+                  height={12}
+                />
                 <ul className="mt-3 space-y-1 text-sm text-ink-soft">
                   {(['harmony', 'suitability', 'aesthetics'] as const).map((k) => (
                     <li key={k} className="flex justify-between">
@@ -263,7 +303,10 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
                 <TrendingUp size={20} className="text-accent-ink" /> {t('result.improve')}
               </h2>
               <ul className="mt-4 space-y-3 text-ink-soft">
-                {(score.weaknesses.length ? score.weaknesses : [{ en: t('result.nothingToImprove'), vi: t('result.nothingToImprove') }]).map((s, i) => (
+                {(score.weaknesses.length
+                  ? score.weaknesses
+                  : [{ en: t('result.nothingToImprove'), vi: t('result.nothingToImprove') }]
+                ).map((s, i) => (
                   <li key={i} className="flex gap-3">
                     <span aria-hidden className="mt-2 h-2 w-2 shrink-0 rounded-full bg-vermilion" />
                     {L(s)}
@@ -303,9 +346,14 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
         {/* ---------- rewards ---------- */}
         {reward && (
           <Reveal className="mt-10">
-            <section aria-labelledby="rewards" className="grid gap-6 rounded-[26px] border border-gold/40 bg-gold/[0.06] p-6 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-8">
+            <section
+              aria-labelledby="rewards"
+              className="grid gap-6 rounded-[26px] border border-gold/40 bg-gold/[0.06] p-6 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:p-8"
+            >
               <div>
-                <h2 id="rewards" className="eyebrow">{t('result.rewards')}</h2>
+                <h2 id="rewards" className="eyebrow">
+                  {t('result.rewards')}
+                </h2>
                 <p className="mt-2 font-display text-5xl text-gold-deep dark:text-gold">
                   +<CountUp to={reward.xpGained} /> XP
                 </p>
@@ -314,12 +362,16 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
                 <XPBar />
                 <p className="flex items-center gap-2 text-sm text-ink-soft">
                   <Flame size={16} className="text-vermilion" />
-                  {reward.streakExtended ? t('result.streakUp', { count: reward.streak }) : t('result.streakSame', { count: reward.streak })}
+                  {reward.streakExtended
+                    ? t('result.streakUp', { count: reward.streak })
+                    : t('result.streakSame', { count: reward.streak })}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <StreakFlame count={reward.streak} size={34} />
-                {reward.newBadges.slice(0, 3).map((id) => BADGE_MAP[id] && <BadgeMedal key={id} badge={BADGE_MAP[id]} unlocked size={56} />)}
+                {reward.newBadges
+                  .slice(0, 3)
+                  .map((id) => BADGE_MAP[id] && <BadgeMedal key={id} badge={BADGE_MAP[id]} unlocked size={56} />)}
               </div>
             </section>
           </Reveal>
@@ -384,7 +436,11 @@ export default function PracticeResultPage() {
   if (isError || !artwork || !artwork.score || !template)
     return (
       <Page>
-        <EmptyState title={t('result.notFound')} body={t('result.notFoundBody')} action={<ButtonLink to="/practice">{t('practice.backToLibrary')}</ButtonLink>} />
+        <EmptyState
+          title={t('result.notFound')}
+          body={t('result.notFoundBody')}
+          action={<ButtonLink to="/practice">{t('practice.backToLibrary')}</ButtonLink>}
+        />
       </Page>
     )
   return <Result artwork={artwork} template={template} />

@@ -34,7 +34,11 @@ export function Muse({ size = 160, className, thinking }: { size?: number; class
       <circle cx="130" cy="142" r="10" fill="#2F80C4" />
       <circle cx="94" cy="142" r="9" fill="#C93C6B" />
       {/* face */}
-      <motion.g animate={{ scaleY: [1, 1, 0.1, 1] }} transition={{ duration: 4, repeat: Infinity, times: [0, 0.9, 0.95, 1] }} style={{ transformOrigin: '115px 96px' }}>
+      <motion.g
+        animate={{ scaleY: [1, 1, 0.1, 1] }}
+        transition={{ duration: 4, repeat: Infinity, times: [0, 0.9, 0.95, 1] }}
+        style={{ transformOrigin: '115px 96px' }}
+      >
         <ellipse cx="104" cy="96" rx="5" ry="7" fill="#1B1A17" />
         <ellipse cx="128" cy="96" rx="5" ry="7" fill="#1B1A17" />
       </motion.g>

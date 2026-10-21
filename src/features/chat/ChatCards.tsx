@@ -31,7 +31,9 @@ export function ChatCardView({ card }: { card: ChatCard }) {
               className="group flex flex-1 items-end justify-center pb-1 transition-[flex] hover:flex-[1.5]"
               style={{ background: c, color: readableOn(c) }}
               aria-label={t('learn.copyColour', { hex: c })}
-              onClick={async () => toast({ title: (await copyText(c)) ? t('common.copied') : c, description: c.toUpperCase(), tone: 'success' })}
+              onClick={async () =>
+                toast({ title: (await copyText(c)) ? t('common.copied') : c, description: c.toUpperCase(), tone: 'success' })
+              }
             >
               <span className="font-mono text-[9.5px] opacity-0 transition-opacity group-hover:opacity-90">{c.toUpperCase()}</span>
             </button>
@@ -55,13 +57,17 @@ export function ChatCardView({ card }: { card: ChatCard }) {
     const tpl = TEMPLATE_MAP[card.templateId]
     if (!tpl) return null
     return (
-      <Link to={`/practice/${tpl.id}`} className="group flex w-full max-w-sm items-center gap-3 rounded-2xl border border-line bg-card p-2.5 shadow-paper hover:shadow-lift">
+      <Link
+        to={`/practice/${tpl.id}`}
+        className="group flex w-full max-w-sm items-center gap-3 rounded-2xl border border-line bg-card p-2.5 shadow-paper hover:shadow-lift"
+      >
         <img src={svgToDataUrl(tpl.svg)} alt="" className="h-16 w-20 shrink-0 rounded-lg border border-line bg-white object-contain" />
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">{t('chat.cards.template')}</p>
           <p className="truncate font-display text-lg leading-tight">{L(tpl.title)}</p>
           <p className="inline-flex items-center gap-1.5 text-xs text-ink-faint">
-            <DifficultyDots level={DIFF_LEVEL[tpl.difficulty]} label={t(`difficulty.${tpl.difficulty}`)} /> {t('common.minutes', { count: tpl.minutes })}
+            <DifficultyDots level={DIFF_LEVEL[tpl.difficulty]} label={t(`difficulty.${tpl.difficulty}`)} />{' '}
+            {t('common.minutes', { count: tpl.minutes })}
           </p>
         </div>
         <span className="inline-flex items-center gap-1 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-paper">
@@ -85,7 +91,10 @@ export function ChatCardView({ card }: { card: ChatCard }) {
             <Clock size={12} /> {t('common.minutes', { count: card.minutes })}
           </span>
         </div>
-        <Link to={`/free-draw?prompt=${encodeURIComponent(card.title)}`} className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent-ink hover:underline">
+        <Link
+          to={`/free-draw?prompt=${encodeURIComponent(card.title)}`}
+          className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent-ink hover:underline"
+        >
           {t('chat.cards.sketchIt')} <ArrowRight size={12} />
         </Link>
       </div>
@@ -94,12 +103,17 @@ export function ChatCardView({ card }: { card: ChatCard }) {
   const lesson = LESSON_MAP[card.slug]
   if (!lesson) return null
   return (
-    <Link to={`/learn/lessons/${lesson.slug}`} className="flex w-full max-w-sm items-center gap-3 rounded-2xl border border-line bg-card p-3 shadow-paper hover:shadow-lift">
+    <Link
+      to={`/learn/lessons/${lesson.slug}`}
+      className="flex w-full max-w-sm items-center gap-3 rounded-2xl border border-line bg-card p-3 shadow-paper hover:shadow-lift"
+    >
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cerulean/15 text-cerulean">
         <BookOpen size={20} />
       </span>
       <div className="min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">{t('chat.cards.lesson', { count: lesson.minutes })}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+          {t('chat.cards.lesson', { count: lesson.minutes })}
+        </p>
         <p className="truncate font-display text-lg leading-tight">{L(lesson.title)}</p>
       </div>
     </Link>

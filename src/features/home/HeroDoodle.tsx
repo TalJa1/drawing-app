@@ -101,7 +101,13 @@ export function HeroDoodle({ className }: { className?: string }) {
 
   return (
     <div className={cn('relative', className)}>
-      <canvas ref={ref} className="h-full w-full touch-none rounded-[18px]" data-cursor="brush" aria-label={t('home.doodleLabel')} role="img" />
+      <canvas
+        ref={ref}
+        className="h-full w-full touch-none rounded-[18px]"
+        data-cursor="brush"
+        aria-label={t('home.doodleLabel')}
+        role="img"
+      />
       <p className="hand pointer-events-none absolute bottom-3 left-4 text-lg text-ink-faint">{t('home.doodleHint')}</p>
     </div>
   )

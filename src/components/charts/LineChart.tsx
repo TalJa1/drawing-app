@@ -56,11 +56,8 @@ export function LineChart({
   })
 
   // direct end labels, nudged apart so they never collide
-  const ends = series
-    .map((s) => ({ s, yy: y(s.values[s.values.length - 1] ?? 0) }))
-    .sort((a, b) => a.yy - b.yy)
-  for (let i = 1; i < ends.length; i++)
-    if (ends[i].yy - ends[i - 1].yy < 14) ends[i].yy = ends[i - 1].yy + 14
+  const ends = series.map((s) => ({ s, yy: y(s.values[s.values.length - 1] ?? 0) })).sort((a, b) => a.yy - b.yy)
+  for (let i = 1; i < ends.length; i++) if (ends[i].yy - ends[i - 1].yy < 14) ends[i].yy = ends[i - 1].yy + 14
 
   const onMove = (clientX: number) => {
     const r = ref.current!.getBoundingClientRect()
@@ -73,23 +70,11 @@ export function LineChart({
 
   return (
     <figure className={cn('relative', className)}>
-      <div
-        className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-soft"
-        aria-hidden
-      >
+      <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-soft" aria-hidden>
         {series.map((s) => (
           <span key={s.id} className="inline-flex items-center gap-2">
             <svg width="22" height="8">
-              <line
-                x1="1"
-                y1="4"
-                x2="21"
-                y2="4"
-                stroke={s.color}
-                strokeWidth="2.5"
-                strokeDasharray={s.dash}
-                strokeLinecap="round"
-              />
+              <line x1="1" y1="4" x2="21" y2="4" stroke={s.color} strokeWidth="2.5" strokeDasharray={s.dash} strokeLinecap="round" />
             </svg>
             {s.label}
           </span>
@@ -114,26 +99,14 @@ export function LineChart({
         {[0, 25, 50, 75, 100].map((v) => (
           <g key={v}>
             <line x1={m.l} x2={m.l + iw} y1={y(v)} y2={y(v)} stroke="var(--viz-grid)" />
-            <text
-              x={m.l - 8}
-              y={y(v)}
-              textAnchor="end"
-              dominantBaseline="middle"
-              className="fill-ink-faint text-[10px] tabular-nums"
-            >
+            <text x={m.l - 8} y={y(v)} textAnchor="end" dominantBaseline="middle" className="fill-ink-faint text-[10px] tabular-nums">
               {v}
             </text>
           </g>
         ))}
         {labels.map((l, i) =>
           i % tickEvery === 0 || i === n - 1 ? (
-            <text
-              key={i}
-              x={x(i)}
-              y={H - 8}
-              textAnchor="middle"
-              className="fill-ink-faint text-[10px]"
-            >
+            <text key={i} x={x(i)} y={H - 8} textAnchor="middle" className="fill-ink-faint text-[10px]">
               {l}
             </text>
           ) : null,
@@ -154,39 +127,15 @@ export function LineChart({
           />
         ))}
         {ends.map(({ s, yy }) => (
-          <text
-            key={s.id}
-            x={m.l + iw + 10}
-            y={yy}
-            dominantBaseline="middle"
-            className="fill-ink-soft text-[11px] font-medium"
-          >
-            {s.label}{' '}
-            <tspan className="fill-ink font-semibold tabular-nums">
-              {s.values[s.values.length - 1]}
-            </tspan>
+          <text key={s.id} x={m.l + iw + 10} y={yy} dominantBaseline="middle" className="fill-ink-soft text-[11px] font-medium">
+            {s.label} <tspan className="fill-ink font-semibold tabular-nums">{s.values[s.values.length - 1]}</tspan>
           </text>
         ))}
         {hover !== null && (
           <g pointerEvents="none">
-            <line
-              x1={x(hover)}
-              x2={x(hover)}
-              y1={m.t}
-              y2={m.t + ih}
-              stroke="var(--ink-faint)"
-              strokeDasharray="3 3"
-            />
+            <line x1={x(hover)} x2={x(hover)} y1={m.t} y2={m.t + ih} stroke="var(--ink-faint)" strokeDasharray="3 3" />
             {series.map((s) => (
-              <circle
-                key={s.id}
-                cx={x(hover)}
-                cy={y(s.values[hover])}
-                r={5}
-                fill={s.color}
-                stroke="var(--card)"
-                strokeWidth={2}
-              />
+              <circle key={s.id} cx={x(hover)} cy={y(s.values[hover])} r={5} fill={s.color} stroke="var(--card)" strokeWidth={2} />
             ))}
           </g>
         )}

@@ -26,8 +26,14 @@ export function Avatar({
     const ground = pick(rng, GROUNDS)
     const dark = ground === '#1B1A17'
     const face = pick(rng, PIGMENTS)
-    const accent = pick(rng, PIGMENTS.filter((p) => p !== face))
-    const accent2 = pick(rng, PIGMENTS.filter((p) => p !== face && p !== accent))
+    const accent = pick(
+      rng,
+      PIGMENTS.filter((p) => p !== face),
+    )
+    const accent2 = pick(
+      rng,
+      PIGMENTS.filter((p) => p !== face && p !== accent),
+    )
     return {
       ground,
       face,

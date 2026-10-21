@@ -21,9 +21,7 @@ export function Chip({
       aria-pressed={selected}
       className={cn(
         'relative inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors',
-        selected
-          ? 'border-transparent text-paper'
-          : 'border-line-strong text-ink-soft hover:border-ink/50 hover:text-ink',
+        selected ? 'border-transparent text-paper' : 'border-line-strong text-ink-soft hover:border-ink/50 hover:text-ink',
         className,
       )}
       {...rest}

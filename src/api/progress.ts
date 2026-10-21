@@ -82,7 +82,9 @@ export async function getLeaderboard(scope: 'weekly' | 'all', filter: 'global' |
   const user = useSession.getState().user
   const p = useProgress.getState()
   const weekAgo = Date.now() - 7 * 86_400_000
-  const weeklyXp = p.scoreHistory.filter((h) => new Date(h.at).getTime() > weekAgo).reduce((s, h) => s + Math.round(10 + h.overall * 0.9), 0)
+  const weeklyXp = p.scoreHistory
+    .filter((h) => new Date(h.at).getTime() > weekAgo)
+    .reduce((s, h) => s + Math.round(10 + h.overall * 0.9), 0)
   const me: LeaderboardEntry = {
     id: user.id,
     name: user.displayName,
