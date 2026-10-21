@@ -1224,7 +1224,20 @@
     "newsletterButton": "Get weekly prompts",
     "newsletterThanks": "You're on the list!",
     "newsletterNote": "This is a preview — no email will actually be sent.",
-    "newsletterHand": "one creative spark every Monday"
+    "newsletterHand": "one creative spark every Monday",
+    "marquee": [
+      "Impressionism",
+      "Đông Hồ prints",
+      "Ukiyo-e",
+      "Sơn mài",
+      "Cubism",
+      "Fauvism",
+      "Pop Art",
+      "Pointillism",
+      "Surrealism",
+      "Mexican Muralism",
+      "Chinese ink wash"
+    ]
   },
   "notFound": {
     "eyebrow": "Error 404",

@@ -456,7 +456,7 @@ function GalleryWall() {
         </ul>
       </div>
       <Marquee className="mt-16 border-y border-line py-5" duration={50}>
-        {['Impressionism', 'Đông Hồ', 'Ukiyo-e', 'Sơn mài', 'Cubism', 'Fauvism', 'Pop Art', 'Pointillism', 'Surrealism', 'Mexican Muralism', 'Chinese ink'].map((m) => (
+        {(t('home.marquee', { returnObjects: true }) as string[]).map((m) => (
           <span key={m} className="mx-8 inline-flex items-center gap-8 font-display text-3xl italic text-ink-soft">
             {m} <span className="text-accent-ink not-italic">✦</span>
           </span>

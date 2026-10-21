@@ -1224,7 +1224,20 @@
     "newsletterButton": "Nhận đề bài hằng tuần",
     "newsletterThanks": "Bạn đã có tên trong danh sách!",
     "newsletterNote": "Đây là bản xem trước — sẽ không có email nào thật sự được gửi.",
-    "newsletterHand": "một tia sáng tạo mỗi thứ Hai"
+    "newsletterHand": "một tia sáng tạo mỗi thứ Hai",
+    "marquee": [
+      "Ấn tượng",
+      "Tranh Đông Hồ",
+      "Ukiyo-e",
+      "Sơn mài",
+      "Lập thể",
+      "Dã thú",
+      "Pop Art",
+      "Chấm điểm",
+      "Siêu thực",
+      "Tranh tường Mexico",
+      "Thủy mặc"
+    ]
   },
   "notFound": {
     "eyebrow": "Lỗi 404",
