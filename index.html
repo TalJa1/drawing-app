@@ -1,10 +1,23 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>drawing-app</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Art Spark — your personal art studio. Trace, colour, get kind feedback from an AI art judge, and explore every way to make art." />
+    <meta name="theme-color" content="#F6F1E7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#12100E" media="(prefers-color-scheme: dark)" />
+    <title>Art Spark — Draw. Colour. Get inspired.</title>
+    <script>
+      // Apply the saved theme before first paint to avoid a flash.
+      try {
+        var s = JSON.parse(localStorage.getItem('artspark:settings') || '{}').state || {}
+        var t = s.theme || 'system'
+        if (t === 'system') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.dataset.theme = t
+        if (s.language) document.documentElement.lang = s.language
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>
