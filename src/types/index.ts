@@ -445,6 +445,8 @@ export interface ChatMessage {
   rating?: 'up' | 'down'
   /** true while the reply is still streaming */
   pending?: boolean
+  /** the reply failed (shown with a retry button) */
+  error?: boolean
 }
 
 export interface Conversation {

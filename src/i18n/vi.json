@@ -1022,5 +1022,87 @@
       "next": "Bức tiếp theo",
       "learnMore": "Tìm hiểu thêm về {{name}}"
     }
+  },
+  "chat": {
+    "title": "Nàng thơ sáng tạo của bạn",
+    "subtitle": "Ý tưởng, lời khuyên về màu, hướng dẫn bố cục và lịch sử nghệ thuật — người bạn AI thân thiện (bản xem trước).",
+    "newChat": "Cuộc trò chuyện mới",
+    "history": "Cuộc trò chuyện",
+    "noHistory": "Các cuộc trò chuyện sẽ xuất hiện ở đây.",
+    "untitled": "Cuộc trò chuyện mới",
+    "rename": "Đổi tên cuộc trò chuyện",
+    "delete": "Xóa cuộc trò chuyện",
+    "deleteTitle": "Xóa cuộc trò chuyện này?",
+    "modeLabel": "Chế độ nàng thơ",
+    "modes": {
+      "ideas": {
+        "name": "Tạo ý tưởng",
+        "short": "Ý tưởng",
+        "intro": "Bí ý tưởng vẽ? Hỏi mình để có đề bài, thử thách và những tia lửa sáng tạo nhỏ.",
+        "prompts": [
+          "Cho mình 5 ý tưởng vẽ cho người mới bắt đầu",
+          "Tạo cho mình thử thách vẽ 7 ngày",
+          "Hôm nay mình nên vẽ gì?"
+        ]
+      },
+      "colour": {
+        "name": "Cố vấn màu sắc",
+        "short": "Màu sắc",
+        "intro": "Cho mình một màu hoặc một tâm trạng, mình sẽ pha bảng màu cho bạn — rồi gửi thẳng tới xưởng vẽ.",
+        "prompts": [
+          "Màu nào hợp với xanh mòng két?",
+          "Cho mình một bảng màu gợi hoài niệm",
+          "Những màu hợp với hồng"
+        ]
+      },
+      "composition": {
+        "name": "Huấn luyện bố cục",
+        "short": "Bố cục",
+        "intro": "Cùng làm bức tranh của bạn cân bằng và sống động hơn — quy tắc một phần ba, đường dẫn, tiêu điểm.",
+        "prompts": [
+          "Làm sao để cải thiện bố cục?",
+          "Nên đặt đường chân trời ở đâu?",
+          "Làm sao tạo tiêu điểm?"
+        ]
+      },
+      "history": {
+        "name": "Sử gia nghệ thuật",
+        "short": "Lịch sử",
+        "intro": "Hỏi mình về bất kỳ trào lưu hay nghệ sĩ nào — từ tranh hang động đến tranh Đông Hồ đến Pop Art.",
+        "prompts": [
+          "Giải thích trường phái Ấn tượng cho trẻ 12 tuổi",
+          "Tranh dân gian Đông Hồ là gì?",
+          "Kể mình nghe về Lập thể"
+        ]
+      }
+    },
+    "emptyTitle": "Xin chào, {{name}}! Mình là nàng thơ của bạn.",
+    "emptyNote": "chọn một gợi ý bên dưới, hoặc hỏi mình bất cứ điều gì",
+    "thinking": "Nàng thơ đang suy nghĩ…",
+    "error": "Nàng thơ vừa quên mất mạch suy nghĩ.",
+    "helpful": "Hữu ích",
+    "notHelpful": "Chưa hữu ích",
+    "regenerate": "Tạo lại câu trả lời",
+    "suggestions": "Gợi ý câu hỏi",
+    "placeholder": "Hỏi ý tưởng, màu sắc, mẹo bố cục…",
+    "send": "Gửi",
+    "stop": "Dừng",
+    "removeAttachment": "Bỏ hình",
+    "disclaimer": "Nàng thơ là bản xem trước với câu trả lời soạn sẵn — AI thật sẽ có khi kết nối máy chủ.",
+    "attach": {
+      "button": "Đính kèm hình",
+      "title": "Chia sẻ hình với nàng thơ",
+      "upload": "Tải lên từ thiết bị",
+      "fromCollection": "Từ bộ sưu tập của bạn",
+      "empty": "Bộ sưu tập còn trống — hoàn thành một tác phẩm để chia sẻ ở đây.",
+      "tooBig": "Hình quá lớn (tối đa 12 MB)."
+    },
+    "cards": {
+      "template": "Mẫu vẽ",
+      "drawThis": "Vẽ mẫu này",
+      "sketchIt": "Phác trong Vẽ tự do",
+      "lesson_one": "Bài học · {{count}} phút",
+      "lesson_other": "Bài học · {{count}} phút"
+    }
   }
 }
