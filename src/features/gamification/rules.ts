@@ -399,12 +399,3 @@ export function applyEvent(
     },
   }
 }
-
-/** Rank label for a score (shown on the result page). */
-export function rankForScore(score: number) {
-  if (score >= 90) return 'masterpiece' as const
-  if (score >= 75) return 'gallery' as const
-  if (score >= 60) return 'steady' as const
-  if (score >= 40) return 'rising' as const
-  return 'starter' as const
-}

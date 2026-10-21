@@ -53,3 +53,9 @@ export function star(cx: number, cy: number, points: number, r1: number, r2: num
 
 export const INK = 'fill="#1b1a17"'
 export const NONE = 'fill="none"'
+
+/** Lily pad: a circle with a wedge-shaped notch facing angle `rot`. */
+export function lilyPad(cx: number, cy: number, r: number, rot = 0): string {
+  const p = (a: number) => `${f(cx + Math.cos(rot + a) * r)} ${f(cy + Math.sin(rot + a) * r)}`
+  return `<path d="M${f(cx)} ${f(cy)} L ${p(0.32)} A ${r} ${r} 0 1 1 ${p(-0.32)} Z"/>`
+}
