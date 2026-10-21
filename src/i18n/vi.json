@@ -146,5 +146,200 @@
     "feedback": "Tiến độ, phản hồi & lớp phủ",
     "badges": "Huy chương",
     "decor": "Trang trí: vệt màu, đường chia, băng chạy, trạng thái trống"
+  },
+  "colour": {
+    "hue": "Sắc màu",
+    "saturationBrightness": "Độ bão hòa và độ sáng",
+    "hex": "Mã hex",
+    "recent": "Màu gần đây",
+    "palettes": "Bảng màu chọn lọc",
+    "suggested": "Gợi ý cho mẫu này",
+    "fromElsewhere": "Bảng màu: {{name}}"
+  },
+  "studio": {
+    "canvasLabel": "Khung vẽ",
+    "toolsLabel": "Công cụ vẽ",
+    "toolOptions": "Tùy chọn công cụ",
+    "tools": {
+      "pencil": "Bút chì",
+      "pen": "Bút kim",
+      "marker": "Bút dạ",
+      "watercolour": "Màu nước",
+      "airbrush": "Cọ phun",
+      "chalk": "Phấn & than",
+      "eraser": "Tẩy",
+      "smudge": "Làm nhòe / hòa trộn",
+      "bucket": "Thùng sơn",
+      "eyedropper": "Hút màu",
+      "line": "Đường thẳng",
+      "rect": "Hình chữ nhật",
+      "ellipse": "Hình elip",
+      "hand": "Bàn tay (di chuyển)",
+      "zoom": "Thu phóng"
+    },
+    "toolHints": {
+      "eyedropper": "Nhấn vào bất kỳ đâu để lấy màu. Mẹo: giữ Alt khi dùng cọ.",
+      "hand": "Kéo để di chuyển. Mẹo: giữ phím Cách với bất kỳ công cụ nào.",
+      "zoom": "Nhấn để phóng to, Alt + nhấn để thu nhỏ."
+    },
+    "size": "Cỡ",
+    "opacity": "Độ đục",
+    "hardness": "Độ cứng",
+    "smoothing": "Làm mượt",
+    "tolerance": "Dung sai",
+    "symmetry": "Đối xứng",
+    "symmetryModes": {
+      "none": "Tắt",
+      "vertical": "Gương ↔",
+      "horizontal": "Gương ↕",
+      "quad": "Bốn hướng",
+      "radial6": "Xoay tròn × 6",
+      "radial8": "Xoay tròn × 8"
+    },
+    "pressure": "Lực nhấn bút",
+    "shapeFill": "Tô kín hình",
+    "sampleAll": "Lấy mẫu mọi lớp",
+    "undo": "Hoàn tác",
+    "redo": "Làm lại",
+    "zoomIn": "Phóng to",
+    "zoomOut": "Thu nhỏ",
+    "zoomReset": "Đặt lại thu phóng 100%",
+    "fit": "Vừa màn hình",
+    "clear": "Xóa lớp",
+    "clearTitle": "Xóa lớp này?",
+    "clearBody": "Mọi thứ trên lớp hiện tại sẽ bị xóa. Bạn vẫn có thể hoàn tác.",
+    "timer": "Thời gian vẽ",
+    "saveDraft": "Lưu nháp",
+    "savedAt": "Đã lưu nháp lúc {{time}}",
+    "draftSaved": "Đã lưu bản nháp",
+    "shortcuts": "Phím tắt",
+    "downloaded": "Đã tải {{type}}",
+    "downloadPng": "Tải PNG",
+    "downloadJpg": "Tải JPG",
+    "panels": {
+      "label": "Bảng điều khiển xưởng vẽ",
+      "colour": "Màu",
+      "layers": "Lớp",
+      "info": "Thông tin"
+    },
+    "layers": {
+      "title": "Lớp",
+      "count": "{{count}}/{{max}} lớp",
+      "add": "Thêm lớp",
+      "delete": "Xóa lớp",
+      "moveUp": "Đưa lớp lên",
+      "moveDown": "Đưa lớp xuống",
+      "rename": "Đổi tên lớp",
+      "renameHint": "Nhấn đúp để đổi tên",
+      "hide": "Ẩn lớp",
+      "show": "Hiện lớp",
+      "lock": "Khóa lớp",
+      "unlock": "Mở khóa lớp",
+      "blend": "Hòa trộn",
+      "properties": "Cài đặt “{{name}}”",
+      "lineArt": "Nét mẫu",
+      "lineArtNote": "Đã khóa · luôn ở trên cùng",
+      "lineArtOpacity": "Độ đục nét mẫu",
+      "defaultName": "Lớp {{n}}",
+      "colourLayer": "Tô màu",
+      "traceLayer": "Đồ nét"
+    },
+    "blend": {
+      "normal": "Bình thường",
+      "multiply": "Nhân",
+      "overlay": "Phủ",
+      "screen": "Sáng lên"
+    },
+    "hints": {
+      "locked": "Lớp này đang khóa — mở khóa trong bảng Lớp để vẽ.",
+      "hidden": "Lớp này đang ẩn — hãy hiện nó để vẽ.",
+      "fill-none": "Không có gì để tô ở đó — thử nhấn vào bên trong một hình."
+    },
+    "sc": {
+      "brushes": "Bút chì · bút kim · bút dạ",
+      "paints": "Màu nước · cọ phun · phấn",
+      "eraser": "Tẩy",
+      "bucket": "Thùng sơn",
+      "eyedropper": "Lấy màu",
+      "shapes": "Đường · chữ nhật · elip",
+      "size": "Cọ nhỏ / lớn hơn",
+      "undo": "Hoàn tác",
+      "redo": "Làm lại",
+      "pan": "Di chuyển khung vẽ",
+      "zoom": "Thu phóng",
+      "fit": "Vừa màn hình",
+      "lineart": "Hiện / ẩn nét mẫu",
+      "swap": "Đổi về màu trước",
+      "constrain": "Hình vuông, tròn và góc 45° hoàn hảo",
+      "save": "Lưu nháp",
+      "help": "Hiện danh sách này"
+    },
+    "tour": {
+      "label": "Hướng dẫn xưởng vẽ",
+      "step": "Bước {{n}}/{{total}}",
+      "start": "Bắt đầu sáng tác",
+      "tools": {
+        "title": "Cọ vẽ của bạn ở đây",
+        "body": "Bút chì, bút kim, bút dạ, màu nước, cọ phun, phấn, thùng sơn và hơn thế. Mỗi loại có cỡ và cảm giác riêng — di chuột để xem phím tắt."
+      },
+      "options": {
+        "title": "Tinh chỉnh từng công cụ",
+        "body": "Cỡ, độ đục, độ mềm, làm mượt và cả đối xứng gương cho mandala. Mẹo: dùng [ và ] để đổi cỡ."
+      },
+      "colour": {
+        "title": "Pha bảng màu của bạn",
+        "body": "Xoay vòng màu, nhập mã hex, hoặc chọn bảng màu có sẵn. Các lớp nằm ở thẻ bên cạnh."
+      },
+      "primary": {
+        "title": "Gửi cho giám khảo",
+        "template": "Khi đã hài lòng, hãy nộp cho Giám khảo AI để nhận điểm, nhận xét ấm áp và ba mẹo cho lần sau.",
+        "free": "Tải tác phẩm dạng PNG hoặc JPG, hoặc lưu vào bộ sưu tập để nhận XP."
+      }
+    },
+    "restore": {
+      "title": "Chào mừng trở lại!",
+      "body": "Bạn có một tác phẩm dang dở từ {{when}}. Tiếp tục nhé?",
+      "note": "cọ của bạn vẫn còn ướt…",
+      "continue": "Tiếp tục vẽ",
+      "fresh": "Bắt đầu mới"
+    }
+  },
+  "freeDraw": {
+    "title": "Vẽ tự do",
+    "subtitle": "Một trang trắng và cả thế giới thời gian",
+    "withPalette": "Đang vẽ với bảng màu “{{name}}”",
+    "description": "Khung vẽ trắng để vẽ tự do. Dùng thanh công cụ bên trái, đổi màu ở bảng bên phải, rồi tải xuống hoặc lưu khi xong.",
+    "canvasTab": "Khung vẽ",
+    "inspiration": "Tia lửa hôm nay",
+    "inspirationEmpty": "Mọi kiệt tác đều bắt đầu từ một nét vẽ dũng cảm.",
+    "needInspiration": "Cần cảm hứng?",
+    "askMuse": "Hỏi nàng thơ",
+    "chatAboutPrompt": "Giúp mình lên ý tưởng vẽ: {{prompt}}",
+    "chatAsk": "Cho mình 5 ý tưởng vẽ cho người mới bắt đầu",
+    "background": "Giấy",
+    "bg": {
+      "white": "Trắng",
+      "cream": "Kem",
+      "kraft": "Giấy xi măng",
+      "black": "Đen",
+      "transparent": "Trong suốt"
+    },
+    "canvasSize": "Kích thước khung",
+    "sizeConfirm": "Đổi kích thước sẽ mở khung vẽ mới (khung hiện tại được giữ làm bản nháp). Tiếp tục?",
+    "sizes": {
+      "classic": "Ngang 4:3",
+      "square": "Vuông",
+      "wide": "Rộng 16:9",
+      "a4": "A4 dọc",
+      "story": "Story 9:16"
+    },
+    "learnLink": "Muốn luyện tập có lộ trình? Thử một bài học trong",
+    "saveToCollection": "Lưu vào bộ sưu tập",
+    "saveTitle": "Đặt tên tác phẩm",
+    "titleLabel": "Tiêu đề",
+    "untitled": "Bản nghiên cứu chưa đặt tên",
+    "medium": "Kỹ thuật số · vẽ tự do",
+    "saved": "Đã lưu vào bộ sưu tập",
+    "savedXp": "+{{xp}} XP vì hoàn thành một tác phẩm"
   }
 }

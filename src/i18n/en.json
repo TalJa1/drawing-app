@@ -146,5 +146,200 @@
     "feedback": "Progress, feedback & overlays",
     "badges": "Badge medals",
     "decor": "Decor: splatters, dividers, marquee, empty state"
+  },
+  "colour": {
+    "hue": "Hue",
+    "saturationBrightness": "Saturation and brightness",
+    "hex": "Hex",
+    "recent": "Recent colours",
+    "palettes": "Curated palettes",
+    "suggested": "Suggested for this template",
+    "fromElsewhere": "Palette: {{name}}"
+  },
+  "studio": {
+    "canvasLabel": "Drawing canvas",
+    "toolsLabel": "Drawing tools",
+    "toolOptions": "Tool options",
+    "tools": {
+      "pencil": "Pencil",
+      "pen": "Fine pen",
+      "marker": "Marker",
+      "watercolour": "Watercolour",
+      "airbrush": "Airbrush",
+      "chalk": "Chalk & charcoal",
+      "eraser": "Eraser",
+      "smudge": "Smudge / blend",
+      "bucket": "Paint bucket",
+      "eyedropper": "Eyedropper",
+      "line": "Line",
+      "rect": "Rectangle",
+      "ellipse": "Ellipse",
+      "hand": "Hand (pan)",
+      "zoom": "Zoom"
+    },
+    "toolHints": {
+      "eyedropper": "Click anywhere to pick a colour. Tip: hold Alt with any brush.",
+      "hand": "Drag to move around. Tip: hold Space with any tool.",
+      "zoom": "Click to zoom in, Alt+click to zoom out."
+    },
+    "size": "Size",
+    "opacity": "Opacity",
+    "hardness": "Hardness",
+    "smoothing": "Smoothing",
+    "tolerance": "Tolerance",
+    "symmetry": "Symmetry",
+    "symmetryModes": {
+      "none": "Off",
+      "vertical": "Mirror ↔",
+      "horizontal": "Mirror ↕",
+      "quad": "Four-way",
+      "radial6": "Radial × 6",
+      "radial8": "Radial × 8"
+    },
+    "pressure": "Pen pressure",
+    "shapeFill": "Fill shape",
+    "sampleAll": "Sample all layers",
+    "undo": "Undo",
+    "redo": "Redo",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "zoomReset": "Reset zoom to 100%",
+    "fit": "Fit to screen",
+    "clear": "Clear layer",
+    "clearTitle": "Clear this layer?",
+    "clearBody": "Everything on the current layer will be wiped. You can still undo it.",
+    "timer": "Time spent drawing",
+    "saveDraft": "Save draft",
+    "savedAt": "Draft saved at {{time}}",
+    "draftSaved": "Draft saved",
+    "shortcuts": "Keyboard shortcuts",
+    "downloaded": "{{type}} downloaded",
+    "downloadPng": "Download PNG",
+    "downloadJpg": "Download JPG",
+    "panels": {
+      "label": "Studio panels",
+      "colour": "Colour",
+      "layers": "Layers",
+      "info": "Info"
+    },
+    "layers": {
+      "title": "Layers",
+      "count": "{{count}} of {{max}} layers",
+      "add": "Add layer",
+      "delete": "Delete layer",
+      "moveUp": "Move layer up",
+      "moveDown": "Move layer down",
+      "rename": "Rename layer",
+      "renameHint": "Double-click to rename",
+      "hide": "Hide layer",
+      "show": "Show layer",
+      "lock": "Lock layer",
+      "unlock": "Unlock layer",
+      "blend": "Blend",
+      "properties": "“{{name}}” settings",
+      "lineArt": "Line art",
+      "lineArtNote": "Locked · always on top",
+      "lineArtOpacity": "Line art opacity",
+      "defaultName": "Layer {{n}}",
+      "colourLayer": "Colour",
+      "traceLayer": "Trace"
+    },
+    "blend": {
+      "normal": "Normal",
+      "multiply": "Multiply",
+      "overlay": "Overlay",
+      "screen": "Screen"
+    },
+    "hints": {
+      "locked": "This layer is locked — unlock it in the Layers panel to paint.",
+      "hidden": "This layer is hidden — show it to paint on it.",
+      "fill-none": "Nothing to fill there — try clicking inside a shape."
+    },
+    "sc": {
+      "brushes": "Pencil · fine pen · marker",
+      "paints": "Watercolour · airbrush · chalk",
+      "eraser": "Eraser",
+      "bucket": "Paint bucket",
+      "eyedropper": "Pick a colour",
+      "shapes": "Line · rectangle · ellipse",
+      "size": "Smaller / bigger brush",
+      "undo": "Undo",
+      "redo": "Redo",
+      "pan": "Pan the canvas",
+      "zoom": "Zoom",
+      "fit": "Fit to screen",
+      "lineart": "Show / hide line art",
+      "swap": "Swap to previous colour",
+      "constrain": "Perfect squares, circles and 45° lines",
+      "save": "Save draft",
+      "help": "Show this list"
+    },
+    "tour": {
+      "label": "Studio tour",
+      "step": "Step {{n}} of {{total}}",
+      "start": "Start creating",
+      "tools": {
+        "title": "Your brushes live here",
+        "body": "Pencil, pen, marker, watercolour, airbrush, chalk, bucket and more. Each has its own size and feel — hover for shortcuts."
+      },
+      "options": {
+        "title": "Fine-tune each tool",
+        "body": "Size, opacity, softness, smoothing and even mirror symmetry for mandalas. Tip: use [ and ] to resize."
+      },
+      "colour": {
+        "title": "Mix your palette",
+        "body": "Spin the pigment wheel, type a hex code, or pick from curated palettes. Layers live in the next tab."
+      },
+      "primary": {
+        "title": "Share it with the judge",
+        "template": "When you're happy, submit to the AI Judge for a score, warm feedback and three tips for next time.",
+        "free": "Download your art as PNG or JPG, or save it to your collection to earn XP."
+      }
+    },
+    "restore": {
+      "title": "Welcome back!",
+      "body": "You have an unfinished piece from {{when}}. Pick up where you left off?",
+      "note": "your brushes are still wet…",
+      "continue": "Continue drawing",
+      "fresh": "Start fresh"
+    }
+  },
+  "freeDraw": {
+    "title": "Free Draw",
+    "subtitle": "A blank page and all the time in the world",
+    "withPalette": "Painting with the “{{name}}” palette",
+    "description": "A blank canvas for free drawing. Use the tool rail on the left, change colours in the right panel, and download or save when finished.",
+    "canvasTab": "Canvas",
+    "inspiration": "Today's spark",
+    "inspirationEmpty": "Every masterpiece begins with one brave line.",
+    "needInspiration": "Need inspiration?",
+    "askMuse": "Ask the muse",
+    "chatAboutPrompt": "Help me plan a drawing of: {{prompt}}",
+    "chatAsk": "Give me 5 drawing ideas for beginners",
+    "background": "Paper",
+    "bg": {
+      "white": "White",
+      "cream": "Cream",
+      "kraft": "Kraft",
+      "black": "Black",
+      "transparent": "None"
+    },
+    "canvasSize": "Canvas size",
+    "sizeConfirm": "Changing the canvas size starts a new canvas (your current one is kept as a draft). Continue?",
+    "sizes": {
+      "classic": "Landscape 4:3",
+      "square": "Square",
+      "wide": "Wide 16:9",
+      "a4": "A4 portrait",
+      "story": "Story 9:16"
+    },
+    "learnLink": "Want structured practice? Try a lesson in",
+    "saveToCollection": "Save to collection",
+    "saveTitle": "Name your artwork",
+    "titleLabel": "Title",
+    "untitled": "Untitled study",
+    "medium": "Digital · free draw",
+    "saved": "Saved to your collection",
+    "savedXp": "+{{xp}} XP for finishing a piece"
   }
 }
