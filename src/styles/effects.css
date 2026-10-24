@@ -1,0 +1,366 @@
+/* Signature effects: frames, washes, ink-bleed buttons, foil badges, shimmer. */
+
+/* ---------- Gallery frame ---------- */
+.frame {
+  position: relative;
+  padding: var(--frame-w, 12px);
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.12), transparent 40%), linear-gradient(315deg, rgb(0 0 0 / 0.35), transparent 50%),
+    var(--frame);
+  border-radius: 3px;
+  box-shadow:
+    var(--shadow-frame),
+    inset 0 0 0 1px var(--frame-edge);
+}
+.frame::after {
+  /* bevel highlight */
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.frame-gold {
+  --frame: #8a6a1c;
+  --frame-edge: #f1d47a;
+  background: linear-gradient(135deg, #f7e7a6 0%, #c9a032 28%, #8a6a1c 50%, #d8b44a 72%, #fff1b8 100%);
+}
+.frame-light {
+  --frame: #e8dcc6;
+  --frame-edge: #fff;
+}
+.mat {
+  background: var(--mat);
+  padding: var(--mat-w, 14px);
+  box-shadow:
+    inset 0 2px 6px rgb(0 0 0 / 0.18),
+    inset 0 0 0 1px rgb(0 0 0 / 0.06);
+}
+.mat > .art {
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+
+/* ---------- Museum wall label ---------- */
+.wall-label {
+  font-family: var(--font-sans);
+  font-variant: all-small-caps;
+  letter-spacing: 0.08em;
+  font-size: 0.82rem;
+  color: var(--ink-faint);
+}
+.wall-label strong {
+  font-family: var(--font-display);
+  font-variant: normal;
+  letter-spacing: -0.01em;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ---------- Watercolour washes ---------- */
+.wash {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(42px);
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  animation: drift 26s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+[data-theme='dark'] .wash {
+  mix-blend-mode: screen;
+  opacity: 0.2;
+}
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(4%, -6%, 0) scale(1.08) rotate(12deg);
+  }
+  100% {
+    transform: translate3d(-5%, 4%, 0) scale(0.95) rotate(-8deg);
+  }
+}
+
+/* ---------- Ink-bleed ripple (buttons) ---------- */
+.ink-bleed {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  animation: bleed 0.65s var(--ease-ink, ease-out) forwards;
+  filter: url(#wash-edge);
+}
+@keyframes bleed {
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ---------- Brush stroke draw-in ---------- */
+.draw-in path {
+  stroke-dasharray: var(--len, 1200);
+  stroke-dashoffset: var(--len, 1200);
+  animation: draw 1.6s var(--ease-ink, ease-out) forwards;
+  animation-delay: var(--delay, 0s);
+}
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------- Skeleton paint shimmer ---------- */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper-3);
+  border-radius: 8px;
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    color-mix(in oklab, var(--saffron) 25%, transparent) 45%,
+    color-mix(in oklab, var(--rose) 18%, transparent) 55%,
+    transparent 80%
+  );
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* ---------- Badge rarity foils ---------- */
+.foil-common {
+  background: linear-gradient(145deg, #d9d2c5, #b9b0a1 50%, #e6e0d5);
+}
+.foil-rare {
+  background: linear-gradient(145deg, #a9c8e8, #4b7fb5 45%, #c7def3 70%, #5c8fc4);
+}
+.foil-epic {
+  background: linear-gradient(145deg, #d8b4f0, #7b4bb5 45%, #e8cff7 70%, #8a59c4);
+}
+.foil-legendary {
+  background: linear-gradient(145deg, #fff1b8, #d4af37 35%, #8a6a1c 55%, #f7e7a6 75%, #c9a032);
+}
+.holo {
+  position: relative;
+  overflow: hidden;
+}
+.holo::before {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  background: conic-gradient(
+    from 0deg,
+    rgb(255 0 128 / 0.35),
+    rgb(255 200 0 / 0.35),
+    rgb(0 255 170 / 0.35),
+    rgb(0 140 255 / 0.35),
+    rgb(200 0 255 / 0.35),
+    rgb(255 0 128 / 0.35)
+  );
+  mix-blend-mode: color-dodge;
+  opacity: 0;
+  transition: opacity 0.4s;
+  animation: spin 6s linear infinite;
+  pointer-events: none;
+}
+.holo:hover::before,
+.holo:focus-visible::before {
+  opacity: 0.85;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.gold-text {
+  background: linear-gradient(100deg, #9c7c17, #f1d47a 40%, #c9a032 60%, #fff1b8 80%, #9c7c17);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gold-sheen 4s linear infinite;
+}
+@keyframes gold-sheen {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Marquee ---------- */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- Flashcard flip ---------- */
+.flip-scene {
+  perspective: 1200px;
+}
+.flip-card {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s var(--ease-ink, ease);
+}
+.flip-card.is-flipped {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+/* ---------- Scanning light (AI ceremony) ---------- */
+@keyframes scan {
+  0% {
+    transform: translateY(-10%);
+  }
+  50% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(-10%);
+  }
+}
+.scan-beam {
+  animation: scan 2.6s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    transform: scale(1) rotate(-2deg);
+  }
+  50% {
+    transform: scale(1.08, 0.94) rotate(2deg);
+  }
+}
+.flame-flicker {
+  transform-origin: 50% 90%;
+  animation: flicker 1.4s ease-in-out infinite;
+}
+
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--r, 0deg));
+  }
+  50% {
+    transform: translateY(-12px) rotate(var(--r, 0deg));
+  }
+}
+.float-y {
+  animation: float-y var(--d, 6s) ease-in-out infinite;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion='full']) *,
+  html:not([data-motion='full']) *::before,
+  html:not([data-motion='full']) *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+html[data-motion='reduce'] *,
+html[data-motion='reduce'] *::before,
+html[data-motion='reduce'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+/* ---------- Range slider (pigment track) ---------- */
+.art-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+}
+.art-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent) var(--pct), var(--paper-3) var(--pct));
+}
+.art-range::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent) var(--pct), var(--paper-3) var(--pct));
+}
+.art-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: -7px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+  transition: transform 0.15s;
+}
+.art-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+}
+.art-range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+.art-range:focus-visible {
+  outline: none;
+}
+.art-range:focus-visible::-webkit-slider-thumb {
+  outline: 2.5px solid var(--focus);
+  outline-offset: 2px;
+}
+.art-range:focus-visible::-moz-range-thumb {
+  outline: 2.5px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* ---------- Custom paint-dot cursor (fine pointers only) ---------- */
+html.art-cursor,
+html.art-cursor * {
+  cursor: none;
+}
+html.art-cursor input:not([type='range']):not([type='checkbox']):not([type='color']),
+html.art-cursor textarea,
+html.art-cursor [contenteditable='true'] {
+  cursor: text;
+}
+html.art-cursor [data-cursor='brush'] {
+  cursor: crosshair;
+}

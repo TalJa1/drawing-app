@@ -1,0 +1,98 @@
+/* ------------------------------------------------------------------
+   Art Spark design tokens — named after pigments.
+   "Atelier" (light) is the default; "Gallery Night" is [data-theme=dark].
+   ------------------------------------------------------------------ */
+
+:root {
+  /* Pigments (shared by both themes) */
+  --vermilion: #e4572e;
+  --vermilion-deep: #bc3e1b;
+  --saffron: #f2a93b;
+  --viridian: #2e8b6f;
+  --cerulean: #2f80c4;
+  --ultramarine: #3a3fa8;
+  --rose: #c93c6b;
+  --ochre: #c98b2b;
+  --umber: #4a3426;
+  --gold: #d4af37;
+  --gold-deep: #9c7c17;
+
+  /* Atelier — warm paper, deep ink */
+  --paper: #f6f1e7;
+  --paper-2: #efe7d8;
+  --paper-3: #e5d9c4;
+  --card: #fbf8f1;
+  --ink: #1b1a17;
+  --ink-soft: #46413a;
+  --ink-faint: #6a6358;
+  --line: rgb(27 26 23 / 0.12);
+  --line-strong: rgb(27 26 23 / 0.24);
+  --accent: var(--vermilion);
+  --accent-ink: #b23a17;
+  --frame: #2b211a;
+  --frame-edge: #7a5a3c;
+  --mat: #fbf8f1;
+  --focus: #3a3fa8;
+  --desk: #e9e0cf;
+  --glow: transparent;
+
+  /* Data viz — validated (dataviz validator, all-pairs) on the Atelier surface #fbf8f1 */
+  --viz-1: #e4572e; /* overall */
+  --viz-2: #3a3fa8; /* similarity */
+  --viz-3: #1a9e8f; /* colour */
+  --viz-grid: rgb(27 26 23 / 0.08);
+  /* sequential teal ramp (activity heatmap), near-zero → strong */
+  --seq-0: #ece6da;
+  --seq-1: #bfe3dc;
+  --seq-2: #7fcbbd;
+  --seq-3: #36a796;
+  --seq-4: #137a6e;
+
+  --shadow-paper: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(60 40 20 / 0.06), 0 6px 18px -8px rgb(60 40 20 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(60 40 20 / 0.06), 0 18px 40px -16px rgb(60 40 20 / 0.32);
+  --shadow-frame: 0 1px 1px rgb(0 0 0 / 0.08), 0 12px 24px -10px rgb(40 25 10 / 0.45), 0 30px 60px -30px rgb(40 25 10 / 0.35);
+}
+
+[data-theme='dark'] {
+  /* Gallery Night — warm near-black, pigments glow under spotlights */
+  --paper: #12100e;
+  --paper-2: #1a1714;
+  --paper-3: #26211c;
+  --card: #1c1814;
+  --ink: #f3ebdd;
+  --ink-soft: #cdc2b1;
+  --ink-faint: #a09584;
+  --line: rgb(243 235 221 / 0.11);
+  --line-strong: rgb(243 235 221 / 0.22);
+  --accent: #f0714b;
+  --accent-ink: #f48a69;
+  --frame: #0b0a09;
+  --frame-edge: #a78449;
+  --mat: #221e19;
+  --focus: #f2a93b;
+  --desk: #0d0c0a;
+  --glow: rgb(242 169 59 / 0.08);
+
+  /* Data viz — dark steps validated on the Gallery Night surface #1c1814 */
+  --viz-1: #e5603a;
+  --viz-2: #7a7fe6;
+  --viz-3: #1fa596;
+  --viz-grid: rgb(243 235 221 / 0.08);
+  --seq-0: #2a251f;
+  --seq-1: #1d4a43;
+  --seq-2: #1f6e62;
+  --seq-3: #26957f;
+  --seq-4: #4cc7ad;
+
+  --vermilion: #ec6a42;
+  --saffron: #f5b552;
+  --viridian: #3aa384;
+  --cerulean: #4b97d6;
+  --ultramarine: #6a6fd6;
+  --rose: #db5583;
+  --ochre: #d89c3c;
+
+  --shadow-paper: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 22px -10px rgb(0 0 0 / 0.7);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 22px 48px -16px rgb(0 0 0 / 0.85);
+  --shadow-frame: 0 0 0 1px rgb(167 132 73 / 0.25), 0 14px 30px -10px rgb(0 0 0 / 0.8), 0 0 80px -20px rgb(242 169 59 / 0.12);
+}
