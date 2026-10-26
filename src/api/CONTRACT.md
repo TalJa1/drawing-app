@@ -127,7 +127,7 @@ Expected latency 2–6 s; the UI shows a "scoring ceremony" while waiting. Rank 
 | `getChallenges()`               | `GET /challenges`                                           | –               | `ChallengeStatus[]`                                |
 | `claimChallenge(id, periodKey)` | `POST /challenges/:id/claim`                                | `{ periodKey }` | `RewardSummary`                                    |
 | `getAchievements()`             | `GET /achievements`                                         | –               | `{ badges: (Badge & { unlockedAt?: ISODate })[] }` |
-| `getLeaderboard(scope, filter)` | `GET /leaderboard?scope=weekly\|all&filter=global\|friends` | –               | `LeaderboardEntry[]` (sorted)                      |
+| `getLeaderboard(scope)` | `GET /leaderboard?scope=weekly\|all` | –               | `LeaderboardEntry[]` (sorted)                      |
 
 `ProgressEvent` is a tagged union (`features/gamification/types.ts`), e.g.
 

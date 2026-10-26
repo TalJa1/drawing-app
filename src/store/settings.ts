@@ -48,7 +48,7 @@ export const useSettings = create<SettingsState>()(
       motion: 'system',
       sound: false,
       customCursor: true,
-      drawing: { defaultTool: 'pencil', pressure: true, smoothing: 0.35 },
+      drawing: { defaultTool: 'pencil', pressure: true, smoothing: 0 },
       onboardingDone: false,
       simulateErrors: false,
       setTheme: (theme) => set({ theme }),
@@ -60,6 +60,16 @@ export const useSettings = create<SettingsState>()(
       setOnboardingDone: (onboardingDone) => set({ onboardingDone }),
       setSimulateErrors: (simulateErrors) => set({ simulateErrors }),
     }),
-    { name: STORE_KEYS.settings, storage: persistStorage, version: 1 },
+    {
+      name: STORE_KEYS.settings,
+      storage: persistStorage,
+      version: 2,
+      // v2: stroke smoothing defaults to 0 (no lag behind the pointer). Only the old default is reset; custom values survive.
+      migrate: (persisted, version) => {
+        const s = persisted as Partial<SettingsState> | undefined
+        if (version < 2 && s?.drawing?.smoothing === 0.35) return { ...s, drawing: { ...s.drawing, smoothing: 0 } } as SettingsState
+        return persisted as SettingsState
+      },
+    },
   ),
 )

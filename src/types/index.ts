@@ -191,7 +191,6 @@ export interface LeaderboardEntry {
   weeklyXp: number
   level: number
   country: string
-  isFriend: boolean
   isCurrentUser?: boolean
   sample: true | false
 }

@@ -15,7 +15,7 @@ export const qk = {
   artwork: (id: string) => ['artworks', id] as const,
   achievements: ['achievements'] as const,
   challenges: ['challenges'] as const,
-  leaderboard: (scope: string, filter: string) => ['leaderboard', scope, filter] as const,
+  leaderboard: (scope: string) => ['leaderboard', scope] as const,
   lessons: ['lessons'] as const,
   lesson: (slug: string) => ['lessons', slug] as const,
   movements: ['movements'] as const,
@@ -61,8 +61,8 @@ export function useClaimChallenge() {
     },
   })
 }
-export const useLeaderboard = (scope: 'weekly' | 'all', filter: 'global' | 'friends') =>
-  useQuery({ queryKey: qk.leaderboard(scope, filter), queryFn: () => getLeaderboard(scope, filter), staleTime: 30_000 })
+export const useLeaderboard = (scope: 'weekly' | 'all') =>
+  useQuery({ queryKey: qk.leaderboard(scope), queryFn: () => getLeaderboard(scope), staleTime: 30_000 })
 
 export const useLessons = () => useQuery({ queryKey: qk.lessons, queryFn: getLessons, ...forever })
 export const useLesson = (slug: string) => useQuery({ queryKey: qk.lesson(slug), queryFn: () => getLesson(slug), ...forever, retry: 0 })

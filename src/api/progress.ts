@@ -76,8 +76,8 @@ export async function getAchievements(): Promise<AchievementsResponse> {
   return { badges: BADGES.map((b) => ({ ...b, unlockedAt: owned[b.id] })) }
 }
 
-/** GET /leaderboard?scope=weekly|all&filter=global|friends */
-export async function getLeaderboard(scope: 'weekly' | 'all', filter: 'global' | 'friends'): Promise<LeaderboardEntry[]> {
+/** GET /leaderboard?scope=weekly|all */
+export async function getLeaderboard(scope: 'weekly' | 'all'): Promise<LeaderboardEntry[]> {
   await simulate({ latency: [400, 900] })
   const user = useSession.getState().user
   const p = useProgress.getState()
@@ -93,11 +93,10 @@ export async function getLeaderboard(scope: 'weekly' | 'all', filter: 'global' |
     weeklyXp,
     level: levelFromXp(p.xp),
     country: 'VN',
-    isFriend: true,
     isCurrentUser: true,
     sample: false,
   }
-  const others = LEADERBOARD_SAMPLE.filter((e) => filter === 'global' || e.isFriend).map((e) => ({ ...e, level: levelFromXp(e.xp) }))
+  const others = LEADERBOARD_SAMPLE.map((e) => ({ ...e, level: levelFromXp(e.xp) }))
   const key = scope === 'weekly' ? 'weeklyXp' : 'xp'
   return [...others, me].sort((a, b) => b[key] - a[key])
 }

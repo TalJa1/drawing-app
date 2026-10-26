@@ -103,6 +103,8 @@ export class DrawingEngine {
   private brush: BrushState | null = null
   private pts: Point[] = []
   private smoothed: Point | null = null
+  /** live tip of a path stroke (visual only, never committed) */
+  private tail: Point | null = null
   private stampCarry = 0
   private bounds = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity }
   private shapeStart: Point | null = null
@@ -494,6 +496,7 @@ export class DrawingEngine {
     v.imageSmoothingEnabled = zoom < 3
     v.imageSmoothingQuality = 'high'
     v.drawImage(this.doc, 0, 0, w, h)
+    this.drawTail(v)
     // symmetry guides
     const b = this.opts.getBrush()
     if (b.symmetry !== 'none' && (BRUSH_TOOLS.includes(b.tool) || SHAPE_TOOLS.includes(b.tool))) {
@@ -531,6 +534,50 @@ export class DrawingEngine {
       v.globalAlpha = 1
     }
     v.restore()
+  }
+
+  /**
+   * Path strokes (pen, marker) are drawn up to the midpoint of the last two samples,
+   * so the visible line ends slightly behind the pointer. This draws the missing
+   * piece up to where the pointer is now. Visual only: the next frame redraws it,
+   * and it is never written to the stroke buffer.
+   */
+  private drawTail(v: CanvasRenderingContext2D) {
+    const b = this.brush
+    const t = this.tail
+    if (!b || !t || this.drawing !== 'stroke' || this.pts.length < 2 || b.tool === 'eraser') return
+    const profile = TOOL_PROFILES[b.tool]
+    if (profile?.render !== 'path') return
+    const [bb, c] = this.pts.slice(-2)
+    const B = this.symmetryPoints(bb.x, bb.y)
+    const C = this.symmetryPoints(c.x, c.y)
+    const T = this.symmetryPoints(t.x, t.y)
+    const z = this.view.zoom
+    v.save()
+    v.globalAlpha = b.settings.opacity
+    v.strokeStyle = b.color
+    v.lineCap = 'round'
+    v.lineJoin = 'round'
+    v.lineWidth = (profile.pressureSize ? b.settings.size * (0.2 + 0.8 * c.p) : b.settings.size) * z
+    for (let i = 0; i < B.length; i++) {
+      v.beginPath()
+      v.moveTo(((B[i][0] + C[i][0]) / 2) * z, ((B[i][1] + C[i][1]) / 2) * z)
+      v.lineTo(C[i][0] * z, C[i][1] * z)
+      v.lineTo(T[i][0] * z, T[i][1] * z)
+      v.stroke()
+    }
+    v.restore()
+  }
+
+  /** Where the pointer is now, for the live tail. Only with smoothing off, so the tail never contradicts the stabiliser. */
+  private liveTail(e: PointerEvent, events: PointerEvent[]): Point | null {
+    const b = this.brush
+    if (!b || b.smoothing >= 0.01 || TOOL_PROFILES[b.tool]?.render !== 'path') return null
+    // predicted points only for pens: for a mouse they overshoot and would leave a ghost line when the hand stops
+    const predicted = e.pointerType === 'pen' ? e.getPredictedEvents?.() : undefined
+    const src = predicted?.length ? predicted[predicted.length - 1] : events[events.length - 1]
+    const { x, y } = this.toDoc(src.clientX, src.clientY)
+    return { x, y, p: this.smoothed?.p ?? 1 }
   }
 
   /* ================= input ================= */
@@ -662,6 +709,7 @@ export class DrawingEngine {
         this.renderStrokeTo(next)
       }
     }
+    this.tail = this.drawing === 'stroke' ? this.liveTail(e, events) : null
     this.dirtyDoc = true
     this.requestRender()
   }
@@ -972,6 +1020,7 @@ export class DrawingEngine {
     const b = this.brush
     const mode = this.drawing
     this.drawing = false
+    this.tail = null
     if (!layer || !b) return
     if (mode !== 'smudge') {
       const lc = ctx2d(layer.canvas)
@@ -1006,6 +1055,7 @@ export class DrawingEngine {
     }
     ctx2d(this.strokeBuf).clearRect(0, 0, this.width, this.height)
     this.drawing = false
+    this.tail = null
     this.brush = null
     this.pts = []
     this.markDirty()

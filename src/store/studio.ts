@@ -52,7 +52,7 @@ const drawingPrefs = () => {
   try {
     return useSettings.getState().drawing
   } catch {
-    return { defaultTool: 'pencil' as const, pressure: true, smoothing: 0.35 }
+    return { defaultTool: 'pencil' as const, pressure: true, smoothing: 0 }
   }
 }
 
@@ -81,7 +81,13 @@ export const useStudio = create<StudioState>()(
     {
       name: STORE_KEYS.studio,
       storage: persistStorage,
-      version: 1,
+      version: 2,
+      // v2: stroke smoothing defaults to 0. Only the old default (0.35) is reset; custom values survive.
+      migrate: (persisted, version) => {
+        const s = persisted as Partial<StudioState> | undefined
+        if (version < 2 && s?.smoothing === 0.35) return { ...s, smoothing: 0 } as StudioState
+        return persisted as StudioState
+      },
       merge: (persisted, current) => {
         const p = (persisted ?? {}) as Partial<StudioState>
         return { ...current, ...p, settings: { ...DEFAULT_TOOL_SETTINGS, ...(p.settings ?? {}) } }

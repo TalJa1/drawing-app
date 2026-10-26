@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { Check, Gift, Snowflake, Users } from 'lucide-react'
+import { Check, Gift, Snowflake } from 'lucide-react'
 import type { Badge, BadgeCategory } from '@/types'
 import { Page, SectionHeading, Reveal } from '@/components/Layout'
 import { Tabs } from '@/components/Tabs'
@@ -346,8 +346,7 @@ function BadgeWall() {
 function Leaderboard() {
   const { t } = useTranslation()
   const [scope, setScope] = useState<'weekly' | 'all'>('weekly')
-  const [filter, setFilter] = useState<'global' | 'friends'>('global')
-  const { data, isLoading } = useLeaderboard(scope, filter)
+  const { data, isLoading } = useLeaderboard(scope)
   return (
     <Card className="p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -359,16 +358,6 @@ function Leaderboard() {
           items={[
             { id: 'weekly', label: t('achievements.weekly') },
             { id: 'all', label: t('achievements.allTime') },
-          ]}
-        />
-        <Tabs
-          ariaLabel={t('achievements.audience')}
-          value={filter}
-          onChange={setFilter}
-          size="sm"
-          items={[
-            { id: 'global', label: t('achievements.global') },
-            { id: 'friends', label: t('achievements.friends'), icon: <Users size={14} /> },
           ]}
         />
       </div>

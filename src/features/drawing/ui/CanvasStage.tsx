@@ -66,7 +66,7 @@ export function CanvasStage({ engine, description }: { engine: DrawingEngine; de
   const d = Math.max(4, size * zoom)
 
   return (
-    <div ref={wrapRef} className="relative h-full w-full overflow-hidden" data-cursor="brush">
+    <div ref={wrapRef} className="relative h-full w-full overflow-hidden" data-cursor="brush" data-brush-ink="off">
       <canvas
         ref={canvasRef}
         role="img"

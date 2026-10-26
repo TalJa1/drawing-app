@@ -351,16 +351,21 @@ html[data-motion='reduce'] *::after {
   outline-offset: 2px;
 }
 
-/* ---------- Custom paint-dot cursor (fine pointers only) ---------- */
+/* ---------- Brush cursor (fine pointers only; canvases are created by CustomCursor) ---------- */
 html.art-cursor,
 html.art-cursor * {
-  cursor: none;
+  cursor: none !important;
 }
-html.art-cursor input:not([type='range']):not([type='checkbox']):not([type='color']),
-html.art-cursor textarea,
-html.art-cursor [contenteditable='true'] {
-  cursor: text;
+/* watercolour ink layer: multiplies onto light surfaces, screens onto dark ones */
+.art-brush-ink {
+  mix-blend-mode: multiply;
 }
-html.art-cursor [data-cursor='brush'] {
-  cursor: crosshair;
+html[data-theme='dark'] .art-brush-ink {
+  mix-blend-mode: screen;
+}
+@media print {
+  .art-brush-ink,
+  .art-brush-cursor {
+    display: none !important;
+  }
 }
