@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Clock, Lock, Star } from 'lucide-react'
 import type { Template } from '@/types'
+import { API_BASE } from '@/api/client'
 import { cn, svgToDataUrl } from '@/lib/utils'
 import { useL } from '@/i18n/useL'
 import { preloadRoute } from '@/app/routes'
@@ -9,10 +10,19 @@ import { TiltCard } from '@/components/Card'
 import { DifficultyDots } from '@/components/Chip'
 import { DIFF_LEVEL } from './constants'
 
+/** `imageUrl` is a path on the API host ("/api/v1/…"); the page itself may be on another host. */
+function apiUrl(path: string): string {
+  try {
+    return new URL(path, new URL(API_BASE, window.location.href)).href
+  } catch {
+    return path
+  }
+}
+
 export function TemplateImage({ template, className, alt = '' }: { template: Template; className?: string; alt?: string }) {
   return (
     <img
-      src={template.imageUrl ?? svgToDataUrl(template.svg)}
+      src={template.imageUrl ? apiUrl(template.imageUrl) : svgToDataUrl(template.svg)}
       alt={alt}
       width={1200}
       height={900}

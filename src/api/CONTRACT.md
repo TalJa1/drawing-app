@@ -48,10 +48,13 @@ gallery/progress (the client can upload `GET /me/export` output).
 | ----------------------- | ------------------------------------------------ | ------------------------- |
 | `getTemplates()`        | `GET /templates`                                 | `Template[]`              |
 | `getTemplate(id)`       | `GET /templates/:id`                             | `Template`                |
+| (`<img src>`)           | `GET /templates/:id/image` (= `imageUrl`)        | `image/png` 1200×900      |
 | `dailyTemplateId(date)` | `GET /challenges/daily-template?date=YYYY-MM-DD` | `{ "templateId": "fox" }` |
 
 ```json
-// Template (svg may be replaced by imageUrl to a 1200×900 transparent PNG/SVG)
+// Template. `svg` is always sent (the studio colours and draws on it). `imageUrl` is a
+// server-relative path to the template's 1200×900 PNG (opaque white background, not transparent);
+// the field is absent until the server has the file. The storage key is never exposed.
 {
   "id": "fox",
   "title": { "en": "Sitting Fox", "vi": "Cáo ngồi" },
@@ -60,7 +63,7 @@ gallery/progress (the client can upload `GET /me/export` output).
   "minutes": 10,
   "unlockLevel": 1,
   "svg": "<svg …/>",
-  "imageUrl": null,
+  "imageUrl": "/api/v1/templates/fox/image",
   "suggestedPalette": ["#E4572E", "#F6F1E7"],
   "popularity": 96,
   "createdAt": "2026-01-01T00:00:00.000Z",
