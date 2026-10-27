@@ -39,7 +39,10 @@ import { cn, copyText } from '@/lib/utils'
 import { useChat } from '@/store/chat'
 import { useSession } from '@/store/session'
 import { toast } from '@/store/ui'
-import { uid } from '@/lib/random'
+import { prepareImage } from '@/features/chat/attachments'
+import type { PreparedImage } from '@/features/chat/attachments'
+import { useChatImageUrl } from '@/features/chat/chatImages'
+import { useChatStream } from '@/features/chat/streamStore'
 import { formatDate } from '@/lib/date'
 import { useMediaQuery } from '@/lib/hooks'
 
@@ -49,18 +52,6 @@ const MODES: { id: ChatMode; icon: typeof Lightbulb }[] = [
   { id: 'composition', icon: LayoutGrid },
   { id: 'history', icon: History },
 ]
-
-/** Downscale an image (blob) to a small data URL for chat thumbnails. */
-async function thumbFrom(blob: Blob, max = 360): Promise<string> {
-  const bmp = await createImageBitmap(blob)
-  const s = Math.min(1, max / Math.max(bmp.width, bmp.height))
-  const c = document.createElement('canvas')
-  c.width = Math.round(bmp.width * s)
-  c.height = Math.round(bmp.height * s)
-  c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height)
-  bmp.close?.()
-  return c.toDataURL('image/jpeg', 0.8)
-}
 
 function ConversationList({ onPick }: { onPick?: () => void }) {
   const { t, i18n } = useTranslation()
@@ -151,14 +142,14 @@ function ConversationList({ onPick }: { onPick?: () => void }) {
   )
 }
 
-function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () => void; onPick: (a: ChatAttachment) => void }) {
+function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () => void; onPick: (a: PreparedImage) => void }) {
   const { t } = useTranslation()
   const { data } = useArtworks()
   const fileRef = useRef<HTMLInputElement>(null)
-  const pickArtwork = async (id: string, key: string, name: string) => {
+  const pickArtwork = async (key: string, name: string) => {
     const blob = await getImageBlob(key)
     if (!blob) return
-    onPick({ kind: 'image', id: uid('a_'), src: await thumbFrom(blob), artworkId: id, name })
+    onPick(await prepareImage(blob, name))
     onClose()
   }
   return (
@@ -175,7 +166,7 @@ function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () =>
             toast({ title: t('chat.attach.tooBig'), tone: 'error' })
             return
           }
-          onPick({ kind: 'image', id: uid('a_'), src: await thumbFrom(f), name: f.name })
+          onPick(await prepareImage(f, f.name))
           onClose()
         }}
       />
@@ -189,7 +180,7 @@ function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () =>
             <li key={a.id}>
               <button
                 type="button"
-                onClick={() => void pickArtwork(a.id, a.thumbKey, a.title)}
+                onClick={() => void pickArtwork(a.imageKey, a.title)}
                 className="block w-full rounded-xl border border-line p-1 hover:border-ink"
               >
                 <ThumbImage k={a.thumbKey} alt={a.title} />
@@ -221,6 +212,25 @@ function ThumbImage({ k, alt }: { k: string; alt: string }) {
   )
 }
 
+function MessageImage({ attachment }: { attachment: ChatAttachment }) {
+  const src = useChatImageUrl(attachment.previewKey, attachment.src)
+  return src ? (
+    <img src={src} alt={attachment.name} className="max-h-48 rounded-2xl border border-line object-contain shadow-paper" />
+  ) : null
+}
+
+function PreparedImagePreview({ image }: { image: PreparedImage }) {
+  const [preview, setPreview] = useState<{ blob: Blob; url: string } | null>(null)
+  useEffect(() => {
+    const url = URL.createObjectURL(image.previewBlob)
+    void Promise.resolve().then(() => setPreview({ blob: image.previewBlob, url }))
+    return () => URL.revokeObjectURL(url)
+  }, [image.previewBlob])
+  return preview?.blob === image.previewBlob ? (
+    <img src={preview.url} alt={image.name} className="h-16 w-20 rounded-xl border border-line object-cover" />
+  ) : null
+}
+
 export default function ChatPage() {
   const { t } = useTranslation()
   const user = useSession((s) => s.user)
@@ -235,11 +245,19 @@ export default function ChatPage() {
   const [mode, setLocalMode] = useState<ChatMode>(active?.mode ?? 'ideas')
   const currentMode = active?.mode ?? mode
   const [text, setText] = useState(() => draft ?? '')
-  const [attachments, setAttachments] = useState<ChatAttachment[]>([])
+  const [attachments, setAttachments] = useState<PreparedImage[]>([])
   const [picker, setPicker] = useState(false)
   const [sidebar, setSidebar] = useState(false)
   const desktop = useMediaQuery('(min-width: 1024px)')
-  const { busy, send, regenerate, stop } = useMuse()
+  const { phase, send, regenerate, retry, stop } = useMuse()
+  const busy = phase !== null
+  const streaming = useChatStream((s) => s.active)
+  const messages =
+    active?.messages.map((message) =>
+      streaming?.conversationId === active.id && streaming.messageId === message.id
+        ? { ...message, content: streaming.content, cards: streaming.cards }
+        : message,
+    ) ?? []
   const endRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
@@ -248,7 +266,7 @@ export default function ChatPage() {
     if (draft) setDraft(null)
   }, [draft, setDraft])
 
-  const lastContent = active?.messages[active.messages.length - 1]?.content.length ?? 0
+  const lastContent = messages.at(-1)?.content.length ?? 0
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [active?.messages.length, lastContent])
@@ -272,7 +290,7 @@ export default function ChatPage() {
   }
 
   const suggestions = t(`chat.modes.${currentMode}.prompts`, { returnObjects: true }) as string[]
-  const lastAssistant = active ? [...active.messages].reverse().find((m) => m.role === 'assistant') : undefined
+  const lastAssistant = active?.messages.at(-1)?.role === 'assistant' ? active.messages.at(-1) : undefined
 
   return (
     <Page className="!pb-24 md:!pb-10">
@@ -332,7 +350,7 @@ export default function ChatPage() {
                 </div>
               ) : (
                 <ol className="mx-auto max-w-3xl space-y-6">
-                  {active.messages.map((m) => (
+                  {messages.map((m) => (
                     <motion.li
                       key={m.id}
                       initial={{ opacity: 0, y: 8 }}
@@ -348,12 +366,7 @@ export default function ChatPage() {
                       )}
                       <div className={cn('flex min-w-0 max-w-[85%] flex-col gap-2', m.role === 'user' && 'items-end')}>
                         {m.attachments.map((a) => (
-                          <img
-                            key={a.id}
-                            src={a.src}
-                            alt={a.name}
-                            className="max-h-48 rounded-2xl border border-line object-contain shadow-paper"
-                          />
+                          <MessageImage key={a.id} attachment={a} />
                         ))}
                         {(m.content || m.status === 'streaming') && (
                           <div
@@ -382,14 +395,14 @@ export default function ChatPage() {
                             )}
                           </div>
                         )}
-                        {m.status === 'failed' && (
+                        {m.id === lastAssistant?.id && (m.status === 'failed' || m.status === 'interrupted' || m.status === 'stopped') && (
                           <div className="flex items-center gap-2 rounded-2xl border border-vermilion/40 bg-vermilion/10 px-3 py-2 text-sm">
                             {t('chat.error')}
                             <Button
                               size="sm"
                               variant="ghost"
                               icon={<RefreshCw size={14} />}
-                              onClick={() => active && void regenerate(active.id, m.id, currentMode)}
+                              onClick={() => active && void retry(active.id)}
                             >
                               {t('common.retry')}
                             </Button>
@@ -436,7 +449,7 @@ export default function ChatPage() {
                                 size="sm"
                                 label={t('chat.regenerate')}
                                 icon={<RefreshCw size={14} />}
-                                onClick={() => active && void regenerate(active.id, m.id, currentMode)}
+                                onClick={() => active && void regenerate(active.id)}
                                 disabled={busy}
                               />
                             )}
@@ -477,7 +490,7 @@ export default function ChatPage() {
                   >
                     {attachments.map((a, i) => (
                       <span key={i} className="relative">
-                        <img src={a.src} alt={a.name} className="h-16 w-20 rounded-xl border border-line object-cover" />
+                        <PreparedImagePreview image={a} />
                         <button
                           type="button"
                           aria-label={t('chat.removeAttachment')}
