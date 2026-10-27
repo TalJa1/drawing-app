@@ -37,7 +37,7 @@ const storedCard: z.ZodType<ChatCard> = z.discriminatedUnion('type', [
     exercise: z.string(),
   }),
 ])
-const variant = z.object({ content: z.string(), cards: z.array(storedCard), status, createdAt: z.string() })
+const variant = z.object({ content: z.string(), cards: z.unknown(), status, createdAt: z.string() })
 const attachment = z.object({
   kind: z.literal('image'),
   id: z.string().optional(),
@@ -55,8 +55,8 @@ const message = z
     id: z.string(),
     role: z.enum(['user', 'assistant']),
     content: z.string(),
-    cards: z.array(storedCard),
-    attachments: z.array(attachment),
+    cards: z.unknown(),
+    attachments: z.unknown(),
     createdAt: z.string(),
     rating: z.enum(['up', 'down']).optional(),
     turnId: z.string().optional(),
@@ -64,56 +64,98 @@ const message = z
     status: status.optional(),
     pending: z.boolean().optional(),
     error: z.boolean().optional(),
-    variants: z.array(variant).optional(),
+    variants: z.unknown().optional(),
   })
   .passthrough()
+const conversationSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  mode,
+  messages: z.array(z.unknown()),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  imageContextTurnId: z.string().nullable().optional(),
+})
 const persisted = z.object({
-  conversations: z.array(
-    z.object({
-      id: z.string(),
-      title: z.string(),
-      mode,
-      messages: z.array(message),
-      createdAt: z.string(),
-      updatedAt: z.string(),
-      imageContextTurnId: z.string().nullable().optional(),
-    }),
-  ),
-  activeId: z.string().nullable(),
-  draft: z.string().nullable(),
-  drafts: z.record(z.string(), z.string()).optional(),
+  conversations: z.array(z.unknown()),
+  activeId: z.unknown().optional(),
+  draft: z.unknown().optional(),
+  drafts: z.unknown().optional(),
 })
 
 const emptyState = (): PersistedChat => ({ conversations: [], activeId: null, draft: null, drafts: {} })
+const repairedStates = new WeakSet<object>()
+
+export function wasChatStateRepaired(value: unknown): boolean {
+  return typeof value === 'object' && value !== null && repairedStates.has(value)
+}
 
 export function migrateChatState(value: unknown, fromVersion: number): PersistedChat {
+  let repaired = wasChatStateRepaired(value)
+  const finish = (state: PersistedChat) => {
+    if (repaired) repairedStates.add(state)
+    return state
+  }
   try {
     const parsed = persisted.safeParse(value)
-    if (!parsed.success) return emptyState()
-    const state = parsed.data
-    if (fromVersion >= 2) {
-      if (state.conversations.some((c) => c.messages.some((m) => !m.turnId || m.attachments.some((a) => !a.id)))) return emptyState()
-      return { ...state, drafts: state.drafts ?? {} } as PersistedChat
+    if (!parsed.success) {
+      repaired = value != null
+      return finish(emptyState())
     }
-    const conversations: Conversation[] = state.conversations.map((conversation) => {
+    const state = parsed.data
+    const read = <T>(schema: z.ZodType<T>, input: unknown, fallback: T): T => {
+      const result = schema.safeParse(input)
+      if (result.success) return result.data
+      repaired = true
+      return fallback
+    }
+    const readItems = <T>(schema: z.ZodType<T>, input: unknown): T[] =>
+      read(z.array(z.unknown()), input, []).flatMap((item) => {
+        const result = schema.safeParse(item)
+        if (result.success) return [result.data]
+        repaired = true
+        return []
+      })
+    const conversations: Conversation[] = readItems(conversationSchema, state.conversations).map((conversation) => {
       let turnId: string | undefined
-      const messages = conversation.messages.map((message): ChatMessage => {
+      const messages = readItems(message, conversation.messages).map((message): ChatMessage => {
         const rest = { ...message }
         delete rest.pending
         delete rest.error
-        if (message.role === 'user' || !turnId) turnId = uid('t_')
+        if (fromVersion < 2 || !message.turnId) repaired = true
+        if (message.role === 'user' || !turnId) turnId = message.turnId || uid('t_')
+        const messageTurnId = message.turnId || turnId
         return {
           ...rest,
-          turnId,
-          ...(message.role === 'user' ? { mode: conversation.mode } : { status: message.error ? 'failed' : 'completed' }),
-          attachments: message.attachments.map((image) => ({ ...image, id: uid('a_') })),
+          turnId: messageTurnId,
+          ...(fromVersion < 2
+            ? message.role === 'user'
+              ? { mode: conversation.mode }
+              : { status: message.error ? 'failed' : 'completed' }
+            : {}),
+          cards: readItems(storedCard, message.cards),
+          attachments: readItems(attachment, message.attachments).map((image) => {
+            if (!image.id) repaired = true
+            return { ...image, id: image.id || uid('a_') }
+          }),
+          variants:
+            message.variants === undefined
+              ? undefined
+              : readItems(variant, message.variants).map((v) => ({ ...v, cards: readItems(storedCard, v.cards) })),
         }
       })
       return { ...conversation, messages }
     })
-    return { conversations, activeId: state.activeId, draft: state.draft, drafts: {} }
+    const activeId = read(z.string().nullable(), state.activeId, null)
+    return finish({
+      conversations,
+      activeId: conversations.some((c) => c.id === activeId) ? activeId : null,
+      draft: read(z.string().nullable(), state.draft, null),
+      drafts: fromVersion < 2 || state.drafts === undefined ? {} : read(z.record(z.string(), z.string()), state.drafts, {}),
+    })
   } catch {
-    return emptyState()
+    repaired = true
+    return finish(emptyState())
   }
 }
 

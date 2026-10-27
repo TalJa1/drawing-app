@@ -2,6 +2,9 @@ import type { ChatMessage, Conversation } from '@/types'
 import { useChat } from '@/store/chat'
 import { STORE_KEYS } from '@/store/storage'
 import { migrateChatState, reviveInterrupted } from './storage'
+import { cleanupOrphanChatImages } from './chatImages'
+
+vi.mock('./chatImages', () => ({ cleanupOrphanChatImages: vi.fn(), deleteConversationImages: vi.fn() }))
 
 const date = '2026-10-27T00:00:00.000Z'
 const reply = (id: string): ChatMessage => ({
@@ -23,7 +26,10 @@ const conversation = (messages: ChatMessage[]): Conversation => ({
   updatedAt: date,
 })
 
-beforeEach(() => useChat.getState().reset())
+beforeEach(() => {
+  useChat.getState().reset()
+  vi.clearAllMocks()
+})
 
 it('migrates v1: pairs turnIds, maps error→failed, keeps text/cards/rating/attachments', () => {
   const cards = [{ type: 'palette', name: 'Old palette', colors: ['#8A8A8A', '#8a8a8a', '#eeeeee'] }]
@@ -91,21 +97,105 @@ it('corrupt input yields empty state without throwing', () => {
   }
 })
 
-it('corrupt persisted cards and variants yield empty state', () => {
-  const empty = { conversations: [], activeId: null, draft: null, drafts: {} }
-  for (const patch of [
-    { cards: [null] },
-    { cards: [{ type: 'palette', name: 'broken', colors: null }] },
-    { variants: [{ content: 'broken' }] },
-  ]) {
-    const state = {
-      conversations: [conversation([{ ...reply('m_1'), ...patch } as ChatMessage])],
-      activeId: 'c_1',
-      draft: null,
-      drafts: {},
-    }
-    expect(migrateChatState(state, 2)).toEqual(empty)
+it('drops malformed cards and variants but keeps the conversation', () => {
+  const card = { type: 'lesson', slug: 'old-lesson' }
+  const variant = { content: 'saved answer', cards: [card], status: 'completed', createdAt: date }
+  const state = {
+    conversations: [
+      conversation([
+        {
+          ...reply('m_1'),
+          cards: [null, card, { type: 'palette', colors: null }],
+          variants: [{ content: 'broken' }, variant, { ...variant, cards: [null, card] }],
+          attachments: [null, { kind: 'image', id: 'a_1', name: 'art.jpg', blobKey: 'chat:a_1:full' }],
+        } as unknown as ChatMessage,
+      ]),
+    ],
+    activeId: 'c_1',
+    draft: 'keep draft',
+    drafts: { c_1: 'unfinished' },
   }
+  const result = migrateChatState(state, 2)
+  expect(result).toMatchObject({ activeId: 'c_1', draft: 'keep draft', drafts: { c_1: 'unfinished' } })
+  expect(result.conversations[0].messages[0]).toMatchObject({
+    cards: [card],
+    variants: [variant, variant],
+    attachments: [{ id: 'a_1', blobKey: 'chat:a_1:full' }],
+    content: 'm_1',
+  })
+})
+
+it('repairs v2 messages missing a turnId or attachment id instead of wiping the store', () => {
+  const user = {
+    ...reply('user'),
+    role: 'user',
+    turnId: undefined,
+    attachments: [{ kind: 'image', name: 'old.png', src: 'data:image/png;base64,old' }],
+  }
+  const state = {
+    conversations: [conversation([user as unknown as ChatMessage, { ...reply('assistant'), turnId: undefined } as unknown as ChatMessage])],
+    activeId: 'c_1',
+    draft: null,
+    drafts: {},
+  }
+  const [u, a] = migrateChatState(state, 2).conversations[0].messages
+  expect(u.turnId).toMatch(/^t_/)
+  expect(a.turnId).toBe(u.turnId)
+  expect(u.attachments[0]).toMatchObject({ id: expect.stringMatching(/^a_/), src: 'data:image/png;base64,old' })
+})
+
+it('drops only the message or conversation that cannot be read', () => {
+  const state = {
+    conversations: [
+      null,
+      { ...conversation([]), id: 42 },
+      { ...conversation([]), messages: [reply('valid'), null, { ...reply('bad'), content: null }] },
+    ],
+    activeId: 'c_1',
+    draft: null,
+    drafts: {},
+  }
+  expect(migrateChatState(state, 2).conversations).toEqual([conversation([reply('valid')])])
+})
+
+it('skips orphan image cleanup when stored chat data had to be repaired', async () => {
+  for (const version of [1, 2]) {
+    for (const patch of [{ cards: [null] }, { turnId: undefined }, { attachments: [{ kind: 'image', name: 'old.jpg' }] }]) {
+      localStorage.setItem(
+        STORE_KEYS.chat,
+        JSON.stringify({
+          version,
+          state: {
+            conversations: [conversation([{ ...reply('m_1'), ...patch } as ChatMessage])],
+            activeId: 'c_1',
+            draft: null,
+            drafts: {},
+          },
+        }),
+      )
+      await useChat.persist.rehydrate()
+      expect(cleanupOrphanChatImages).not.toHaveBeenCalled()
+      expect(useChat.getState().conversations).toHaveLength(1)
+    }
+  }
+  localStorage.removeItem(STORE_KEYS.chat)
+  await useChat.persist.rehydrate()
+  expect(cleanupOrphanChatImages).toHaveBeenCalledTimes(1)
+  vi.mocked(cleanupOrphanChatImages).mockClear()
+  localStorage.setItem(
+    STORE_KEYS.chat,
+    JSON.stringify({
+      version: 2,
+      state: {
+        conversations: [conversation([reply('valid')])],
+        activeId: 'c_1',
+        draft: null,
+        drafts: {},
+      },
+    }),
+  )
+  await useChat.persist.rehydrate()
+  expect(cleanupOrphanChatImages).toHaveBeenCalledWith([conversation([reply('valid')])])
 })
 
 it('selectVariant ignores replies that are not last', () => {

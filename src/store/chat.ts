@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import type { ChatMessage, ChatMode, Conversation } from '@/types'
 import { uid } from '@/lib/random'
 import { persistStorage, STORE_KEYS } from './storage'
-import { migrateChatState, reviveInterrupted } from '@/features/chat/storage'
+import { migrateChatState, reviveInterrupted, wasChatStateRepaired } from '@/features/chat/storage'
 import { cleanupOrphanChatImages, deleteConversationImages } from '@/features/chat/chatImages'
 
 interface ChatState {
@@ -28,6 +28,8 @@ interface ChatState {
   setImageContext: (convId: string, turnId: string | null) => void
   reset: () => void
 }
+
+let skipOrphanCleanup = false
 
 export const useChat = create<ChatState>()(
   persist(
@@ -119,10 +121,14 @@ export const useChat = create<ChatState>()(
       partialize: (s) => ({ conversations: s.conversations, activeId: s.activeId, draft: s.draft, drafts: s.drafts }),
       merge: (persisted, current) => {
         const state = migrateChatState(persisted, 2)
+        skipOrphanCleanup = wasChatStateRepaired(state)
         return { ...current, ...state, conversations: reviveInterrupted(state.conversations) }
       },
-      onRehydrateStorage: () => (state) => {
-        if (state) void cleanupOrphanChatImages(state.conversations)
+      onRehydrateStorage: () => {
+        skipOrphanCleanup = false
+        return (state) => {
+          if (state && !skipOrphanCleanup) void cleanupOrphanChatImages(state.conversations)
+        }
       },
     },
   ),
