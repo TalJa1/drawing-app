@@ -1,4 +1,4 @@
-import { act, fireEvent, renderHook, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, renderHook, screen, waitFor } from '@testing-library/react'
 import ChatPage from '@/pages/chat/ChatPage'
 import { useChat } from '@/store/chat'
 import { useChatStream } from '../streamStore'
@@ -20,6 +20,7 @@ beforeEach(() => {
   useChat.getState().reset()
 })
 afterEach(() => {
+  cleanup()
   useChat.getState().reset()
   vi.unstubAllGlobals()
 })

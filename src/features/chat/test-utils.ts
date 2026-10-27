@@ -13,18 +13,17 @@ export async function renderChat(ui: ReactElement, opts?: Omit<RenderOptions, 'w
   const i18n = createInstance()
   await i18n.use(initReactI18next).init({ lng: 'en', resources: { en: { translation: en } }, interpolation: { escapeValue: false } })
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-  return render(
+  const wrapper = ({ children }: { children: React.ReactNode }) =>
     createElement(
       I18nextProvider,
       { i18n },
       createElement(
         MemoryRouter,
         { future: { v7_startTransition: true, v7_relativeSplatPath: true } },
-        createElement(QueryClientProvider, { client }, ui),
+        createElement(QueryClientProvider, { client }, children),
       ),
-    ),
-    opts,
-  )
+    )
+  return render(ui, { ...opts, wrapper })
 }
 
 export function installDomStubs() {

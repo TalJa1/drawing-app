@@ -1036,6 +1036,48 @@
     "delete": "Xóa cuộc trò chuyện",
     "deleteTitle": "Xóa cuộc trò chuyện này?",
     "modeLabel": "Chế độ nàng thơ",
+    "messages": "Tin nhắn",
+    "scrollToLatest": "Xuống tin mới",
+    "previousVersion": "Phiên bản trước",
+    "nextVersion": "Phiên bản sau",
+    "status": {
+      "preparing": "Đang chuẩn bị ảnh…",
+      "connecting": "Đang kết nối…",
+      "thinking": "Nàng thơ đang suy nghĩ…",
+      "streaming": "Đang viết câu trả lời…",
+      "completed": "Đã trả lời xong.",
+      "stopped": "Đã dừng trả lời. Nội dung đã nhận vẫn được giữ lại.",
+      "interrupted": "Câu trả lời bị gián đoạn. Bạn có thể thử lại.",
+      "failed": "Chưa thể hoàn tất câu trả lời.",
+      "retryIn_one": "Thử lại sau {{count}} giây.",
+      "retryIn_other": "Thử lại sau {{count}} giây."
+    },
+    "incomplete": {
+      "max_output_tokens": "Câu trả lời đã đạt giới hạn độ dài. Hãy thử yêu cầu câu trả lời ngắn hơn.",
+      "content_filter": "Bộ lọc an toàn đã dừng câu trả lời. Hãy thử diễn đạt câu hỏi khác đi.",
+      "max_messages": "Câu trả lời đã đạt giới hạn số tin. Hãy thử lại.",
+      "steered": "Câu trả lời kết thúc sớm. Hãy thử lại.",
+      "budget": "Câu trả lời đã đạt ngân sách hiện có.",
+      "other": "Câu trả lời kết thúc khi chưa hoàn tất. Hãy thử lại."
+    },
+    "errors": {
+      "unauthorized": "Hãy đăng nhập để dùng trợ lý vẽ.",
+      "ai_not_configured": "Trợ lý vẽ chưa được cấu hình.",
+      "service_unavailable": "Trợ lý vẽ tạm thời chưa sẵn sàng.",
+      "rate_limited": "Bạn đã gửi quá nhiều yêu cầu. Hãy chờ trước khi thử lại.",
+      "ai_busy": "Trợ lý vẽ đang bận. Hãy chờ trước khi thử lại.",
+      "ai_budget_exceeded": "Trợ lý vẽ đã đạt ngân sách hôm nay.",
+      "payload_too_large": "Tin nhắn này quá lớn. Hãy bỏ bớt ảnh rồi thử lại.",
+      "unsupported_media_type": "Định dạng ảnh này chưa được hỗ trợ.",
+      "bad_request": "Không thể đọc yêu cầu này. Hãy thử lại.",
+      "validation_error": "Hãy kiểm tra tin nhắn và ảnh rồi thử lại.",
+      "upstream": "Trợ lý vẽ chưa thể hoàn tất câu trả lời. Hãy thử lại.",
+      "timeout": "Chờ câu trả lời quá lâu. Hãy thử lại.",
+      "model_unavailable": "Mô hình vẽ tạm thời chưa sẵn sàng.",
+      "network": "Kết nối bị mất. Hãy thử lại.",
+      "protocol": "Không thể đọc câu trả lời. Hãy thử lại.",
+      "client": "Có lỗi khi chuẩn bị câu trả lời. Hãy thử lại."
+    },
     "groups": { "today": "Hôm nay", "yesterday": "Hôm qua", "week": "Tuần này", "older": "Cũ hơn" },
     "modes": {
       "ideas": {

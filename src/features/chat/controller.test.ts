@@ -107,6 +107,23 @@ it('stop before the first token leaves an empty stopped reply without error', as
   expect(h.activity).not.toHaveBeenCalled()
 })
 
+it('stores retryAt when a turn fails with retryAfterMs', async () => {
+  const h = setup()
+  const pending = h.controller.send(h.convId, 'question', 'ideas', [])
+  await settle()
+  const now = Date.now()
+  h.channels[0].push({ type: 'error', code: 'rate_limited', retryAfterMs: 5000 })
+  await pending
+  expect(reply(h.convId).retryAt).toBe(new Date(now + 5000).toISOString())
+  const retry = h.controller.retry(h.convId)
+  expect(reply(h.convId).retryAt).toBeUndefined()
+  await settle()
+  const next = Date.now()
+  h.channels[1].push(new AiTransportError('ai_busy', 3000))
+  await retry
+  expect(reply(h.convId).retryAt).toBe(new Date(next + 3000).toISOString())
+})
+
 it('network error marks the reply failed with code network', async () => {
   const h = setup()
   const pending = h.controller.send(h.convId, 'question', 'ideas', [])

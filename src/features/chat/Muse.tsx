@@ -2,7 +2,17 @@ import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 /** The Art Spark muse: a friendly painter's palette with a brush tucked behind its ear. Original character. */
-export function Muse({ size = 160, className, thinking }: { size?: number; className?: string; thinking?: boolean }) {
+export function Muse({
+  size = 160,
+  className,
+  thinking,
+  still = false,
+}: {
+  size?: number
+  className?: string
+  thinking?: boolean
+  still?: boolean
+}) {
   return (
     <motion.svg
       viewBox="0 0 200 180"
@@ -10,8 +20,8 @@ export function Muse({ size = 160, className, thinking }: { size?: number; class
       height={size * 0.9}
       className={cn('overflow-visible', className)}
       aria-hidden
-      animate={thinking ? { rotate: [-2, 2, -2] } : { y: [0, -6, 0] }}
-      transition={{ duration: thinking ? 1.2 : 4, repeat: Infinity, ease: 'easeInOut' }}
+      animate={still ? {} : thinking ? { rotate: [-2, 2, -2] } : { y: [0, -6, 0] }}
+      transition={{ duration: thinking ? 1.2 : 4, repeat: still ? 0 : Infinity, ease: 'easeInOut' }}
     >
       {/* brush behind the "ear" */}
       <g transform="rotate(-28 150 40)">
@@ -35,8 +45,8 @@ export function Muse({ size = 160, className, thinking }: { size?: number; class
       <circle cx="94" cy="142" r="9" fill="#C93C6B" />
       {/* face */}
       <motion.g
-        animate={{ scaleY: [1, 1, 0.1, 1] }}
-        transition={{ duration: 4, repeat: Infinity, times: [0, 0.9, 0.95, 1] }}
+        animate={still ? {} : { scaleY: [1, 1, 0.1, 1] }}
+        transition={{ duration: 4, repeat: still ? 0 : Infinity, times: [0, 0.9, 0.95, 1] }}
         style={{ transformOrigin: '115px 96px' }}
       >
         <ellipse cx="104" cy="96" rx="5" ry="7" fill="#1B1A17" />

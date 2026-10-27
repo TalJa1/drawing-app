@@ -1036,6 +1036,48 @@
     "delete": "Delete conversation",
     "deleteTitle": "Delete this conversation?",
     "modeLabel": "Muse mode",
+    "messages": "Messages",
+    "scrollToLatest": "Jump to latest",
+    "previousVersion": "Previous version",
+    "nextVersion": "Next version",
+    "status": {
+      "preparing": "Preparing images…",
+      "connecting": "Connecting…",
+      "thinking": "Muse is thinking…",
+      "streaming": "Writing a reply…",
+      "completed": "Reply complete.",
+      "stopped": "Reply stopped. Your received text has been kept.",
+      "interrupted": "The reply was interrupted. You can try again.",
+      "failed": "The reply could not be completed.",
+      "retryIn_one": "Try again in {{count}} second.",
+      "retryIn_other": "Try again in {{count}} seconds."
+    },
+    "incomplete": {
+      "max_output_tokens": "The reply reached its length limit. Try again for a shorter answer.",
+      "content_filter": "This reply was stopped by a safety filter. Try rephrasing your question.",
+      "max_messages": "The reply reached its message limit. Try again.",
+      "steered": "The reply ended early. Try again.",
+      "budget": "The reply reached the available budget.",
+      "other": "The reply ended before it was complete. Try again."
+    },
+    "errors": {
+      "unauthorized": "Sign in to use the drawing assistant.",
+      "ai_not_configured": "The drawing assistant is not configured yet.",
+      "service_unavailable": "The drawing assistant is temporarily unavailable.",
+      "rate_limited": "You have sent too many requests. Please wait before trying again.",
+      "ai_busy": "The drawing assistant is busy. Please wait before trying again.",
+      "ai_budget_exceeded": "The drawing assistant has reached its daily budget.",
+      "payload_too_large": "This message is too large. Remove an image and try again.",
+      "unsupported_media_type": "This image format is not supported.",
+      "bad_request": "This request could not be read. Try again.",
+      "validation_error": "Check your message and images, then try again.",
+      "upstream": "The drawing assistant could not finish this reply. Try again.",
+      "timeout": "The reply took too long. Try again.",
+      "model_unavailable": "The drawing model is temporarily unavailable.",
+      "network": "The connection was lost. Try again.",
+      "protocol": "The reply could not be read. Try again.",
+      "client": "Something went wrong while preparing the reply. Try again."
+    },
     "groups": { "today": "Today", "yesterday": "Yesterday", "week": "This week", "older": "Older" },
     "modes": {
       "ideas": {

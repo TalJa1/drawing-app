@@ -28,7 +28,7 @@ type RunningTurn = ActiveStream & {
   opened: boolean
   checkpoint?: ReturnType<typeof setInterval>
   flush?: ReturnType<typeof setTimeout>
-  finish(status: ReplyStatus, errorCode?: AiErrorCode, incompleteReason?: string): void
+  finish(status: ReplyStatus, errorCode?: AiErrorCode, incompleteReason?: string, retryAfterMs?: number): void
 }
 
 let current: RunningTurn | null = null
@@ -80,7 +80,7 @@ export function createChatController(deps: ControllerDeps): ChatController {
       cards: [],
       abort: new AbortController(),
       opened: false,
-      finish(status, errorCode, incompleteReason) {
+      finish(status, errorCode, incompleteReason, retryAfterMs) {
         if (current !== run) return
         clearInterval(run.checkpoint)
         clearTimeout(run.flush)
@@ -89,9 +89,14 @@ export function createChatController(deps: ControllerDeps): ChatController {
         useChatStream.setState({ active: null })
         const conversation = useChat.getState().conversations.find((c) => c.id === conversationId)
         if (run.opened && conversation?.messages.some((m) => m.id === messageId)) {
-          useChat
-            .getState()
-            .commitReply(conversationId, messageId, { content: run.content, cards: [...run.cards], status, errorCode, incompleteReason })
+          useChat.getState().commitReply(conversationId, messageId, {
+            content: run.content,
+            cards: [...run.cards],
+            status,
+            errorCode,
+            incompleteReason,
+            retryAt: retryAfterMs === undefined ? undefined : new Date(Date.now() + retryAfterMs).toISOString(),
+          })
           if (qualifiesForActivity({ content: run.content, cards: run.cards, status, createdAt: '' }) && !recordedTurns.has(turnId)) {
             recordedTurns.add(turnId)
             deps.recordTurnActivity()
@@ -144,7 +149,7 @@ export function createChatController(deps: ControllerDeps): ChatController {
           return
         }
         if (event.type === 'error') {
-          run.finish('failed', event.code)
+          run.finish('failed', event.code, undefined, event.retryAfterMs)
           return
         }
         if (event.type === 'status') {
@@ -163,7 +168,13 @@ export function createChatController(deps: ControllerDeps): ChatController {
     } catch (error) {
       if (!isCurrent(run)) return
       if (error instanceof Error && error.name === 'AbortError') run.finish('stopped')
-      else run.finish('failed', error instanceof AiTransportError ? error.code : error instanceof TypeError ? 'network' : 'client')
+      else
+        run.finish(
+          'failed',
+          error instanceof AiTransportError ? error.code : error instanceof TypeError ? 'network' : 'client',
+          undefined,
+          error instanceof AiTransportError ? error.retryAfterMs : undefined,
+        )
     } finally {
       if (iterator?.return) void iterator.return().catch(() => undefined)
     }
@@ -197,6 +208,7 @@ export function createChatController(deps: ControllerDeps): ChatController {
       status: 'streaming',
       errorCode: undefined,
       incompleteReason: undefined,
+      retryAt: undefined,
       rating: undefined,
       variants: action === 'regenerate' ? [...(reply.variants ?? []), snapshot] : reply.variants,
     })

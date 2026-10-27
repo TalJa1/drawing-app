@@ -456,6 +456,7 @@ export interface ChatMessage {
   status?: ReplyStatus
   errorCode?: AiErrorCode
   incompleteReason?: string
+  retryAt?: ISODate
   variants?: ReplyVariant[]
 }
 
