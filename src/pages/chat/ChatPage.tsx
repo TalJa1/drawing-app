@@ -1,17 +1,15 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Copy, Image as ImageIcon, Paperclip, RefreshCw, Send, Square, ThumbsDown, ThumbsUp, Upload, X } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Copy, RefreshCw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { ChatAttachment, ChatMode } from '@/types'
 import { Page } from '@/components/Layout'
 import { IconButton } from '@/components/IconButton'
 import { Button } from '@/components/Button'
-import { Modal, Sheet } from '@/components/Modal'
+import { Sheet } from '@/components/Modal'
 import { Markdown } from '@/components/Markdown'
 import { Avatar } from '@/components/Avatar'
 import { Washes } from '@/components/art/Washes'
-import { useArtworks } from '@/api/queries'
-import { getImageBlob } from '@/api/artworks'
 import { Muse } from '@/features/chat/Muse'
 import { ChatCardView } from '@/features/chat/ChatCards'
 import { useMuse } from '@/features/chat/useMuse'
@@ -19,111 +17,20 @@ import { cn, copyText } from '@/lib/utils'
 import { useChat } from '@/store/chat'
 import { useSession } from '@/store/session'
 import { toast } from '@/store/ui'
-import { AttachmentError, prepareImage } from '@/features/chat/attachments'
 import type { PreparedImage } from '@/features/chat/attachments'
 import { useChatImageUrl } from '@/features/chat/chatImages'
 import { useChatStream } from '@/features/chat/streamStore'
 import { ConversationList } from '@/features/chat/components/ConversationList'
 import { ChatHeader } from '@/features/chat/components/ChatHeader'
 import { WelcomeState } from '@/features/chat/components/WelcomeState'
+import { ChatComposer } from '@/features/chat/components/ChatComposer'
+import type { ChatComposerHandle } from '@/features/chat/components/ChatComposer'
 import { useMediaQuery } from '@/lib/hooks'
-
-function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () => void; onPick: (a: PreparedImage) => void }) {
-  const { t } = useTranslation()
-  const { data } = useArtworks()
-  const fileRef = useRef<HTMLInputElement>(null)
-  const reportImageError = (error: unknown) => {
-    const code = error instanceof AttachmentError ? error.code : 'decode'
-    toast({ title: t(code === 'too_big' ? 'chat.attach.tooBig' : `chat.attach.${code}`), tone: 'error' })
-  }
-  const pickImage = async (blob: Blob, name: string) => {
-    try {
-      onPick(await prepareImage(blob, name))
-      onClose()
-    } catch (error) {
-      reportImageError(error)
-    }
-  }
-  const pickArtwork = async (key: string, name: string) => {
-    try {
-      const blob = await getImageBlob(key)
-      if (!blob) throw new AttachmentError('decode')
-      await pickImage(blob, name)
-    } catch (error) {
-      reportImageError(error)
-    }
-  }
-  return (
-    <Modal open={open} onClose={onClose} title={t('chat.attach.title')} size="lg">
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        className="sr-only"
-        onChange={(e) => {
-          const f = e.target.files?.[0]
-          e.currentTarget.value = ''
-          if (f) void pickImage(f, f.name)
-        }}
-      />
-      <Button variant="outline" icon={<Upload size={16} />} onClick={() => fileRef.current?.click()}>
-        {t('chat.attach.upload')}
-      </Button>
-      <p className="eyebrow mt-6">{t('chat.attach.fromCollection')}</p>
-      {data && data.length ? (
-        <ul className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
-          {data.slice(0, 16).map((a) => (
-            <li key={a.id}>
-              <button
-                type="button"
-                onClick={() => void pickArtwork(a.imageKey, a.title)}
-                className="block w-full rounded-xl border border-line p-1 hover:border-ink"
-              >
-                <ThumbImage k={a.thumbKey} alt={a.title} />
-                <span className="mt-1 block truncate text-xs">{a.title}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="mt-3 text-sm text-ink-faint">{t('chat.attach.empty')}</p>
-      )}
-    </Modal>
-  )
-}
-
-function ThumbImage({ k, alt }: { k: string; alt: string }) {
-  const [src, setSrc] = useState<string | null>(null)
-  useEffect(() => {
-    let alive = true
-    void getImageBlob(k).then((b) => b && alive && setSrc(URL.createObjectURL(b)))
-    return () => {
-      alive = false
-    }
-  }, [k])
-  return src ? (
-    <img src={src} alt={alt} className="aspect-[4/3] w-full rounded-lg object-cover" />
-  ) : (
-    <div className="skeleton aspect-[4/3] w-full rounded-lg" />
-  )
-}
 
 function MessageImage({ attachment }: { attachment: ChatAttachment }) {
   const src = useChatImageUrl(attachment.previewKey, attachment.src)
   return src ? (
     <img src={src} alt={attachment.name} className="max-h-48 rounded-2xl border border-line object-contain shadow-paper" />
-  ) : null
-}
-
-function PreparedImagePreview({ image }: { image: PreparedImage }) {
-  const [preview, setPreview] = useState<{ blob: Blob; url: string } | null>(null)
-  useEffect(() => {
-    const url = URL.createObjectURL(image.previewBlob)
-    void Promise.resolve().then(() => setPreview({ blob: image.previewBlob, url }))
-    return () => URL.revokeObjectURL(url)
-  }, [image.previewBlob])
-  return preview?.blob === image.previewBlob ? (
-    <img src={preview.url} alt={image.name} className="h-16 w-20 rounded-xl border border-line object-cover" />
   ) : null
 }
 
@@ -137,12 +44,11 @@ export default function ChatPage() {
   const updateMessage = useChat((s) => s.updateMessage)
   const draft = useChat((s) => s.draft)
   const setDraft = useChat((s) => s.setDraft)
+  const drafts = useChat((s) => s.drafts)
+  const setActive = useChat((s) => s.setActive)
   const active = conversations.find((c) => c.id === activeId) ?? null
   const [mode, setLocalMode] = useState<ChatMode>(active?.mode ?? 'ideas')
   const currentMode = active?.mode ?? mode
-  const [text, setText] = useState(() => draft ?? '')
-  const [attachments, setAttachments] = useState<PreparedImage[]>([])
-  const [picker, setPicker] = useState(false)
   const [sidebar, setSidebar] = useState(false)
   const desktop = useMediaQuery('(min-width: 1024px)')
   const { phase, send, regenerate, retry, stop } = useMuse()
@@ -156,29 +62,26 @@ export default function ChatPage() {
         : message,
     ) ?? []
   const endRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const composer = useRef<ChatComposerHandle>(null)
+  const composerId = draft !== null ? '__new__' : (active?.id ?? '__new__')
 
-  // a prompt handed over from another page is used once
   useEffect(() => {
-    if (draft) setDraft(null)
-  }, [draft, setDraft])
+    if (draft === null) return
+    setActive(null)
+    useChat.getState().setConversationDraft('__new__', draft)
+    setDraft(null)
+  }, [draft, setDraft, setActive])
 
   const lastContent = messages.at(-1)?.content.length ?? 0
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [active?.messages.length, lastContent])
 
-  const submit = async (e?: FormEvent, preset?: string) => {
-    e?.preventDefault()
-    const message = (preset ?? text).trim()
-    if ((!message && !attachments.length) || busy) return
+  const submit = async (message: string, attachments: PreparedImage[]) => {
+    if (busy) return
     let convId = activeId
     if (!convId || !conversations.some((c) => c.id === convId)) convId = create(currentMode)
-    const atts = attachments
-    setText('')
-    setAttachments([])
-    await send(convId, message, currentMode, atts)
-    inputRef.current?.focus()
+    await send(convId, message, currentMode, attachments)
   }
 
   const changeMode = (m: ChatMode) => {
@@ -221,10 +124,7 @@ export default function ChatPage() {
                 <WelcomeState
                   mode={currentMode}
                   name={user.displayName.split(' ')[0]}
-                  onPrompt={(prompt) => {
-                    setText(prompt)
-                    inputRef.current?.focus()
-                  }}
+                  onPrompt={(prompt) => composer.current?.fill(prompt)}
                 />
               ) : (
                 <ol className="mx-auto max-w-[720px] space-y-6">
@@ -341,78 +241,18 @@ export default function ChatPage() {
               <div ref={endRef} />
             </div>
 
-            {/* composer */}
-            <div className="border-t border-line bg-card/60 px-3 pb-3 pt-3 sm:px-5">
-              <AnimatePresence>
-                {attachments.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mb-2 flex gap-2"
-                  >
-                    {attachments.map((a, i) => (
-                      <span key={i} className="relative">
-                        <PreparedImagePreview image={a} />
-                        <button
-                          type="button"
-                          aria-label={t('chat.removeAttachment')}
-                          onClick={() => setAttachments((x) => x.filter((_, j) => j !== i))}
-                          className="absolute -right-1.5 -top-1.5 rounded-full bg-ink p-0.5 text-paper"
-                        >
-                          <X size={12} />
-                        </button>
-                      </span>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              <form onSubmit={(e) => void submit(e)} className="flex items-end gap-2">
-                <IconButton
-                  label={t('chat.attach.button')}
-                  icon={<Paperclip size={18} />}
-                  onClick={() => setPicker(true)}
-                  variant="paper"
-                />
-                <label className="sr-only" htmlFor="chat-input">
-                  {t('chat.placeholder')}
-                </label>
-                <textarea
-                  id="chat-input"
-                  ref={inputRef}
-                  rows={1}
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
-                      void submit()
-                    }
-                  }}
-                  placeholder={t('chat.placeholder')}
-                  className="max-h-40 min-h-11 flex-1 resize-none rounded-[22px] border border-line-strong bg-card px-4 py-2.5 text-ink placeholder:text-ink-faint/80 focus:border-ink"
-                  style={{ fieldSizing: 'content' } as React.CSSProperties}
-                />
-                {busy ? (
-                  <IconButton label={t('chat.stop')} icon={<Square size={16} />} variant="ink" onClick={stop} />
-                ) : (
-                  <IconButton
-                    label={t('chat.send')}
-                    icon={<Send size={17} />}
-                    variant="ink"
-                    type="submit"
-                    disabled={!text.trim() && !attachments.length}
-                  />
-                )}
-              </form>
-              <p className="mt-2 flex items-center gap-1.5 text-[11px] text-ink-faint">
-                <ImageIcon size={11} /> {t('chat.disclaimer')}
-              </p>
-            </div>
+            <ChatComposer
+              key={composerId}
+              ref={composer}
+              conversationId={composerId}
+              initialText={draft ?? drafts[composerId] ?? ''}
+              busy={busy}
+              onSend={submit}
+              onStop={stop}
+            />
           </section>
         </div>
       </div>
-      <AttachPicker open={picker} onClose={() => setPicker(false)} onPick={(a) => setAttachments((x) => [...x, a].slice(0, 3))} />
       {!desktop && (
         <Sheet open={sidebar} onClose={() => setSidebar(false)} side="left" title={t('chat.history')}>
           <ConversationList onPick={() => setSidebar(false)} />

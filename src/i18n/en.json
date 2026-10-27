@@ -1082,10 +1082,14 @@
       "upload": "Upload from your device",
       "fromCollection": "From your collection",
       "empty": "Your collection is empty — finish an artwork to share it here.",
-      "tooBig": "That image is too large (12 MB max).",
-      "unsupported": "Choose a PNG, JPEG, WebP or GIF image.",
-      "decode": "This image could not be opened. Try another image.",
-      "too_many_pixels": "This image exceeds the 40-megapixel limit."
+      "preparing": "Preparing image",
+      "errors": {
+        "too_big": "That image is too large (12 MB max).",
+        "unsupported": "Choose a PNG, JPEG, WebP or GIF image.",
+        "decode": "This image could not be opened. Try another image.",
+        "too_many_pixels": "This image exceeds the 40-megapixel limit.",
+        "missing": "This image is no longer available. Attach it again."
+      }
     },
     "cards": {
       "template": "Template",

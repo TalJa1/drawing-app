@@ -1082,10 +1082,14 @@
       "upload": "Tải lên từ thiết bị",
       "fromCollection": "Từ bộ sưu tập của bạn",
       "empty": "Bộ sưu tập còn trống — hoàn thành một tác phẩm để chia sẻ ở đây.",
-      "tooBig": "Hình quá lớn (tối đa 12 MB).",
-      "unsupported": "Hãy chọn ảnh PNG, JPEG, WebP hoặc GIF.",
-      "decode": "Không thể mở ảnh này. Hãy thử một ảnh khác.",
-      "too_many_pixels": "Ảnh này vượt giới hạn 40 megapixel."
+      "preparing": "Đang chuẩn bị ảnh",
+      "errors": {
+        "too_big": "Hình quá lớn (tối đa 12 MB).",
+        "unsupported": "Hãy chọn ảnh PNG, JPEG, WebP hoặc GIF.",
+        "decode": "Không thể mở ảnh này. Hãy thử một ảnh khác.",
+        "too_many_pixels": "Ảnh này vượt giới hạn 40 megapixel.",
+        "missing": "Ảnh này không còn trên thiết bị. Hãy đính kèm lại."
+      }
     },
     "cards": {
       "template": "Mẫu vẽ",

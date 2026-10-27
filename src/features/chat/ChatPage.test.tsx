@@ -8,7 +8,7 @@ import { installDomStubs } from './test-utils'
 import viMessages from '@/i18n/vi.json'
 
 it('keeps Vietnamese attachment errors in readable UTF-8', () => {
-  expect(viMessages.chat.attach).toMatchObject({
+  expect(viMessages.chat.attach.errors).toMatchObject({
     unsupported: 'Hãy chọn ảnh PNG, JPEG, WebP hoặc GIF.',
     decode: 'Không thể mở ảnh này. Hãy thử một ảnh khác.',
     too_many_pixels: 'Ảnh này vượt giới hạn 40 megapixel.',
@@ -21,7 +21,10 @@ vi.mock('react-i18next', () => ({
 vi.mock('@/api/queries', () => ({
   useArtworks: () => ({ data: [{ id: 'art_1', title: 'My art', imageKey: 'full-key', thumbKey: 'thumb-key' }] }),
 }))
-vi.mock('@/api/artworks', () => ({ getImageBlob: vi.fn(async () => new Blob(['image'])) }))
+vi.mock('@/api/artworks', () => ({
+  getImageBlob: vi.fn(async () => new Blob(['image'])),
+  getImageUrl: vi.fn(async () => 'blob:cached-thumb'),
+}))
 vi.mock('./attachments', async (original) => ({ ...(await original<typeof import('./attachments')>()), prepareImage: vi.fn() }))
 
 beforeEach(() => {
@@ -46,14 +49,14 @@ it('reports image preparation failures without adding an attachment', async () =
     fireEvent.change(input, { target: { files: [new File(['invalid image'], 'bad.png', { type: 'image/png' })] } })
     await waitFor(() =>
       expect(useToasts.getState().toasts.at(-1)).toMatchObject({
-        title: code === 'too_big' ? 'chat.attach.tooBig' : `chat.attach.${code}`,
+        title: `chat.attach.errors.${code}`,
         tone: 'error',
       }),
     )
   }
   useToasts.setState({ toasts: [] })
   fireEvent.click(within(picker).getByText('My art').closest('button')!)
-  await waitFor(() => expect(useToasts.getState().toasts.at(-1)).toMatchObject({ title: 'chat.attach.unsupported', tone: 'error' }))
+  await waitFor(() => expect(useToasts.getState().toasts.at(-1)).toMatchObject({ title: 'chat.attach.errors.unsupported', tone: 'error' }))
   expect(screen.queryByRole('button', { name: 'chat.removeAttachment' })).not.toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'chat.send' })).toBeDisabled()
   expect(useChat.getState().conversations).toEqual([])
