@@ -4,6 +4,11 @@ import { motion } from 'framer-motion'
 import { History, LayoutGrid, Lightbulb, Palette, PanelLeft } from 'lucide-react'
 import type { ChatMode } from '@/types'
 import { IconButton } from '@/components/IconButton'
+import { useReducedMotion } from '@/app/theme'
+import { Muse } from '../Muse'
+import { CHAT_MOTION } from '../motion'
+import type { ReplyStatus } from '@/types'
+import type { StreamPhase } from '../streamStore'
 import { cn } from '@/lib/utils'
 
 const MODES = [
@@ -19,19 +24,35 @@ export function ChatHeader({
   onModeChange,
   desktop,
   onHistory,
+  phase = null,
+  replyStatus,
+  hasMessages = false,
 }: {
   title?: string
   mode: ChatMode
   onModeChange: (mode: ChatMode) => void
   desktop: boolean
   onHistory: () => void
+  phase?: StreamPhase | null
+  replyStatus?: ReplyStatus
+  hasMessages?: boolean
 }) {
   const { t } = useTranslation()
+  const reduced = useReducedMotion()
+  const state =
+    phase === 'connecting' || phase === 'thinking'
+      ? 'thinking'
+      : phase === 'streaming'
+        ? 'speaking'
+        : replyStatus === 'failed'
+          ? 'error'
+          : 'idle'
   const refs = useRef<(HTMLButtonElement | null)[]>([])
   return (
     <header className="min-w-0 border-b border-line px-3 py-3 sm:px-5">
       <div className="flex min-w-0 items-center gap-2">
         {!desktop && <IconButton label={t('chat.history')} icon={<PanelLeft size={18} />} onClick={onHistory} className="!h-11 !w-11" />}
+        {hasMessages && <Muse size={42} state={state} />}
         <div className="min-w-0 flex-1">
           <h1 className="break-words font-display text-xl leading-tight">{title || t('chat.title')}</h1>
           <p className="mt-1 text-xs text-ink-faint">{t('chat.subtitle')}</p>
@@ -68,7 +89,11 @@ export function ChatHeader({
             )}
           >
             {mode === id && (
-              <motion.span layoutId="chat-mode-pill" className="absolute inset-0 rounded-full bg-ink" transition={{ duration: 0.2 }} />
+              <motion.span
+                layoutId="chat-mode-pill"
+                className="absolute inset-0 rounded-full bg-ink"
+                transition={{ duration: reduced ? 0 : CHAT_MOTION.mode }}
+              />
             )}
             <Icon size={14} className="relative" />
             <span className="relative">{t(`chat.modes.${id}.name`)}</span>

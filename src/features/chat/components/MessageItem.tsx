@@ -1,3 +1,6 @@
+import { motion } from 'framer-motion'
+import { useReducedMotion } from '@/app/theme'
+import { CHAT_MOTION, chatVariants, useChatVisibility } from '../motion'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ChatAttachment, ChatMessage } from '@/types'
@@ -25,15 +28,29 @@ function MessageImage({ attachment }: { attachment: ChatAttachment }) {
 
 function ReplyBody({ content, streaming }: { content: string; streaming: boolean }) {
   const { t } = useTranslation()
+  const reduced = useReducedMotion()
+  const visible = useChatVisibility()
   const parts = streaming ? splitStable(content) : { stable: content, tail: '' }
   return (
     <div className="text-[0.97rem] leading-relaxed text-ink-soft">
       {streaming && !content ? (
-        <p>{t('chat.status.thinking')}</p>
+        <p className="flex items-center gap-2">
+          {t('chat.status.thinking')}
+          <motion.span
+            aria-hidden
+            className="inline-block h-1 w-10 rounded-full bg-saffron"
+            animate={!reduced && visible ? { opacity: [0.3, 1, 0.3] } : { opacity: 1 }}
+            transition={!reduced && visible ? { duration: CHAT_MOTION.connecting, repeat: Infinity } : { duration: 0 }}
+          />
+        </p>
       ) : (
         <>
           {parts.stable && <StableMarkdown text={parts.stable} />}
-          {parts.tail && <Markdown text={closeDangling(parts.tail)} className="mt-2.5" />}
+          {parts.tail && (
+            <motion.div initial={{ opacity: 0.9 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : CHAT_MOTION.tokenFlush }}>
+              <Markdown text={closeDangling(parts.tail)} className="mt-2.5" />
+            </motion.div>
+          )}
         </>
       )}
     </div>
@@ -42,6 +59,8 @@ function ReplyBody({ content, streaming }: { content: string; streaming: boolean
 
 function Content({ message, conversationId, last }: { message: ChatMessage; conversationId: string; last: boolean }) {
   const { t } = useTranslation()
+  const reduced = useReducedMotion()
+  const variants = chatVariants(reduced)
   const avatarSeed = useSession((s) => s.user.avatarSeed)
   const incomplete =
     message.incompleteReason &&
@@ -57,7 +76,7 @@ function Content({ message, conversationId, last }: { message: ChatMessage; conv
           ? t('chat.status.stopped')
           : null
   return (
-    <li className={cn('flex gap-3', message.role === 'user' && 'flex-row-reverse')}>
+    <div className={cn('flex gap-3', message.role === 'user' && 'flex-row-reverse')}>
       {message.role === 'user' ? (
         <Avatar seed={avatarSeed} size={34} className="mt-1" />
       ) : (
@@ -83,19 +102,38 @@ function Content({ message, conversationId, last }: { message: ChatMessage; conv
             )}
           </div>
         )}
-        {notice && <p className="rounded-2xl border border-line bg-paper-3 px-3 py-2 text-sm">{notice}</p>}
+        {notice && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: reduced ? 0.08 : message.status === 'stopped' ? CHAT_MOTION.stop : CHAT_MOTION.error }}
+            className="rounded-2xl border border-line bg-paper-3 px-3 py-2 text-sm"
+          >
+            {notice}
+          </motion.p>
+        )}
         {!!message.cards.length && (
           <div className="flex flex-wrap gap-3">
             {message.cards.map((card, index) => (
-              <ChatCardView key={index} card={card} />
+              <motion.div
+                key={index}
+                variants={variants.card}
+                initial={message.status === 'streaming' ? 'hidden' : false}
+                animate="visible"
+                transition={{ delay: reduced ? 0 : index * CHAT_MOTION.cardStagger }}
+              >
+                <ChatCardView card={card} animate={message.status === 'streaming'} />
+              </motion.div>
             ))}
           </div>
         )}
         {message.role === 'assistant' && message.status !== 'streaming' && (
-          <MessageActions message={message} conversationId={conversationId} last={last} />
+          <motion.div variants={variants.threadSwap} initial="hidden" animate="visible">
+            <MessageActions message={message} conversationId={conversationId} last={last} />
+          </motion.div>
         )}
       </div>
-    </li>
+    </div>
   )
 }
 
@@ -110,6 +148,16 @@ function StreamingMessage({ message, conversationId, last }: { message: ChatMess
   )
 }
 
-export const MessageItem = memo(function MessageItem(props: { message: ChatMessage; conversationId: string; last: boolean }) {
-  return props.message.status === 'streaming' ? <StreamingMessage {...props} /> : <Content {...props} />
+export const MessageItem = memo(function MessageItem(props: {
+  message: ChatMessage
+  conversationId: string
+  last: boolean
+  animateNew?: boolean
+}) {
+  const reduced = useReducedMotion()
+  return (
+    <motion.li variants={chatVariants(reduced).bubble} initial={props.animateNew ? 'hidden' : false} animate="visible">
+      {props.message.status === 'streaming' ? <StreamingMessage {...props} /> : <Content {...props} />}
+    </motion.li>
+  )
 })

@@ -1,6 +1,9 @@
 import { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import type { Ref } from 'react'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
+import { useReducedMotion } from '@/app/theme'
+import { CHAT_MOTION, chatVariants } from '../motion'
 import { Image, Paperclip, Send, Square } from 'lucide-react'
 import { IconButton } from '@/components/IconButton'
 import { useChat } from '@/store/chat'
@@ -29,6 +32,7 @@ export function ChatComposer({
   ref?: Ref<ChatComposerHandle>
 }) {
   const { t } = useTranslation()
+  const reduced = useReducedMotion()
   const [text, setText] = useState(initialText.slice(0, LIMITS.maxMessageChars))
   const [images, setImages] = useState<PreparedImage[]>([])
   const [preparing, setPreparing] = useState(0)
@@ -153,17 +157,44 @@ export function ChatComposer({
             }
           }}
           placeholder={t('chat.placeholder')}
-          className="max-h-40 min-h-11 min-w-0 flex-1 resize-none rounded-[22px] border border-line-strong bg-card px-4 py-2.5 text-base text-ink placeholder:text-ink-faint/80 focus:border-ink"
-          style={{ fieldSizing: 'content' }}
+          className="transition-[border-color,box-shadow] duration-150 focus:shadow-paper max-h-40 min-h-11 min-w-0 flex-1 resize-none rounded-[22px] border border-line-strong bg-card px-4 py-2.5 text-base text-ink placeholder:text-ink-faint/80 focus:border-ink"
+          style={{ fieldSizing: 'content', transitionDuration: reduced ? '0s' : `${CHAT_MOTION.focus}s` }}
         />
         {busy ? (
-          <IconButton noTooltip className="h-11 w-11" label={t('chat.stop')} icon={<Square size={16} />} variant="ink" onClick={onStop} />
+          <IconButton
+            noTooltip
+            className="h-11 w-11"
+            label={t('chat.stop')}
+            icon={
+              <motion.span
+                key="stop"
+                variants={chatVariants(reduced).threadSwap}
+                initial="hidden"
+                animate="visible"
+                transition={{ duration: CHAT_MOTION.sendStop }}
+              >
+                <Square size={16} />
+              </motion.span>
+            }
+            variant="ink"
+            onClick={onStop}
+          />
         ) : (
           <IconButton
             noTooltip
             className="h-11 w-11"
             label={t('chat.send')}
-            icon={<Send size={17} />}
+            icon={
+              <motion.span
+                key="send"
+                variants={chatVariants(reduced).threadSwap}
+                initial="hidden"
+                animate="visible"
+                transition={{ duration: CHAT_MOTION.sendStop }}
+              >
+                <Send size={17} />
+              </motion.span>
+            }
             variant="ink"
             type="submit"
             disabled={!!preparing || (!text.trim() && !images.length)}

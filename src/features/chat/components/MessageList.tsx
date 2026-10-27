@@ -1,4 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { chatVariants } from '../motion'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Conversation } from '@/types'
@@ -15,6 +17,7 @@ export function MessageList({ conversation, children }: { conversation: Conversa
   const reduced = useReducedMotion()
   const thread = useRef<HTMLDivElement>(null)
   const stick = useRef(true)
+  const [initialIds] = useState(() => new Set(conversation?.messages.map((message) => message.id)))
   const [latest, setLatest] = useState(false)
   const id = conversation?.id ?? '__new__'
   useLayoutEffect(() => {
@@ -61,7 +64,12 @@ export function MessageList({ conversation, children }: { conversation: Conversa
     node?.scrollTo({ top: node.scrollHeight, behavior: reduced ? 'auto' : 'smooth' })
   }
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col">
+    <motion.div
+      variants={chatVariants(reduced).threadSwap}
+      initial="hidden"
+      animate="visible"
+      className="relative flex min-h-0 flex-1 flex-col"
+    >
       <div
         ref={thread}
         role="region"
@@ -75,14 +83,20 @@ export function MessageList({ conversation, children }: { conversation: Conversa
         {conversation?.messages.length ? (
           <ol className="mx-auto max-w-[720px] space-y-6">
             {conversation.messages.map((message, index) => (
-              <MessageItem key={message.id} message={message} conversationId={id} last={index === conversation.messages.length - 1} />
+              <MessageItem
+                key={message.id}
+                message={message}
+                conversationId={id}
+                last={index === conversation.messages.length - 1}
+                animateNew={!initialIds.has(message.id)}
+              />
             ))}
           </ol>
         ) : (
           children
         )}
       </div>
-      {latest && <ScrollToLatest onClick={scrollToLatest} />}
-    </div>
+      <AnimatePresence>{latest && <ScrollToLatest onClick={scrollToLatest} />}</AnimatePresence>
+    </motion.div>
   )
 }

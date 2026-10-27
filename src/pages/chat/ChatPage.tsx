@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ChatMode } from '@/types'
 import { Page } from '@/components/Layout'
-import { Sheet } from '@/components/Modal'
 import { Washes } from '@/components/art/Washes'
 import { useMuse } from '@/features/chat/useMuse'
 import { useChat } from '@/store/chat'
@@ -15,10 +14,17 @@ import { ChatComposer } from '@/features/chat/components/ChatComposer'
 import type { ChatComposerHandle } from '@/features/chat/components/ChatComposer'
 import { MessageList } from '@/features/chat/components/MessageList'
 import { ChatStatus } from '@/features/chat/components/ChatStatus'
+import { HistorySheet } from '@/features/chat/components/HistorySheet'
+import { MotionConfig } from 'framer-motion'
+import { useReducedMotion } from '@/app/theme'
+import { useChatVisibility } from '@/features/chat/motion'
+import { cn } from '@/lib/utils'
 import { useMediaQuery } from '@/lib/hooks'
 
 export default function ChatPage() {
   const { t } = useTranslation()
+  const reduced = useReducedMotion()
+  const visible = useChatVisibility()
   const user = useSession((s) => s.user)
   const conversations = useChat((s) => s.conversations)
   const activeId = useChat((s) => s.activeId)
@@ -59,58 +65,68 @@ export default function ChatPage() {
   }
 
   return (
-    <Page className="!pb-24 md:!pb-10">
-      <Washes
-        washes={[
-          { color: 'var(--rose)', size: '34vmax', top: '-10%', right: '-10%' },
-          { color: 'var(--cerulean)', size: '28vmax', bottom: '-10%', left: '-12%', delay: -10 },
-        ]}
-      />
-      <div className="container-art">
-        <div className="grid h-[calc(100dvh-12rem)] min-h-[560px] gap-6 md:h-[calc(100dvh-11rem)] lg:grid-cols-[272px_1fr]">
-          {desktop && (
-            <aside className="paper hidden rounded-[26px] border border-line p-4 shadow-paper lg:block" aria-label={t('chat.history')}>
-              <ConversationList />
-            </aside>
-          )}
-          <section
-            className="paper relative flex min-h-0 flex-col overflow-hidden rounded-[26px] border border-line shadow-paper"
-            aria-label={t('chat.title')}
-          >
-            <ChatHeader
-              title={active?.title}
-              mode={currentMode}
-              onModeChange={changeMode}
-              desktop={desktop}
-              onHistory={() => setSidebar(true)}
-            />
-
-            <MessageList key={active?.id ?? '__new__'} conversation={active}>
-              <WelcomeState
+    <MotionConfig reducedMotion={reduced ? 'always' : 'never'}>
+      <Page
+        className={cn(
+          '!pb-24 md:!pb-10',
+          (reduced || !visible) && '[&_.wash]:animate-none [&_.skeleton]:animate-none [&_.skeleton]:after:animate-none',
+        )}
+      >
+        <Washes
+          washes={[
+            { color: 'var(--rose)', size: '34vmax', top: '-10%', right: '-10%' },
+            { color: 'var(--cerulean)', size: '28vmax', bottom: '-10%', left: '-12%', delay: -10 },
+          ]}
+        />
+        <div className="container-art">
+          <div className="grid h-[calc(100dvh-12rem)] min-h-[560px] gap-6 md:h-[calc(100dvh-11rem)] lg:grid-cols-[272px_1fr]">
+            {desktop && (
+              <aside className="paper hidden rounded-[26px] border border-line p-4 shadow-paper lg:block" aria-label={t('chat.history')}>
+                <ConversationList />
+              </aside>
+            )}
+            <section
+              className="paper relative flex min-h-0 flex-col overflow-hidden rounded-[26px] border border-line shadow-paper"
+              aria-label={t('chat.title')}
+            >
+              <ChatHeader
+                title={active?.title}
                 mode={currentMode}
-                name={user.displayName.split(' ')[0]}
-                onPrompt={(prompt) => composer.current?.fill(prompt)}
+                onModeChange={changeMode}
+                desktop={desktop}
+                onHistory={() => setSidebar(true)}
+                phase={phase}
+                replyStatus={active?.messages.at(-1)?.status}
+                hasMessages={!!active?.messages.length}
               />
-            </MessageList>
-            <ChatStatus conversation={active} />
 
-            <ChatComposer
-              key={composerId}
-              ref={composer}
-              conversationId={composerId}
-              initialText={draft ?? drafts[composerId] ?? ''}
-              busy={busy}
-              onSend={submit}
-              onStop={stop}
-            />
-          </section>
+              <MessageList key={active?.id ?? '__new__'} conversation={active}>
+                <WelcomeState
+                  mode={currentMode}
+                  name={user.displayName.split(' ')[0]}
+                  onPrompt={(prompt) => composer.current?.fill(prompt)}
+                />
+              </MessageList>
+              <ChatStatus conversation={active} />
+
+              <ChatComposer
+                key={composerId}
+                ref={composer}
+                conversationId={composerId}
+                initialText={draft ?? drafts[composerId] ?? ''}
+                busy={busy}
+                onSend={submit}
+                onStop={stop}
+              />
+            </section>
+          </div>
         </div>
-      </div>
-      {!desktop && (
-        <Sheet open={sidebar} onClose={() => setSidebar(false)} side="left" title={t('chat.history')}>
-          <ConversationList onPick={() => setSidebar(false)} />
-        </Sheet>
-      )}
-    </Page>
+        {!desktop && (
+          <HistorySheet open={sidebar} onClose={() => setSidebar(false)}>
+            <ConversationList onPick={() => setSidebar(false)} />
+          </HistorySheet>
+        )}
+      </Page>
+    </MotionConfig>
   )
 }

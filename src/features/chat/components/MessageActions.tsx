@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronLeft, ChevronRight, Copy, RefreshCw, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { useReducedMotion } from '@/app/theme'
+import { CHAT_MOTION, chatVariants } from '../motion'
+import { Check, ChevronLeft, ChevronRight, Copy, RefreshCw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { ChatMessage } from '@/types'
 import { IconButton } from '@/components/IconButton'
 import { Button } from '@/components/Button'
@@ -12,6 +15,13 @@ import { useMuse } from '../useMuse'
 export function MessageActions({ message, conversationId, last }: { message: ChatMessage; conversationId: string; last: boolean }) {
   const { t } = useTranslation()
   const { retry, regenerate, phase } = useMuse()
+  const reduced = useReducedMotion()
+  const [copied, setCopied] = useState(false)
+  useEffect(() => {
+    if (!copied) return
+    const timer = setTimeout(() => setCopied(false), CHAT_MOTION.copyReset * 1000)
+    return () => clearTimeout(timer)
+  }, [copied])
   const [now, setNow] = useState(Date.now)
   const [version, setVersion] = useState(message.variants?.length ?? 0)
   const [slots, setSlots] = useState(() => (message.variants ?? []).map((_, index) => index))
@@ -55,10 +65,16 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
           <IconButton
             size="sm"
             label={t('common.copy')}
-            icon={<Copy size={14} />}
-            onClick={async () =>
-              toast({ title: (await copyText(message.content)) ? t('common.copied') : t('learn.lab.copyFailed'), tone: 'success' })
+            icon={
+              <motion.span key={copied ? 'copied' : 'copy'} variants={chatVariants(reduced).threadSwap} initial="hidden" animate="visible">
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+              </motion.span>
             }
+            onClick={async () => {
+              const success = await copyText(message.content)
+              setCopied(success)
+              toast({ title: success ? t('common.copied') : t('learn.lab.copyFailed'), tone: 'success' })
+            }}
           />
           <IconButton
             size="sm"
@@ -78,6 +94,7 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
               useChat.getState().updateMessage(conversationId, message.id, { rating: message.rating === 'down' ? undefined : 'down' })
             }
           />
+          {copied && <span className="self-center text-xs text-ink-faint">{t('common.copied')}</span>}
           {last && (
             <IconButton
               size="sm"

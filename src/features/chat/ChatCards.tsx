@@ -1,3 +1,6 @@
+import { motion } from 'framer-motion'
+import { useReducedMotion } from '@/app/theme'
+import { CHAT_MOTION, chatVariants } from './motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, BookOpen, Brush, Clock, Send } from 'lucide-react'
@@ -13,9 +16,10 @@ import { useStudio } from '@/store/studio'
 import { DifficultyDots } from '@/components/Chip'
 import { DIFF_LEVEL } from '@/features/practice/constants'
 
-export function ChatCardView({ card }: { card: ChatCard }) {
+export function ChatCardView({ card, animate = false }: { card: ChatCard; animate?: boolean }) {
   const { t } = useTranslation()
   const L = useL()
+  const reduced = useReducedMotion()
   const navigate = useNavigate()
   const setPalette = useStudio((s) => s.setPendingPalette)
 
@@ -24,8 +28,12 @@ export function ChatCardView({ card }: { card: ChatCard }) {
       <div className="w-full max-w-sm rounded-2xl border border-line bg-card p-3 shadow-paper">
         <p className="mb-2 text-sm font-semibold">{card.name}</p>
         <div className="flex h-14 overflow-hidden rounded-xl ring-1 ring-line-strong">
-          {card.colors.map((c) => (
-            <button
+          {card.colors.map((c, index) => (
+            <motion.button
+              variants={chatVariants(reduced).swatch}
+              initial={animate ? 'hidden' : false}
+              animate="visible"
+              transition={{ duration: CHAT_MOTION.swatch, delay: reduced ? 0 : index * 0.03 }}
               key={c}
               type="button"
               className="group flex flex-1 items-end justify-center pb-1 transition-[flex] hover:flex-[1.5]"
@@ -36,7 +44,7 @@ export function ChatCardView({ card }: { card: ChatCard }) {
               }
             >
               <span className="font-mono text-[9.5px] opacity-0 transition-opacity group-hover:opacity-90">{c.toUpperCase()}</span>
-            </button>
+            </motion.button>
           ))}
         </div>
         <button

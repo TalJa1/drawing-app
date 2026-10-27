@@ -8,6 +8,8 @@ import { getImageBlob, getImageUrl } from '@/api/artworks'
 import { toast } from '@/store/ui'
 import { AttachmentError, prepareImage } from '../attachments'
 import type { PreparedImage } from '../attachments'
+import { useReducedMotion } from '@/app/theme'
+import { useChatVisibility } from '../motion'
 
 function Thumbnail({ imageKey, alt }: { imageKey: string; alt: string }) {
   const [image, setImage] = useState<{ key: string; url: string } | null>(null)
@@ -41,6 +43,8 @@ export function AttachmentPicker({
   disabled?: boolean
 }) {
   const { t } = useTranslation()
+  const reduced = useReducedMotion()
+  const visible = useChatVisibility()
   const { data } = useArtworks()
   const input = useRef<HTMLInputElement>(null)
   const active = useRef(true)
@@ -77,7 +81,13 @@ export function AttachmentPicker({
     }
   }
   return (
-    <Modal open={open} onClose={onClose} title={t('chat.attach.title')} size="lg">
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={t('chat.attach.title')}
+      size="lg"
+      className={reduced || !visible ? '[&_.skeleton]:after:animate-none' : undefined}
+    >
       <input
         ref={input}
         type="file"
