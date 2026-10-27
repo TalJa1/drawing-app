@@ -112,10 +112,16 @@ export function activeChallenges(now: Date): ActiveChallenge[] {
   }
   const month = now.getMonth()
   const special = SPECIAL_EVENTS.find((e) => e.months.includes(month)) ?? SPECIAL_EVENTS[0]
+  // The period key is `<year>-<id>`, and progress / "already claimed" are stored under it. An event that
+  // runs across New Year (months [11, 0], i.e. Dec + Jan) must keep ONE key for the whole season, or on
+  // 1 Jan the key changes and the player starts the same event again (progress lost, reward claimable twice).
+  // So in January the season belongs to the year it started in (December of the previous year).
+  const wrapsNewYear = special.months.includes(11) && special.months.includes(0)
+  const seasonYear = wrapsNewYear && month === 0 ? now.getFullYear() - 1 : now.getFullYear()
   return [
     { challenge: daily, periodKey: day },
     ...weekly.map((w) => ({ challenge: w, periodKey: week })),
-    { challenge: special, periodKey: `${now.getFullYear()}-${special.id}`, theme: special.theme },
+    { challenge: special, periodKey: `${seasonYear}-${special.id}`, theme: special.theme },
   ]
 }
 
