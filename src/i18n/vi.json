@@ -1082,9 +1082,9 @@
       "fromCollection": "Từ bộ sưu tập của bạn",
       "empty": "Bộ sưu tập còn trống — hoàn thành một tác phẩm để chia sẻ ở đây.",
       "tooBig": "Hình quá lớn (tối đa 12 MB).",
-      "unsupported": "H?y ch?n ?nh PNG, JPEG, WebP ho?c GIF.",
-      "decode": "Kh?ng th? m? ?nh n?y. H?y th? m?t ?nh kh?c.",
-      "too_many_pixels": "?nh n?y v??t gi?i h?n 40 megapixel."
+      "unsupported": "Hãy chọn ảnh PNG, JPEG, WebP hoặc GIF.",
+      "decode": "Không thể mở ảnh này. Hãy thử một ảnh khác.",
+      "too_many_pixels": "Ảnh này vượt giới hạn 40 megapixel."
     },
     "cards": {
       "template": "Mẫu vẽ",

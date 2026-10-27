@@ -5,6 +5,15 @@ import { useChat } from '@/store/chat'
 import { useToasts } from '@/store/ui'
 import { AttachmentError, prepareImage } from './attachments'
 import { installChatTestStubs } from './test-utils'
+import viMessages from '@/i18n/vi.json'
+
+it('keeps Vietnamese attachment errors in readable UTF-8', () => {
+  expect(viMessages.chat.attach).toMatchObject({
+    unsupported: 'Hãy chọn ảnh PNG, JPEG, WebP hoặc GIF.',
+    decode: 'Không thể mở ảnh này. Hãy thử một ảnh khác.',
+    too_many_pixels: 'Ảnh này vượt giới hạn 40 megapixel.',
+  })
+})
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => (key.endsWith('.prompts') ? [] : key), i18n: { language: 'en' } }),
