@@ -63,7 +63,7 @@ function findColour(message: string) {
 function harmonyPalettes(base: string, lang: Lang, label: string): ChatCard[] {
   const hsl = hexToHsl(base)
   const soft = (hex: string, l: number) => hslToHex({ ...hexToHsl(hex), l })
-  return [
+  const palettes: Extract<ChatCard, { type: 'palette' }>[] = [
     {
       type: 'palette',
       name: L(lang, `Complementary ${label}`, `${label} bổ túc`),
@@ -80,6 +80,10 @@ function harmonyPalettes(base: string, lang: Lang, label: string): ChatCard[] {
       colors: [...scheme(base, 'split'), '#F6F1E7'],
     },
   ]
+  return palettes.map((palette) => ({
+    ...palette,
+    colors: palette.colors.filter((color, index, colors) => colors.findIndex((c) => c.toLowerCase() === color.toLowerCase()) === index),
+  }))
 }
 
 /** Pure reply builder (unit-testable). */
