@@ -1,4 +1,4 @@
-import { act, createEvent, fireEvent, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, createEvent, fireEvent, screen, waitFor } from '@testing-library/react'
 import { ChatComposer } from './ChatComposer'
 import ChatPage from '@/pages/chat/ChatPage'
 import { useChat } from '@/store/chat'
@@ -33,8 +33,28 @@ beforeEach(() => {
   vi.mocked(prepareImage).mockResolvedValue(prepared)
 })
 afterEach(() => {
+  cleanup()
   vi.useRealTimers()
   vi.unstubAllGlobals()
+})
+
+it('reset clears the mounted composer without restoring its old draft', async () => {
+  await renderChat(<ChatPage />)
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'discard this private draft' } })
+  act(() => useChat.getState().reset())
+  expect(screen.getByRole('textbox')).toHaveValue('')
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 450))
+  })
+  expect(useChat.getState().drafts).toEqual({})
+})
+
+it('unmounting a deleted conversation does not restore its draft', async () => {
+  const id = useChat.getState().create()
+  await renderChat(<ChatPage />)
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'deleted draft' } })
+  act(() => useChat.getState().remove(id))
+  expect(useChat.getState().drafts).not.toHaveProperty(id)
 })
 
 it('does not submit on Enter while composing', async () => {

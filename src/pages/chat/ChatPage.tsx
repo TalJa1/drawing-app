@@ -34,6 +34,7 @@ export default function ChatPage() {
   const setDraft = useChat((s) => s.setDraft)
   const drafts = useChat((s) => s.drafts)
   const setActive = useChat((s) => s.setActive)
+  const resetVersion = useChat((s) => s.resetVersion)
   const active = conversations.find((c) => c.id === activeId) ?? null
   const [mode, setLocalMode] = useState<ChatMode>(active?.mode ?? 'ideas')
   const currentMode = active?.mode ?? mode
@@ -110,7 +111,7 @@ export default function ChatPage() {
               <ChatStatus conversation={active} />
 
               <ChatComposer
-                key={composerId}
+                key={`composer:${composerId}:${resetVersion}`}
                 ref={composer}
                 conversationId={composerId}
                 initialText={draft ?? drafts[composerId] ?? ''}

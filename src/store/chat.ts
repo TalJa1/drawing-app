@@ -12,6 +12,7 @@ interface ChatState {
   /** A prompt handed over from another page (e.g. the result page) */
   draft: string | null
   drafts: Record<string, string>
+  resetVersion: number
   create: (mode?: ChatMode, title?: string) => string
   setActive: (id: string | null) => void
   rename: (id: string, title: string) => void
@@ -38,6 +39,7 @@ export const useChat = create<ChatState>()(
       activeId: null,
       draft: null,
       drafts: {},
+      resetVersion: 0,
       create: (mode = 'ideas', title = '') => {
         const id = uid('c_')
         const now = new Date().toISOString()
@@ -111,7 +113,7 @@ export const useChat = create<ChatState>()(
         set((s) => ({
           conversations: s.conversations.map((c) => (c.id === convId ? { ...c, imageContextTurnId: turnId } : c)),
         })),
-      reset: () => set({ conversations: [], activeId: null, draft: null, drafts: {} }),
+      reset: () => set((s) => ({ conversations: [], activeId: null, draft: null, drafts: {}, resetVersion: s.resetVersion + 1 })),
     }),
     {
       name: STORE_KEYS.chat,

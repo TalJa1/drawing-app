@@ -37,6 +37,7 @@ export function ChatComposer({
   const [images, setImages] = useState<PreparedImage[]>([])
   const [preparing, setPreparing] = useState(0)
   const [picker, setPicker] = useState(false)
+  const [resetVersion] = useState(() => useChat.getState().resetVersion)
   const input = useRef<HTMLTextAreaElement>(null)
   const latest = useRef(text)
   const imageCount = useRef(0)
@@ -64,9 +65,15 @@ export function ChatComposer({
     alive.current = true
     return () => {
       alive.current = false
-      useChat.getState().setConversationDraft(conversationId, latest.current)
+      const state = useChat.getState()
+      if (
+        state.resetVersion === resetVersion &&
+        (conversationId === '__new__' || state.conversations.some((c) => c.id === conversationId))
+      ) {
+        state.setConversationDraft(conversationId, latest.current)
+      }
     }
-  }, [conversationId])
+  }, [conversationId, resetVersion])
   const addImage = (image: PreparedImage) => {
     if (!alive.current || imageCount.current >= LIMITS.maxImagesPerRequest) return
     imageCount.current++
