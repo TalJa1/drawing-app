@@ -116,9 +116,23 @@ export function migrateChatState(value: unknown, fromVersion: number): Persisted
         repaired = true
         return []
       })
-    const conversations: Conversation[] = readItems(conversationSchema, state.conversations).map((conversation) => {
+    const optional = <T>(schema: z.ZodType<T>) =>
+      schema.optional().catch(() => {
+        repaired = true
+        return undefined
+      })
+    const readableMessage = message.extend({
+      rating: optional(z.enum(['up', 'down'])),
+      turnId: optional(z.string()),
+      mode: optional(mode),
+      status: optional(status),
+      pending: optional(z.boolean()),
+      error: optional(z.boolean()),
+    })
+    const readableConversation = conversationSchema.extend({ imageContextTurnId: optional(z.string().nullable()) })
+    const conversations: Conversation[] = readItems(readableConversation, state.conversations).map((conversation) => {
       let turnId: string | undefined
-      const messages = readItems(message, conversation.messages).map((message): ChatMessage => {
+      const messages = readItems(readableMessage, conversation.messages).map((message): ChatMessage => {
         const rest = { ...message }
         delete rest.pending
         delete rest.error
@@ -147,9 +161,11 @@ export function migrateChatState(value: unknown, fromVersion: number): Persisted
       return { ...conversation, messages }
     })
     const activeId = read(z.string().nullable(), state.activeId, null)
+    const validActiveId = conversations.some((c) => c.id === activeId) ? activeId : null
+    if (activeId !== validActiveId) repaired = true
     return finish({
       conversations,
-      activeId: conversations.some((c) => c.id === activeId) ? activeId : null,
+      activeId: validActiveId,
       draft: read(z.string().nullable(), state.draft, null),
       drafts: fromVersion < 2 || state.drafts === undefined ? {} : read(z.record(z.string(), z.string()), state.drafts, {}),
     })

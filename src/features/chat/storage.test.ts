@@ -158,6 +158,29 @@ it('drops only the message or conversation that cannot be read', () => {
   expect(migrateChatState(state, 2).conversations).toEqual([conversation([reply('valid')])])
 })
 
+it('keeps readable history when optional stored metadata is malformed', async () => {
+  for (const patch of [{ rating: 42 }, { status: 'unknown' }, { mode: null }, { pending: 'wrong' }, { error: 'wrong' }, { turnId: 42 }]) {
+    const state = {
+      conversations: [{ ...conversation([reply('valid')]), messages: [{ ...reply('valid'), ...patch }] }],
+      activeId: 'c_1',
+      draft: null,
+      drafts: {},
+    }
+    const result = migrateChatState(state, 2)
+    expect(result.conversations[0].messages).toHaveLength(1)
+    expect(result.conversations[0].messages[0].content).toBe('valid')
+    expect(result.conversations[0].messages[0].turnId).toMatch(/^t_/)
+    localStorage.setItem(STORE_KEYS.chat, JSON.stringify({ version: 2, state }))
+    await useChat.persist.rehydrate()
+    expect(cleanupOrphanChatImages).not.toHaveBeenCalled()
+  }
+  const result = migrateChatState(
+    { conversations: [{ ...conversation([reply('valid')]), imageContextTurnId: 42 }], activeId: 'c_1', draft: null, drafts: {} },
+    2,
+  )
+  expect(result.conversations[0].messages[0].content).toBe('valid')
+})
+
 it('skips orphan image cleanup when stored chat data had to be repaired', async () => {
   for (const version of [1, 2]) {
     for (const patch of [{ cards: [null] }, { turnId: undefined }, { attachments: [{ kind: 'image', name: 'old.jpg' }] }]) {
