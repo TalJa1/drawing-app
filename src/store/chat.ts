@@ -70,7 +70,7 @@ export const useChat = create<ChatState>()(
         ...s,
         conversations: s.conversations.map((c) => ({
           ...c,
-          messages: c.messages.map((m) => (m.pending ? { ...m, pending: false } : m)),
+          messages: c.messages.map((m) => (m.status === 'streaming' ? { ...m, status: 'completed' as const } : m)),
         })),
       }),
     },

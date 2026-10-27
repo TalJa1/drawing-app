@@ -39,6 +39,7 @@ import { cn, copyText } from '@/lib/utils'
 import { useChat } from '@/store/chat'
 import { useSession } from '@/store/session'
 import { toast } from '@/store/ui'
+import { uid } from '@/lib/random'
 import { formatDate } from '@/lib/date'
 import { useMediaQuery } from '@/lib/hooks'
 
@@ -157,7 +158,7 @@ function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () =>
   const pickArtwork = async (id: string, key: string, name: string) => {
     const blob = await getImageBlob(key)
     if (!blob) return
-    onPick({ kind: 'image', src: await thumbFrom(blob), artworkId: id, name })
+    onPick({ kind: 'image', id: uid('a_'), src: await thumbFrom(blob), artworkId: id, name })
     onClose()
   }
   return (
@@ -174,7 +175,7 @@ function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () =>
             toast({ title: t('chat.attach.tooBig'), tone: 'error' })
             return
           }
-          onPick({ kind: 'image', src: await thumbFrom(f), name: f.name })
+          onPick({ kind: 'image', id: uid('a_'), src: await thumbFrom(f), name: f.name })
           onClose()
         }}
       />
@@ -348,13 +349,13 @@ export default function ChatPage() {
                       <div className={cn('flex min-w-0 max-w-[85%] flex-col gap-2', m.role === 'user' && 'items-end')}>
                         {m.attachments.map((a) => (
                           <img
-                            key={a.src.slice(-24)}
+                            key={a.id}
                             src={a.src}
                             alt={a.name}
                             className="max-h-48 rounded-2xl border border-line object-contain shadow-paper"
                           />
                         ))}
-                        {(m.content || m.pending) && (
+                        {(m.content || m.status === 'streaming') && (
                           <div
                             className={cn(
                               'rounded-[20px] px-4 py-3',
@@ -363,7 +364,7 @@ export default function ChatPage() {
                           >
                             {m.role === 'user' ? (
                               <p className="whitespace-pre-wrap">{m.content}</p>
-                            ) : m.pending && !m.content ? (
+                            ) : m.status === 'streaming' && !m.content ? (
                               <p className="flex items-center gap-2 text-ink-faint">
                                 <span className="flex gap-1" aria-hidden>
                                   {[0, 1, 2].map((d) => (
@@ -381,7 +382,7 @@ export default function ChatPage() {
                             )}
                           </div>
                         )}
-                        {m.error && (
+                        {m.status === 'failed' && (
                           <div className="flex items-center gap-2 rounded-2xl border border-vermilion/40 bg-vermilion/10 px-3 py-2 text-sm">
                             {t('chat.error')}
                             <Button
@@ -403,7 +404,7 @@ export default function ChatPage() {
                             ))}
                           </div>
                         )}
-                        {m.role === 'assistant' && !m.pending && !m.error && m.content && (
+                        {m.role === 'assistant' && m.status !== 'streaming' && m.status !== 'failed' && m.content && (
                           <div className="flex gap-0.5">
                             <IconButton
                               size="sm"

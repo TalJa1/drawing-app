@@ -251,7 +251,7 @@ export async function* streamChatReply(req: ChatRequest, signal?: AbortSignal): 
     await sleep(120)
     yield { type: 'card', card }
   }
-  yield { type: 'done' }
+  yield { type: 'done', finish: 'completed' }
 }
 
 /** Suggest a short conversation title from the first message. */

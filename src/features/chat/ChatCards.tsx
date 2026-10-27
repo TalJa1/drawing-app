@@ -100,6 +100,8 @@ export function ChatCardView({ card }: { card: ChatCard }) {
       </div>
     )
 
+  if (card.type === 'critique') return null
+
   const lesson = LESSON_MAP[card.slug]
   if (!lesson) return null
   return (
