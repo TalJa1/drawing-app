@@ -91,6 +91,23 @@ it('corrupt input yields empty state without throwing', () => {
   }
 })
 
+it('corrupt persisted cards and variants yield empty state', () => {
+  const empty = { conversations: [], activeId: null, draft: null, drafts: {} }
+  for (const patch of [
+    { cards: [null] },
+    { cards: [{ type: 'palette', name: 'broken', colors: null }] },
+    { variants: [{ content: 'broken' }] },
+  ]) {
+    const state = {
+      conversations: [conversation([{ ...reply('m_1'), ...patch } as ChatMessage])],
+      activeId: 'c_1',
+      draft: null,
+      drafts: {},
+    }
+    expect(migrateChatState(state, 2)).toEqual(empty)
+  }
+})
+
 it('selectVariant ignores replies that are not last', () => {
   useChat.setState({ conversations: [conversation([reply('old'), reply('last')])] })
   const store = useChat.getState()

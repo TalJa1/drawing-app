@@ -11,6 +11,33 @@ export type PersistedChat = {
 
 const mode = z.enum(['ideas', 'colour', 'composition', 'history'])
 const status = z.enum(['streaming', 'completed', 'stopped', 'interrupted', 'failed'])
+const storedCard: z.ZodType<ChatCard> = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal('palette'),
+    name: z.string(),
+    colors: z.array(z.string()),
+    roles: z.array(z.enum(['dominant', 'support', 'accent'])).optional(),
+    note: z.string().optional(),
+  }),
+  z.object({ type: z.literal('template'), templateId: z.string(), reason: z.string().optional() }),
+  z.object({ type: z.literal('lesson'), slug: z.string(), reason: z.string().optional() }),
+  z.object({
+    type: z.literal('idea'),
+    title: z.string(),
+    description: z.string(),
+    difficulty: z.enum(['beginner', 'intermediate', 'advanced', 'master']),
+    minutes: z.number(),
+  }),
+  z.object({
+    type: z.literal('critique'),
+    imageId: z.string(),
+    observations: z.array(z.string()),
+    strengths: z.array(z.string()),
+    priorities: z.array(z.string()),
+    exercise: z.string(),
+  }),
+])
+const variant = z.object({ content: z.string(), cards: z.array(storedCard), status, createdAt: z.string() })
 const attachment = z.object({
   kind: z.literal('image'),
   id: z.string().optional(),
@@ -28,7 +55,7 @@ const message = z
     id: z.string(),
     role: z.enum(['user', 'assistant']),
     content: z.string(),
-    cards: z.array(z.custom<ChatCard>()),
+    cards: z.array(storedCard),
     attachments: z.array(attachment),
     createdAt: z.string(),
     rating: z.enum(['up', 'down']).optional(),
@@ -37,6 +64,7 @@ const message = z
     status: status.optional(),
     pending: z.boolean().optional(),
     error: z.boolean().optional(),
+    variants: z.array(variant).optional(),
   })
   .passthrough()
 const persisted = z.object({
