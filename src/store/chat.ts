@@ -4,6 +4,7 @@ import type { ChatMessage, ChatMode, Conversation } from '@/types'
 import { uid } from '@/lib/random'
 import { persistStorage, STORE_KEYS } from './storage'
 import { migrateChatState, reviveInterrupted } from '@/features/chat/storage'
+import { cleanupOrphanChatImages, deleteConversationImages } from '@/features/chat/chatImages'
 
 interface ChatState {
   conversations: Conversation[]
@@ -48,6 +49,8 @@ export const useChat = create<ChatState>()(
       rename: (id, title) => set((s) => ({ conversations: s.conversations.map((c) => (c.id === id ? { ...c, title } : c)) })),
       remove: (id) =>
         set((s) => {
+          const conversation = s.conversations.find((c) => c.id === id)
+          if (conversation) void deleteConversationImages(conversation)
           const conversations = s.conversations.filter((c) => c.id !== id)
           const drafts = { ...s.drafts }
           delete drafts[id]
@@ -117,6 +120,9 @@ export const useChat = create<ChatState>()(
       merge: (persisted, current) => {
         const state = migrateChatState(persisted, 2)
         return { ...current, ...state, conversations: reviveInterrupted(state.conversations) }
+      },
+      onRehydrateStorage: () => (state) => {
+        if (state) void cleanupOrphanChatImages(state.conversations)
       },
     },
   ),
