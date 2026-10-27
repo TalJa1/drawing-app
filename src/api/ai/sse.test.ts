@@ -80,3 +80,9 @@ it('cancels the reader when the consumer stops early', async () => {
   expect(cancel).toHaveBeenCalledTimes(1)
   expect(stream.locked).toBe(false)
 })
+
+it('rejects an unknown SSE event name even for a card envelope', async () => {
+  await expect(
+    collect(body('event: unknown\ndata: {"type":"card","card":{"type":"lesson","slug":"not-in-the-app"}}\n\n')),
+  ).rejects.toMatchObject({ code: 'protocol' })
+})

@@ -18,6 +18,12 @@ function parseFrame(frame: string): ChatStreamEvent | null {
   } catch {
     throw new AiTransportError('protocol')
   }
+  const name = lines
+    .find((line) => line.startsWith('event:'))
+    ?.slice(6)
+    .trim()
+  const type = typeof value === 'object' && value !== null && 'type' in value ? value.type : undefined
+  if (name && name !== type) throw new AiTransportError('protocol')
   const envelope = cardEnvelope.safeParse(value)
   if (envelope.success) {
     const card = chatCardSchema.safeParse(envelope.data.card)
@@ -25,11 +31,6 @@ function parseFrame(frame: string): ChatStreamEvent | null {
   }
   const parsed = chatStreamEventSchema.safeParse(value)
   if (!parsed.success) throw new AiTransportError('protocol')
-  const name = lines
-    .find((line) => line.startsWith('event:'))
-    ?.slice(6)
-    .trim()
-  if (name && name !== parsed.data.type) throw new AiTransportError('protocol')
   return parsed.data
 }
 
