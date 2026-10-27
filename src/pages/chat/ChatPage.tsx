@@ -39,7 +39,7 @@ import { cn, copyText } from '@/lib/utils'
 import { useChat } from '@/store/chat'
 import { useSession } from '@/store/session'
 import { toast } from '@/store/ui'
-import { prepareImage } from '@/features/chat/attachments'
+import { AttachmentError, prepareImage } from '@/features/chat/attachments'
 import type { PreparedImage } from '@/features/chat/attachments'
 import { useChatImageUrl } from '@/features/chat/chatImages'
 import { useChatStream } from '@/features/chat/streamStore'
@@ -146,11 +146,26 @@ function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () =>
   const { t } = useTranslation()
   const { data } = useArtworks()
   const fileRef = useRef<HTMLInputElement>(null)
+  const reportImageError = (error: unknown) => {
+    const code = error instanceof AttachmentError ? error.code : 'decode'
+    toast({ title: t(code === 'too_big' ? 'chat.attach.tooBig' : `chat.attach.${code}`), tone: 'error' })
+  }
+  const pickImage = async (blob: Blob, name: string) => {
+    try {
+      onPick(await prepareImage(blob, name))
+      onClose()
+    } catch (error) {
+      reportImageError(error)
+    }
+  }
   const pickArtwork = async (key: string, name: string) => {
-    const blob = await getImageBlob(key)
-    if (!blob) return
-    onPick(await prepareImage(blob, name))
-    onClose()
+    try {
+      const blob = await getImageBlob(key)
+      if (!blob) throw new AttachmentError('decode')
+      await pickImage(blob, name)
+    } catch (error) {
+      reportImageError(error)
+    }
   }
   return (
     <Modal open={open} onClose={onClose} title={t('chat.attach.title')} size="lg">
@@ -159,15 +174,10 @@ function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () =>
         type="file"
         accept="image/*"
         className="sr-only"
-        onChange={async (e) => {
+        onChange={(e) => {
           const f = e.target.files?.[0]
-          if (!f) return
-          if (f.size > 12 * 1024 * 1024) {
-            toast({ title: t('chat.attach.tooBig'), tone: 'error' })
-            return
-          }
-          onPick(await prepareImage(f, f.name))
-          onClose()
+          e.currentTarget.value = ''
+          if (f) void pickImage(f, f.name)
         }}
       />
       <Button variant="outline" icon={<Upload size={16} />} onClick={() => fileRef.current?.click()}>
