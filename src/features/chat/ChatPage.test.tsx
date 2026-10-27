@@ -4,7 +4,7 @@ import ChatPage from '@/pages/chat/ChatPage'
 import { useChat } from '@/store/chat'
 import { useToasts } from '@/store/ui'
 import { AttachmentError, prepareImage } from './attachments'
-import { installChatTestStubs } from './test-utils'
+import { installDomStubs } from './test-utils'
 import viMessages from '@/i18n/vi.json'
 
 it('keeps Vietnamese attachment errors in readable UTF-8', () => {
@@ -25,7 +25,7 @@ vi.mock('@/api/artworks', () => ({ getImageBlob: vi.fn(async () => new Blob(['im
 vi.mock('./attachments', async (original) => ({ ...(await original<typeof import('./attachments')>()), prepareImage: vi.fn() }))
 
 beforeEach(() => {
-  installChatTestStubs()
+  installDomStubs()
   useChat.getState().reset()
   useToasts.setState({ toasts: [] })
   vi.mocked(prepareImage).mockRejectedValue(new AttachmentError('unsupported'))

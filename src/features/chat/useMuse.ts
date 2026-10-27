@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { getChatTransport } from '@/api/ai/transport'
 import { recordActivity } from '@/api/progress'
 import { presentReward } from '@/store/ui'
@@ -17,6 +16,5 @@ const controller = createChatController({
 export function useMuse() {
   const phase = useChatStream((s) => s.active?.phase ?? null)
   const streamingConversationId = useChatStream((s) => s.active?.conversationId ?? null)
-  useEffect(() => () => controller.stop(), [])
   return { ...controller, phase, streamingConversationId }
 }

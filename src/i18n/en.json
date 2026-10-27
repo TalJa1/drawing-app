@@ -1036,27 +1036,28 @@
     "delete": "Delete conversation",
     "deleteTitle": "Delete this conversation?",
     "modeLabel": "Muse mode",
+    "groups": { "today": "Today", "yesterday": "Yesterday", "week": "This week", "older": "Older" },
     "modes": {
       "ideas": {
-        "name": "Idea Generator",
+        "name": "Find ideas",
         "short": "Ideas",
         "intro": "Stuck on what to draw? Ask me for prompts, challenges and little creative sparks.",
         "prompts": ["Give me 5 drawing ideas for beginners", "Create a 7-day drawing challenge for me", "What should I draw today?"]
       },
       "colour": {
-        "name": "Colour Advisor",
+        "name": "Mix colours",
         "short": "Colour",
         "intro": "Tell me a colour or a mood and I'll mix a palette for you — then send it straight to the studio.",
         "prompts": ["Which colours go well with teal?", "Give me a palette that feels nostalgic", "Colours that go with rose pink"]
       },
       "composition": {
-        "name": "Composition Coach",
+        "name": "Improve composition",
         "short": "Composition",
         "intro": "Let's make your pictures feel balanced and alive — rule of thirds, leading lines, focal points.",
         "prompts": ["How can I improve my composition?", "Where should I put the horizon?", "How do I make a focal point?"]
       },
       "history": {
-        "name": "Art Historian",
+        "name": "Explore art",
         "short": "History",
         "intro": "Ask me about any movement or artist — from cave paintings to Đông Hồ prints to Pop Art.",
         "prompts": ["Explain Impressionism like I'm 12", "What is Đông Hồ folk printing?", "Tell me about Cubism"]

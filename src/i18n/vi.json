@@ -1036,27 +1036,28 @@
     "delete": "Xóa cuộc trò chuyện",
     "deleteTitle": "Xóa cuộc trò chuyện này?",
     "modeLabel": "Chế độ nàng thơ",
+    "groups": { "today": "Hôm nay", "yesterday": "Hôm qua", "week": "Tuần này", "older": "Cũ hơn" },
     "modes": {
       "ideas": {
-        "name": "Tạo ý tưởng",
+        "name": "Tìm ý tưởng",
         "short": "Ý tưởng",
         "intro": "Bí ý tưởng vẽ? Hỏi mình để có đề bài, thử thách và những tia lửa sáng tạo nhỏ.",
         "prompts": ["Cho mình 5 ý tưởng vẽ cho người mới bắt đầu", "Tạo cho mình thử thách vẽ 7 ngày", "Hôm nay mình nên vẽ gì?"]
       },
       "colour": {
-        "name": "Cố vấn màu sắc",
+        "name": "Phối màu",
         "short": "Màu sắc",
         "intro": "Cho mình một màu hoặc một tâm trạng, mình sẽ pha bảng màu cho bạn — rồi gửi thẳng tới xưởng vẽ.",
         "prompts": ["Màu nào hợp với xanh mòng két?", "Cho mình một bảng màu gợi hoài niệm", "Những màu hợp với hồng"]
       },
       "composition": {
-        "name": "Huấn luyện bố cục",
+        "name": "Góp ý bố cục",
         "short": "Bố cục",
         "intro": "Cùng làm bức tranh của bạn cân bằng và sống động hơn — quy tắc một phần ba, đường dẫn, tiêu điểm.",
         "prompts": ["Làm sao để cải thiện bố cục?", "Nên đặt đường chân trời ở đâu?", "Làm sao tạo tiêu điểm?"]
       },
       "history": {
-        "name": "Sử gia nghệ thuật",
+        "name": "Khám phá mỹ thuật",
         "short": "Lịch sử",
         "intro": "Hỏi mình về bất kỳ trào lưu hay nghệ sĩ nào — từ tranh hang động đến tranh Đông Hồ đến Pop Art.",
         "prompts": ["Giải thích trường phái Ấn tượng cho trẻ 12 tuổi", "Tranh dân gian Đông Hồ là gì?", "Kể mình nghe về Lập thể"]

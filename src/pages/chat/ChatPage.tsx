@@ -1,28 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  Compass,
-  Copy,
-  History,
-  Image as ImageIcon,
-  Lightbulb,
-  MessageCirclePlus,
-  Palette,
-  Paperclip,
-  PanelLeft,
-  Pencil,
-  RefreshCw,
-  Send,
-  Square,
-  ThumbsDown,
-  ThumbsUp,
-  Trash2,
-  Upload,
-  X,
-  LayoutGrid,
-} from 'lucide-react'
-import type { ChatAttachment, ChatMode, Conversation } from '@/types'
+import { Copy, Image as ImageIcon, Paperclip, RefreshCw, Send, Square, ThumbsDown, ThumbsUp, Upload, X } from 'lucide-react'
+import type { ChatAttachment, ChatMode } from '@/types'
 import { Page } from '@/components/Layout'
 import { IconButton } from '@/components/IconButton'
 import { Button } from '@/components/Button'
@@ -43,104 +23,10 @@ import { AttachmentError, prepareImage } from '@/features/chat/attachments'
 import type { PreparedImage } from '@/features/chat/attachments'
 import { useChatImageUrl } from '@/features/chat/chatImages'
 import { useChatStream } from '@/features/chat/streamStore'
-import { formatDate } from '@/lib/date'
+import { ConversationList } from '@/features/chat/components/ConversationList'
+import { ChatHeader } from '@/features/chat/components/ChatHeader'
+import { WelcomeState } from '@/features/chat/components/WelcomeState'
 import { useMediaQuery } from '@/lib/hooks'
-
-const MODES: { id: ChatMode; icon: typeof Lightbulb }[] = [
-  { id: 'ideas', icon: Lightbulb },
-  { id: 'colour', icon: Palette },
-  { id: 'composition', icon: LayoutGrid },
-  { id: 'history', icon: History },
-]
-
-function ConversationList({ onPick }: { onPick?: () => void }) {
-  const { t, i18n } = useTranslation()
-  const conversations = useChat((s) => s.conversations)
-  const activeId = useChat((s) => s.activeId)
-  const setActive = useChat((s) => s.setActive)
-  const rename = useChat((s) => s.rename)
-  const remove = useChat((s) => s.remove)
-  const create = useChat((s) => s.create)
-  const [editing, setEditing] = useState<string | null>(null)
-  const [confirm, setConfirm] = useState<Conversation | null>(null)
-  return (
-    <div className="flex h-full flex-col">
-      <Button
-        variant="ink"
-        icon={<MessageCirclePlus size={17} />}
-        onClick={() => {
-          create()
-          onPick?.()
-        }}
-      >
-        {t('chat.newChat')}
-      </Button>
-      <p className="eyebrow mt-6 px-1">{t('chat.history')}</p>
-      <ul className="mt-2 flex-1 space-y-1 overflow-y-auto scrollbar-thin">
-        {conversations.length === 0 && <li className="px-2 py-3 text-sm text-ink-faint">{t('chat.noHistory')}</li>}
-        {conversations.map((c) => (
-          <li
-            key={c.id}
-            className={cn('group flex items-center gap-1 rounded-xl', c.id === activeId ? 'bg-ink/[0.07]' : 'hover:bg-ink/[0.04]')}
-          >
-            {editing === c.id ? (
-              <input
-                autoFocus
-                defaultValue={c.title}
-                aria-label={t('chat.rename')}
-                className="m-1 h-8 flex-1 rounded-lg border border-line-strong bg-card px-2 text-sm"
-                onBlur={(e) => {
-                  rename(c.id, e.target.value.trim() || c.title)
-                  setEditing(null)
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
-                  if (e.key === 'Escape') setEditing(null)
-                }}
-              />
-            ) : (
-              <button
-                type="button"
-                className="min-w-0 flex-1 px-3 py-2 text-left"
-                aria-current={c.id === activeId ? 'true' : undefined}
-                onClick={() => {
-                  setActive(c.id)
-                  onPick?.()
-                }}
-              >
-                <span className="block truncate text-sm font-medium">{c.title || t('chat.untitled')}</span>
-                <span className="block text-[11px] text-ink-faint">
-                  {t(`chat.modes.${c.mode}.short`)} · {formatDate(c.updatedAt, i18n.language)}
-                </span>
-              </button>
-            )}
-            <span className="flex shrink-0 opacity-100 transition-opacity md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100">
-              <IconButton size="sm" label={t('chat.rename')} icon={<Pencil size={14} />} onClick={() => setEditing(c.id)} noTooltip />
-              <IconButton size="sm" label={t('chat.delete')} icon={<Trash2 size={14} />} onClick={() => setConfirm(c)} noTooltip />
-            </span>
-          </li>
-        ))}
-      </ul>
-      <Modal open={!!confirm} onClose={() => setConfirm(null)} title={t('chat.deleteTitle')} description={confirm?.title} size="sm">
-        <div className="flex gap-3">
-          <Button variant="outline" className="flex-1" onClick={() => setConfirm(null)}>
-            {t('common.cancel')}
-          </Button>
-          <Button
-            variant="pigment"
-            className="flex-1"
-            onClick={() => {
-              if (confirm) remove(confirm.id)
-              setConfirm(null)
-            }}
-          >
-            {t('common.delete')}
-          </Button>
-        </div>
-      </Modal>
-    </div>
-  )
-}
 
 function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () => void; onPick: (a: PreparedImage) => void }) {
   const { t } = useTranslation()
@@ -260,6 +146,7 @@ export default function ChatPage() {
   const [sidebar, setSidebar] = useState(false)
   const desktop = useMediaQuery('(min-width: 1024px)')
   const { phase, send, regenerate, retry, stop } = useMuse()
+  useEffect(() => () => stop(), [stop])
   const busy = phase !== null
   const streaming = useChatStream((s) => s.active)
   const messages =
@@ -299,7 +186,6 @@ export default function ChatPage() {
     if (active) setMode(active.id, m)
   }
 
-  const suggestions = t(`chat.modes.${currentMode}.prompts`, { returnObjects: true }) as string[]
   const lastAssistant = active?.messages.at(-1)?.role === 'assistant' ? active.messages.at(-1) : undefined
 
   return (
@@ -311,7 +197,7 @@ export default function ChatPage() {
         ]}
       />
       <div className="container-art">
-        <div className="grid h-[calc(100dvh-12rem)] min-h-[560px] gap-6 md:h-[calc(100dvh-11rem)] lg:grid-cols-[280px_1fr]">
+        <div className="grid h-[calc(100dvh-12rem)] min-h-[560px] gap-6 md:h-[calc(100dvh-11rem)] lg:grid-cols-[272px_1fr]">
           {desktop && (
             <aside className="paper hidden rounded-[26px] border border-line p-4 shadow-paper lg:block" aria-label={t('chat.history')}>
               <ConversationList />
@@ -321,45 +207,27 @@ export default function ChatPage() {
             className="paper relative flex min-h-0 flex-col overflow-hidden rounded-[26px] border border-line shadow-paper"
             aria-label={t('chat.title')}
           >
-            {/* header */}
-            <header className="flex items-center gap-2 border-b border-line px-3 py-3 sm:px-5">
-              {!desktop && <IconButton label={t('chat.history')} icon={<PanelLeft size={18} />} onClick={() => setSidebar(true)} />}
-              <div className="min-w-0 flex-1">
-                <h1 className="truncate font-display text-xl leading-tight">{active?.title || t('chat.title')}</h1>
-                <p className="hidden truncate text-xs text-ink-faint sm:block">{t('chat.subtitle')}</p>
-              </div>
-              <div role="radiogroup" aria-label={t('chat.modeLabel')} className="no-scrollbar flex gap-1 overflow-x-auto">
-                {MODES.map(({ id, icon: Icon }) => (
-                  <button
-                    key={id}
-                    type="button"
-                    role="radio"
-                    aria-checked={currentMode === id}
-                    onClick={() => changeMode(id)}
-                    title={t(`chat.modes.${id}.name`)}
-                    className={cn(
-                      'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-xs font-semibold transition-colors',
-                      currentMode === id ? 'border-ink bg-ink text-paper' : 'border-line-strong text-ink-soft hover:text-ink',
-                    )}
-                  >
-                    <Icon size={14} />
-                    <span className="hidden xl:inline">{t(`chat.modes.${id}.name`)}</span>
-                  </button>
-                ))}
-              </div>
-            </header>
+            <ChatHeader
+              title={active?.title}
+              mode={currentMode}
+              onModeChange={changeMode}
+              desktop={desktop}
+              onHistory={() => setSidebar(true)}
+            />
 
             {/* thread */}
             <div className="min-h-0 flex-1 overflow-y-auto px-3 py-6 scrollbar-thin sm:px-6" aria-live="polite">
               {!active || active.messages.length === 0 ? (
-                <div className="mx-auto flex max-w-lg flex-col items-center pt-4 text-center">
-                  <Muse size={150} />
-                  <h2 className="display-md mt-4">{t('chat.emptyTitle', { name: user.displayName.split(' ')[0] })}</h2>
-                  <p className="mt-2 text-ink-soft">{t(`chat.modes.${currentMode}.intro`)}</p>
-                  <p className="hand mt-2 text-xl text-accent-ink">{t('chat.emptyNote')}</p>
-                </div>
+                <WelcomeState
+                  mode={currentMode}
+                  name={user.displayName.split(' ')[0]}
+                  onPrompt={(prompt) => {
+                    setText(prompt)
+                    inputRef.current?.focus()
+                  }}
+                />
               ) : (
-                <ol className="mx-auto max-w-3xl space-y-6">
+                <ol className="mx-auto max-w-[720px] space-y-6">
                   {messages.map((m) => (
                     <motion.li
                       key={m.id}
@@ -475,21 +343,6 @@ export default function ChatPage() {
 
             {/* composer */}
             <div className="border-t border-line bg-card/60 px-3 pb-3 pt-3 sm:px-5">
-              {(!active || active.messages.length < 2) && (
-                <div className="no-scrollbar mb-3 flex gap-2 overflow-x-auto" role="group" aria-label={t('chat.suggestions')}>
-                  {suggestions.map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => void submit(undefined, s)}
-                      disabled={busy}
-                      className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-line-strong bg-card px-3 py-1.5 text-sm text-ink-soft transition-colors hover:border-ink hover:text-ink"
-                    >
-                      <Compass size={13} className="text-accent-ink" /> {s}
-                    </button>
-                  ))}
-                </div>
-              )}
               <AnimatePresence>
                 {attachments.length > 0 && (
                   <motion.div
