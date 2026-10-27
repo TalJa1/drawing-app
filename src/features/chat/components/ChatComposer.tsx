@@ -14,7 +14,7 @@ import type { PreparedImage } from '../attachments'
 import { AttachmentStrip } from './AttachmentStrip'
 import { AttachmentPicker } from './AttachmentPicker'
 
-export type ChatComposerHandle = { fill: (text: string) => void }
+export type ChatComposerHandle = { fill: (text: string) => void; focus: () => void }
 
 export function ChatComposer({
   conversationId,
@@ -50,6 +50,7 @@ export function ChatComposer({
   useImperativeHandle(
     ref,
     () => ({
+      focus: () => input.current?.focus(),
       fill: (value) => {
         changeText(value)
         input.current?.focus()

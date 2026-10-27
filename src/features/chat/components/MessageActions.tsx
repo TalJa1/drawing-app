@@ -53,7 +53,10 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
             variant="ghost"
             icon={<RefreshCw size={14} />}
             disabled={remaining > 0 || phase !== null}
-            onClick={() => void retry(conversationId)}
+            onClick={() => {
+              void retry(conversationId)
+              document.getElementById('chat-input')?.focus()
+            }}
           >
             {t('common.retry')}
           </Button>

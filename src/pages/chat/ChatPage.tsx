@@ -44,7 +44,14 @@ export default function ChatPage() {
   useEffect(() => () => stop(), [stop])
   const busy = phase !== null
   const composer = useRef<ChatComposerHandle>(null)
+  const focusAfterSend = useRef(false)
   const composerId = draft !== null ? '__new__' : (active?.id ?? '__new__')
+  useEffect(() => {
+    if (focusAfterSend.current) {
+      composer.current?.focus()
+      focusAfterSend.current = false
+    }
+  }, [active?.id])
 
   useEffect(() => {
     if (draft === null) return
@@ -56,7 +63,10 @@ export default function ChatPage() {
   const submit = async (message: string, attachments: PreparedImage[]) => {
     if (busy) return
     let convId = activeId
-    if (!convId || !conversations.some((c) => c.id === convId)) convId = create(currentMode)
+    if (!convId || !conversations.some((c) => c.id === convId)) {
+      focusAfterSend.current = true
+      convId = create(currentMode)
+    }
     await send(convId, message, currentMode, attachments)
   }
 

@@ -54,6 +54,30 @@ it('leaving the chat page stops the active stream', async () => {
   expect(useChat.getState().conversations[0].messages.at(-1)?.status).toBe('stopped')
 })
 
+it('sending the first message restores focus to the new composer', async () => {
+  await renderChat(<ChatPage />)
+  const input = screen.getByRole('textbox')
+  input.focus()
+  fireEvent.change(input, { target: { value: 'Help me draw' } })
+  fireEvent.keyDown(input, { key: 'Enter' })
+  await waitFor(() => expect(useChatStream.getState().active).not.toBeNull())
+  expect(screen.getByRole('textbox')).toHaveFocus()
+})
+
+it('retry returns focus to the composer', async () => {
+  await renderChat(<ChatPage />)
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Help me draw' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Send' }))
+  await waitFor(() => expect(useChatStream.getState().active).not.toBeNull())
+  fireEvent.click(screen.getByRole('button', { name: 'Stop' }))
+  const retry = screen.getByRole('button', { name: 'Try again' })
+  retry.focus()
+  await act(async () => {
+    fireEvent.click(retry)
+  })
+  expect(screen.getByRole('textbox')).toHaveFocus()
+})
+
 it('unmounting a child that uses useMuse keeps the page stream active', async () => {
   await renderChat(<ChatPage />)
   const child = renderHook(() => useMuse())
