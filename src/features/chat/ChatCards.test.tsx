@@ -112,6 +112,21 @@ it('copying a swatch confirms locally and resets the check', async () => {
   expect(swatch.querySelector('.lucide-check')).not.toBeInTheDocument()
 })
 
+it('copying the same swatch again restarts the confirmation timeout', async () => {
+  await renderChat(<ChatCardView card={paletteCard} />)
+  vi.useFakeTimers()
+  const swatch = screen.getByRole('button', { name: /#112233/i })
+  await act(async () => fireEvent.click(swatch))
+  await act(async () => vi.advanceTimersByTimeAsync(900))
+  await act(async () => fireEvent.click(swatch))
+  await act(async () => vi.advanceTimersByTimeAsync(300))
+  expect(swatch.querySelector('.lucide-check')).toBeInTheDocument()
+  await act(async () => vi.advanceTimersByTimeAsync(899))
+  expect(swatch.querySelector('.lucide-check')).toBeInTheDocument()
+  await act(async () => vi.advanceTimersByTimeAsync(1))
+  expect(swatch.querySelector('.lucide-check')).not.toBeInTheDocument()
+})
+
 it('lesson shows difficulty, minutes and reason with a catalog route', async () => {
   const lesson = Object.values(LESSON_MAP)[0]
   await renderChat(<ChatCardView card={{ type: 'lesson', slug: lesson.slug, reason: 'Practise value' }} />)

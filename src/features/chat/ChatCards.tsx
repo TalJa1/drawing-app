@@ -26,7 +26,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
   const navigate = useNavigate()
   const setPalette = useStudio((s) => s.setPendingPalette)
   const { level } = useLevel()
-  const [copied, setCopied] = useState<string | null>(null)
+  const [copied, setCopied] = useState<{ color: string } | null>(null)
   useEffect(() => {
     if (!copied) return
     const timer = setTimeout(() => setCopied(null), CHAT_MOTION.copyReset * 1000)
@@ -51,7 +51,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
               aria-label={t('learn.copyColour', { hex: c })}
               onClick={async () => {
                 const success = await copyText(c)
-                setCopied(success ? c : null)
+                setCopied(success ? { color: c } : null)
                 toast({
                   title: success ? t('common.copied') : t('learn.lab.copyFailed'),
                   description: c.toUpperCase(),
@@ -59,7 +59,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
                 })
               }}
             >
-              {copied === c && <Check size={14} className="self-center" />}
+              {copied?.color === c && <Check size={14} className="self-center" />}
               <span className="font-mono text-[9.5px] opacity-0 transition-opacity group-hover:opacity-90">{c.toUpperCase()}</span>
             </motion.button>
           ))}
