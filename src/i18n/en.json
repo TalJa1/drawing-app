@@ -1143,6 +1143,8 @@
     },
     "cards": {
       "template": "Template",
+      "unlockLevel": "Unlocks at level {{level}}",
+      "roles": { "dominant": "Dominant", "support": "Support", "accent": "Accent" },
       "drawThis": "Draw this",
       "sketchIt": "Sketch it in Free Draw",
       "lesson_one": "Lesson · {{count}} min",

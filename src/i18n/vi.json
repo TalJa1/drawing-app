@@ -1143,6 +1143,8 @@
     },
     "cards": {
       "template": "Mẫu vẽ",
+      "unlockLevel": "Mở ở cấp {{level}}",
+      "roles": { "dominant": "Chủ đạo", "support": "Hỗ trợ", "accent": "Nhấn" },
       "drawThis": "Vẽ mẫu này",
       "sketchIt": "Phác trong Vẽ tự do",
       "lesson_one": "Bài học · {{count}} phút",
