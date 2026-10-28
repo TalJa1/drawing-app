@@ -18,7 +18,6 @@ export function ConversationList({ onPick }: { onPick?: () => void }) {
   const setActive = useChat((s) => s.setActive)
   const rename = useChat((s) => s.rename)
   const remove = useChat((s) => s.remove)
-  const create = useChat((s) => s.create)
   const { cancelConversation } = useMuse()
   const groups = groupConversations(conversations, new Date())
   const [editing, setEditing] = useState<string | null>(null)
@@ -30,7 +29,7 @@ export function ConversationList({ onPick }: { onPick?: () => void }) {
         icon={<MessageCirclePlus size={17} />}
         onClick={() => {
           if (activeId) cancelConversation(activeId)
-          create()
+          setActive(null)
           onPick?.()
         }}
       >
