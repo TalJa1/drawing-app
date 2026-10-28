@@ -134,6 +134,20 @@ it('network error marks the reply failed with code network', async () => {
   expect(reply(h.convId)).toMatchObject({ status: 'failed', errorCode: 'network' })
 })
 
+it('marks the active reply interrupted when the page unloads mid-stream', async () => {
+  const h = setup()
+  const pending = h.controller.send(h.convId, 'question', 'ideas', [])
+  await settle()
+  h.channels[0].push({ type: 'token', text: 'Keep this text' })
+  await settle()
+  window.dispatchEvent(new Event('pagehide'))
+  h.channels[0].push(new TypeError('The connection was lost'))
+  await pending
+  expect(reply(h.convId)).toMatchObject({ content: 'Keep this text', status: 'interrupted' })
+  expect(reply(h.convId).errorCode).toBeUndefined()
+  expect(h.signals[0].aborted).toBe(true)
+})
+
 it('upstream error after tokens keeps the partial text', async () => {
   const h = setup()
   const pending = h.controller.send(h.convId, 'question', 'ideas', [])

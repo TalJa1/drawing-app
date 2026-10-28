@@ -68,6 +68,12 @@ useChat.subscribe((state, previous) => {
   }
 })
 
+if (typeof window !== 'undefined') {
+  const interrupt = () => current?.finish('interrupted')
+  window.addEventListener('pagehide', interrupt)
+  window.addEventListener('beforeunload', interrupt)
+}
+
 export function createChatController(deps: ControllerDeps): ChatController {
   const begin = (conversationId: string, turnId: string, messageId: string): RunningTurn => {
     const run: RunningTurn = {
