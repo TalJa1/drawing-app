@@ -76,7 +76,7 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
             onClick={async () => {
               const success = await copyText(message.content)
               setCopied(success)
-              toast({ title: success ? t('common.copied') : t('learn.lab.copyFailed'), tone: 'success' })
+              toast({ title: success ? t('common.copied') : t('learn.lab.copyFailed'), tone: success ? 'success' : 'error' })
             }}
           />
           <IconButton
