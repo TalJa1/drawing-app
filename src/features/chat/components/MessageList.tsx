@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Conversation } from '@/types'
 import { useReducedMotion } from '@/app/theme'
+import { useChat } from '@/store/chat'
 import { useChatStream } from '../streamStore'
 import { isNearBottom } from '../scroll'
 import { MessageItem } from './MessageItem'
@@ -44,16 +45,20 @@ export function MessageList({ conversation, children }: { conversation: Conversa
     }
     const unsubscribe = useChatStream.subscribe((state, previous) => {
       if (
-        state.active?.conversationId === id &&
-        (state.active.content !== previous.active?.content || state.active.cards.length !== previous.active?.cards.length)
+        (state.active?.conversationId === id &&
+          (state.active.content !== previous.active?.content || state.active.cards.length !== previous.active?.cards.length)) ||
+        (previous.active?.conversationId === id && state.active?.conversationId !== id)
       )
         notify()
     })
-    const observer = new MutationObserver(notify)
-    if (thread.current) observer.observe(thread.current, { childList: true, subtree: true, characterData: true })
+    const unsubscribeMessages = useChat.subscribe((state, previous) => {
+      const count = state.conversations.find((conversation) => conversation.id === id)?.messages.length ?? 0
+      const previousCount = previous.conversations.find((conversation) => conversation.id === id)?.messages.length ?? 0
+      if (count !== previousCount) notify()
+    })
     return () => {
       unsubscribe()
-      observer.disconnect()
+      unsubscribeMessages()
       cancelAnimationFrame(frame)
     }
   }, [id, reduced])

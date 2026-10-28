@@ -6,6 +6,8 @@ import { useChat } from '@/store/chat'
 import { useChatStream } from '../streamStore'
 import { installDomStubs, renderChat } from '../test-utils'
 
+vi.mock('@/lib/utils', async (original) => ({ ...(await original<object>()), copyText: vi.fn(async () => true) }))
+
 const renders = vi.hoisted(() => vi.fn())
 vi.mock('@/components/Markdown', () => ({
   Markdown: ({ text }: { text: string }) => {
@@ -138,6 +140,51 @@ it('remembers the scroll position of each conversation', async () => {
   expect(screen.getByRole('region', { name: 'Messages' }).scrollTop).toBe(0)
   page.rerender(<MessageList key={first.id} conversation={first} />)
   expect(screen.getByRole('region', { name: 'Messages' }).scrollTop).toBe(450)
+})
+
+it('the latest-message button ignores countdown and copy updates', async () => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date(date))
+  const c = conversation(
+    [reply('copy'), reply('limited', { status: 'failed', errorCode: 'rate_limited', retryAt: new Date(Date.now() + 2000).toISOString() })],
+    'c_countdown_copy',
+  )
+  useChat.setState({ conversations: [c], activeId: c.id })
+  await renderChat(<MessageList conversation={c} />)
+  await act(async () => {})
+  const thread = screen.getByRole('region', { name: 'Messages' })
+  Object.defineProperties(thread, {
+    scrollHeight: { configurable: true, value: 1000 },
+    clientHeight: { configurable: true, value: 300 },
+    scrollTop: { configurable: true, writable: true, value: 100 },
+  })
+  fireEvent.scroll(thread)
+  expect(screen.queryByRole('button', { name: 'Jump to latest' })).not.toBeInTheDocument()
+  await act(async () => vi.advanceTimersByTimeAsync(1000))
+  expect(screen.queryByRole('button', { name: 'Jump to latest' })).not.toBeInTheDocument()
+  await act(async () => fireEvent.click(screen.getAllByRole('button', { name: 'Copy' })[0]))
+  expect(screen.queryByRole('button', { name: 'Jump to latest' })).not.toBeInTheDocument()
+  await act(async () => vi.advanceTimersByTimeAsync(1200))
+  expect(screen.queryByRole('button', { name: 'Jump to latest' })).not.toBeInTheDocument()
+})
+
+it('new messages expose the latest button while reading above', async () => {
+  const c = conversation([reply('first')], 'c_appended')
+  useChat.setState({ conversations: [c], activeId: c.id })
+  const page = await renderChat(<MessageList conversation={c} />)
+  const thread = screen.getByRole('region', { name: 'Messages' })
+  Object.defineProperties(thread, {
+    scrollHeight: { configurable: true, value: 1000 },
+    clientHeight: { configurable: true, value: 300 },
+    scrollTop: { configurable: true, writable: true, value: 100 },
+  })
+  fireEvent.scroll(thread)
+  const appended = { ...c, messages: [...c.messages, reply('second')] }
+  act(() => useChat.setState({ conversations: [appended] }))
+  page.rerender(<MessageList conversation={appended} />)
+  await act(async () => {})
+  expect(screen.getByRole('button', { name: 'Jump to latest' })).toBeInTheDocument()
+  expect(thread.scrollTop).toBe(100)
 })
 
 it('unknown incomplete reasons use the fallback and content filters have distinct copy', async () => {
