@@ -4,6 +4,7 @@ import { useChat } from '@/store/chat'
 import { useChatStream } from '../streamStore'
 import { useMuse } from '../useMuse'
 import { installDomStubs, renderChat } from '../test-utils'
+import { ChatHeader } from './ChatHeader'
 
 vi.mock('@/api/ai/transport', () => ({
   checkAiHealth: async () => null,
@@ -35,6 +36,17 @@ it('ArrowRight moves the checked mode and focus', async () => {
   expect(colour).toHaveAttribute('aria-checked', 'true')
   expect(colour).toHaveFocus()
   expect(ideas).toHaveAttribute('tabindex', '-1')
+})
+
+it('small screens hide the subtitle and show all four modes', async () => {
+  await renderChat(<ChatHeader mode="ideas" onModeChange={vi.fn()} desktop={false} onHistory={vi.fn()} />)
+  const heading = screen.getByRole('heading', { level: 1 })
+  expect(heading).toHaveClass('truncate', 'sm:whitespace-normal')
+  expect(heading.nextElementSibling).toHaveClass('hidden', 'sm:block')
+  const modes = screen.getByRole('radiogroup')
+  expect(modes).toHaveClass('grid', 'grid-cols-2', 'sm:flex')
+  expect(modes).not.toHaveClass('overflow-x-auto')
+  expect(screen.getAllByRole('radio')).toHaveLength(4)
 })
 
 it('prompt card fills the composer instead of sending', async () => {

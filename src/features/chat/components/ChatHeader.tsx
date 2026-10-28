@@ -54,11 +54,11 @@ export function ChatHeader({
         {!desktop && <IconButton label={t('chat.history')} icon={<PanelLeft size={18} />} onClick={onHistory} className="!h-11 !w-11" />}
         {hasMessages && <Muse size={42} state={state} />}
         <div className="min-w-0 flex-1">
-          <h1 className="break-words font-display text-xl leading-tight">{title || t('chat.title')}</h1>
-          <p className="mt-1 text-xs text-ink-faint">{t('chat.subtitle')}</p>
+          <h1 className="truncate font-display text-xl leading-tight sm:whitespace-normal sm:break-words">{title || t('chat.title')}</h1>
+          <p className="mt-1 hidden text-xs text-ink-faint sm:block">{t('chat.subtitle')}</p>
         </div>
       </div>
-      <div role="radiogroup" aria-label={t('chat.modeLabel')} className="no-scrollbar mt-3 flex gap-1 overflow-x-auto">
+      <div role="radiogroup" aria-label={t('chat.modeLabel')} className="mt-3 grid grid-cols-2 gap-1 sm:flex sm:overflow-x-auto">
         {MODES.map(({ id, icon: Icon }, index) => (
           <button
             key={id}
