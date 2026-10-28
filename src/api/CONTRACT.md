@@ -174,22 +174,133 @@ user's local timezone (send `X-Timezone`).
 Artist works and movement examples carry an optional `imageUrl` — today they are rendered
 as generative SVG placeholders; a CMS can supply licensed/public-domain images.
 
-## AI chat — `src/api/chat.ts`
+## AI chat — protocol v1, `src/api/ai/`
 
-| Function                       | Method & path                            | Request                                        | Response                    |
-| ------------------------------ | ---------------------------------------- | ---------------------------------------------- | --------------------------- |
-| `streamChatReply(req, signal)` | `POST /chat/stream` (Server-Sent Events) | `{ message, mode, lang, attachments?, seed? }` | stream of `ChatStreamEvent` |
+The paths below include the backend's `/api/v1` prefix. `VITE_API_BASE` is the origin plus
+`/api`, for example `http://127.0.0.1:8000/api`. `VITE_CHAT_TRANSPORT=mock|server` selects
+the transport; the default is mock in development and server in production.
 
-```text
-event: token   data: {"type":"token","text":" Hello"}
-event: card    data: {"type":"card","card":{"type":"palette","name":"Teal harmony","colors":["#1F8A8A","#8A1F1F"]}}
-event: done    data: {"type":"done"}
+| Method & path                 | Request                            | Response                                      |
+| ----------------------------- | ---------------------------------- | --------------------------------------------- |
+| `GET /api/v1/ai/health`       | Optional `Authorization: Bearer …` | `{ configured: boolean, protocolVersion: 1 }` |
+| `POST /api/v1/ai/chat/stream` | JSON below                         | `text/event-stream`                           |
+
+Both routes resolve identity. A valid JWT identifies the user. Guests (including mock
+tokens) are accepted only when `AI_REQUIRE_AUTH=false` and the client IP is loopback.
+Send `Content-Type: application/json` and `X-Request-ID: <requestId>`; compressed bodies
+are unsupported. History stays on the client; AI uses no conversation database.
+
+```json
+{
+  "protocolVersion": 1,
+  "requestId": "r_1",
+  "conversationId": "c_1",
+  "turnId": "t_1",
+  "action": "send",
+  "mode": "colour",
+  "lang": "vi",
+  "message": { "text": "Suggest a coastal palette", "images": [] },
+  "history": [
+    { "role": "user", "text": "I have ten minutes" },
+    { "role": "assistant", "text": "Try a small study.", "cards": [], "status": "completed" }
+  ],
+  "learner": { "level": 1, "completedLessons": [] }
+}
 ```
 
-`mode` ∈ `ideas | colour | composition | history` (sets the system prompt / tone).
-Cards: `palette { name, colors[] }`, `template { templateId }`, `idea { title, description, difficulty, minutes }`,
-`lesson { slug }`. Attachments are `{ kind: "image", src: <data URL or uploaded URL>, artworkId?, name }`.
-Conversations are stored client-side today; a `GET/POST /conversations` resource can be added later.
+`action` is `send|regenerate`; `mode` is `ideas|colour|composition|history`; `lang` is
+`en|vi` (the message language takes precedence). `learner` may be `null` (level 1).
+History roles are `user|assistant`. Assistant status is `completed|stopped|interrupted`.
+A user history item may carry `images` or `imageMissing: true`; the latter asks the model
+to acknowledge the missing image. `imageMissing` is not a field of the current message.
+
+An image is `{ id, name, mime: "image/jpeg", dataUrl: "data:image/jpeg;base64,…", width,
+height, hash }`. `width`/`height` are positive integers matching the JPEG. The browser
+flattens transparency onto white before JPEG conversion; the server verifies the bytes.
+Only the current turn's images, or the selected most recent image turn, are sent. New
+images replace that context; clearing the active-image chip excludes it. If trimming
+removes its source user item, the selected images move into the current message. A
+missing current image stops the request with client error `image_missing`; a missing
+history image uses `imageMissing` when its source item is retained.
+
+| Limit                         | Value                                                                            |
+| ----------------------------- | -------------------------------------------------------------------------------- |
+| Current message text          | 4,000 characters                                                                 |
+| History                       | 24 items, 60,000 text characters                                                 |
+| Images                        | At most 3 across the request, belonging to one user turn                         |
+| Each image                    | JPEG ≤ 1,100,000 bytes, data URL ≤ 1,500,000 characters, longest edge ≤ 1,600 px |
+| Entire request body           | 6,000,000 bytes                                                                  |
+| Cards                         | At most 6 emitted per turn                                                       |
+| Image identifiers             | `id` and `hash`: 1–80 characters; `name`: 1–120                                  |
+| Request/conversation/turn IDs | `[A-Za-z0-9._-]{1,64}`                                                           |
+
+Count only `history[].text` toward 60,000 characters; cards and images do not count.
+Before sending, FE drops the oldest whole user/assistant turns until both history limits
+hold. BE applies the same request limits and may further trim model context in blocks
+of six oldest turns when history exceeds about 16k estimated tokens. Stopped/interrupted
+answers keep their text and are marked unfinished in model context. Validated card data
+is included in assistant history; invalid old cards are dropped without rejecting the request.
+
+SSE uses separate `event: <type>` and `data: <JSON>` lines followed by a blank line.
+Ignore comment lines starting with `:` (keepalive). The JSON `type` matches the event.
+
+```text
+status  {"type":"status","phase":"thinking"}
+token   {"type":"token","text":"Try this palette."}
+card    {"type":"card","card":{"type":"palette","name":"Coast","colors":["#123456","#abcdef","#778899"]}}
+done    {"type":"done","finish":"completed"}
+done    {"type":"done","finish":"incomplete","reason":"max_output_tokens"}
+error   {"type":"error","code":"rate_limited","retryAfterMs":5000}
+```
+
+The two `done` examples are alternatives. Exactly one `done` terminates the whole tool
+loop; `error` terminates without `done`. Incomplete reasons include `max_output_tokens`,
+`content_filter`, `max_messages`, `steered`, and `budget`; unknown reasons use generic
+client copy. EOF without a terminal event and `done: incomplete` become `interrupted`.
+Abort becomes `stopped`; errors become `failed`. Every path preserves received text.
+Cards supplement a written answer and an immediate action. Requests for steps receive
+written steps; requests for both a lesson and a template receive both cards. The server
+allows at most three model rounds; a valid card-only round without text gets a
+`tool_choice: "none"` text round when another round remains. The final round disables
+tools. Every model image has an `Image id: <id>` label for critique references.
+
+Before SSE, errors use `{ "error": { "code", "message", "traceId", "details"? } }`.
+
+| HTTP / location | Codes                                                                           |
+| --------------- | ------------------------------------------------------------------------------- |
+| 401             | `unauthorized` (required token missing/invalid)                                 |
+| 503             | `ai_not_configured` (no key), `service_unavailable` (JWT configuration missing) |
+| 429             | `rate_limited`, `ai_busy`, `ai_budget_exceeded`; `Retry-After` in seconds       |
+| 413             | `payload_too_large`                                                             |
+| 415             | `unsupported_media_type` (non-JSON, compressed body, non-JPEG image)            |
+| 400             | `bad_request` (malformed JSON)                                                  |
+| 422             | `validation_error` (schema, oversize/corrupt image, decompression bomb)         |
+| SSE `error`     | `upstream`, `timeout`, `model_unavailable`, `rate_limited`, `ai_not_configured` |
+| Client only     | `network`, `protocol`, `client`, `image_missing`                                |
+
+`retryAfterMs` is optional on SSE errors; FE converts an HTTP `Retry-After` to milliseconds.
+`network` means fetch failed; `protocol` means invalid SSE/response; `client` is an unexpected
+local failure; `image_missing` means a selected image cannot be loaded. Client-only codes
+are never server SSE error codes. One active turn is allowed across the FE; BE permits
+one stream per identity and three globally, 20 turns per 600 seconds per identity, and
+an in-memory daily USD budget. The entire turn deadline is 120 seconds with a 45-second
+upstream idle timeout. Stop, conversation changes and leaving the page abort the request.
+
+All cards have a `type` discriminator. No model-provided HTML, SVG or route is accepted.
+
+| Type       | Fields and rules                                                                                                                                                                    |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `palette`  | `name` 1–40; 3–6 distinct `colors` matching `^#[0-9a-f]{6}$` case-insensitively; optional `roles` (`dominant`, `support`, `accent`) matches colors in length; optional `note` ≤ 160 |
+| `idea`     | `title` 1–60; `description` 1–220; `difficulty` is `beginner`, `intermediate`, `advanced` or `master`; integer `minutes` 5–120                                                      |
+| `critique` | `imageId` belongs to this request; `observations` 1–3; `strengths` ≤ 2; `priorities` ≤ 2; each item and required `exercise` 1–240 characters                                        |
+| `lesson`   | Real catalog `slug`; optional `reason` ≤ 160                                                                                                                                        |
+| `template` | Real catalog `templateId`, unlocked at `learner.level` (or level 1); optional `reason` ≤ 160                                                                                        |
+
+Duplicate cards are emitted once. Invalid or locked tool cards are rejected so the model
+can choose another. FE builds lesson/template routes from the validated slug/ID and its
+own catalog; locked historical/mock templates show a lock without a link. Palette actions
+copy HEX or send the palette to Studio; ideas open Free Draw; critiques select their own
+image context for a follow-up. These actions do not award XP or complete lessons.
 
 ## Account & dev — `src/api/account.ts`, `src/api/demo.ts`
 
