@@ -58,7 +58,11 @@ export function ChatHeader({
           <p className="mt-1 hidden text-xs text-ink-faint sm:block">{t('chat.subtitle')}</p>
         </div>
       </div>
-      <div role="radiogroup" aria-label={t('chat.modeLabel')} className="mt-3 grid grid-cols-2 gap-1 sm:flex sm:overflow-x-auto">
+      <div
+        role="radiogroup"
+        aria-label={t('chat.modeLabel')}
+        className="no-scrollbar mt-3 grid grid-cols-2 gap-1 sm:flex sm:overflow-x-auto"
+      >
         {MODES.map(({ id, icon: Icon }, index) => (
           <button
             key={id}

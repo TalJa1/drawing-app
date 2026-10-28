@@ -49,6 +49,11 @@ it('small screens hide the subtitle and show all four modes', async () => {
   expect(screen.getAllByRole('radio')).toHaveLength(4)
 })
 
+it('desktop mode row hides its scrollbar while keeping the mobile grid', async () => {
+  await renderChat(<ChatHeader mode="ideas" onModeChange={vi.fn()} desktop onHistory={vi.fn()} />)
+  expect(screen.getByRole('radiogroup')).toHaveClass('no-scrollbar', 'sm:overflow-x-auto', 'grid-cols-2', 'sm:flex')
+})
+
 it('prompt card fills the composer instead of sending', async () => {
   await renderChat(<ChatPage />)
   fireEvent.click(screen.getByRole('button', { name: 'Give me 5 drawing ideas for beginners' }))
