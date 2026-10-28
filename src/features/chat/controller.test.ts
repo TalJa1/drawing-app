@@ -1,7 +1,7 @@
 import type { ChatMessage, ChatStreamEvent, Conversation } from '@/types'
 import type { ChatTransport } from '@/api/ai/transport'
 import { AiTransportError } from '@/api/ai/errors'
-import { putFile } from '@/api/imageStore'
+import { getFile, putFile } from '@/api/imageStore'
 import { useChat } from '@/store/chat'
 import { createChatController } from './controller'
 import { useChatStream } from './streamStore'
@@ -64,6 +64,7 @@ const done = { type: 'done', finish: 'completed' } as const
 
 beforeEach(() => {
   vi.useFakeTimers()
+  vi.mocked(getFile).mockReset()
   useChat.getState().reset()
   useChatStream.setState({ active: null })
 })
@@ -236,16 +237,17 @@ it('images are written to IndexedDB only on send', async () => {
     hash: 'hash',
     mime: 'image/jpeg' as const,
   }
+  vi.mocked(getFile).mockImplementation(async (key) => (key.endsWith(':full') ? prepared.analysisBlob : prepared.previewBlob))
   expect(spy).not.toHaveBeenCalled()
   const pending = h.controller.send(h.convId, 'question', 'ideas', [prepared])
-  await settle()
+  await vi.waitFor(() => expect(h.streamTurn).toHaveBeenCalledTimes(1))
   h.channels[0].push(done)
   await pending
   expect(spy).toHaveBeenCalledOnce()
   expect(putFile).toHaveBeenCalledTimes(2)
   expect(useChat.getState().conversations[0].imageContextTurnId).toBe(reply(h.convId).turnId)
   const again = h.controller.regenerate(h.convId)
-  await settle()
+  await vi.waitFor(() => expect(h.streamTurn).toHaveBeenCalledTimes(2))
   h.channels[1].push(done)
   await again
   expect(spy).toHaveBeenCalledOnce()
