@@ -6,6 +6,7 @@ import { buildTurnRequest } from './request'
 import { learnerSnapshot } from './useMuse'
 import { loadChatImage } from './chatImages'
 import { chatTurnRequestSchema } from './contract'
+import { useChat } from '@/store/chat'
 
 vi.mock('./chatImages', () => ({ loadChatImage: vi.fn() }))
 
@@ -45,8 +46,53 @@ beforeEach(() => {
   vi.mocked(loadChatImage).mockResolvedValue(new Blob([new Uint8Array([255, 216, 255, 0])], { type: 'image/jpeg' }))
 })
 afterEach(() => {
+  useChat.getState().reset()
   useLearn.getState().reset()
   useProgress.getState().reset()
+})
+
+it('request: an unreadable context image clears the context and reports image_missing', async () => {
+  const middle = Array.from({ length: 12 }, (_, i) => [message('user', `t-${i}`), message('assistant', `t-${i}`)]).flat()
+  const conv = conversation([message('user', 'old', 'Image', { attachments: [photo()] }), ...middle, message('user', 'current')], {
+    imageContextTurnId: 'old',
+  })
+  useChat.setState({ conversations: [conv] })
+  vi.mocked(loadChatImage).mockResolvedValue(undefined)
+  await expect(build(conv)).rejects.toMatchObject({ code: 'image_missing' })
+  const cleared = useChat.getState().conversations[0]
+  expect(cleared.imageContextTurnId).toBeNull()
+  expect((await build(cleared)).message.images).toEqual([])
+  expect(loadChatImage).toHaveBeenCalledOnce()
+})
+
+it('request: an unreadable image of the current turn reports image_missing', async () => {
+  const conv = conversation([message('user', 'current', 'Image', { attachments: [photo()] })])
+  for (const action of ['send', 'regenerate'] as const) {
+    vi.mocked(loadChatImage).mockResolvedValueOnce(undefined)
+    await expect(build(conv, action)).rejects.toMatchObject({ code: 'image_missing' })
+    vi.mocked(loadChatImage).mockRejectedValueOnce(new Error('Unreadable blob'))
+    await expect(build(conv, action)).rejects.toMatchObject({ code: 'image_missing' })
+  }
+})
+
+it('critique history serializes with its image id', async () => {
+  const card = {
+    type: 'critique' as const,
+    imageId: 'image-1',
+    observations: ['A tree'],
+    strengths: ['Clear shape'],
+    priorities: ['Darken the sky'],
+    exercise: 'Make a thumbnail',
+  }
+  const req = await build(
+    conversation([
+      message('user', 'old', 'Image', { attachments: [photo()] }),
+      message('assistant', 'old', '', { cards: [card] }),
+      message('user', 'current'),
+    ]),
+  )
+  expect(req.history[1].cards).toEqual([card])
+  expect(req.history[0].images?.[0].id).toBe(card.imageId)
 })
 
 it('request: excludes failed replies', async () => {

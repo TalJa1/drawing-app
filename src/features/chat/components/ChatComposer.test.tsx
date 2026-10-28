@@ -5,6 +5,7 @@ import { useChat } from '@/store/chat'
 import { prepareImage } from '../attachments'
 import { putFile } from '@/api/imageStore'
 import { installDomStubs, renderChat } from '../test-utils'
+import { buildTurnRequest } from '../request'
 
 vi.mock('@/api/queries', () => ({ useArtworks: () => ({ data: [] }) }))
 vi.mock('@/api/imageStore', () => ({ putFile: vi.fn(), getFile: vi.fn(), deleteFile: vi.fn(), listKeys: vi.fn().mockResolvedValue([]) }))
@@ -64,6 +65,27 @@ it('does not submit on Enter while composing', async () => {
   expect(onSend).not.toHaveBeenCalled()
   fireEvent.keyDown(input, { key: 'Enter' })
   expect(onSend).toHaveBeenCalledWith('Draw a tree', [])
+})
+
+it('clearing the active image removes it from the next request', async () => {
+  const id = useChat.getState().create()
+  const base = { cards: [], createdAt: '2026-10-28T00:00:00Z', mode: 'ideas' as const, role: 'user' as const }
+  useChat.getState().addMessage(id, {
+    ...base,
+    id: 'u_old',
+    turnId: 'old',
+    content: 'Image',
+    attachments: [{ kind: 'image', id: 'a_old', name: 'Landscape.jpg', blobKey: 'chat:a_old:full', width: 8, height: 6, hash: 'hash' }],
+  })
+  useChat.getState().addMessage(id, { ...base, id: 'u_now', turnId: 'current', content: 'What next?', attachments: [] })
+  useChat.getState().setImageContext(id, 'old')
+  await renderChat(<ChatComposer conversationId={id} initialText="" busy={false} onSend={vi.fn()} onStop={vi.fn()} />)
+  expect(screen.getByText('Asking about: Landscape.jpg')).toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: 'Clear image context' }))
+  expect(screen.queryByText('Asking about: Landscape.jpg')).not.toBeInTheDocument()
+  const req = await buildTurnRequest(useChat.getState().conversations[0], 'current', 'send', null)
+  expect(req.message.images).toEqual([])
+  expect(req.history.flatMap((item) => item.images ?? [])).toEqual([])
 })
 it('Shift+Enter does not submit and is not prevented', async () => {
   const { input, onSend } = await setup()

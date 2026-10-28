@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { useReducedMotion } from '@/app/theme'
 import { CHAT_MOTION, chatVariants } from '../motion'
-import { Paperclip, Send, Square } from 'lucide-react'
+import { Paperclip, Send, Square, X } from 'lucide-react'
 import { IconButton } from '@/components/IconButton'
 import { useChat } from '@/store/chat'
 import { toast } from '@/store/ui'
@@ -38,6 +38,13 @@ export function ChatComposer({
   const [images, setImages] = useState<PreparedImage[]>([])
   const [preparing, setPreparing] = useState(0)
   const [picker, setPicker] = useState(false)
+  const conversation = useChat((state) => state.conversations.find((item) => item.id === conversationId))
+  const imageContext =
+    conversation?.imageContextTurnId === null
+      ? undefined
+      : conversation?.imageContextTurnId !== undefined
+        ? conversation.messages.find((message) => message.role === 'user' && message.turnId === conversation.imageContextTurnId)
+        : conversation?.messages.findLast((message) => message.role === 'user' && message.attachments.some((image) => image.blobKey))
   const [resetVersion] = useState(() => useChat.getState().resetVersion)
   const input = useRef<HTMLTextAreaElement>(null)
   const latest = useRef(text)
@@ -116,6 +123,19 @@ export function ChatComposer({
       className="border-t border-line bg-card/60 px-3 pt-3 sm:px-5"
       style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
     >
+      {!!imageContext?.attachments.length && images.length === 0 && (
+        <div className="mb-2 flex min-w-0 items-center gap-2 rounded-xl border border-line bg-paper-3 pl-3 text-xs text-ink-soft">
+          <span className="min-w-0 flex-1 truncate">
+            {t('chat.activeImage.label', { name: imageContext.attachments.map((image) => image.name).join(', ') })}
+          </span>
+          <IconButton
+            className="!h-11 !w-11"
+            label={t('chat.activeImage.clear')}
+            icon={<X size={14} />}
+            onClick={() => useChat.getState().setImageContext(conversationId, null)}
+          />
+        </div>
+      )}
       {(images.length > 0 || preparing > 0) && (
         <AttachmentStrip
           images={images}

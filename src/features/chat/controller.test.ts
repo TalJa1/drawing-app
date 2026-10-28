@@ -298,6 +298,34 @@ it('retry and regenerate act only on the last turn', async () => {
   expect(h.streamTurn).toHaveBeenCalledOnce()
 })
 
+it('sending new images moves the image context to the new turn', async () => {
+  const h = setup()
+  const prepared = {
+    id: 'first_image',
+    name: 'Art.jpg',
+    previewBlob: new Blob(['preview']),
+    analysisBlob: new Blob(['full']),
+    width: 8,
+    height: 6,
+    hash: 'hash',
+    mime: 'image/jpeg' as const,
+  }
+  vi.mocked(getFile).mockResolvedValue(prepared.analysisBlob)
+  const first = h.controller.send(h.convId, 'First image', 'ideas', [prepared])
+  await vi.waitFor(() => expect(h.streamTurn).toHaveBeenCalledTimes(1))
+  h.channels[0].push(done)
+  await first
+  const firstContext = useChat.getState().conversations[0].imageContextTurnId
+  const second = h.controller.send(h.convId, 'Second image', 'ideas', [{ ...prepared, id: 'second_image' }])
+  await vi.waitFor(() => expect(h.streamTurn).toHaveBeenCalledTimes(2))
+  h.channels[1].push(done)
+  await second
+  const conv = useChat.getState().conversations[0]
+  expect(conv.imageContextTurnId).not.toBe(firstContext)
+  expect(conv.imageContextTurnId).toBe(conv.messages.at(-1)?.turnId)
+  expect(h.streamTurn.mock.calls[1][0].message.images[0].id).toBe('second_image')
+})
+
 it('regenerate keeps the previous answer as a variant', async () => {
   const h = setup()
   const first = h.controller.send(h.convId, 'question', 'ideas', [])

@@ -122,7 +122,7 @@ function Content({ message, conversationId, last }: { message: ChatMessage; conv
                 animate="visible"
                 transition={{ delay: reduced ? 0 : index * CHAT_MOTION.cardStagger }}
               >
-                <ChatCardView card={card} animate={message.status === 'streaming'} />
+                <ChatCardView card={card} animate={message.status === 'streaming'} conversationId={conversationId} />
               </motion.div>
             ))}
           </div>

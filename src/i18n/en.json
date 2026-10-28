@@ -1077,9 +1077,11 @@
       "model_unavailable": "The drawing model is temporarily unavailable.",
       "network": "The connection was lost. Try again.",
       "protocol": "The reply could not be read. Try again.",
-      "client": "Something went wrong while preparing the reply. Try again."
+      "client": "Something went wrong while preparing the reply. Try again.",
+      "image_missing": "This image is no longer on this device. Please attach it again."
     },
     "groups": { "today": "Today", "yesterday": "Yesterday", "week": "This week", "older": "Older" },
+    "activeImage": { "label": "Asking about: {{name}}", "clear": "Clear image context" },
     "modes": {
       "ideas": {
         "name": "Find ideas",
@@ -1143,6 +1145,13 @@
     },
     "cards": {
       "template": "Template",
+      "critique": {
+        "observations": "Observations",
+        "strengths": "What works",
+        "priorities": "What to improve",
+        "exercise": "Try this",
+        "followUp": "Ask about this image"
+      },
       "unlockLevel": "Unlocks at level {{level}}",
       "roles": { "dominant": "Dominant", "support": "Support", "accent": "Accent" },
       "drawThis": "Draw this",

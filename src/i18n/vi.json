@@ -1077,9 +1077,11 @@
       "model_unavailable": "Mô hình vẽ tạm thời chưa sẵn sàng.",
       "network": "Kết nối bị mất. Hãy thử lại.",
       "protocol": "Không thể đọc câu trả lời. Hãy thử lại.",
-      "client": "Có lỗi khi chuẩn bị câu trả lời. Hãy thử lại."
+      "client": "Có lỗi khi chuẩn bị câu trả lời. Hãy thử lại.",
+      "image_missing": "Ảnh này không còn trên thiết bị. Hãy đính kèm lại."
     },
     "groups": { "today": "Hôm nay", "yesterday": "Hôm qua", "week": "Tuần này", "older": "Cũ hơn" },
+    "activeImage": { "label": "Đang hỏi về: {{name}}", "clear": "Bỏ ngữ cảnh ảnh" },
     "modes": {
       "ideas": {
         "name": "Tìm ý tưởng",
@@ -1143,6 +1145,13 @@
     },
     "cards": {
       "template": "Mẫu vẽ",
+      "critique": {
+        "observations": "Quan sát",
+        "strengths": "Điểm hiệu quả",
+        "priorities": "Ưu tiên cải thiện",
+        "exercise": "Thử bài tập này",
+        "followUp": "Hỏi tiếp về ảnh này"
+      },
       "unlockLevel": "Mở ở cấp {{level}}",
       "roles": { "dominant": "Chủ đạo", "support": "Hỗ trợ", "accent": "Nhấn" },
       "drawThis": "Vẽ mẫu này",

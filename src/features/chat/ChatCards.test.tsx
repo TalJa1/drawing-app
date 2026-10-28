@@ -7,6 +7,7 @@ import { LESSON_MAP } from '@/mocks/lessons'
 import { useStudio } from '@/store/studio'
 import { copyText } from '@/lib/utils'
 import { recordActivity } from '@/api/progress'
+import { useChat } from '@/store/chat'
 
 vi.mock('@/features/gamification/hooks', () => ({ useLevel: () => ({ level: 1 }) }))
 vi.mock('@/api/progress', () => ({ recordActivity: vi.fn(async () => null) }))
@@ -19,9 +20,49 @@ function Location() {
 }
 
 beforeEach(() => {
+  useChat.getState().reset()
   installDomStubs()
   vi.mocked(recordActivity).mockClear()
   useStudio.getState().setPendingPalette(null)
+})
+
+const critique = {
+  type: 'critique' as const,
+  imageId: 'a_old',
+  observations: ['A tree against a pale sky'],
+  strengths: ['Clear silhouette'],
+  priorities: ['Deepen the sky'],
+  exercise: 'Draw three value thumbnails',
+}
+
+it('critique card renders observations, priorities and exercise', async () => {
+  await renderChat(<ChatCardView card={critique} />)
+  for (const text of [...critique.observations, ...critique.strengths, ...critique.priorities, critique.exercise])
+    expect(screen.getByText(text)).toBeInTheDocument()
+})
+
+it('critique follow-up selects its own image and focuses the composer', async () => {
+  const id = useChat.getState().create()
+  for (const turnId of ['old', 'new'])
+    useChat.getState().addMessage(id, {
+      id: `u_${turnId}`,
+      turnId,
+      role: 'user',
+      content: 'Image',
+      cards: [],
+      attachments: [{ kind: 'image', id: `a_${turnId}`, name: `${turnId}.jpg`, blobKey: `chat:a_${turnId}:full` }],
+      createdAt: '2026-10-28T00:00:00Z',
+    })
+  useChat.getState().setImageContext(id, 'new')
+  await renderChat(
+    <>
+      <ChatCardView card={critique} />
+      <textarea id="chat-input" />
+    </>,
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'Ask about this image' }))
+  expect(useChat.getState().conversations[0].imageContextTurnId).toBe('old')
+  expect(screen.getByRole('textbox')).toHaveFocus()
 })
 afterEach(() => {
   cleanup()

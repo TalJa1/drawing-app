@@ -2,6 +2,7 @@ import type { ChatAttachment, Conversation } from '@/types'
 import { AiTransportError } from '@/api/ai/errors'
 import { uid } from '@/lib/random'
 import { useSettings } from '@/store/settings'
+import { useChat } from '@/store/chat'
 import { LIMITS, PROTOCOL_VERSION, parseHistoryCards } from './contract'
 import type { ChatTurnRequest, HistoryItem, ImagePayload, LearnerSnapshot } from './contract'
 import { loadChatImage } from './chatImages'
@@ -78,10 +79,13 @@ export async function buildTurnRequest(
   if (context) {
     const source = userItems.get(context.turnId)
     for (const attachment of context.attachments.slice(0, LIMITS.maxImagesPerRequest)) {
-      const image = await imagePayload(attachment)
+      const image = await imagePayload(attachment).catch(() => undefined)
       if (image) images.push(image)
       else if (source && history.includes(source)) source.imageMissing = true
-      else throw new AiTransportError('client')
+      else {
+        if (context.turnId !== turnId) useChat.getState().setImageContext(conversation.id, null)
+        throw new AiTransportError('image_missing')
+      }
     }
     if (source && history.includes(source) && images.length) source.images = images.splice(0)
   }

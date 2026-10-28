@@ -10,6 +10,10 @@ const image = {
   hash: 'hash',
 }
 const palette = { type: 'palette', name: 'Rain', colors: ['#123456', '#abcdef', '#ffffff'] }
+
+it('image_missing is a client error that cannot arrive from the server', () => {
+  expect(chatStreamEventSchema.safeParse({ type: 'error', code: 'image_missing' }).success).toBe(false)
+})
 const request = () => ({
   protocolVersion: 1,
   requestId: 'r_1',

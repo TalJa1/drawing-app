@@ -17,8 +17,9 @@ import { useStudio } from '@/store/studio'
 import { DifficultyDots } from '@/components/Chip'
 import { DIFF_LEVEL } from '@/features/practice/constants'
 import { useLevel } from '@/features/gamification/hooks'
+import { CritiqueCard } from './cards/CritiqueCard'
 
-export function ChatCardView({ card, animate = false }: { card: ChatCard; animate?: boolean }) {
+export function ChatCardView({ card, animate = false, conversationId }: { card: ChatCard; animate?: boolean; conversationId?: string }) {
   const { t } = useTranslation()
   const L = useL()
   const reduced = useReducedMotion()
@@ -142,7 +143,7 @@ export function ChatCardView({ card, animate = false }: { card: ChatCard; animat
       </div>
     )
 
-  if (card.type === 'critique') return null
+  if (card.type === 'critique') return <CritiqueCard card={card} animate={animate} conversationId={conversationId} />
 
   const lesson = LESSON_MAP[card.slug]
   if (!lesson) return null

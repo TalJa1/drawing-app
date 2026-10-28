@@ -408,6 +408,7 @@ export type AiErrorCode =
   | 'network'
   | 'protocol'
   | 'client'
+  | 'image_missing'
 export type PaletteRole = 'dominant' | 'support' | 'accent'
 
 export type ChatCard =
