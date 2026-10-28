@@ -1027,7 +1027,8 @@
   },
   "chat": {
     "title": "Nàng thơ sáng tạo của bạn",
-    "subtitle": "Ý tưởng, lời khuyên về màu, hướng dẫn bố cục và lịch sử nghệ thuật — người bạn AI thân thiện (bản xem trước).",
+    "subtitle": "Tìm ý tưởng, phối màu, góp ý bố cục và khám phá mỹ thuật cùng trợ lý vẽ.",
+    "notConfigured": "Trợ lý vẽ chưa sẵn sàng. Bạn hãy thử lại sau.",
     "newChat": "Cuộc trò chuyện mới",
     "history": "Cuộc trò chuyện",
     "noHistory": "Các cuộc trò chuyện sẽ xuất hiện ở đây.",
@@ -1117,7 +1118,14 @@
     "send": "Gửi",
     "stop": "Dừng",
     "removeAttachment": "Bỏ hình",
-    "disclaimer": "Nàng thơ là bản xem trước với câu trả lời soạn sẵn — AI thật sẽ có khi kết nối máy chủ.",
+    "disclaimer": "Câu hỏi và ảnh của bạn được gửi qua máy chủ Art Spark tới OpenAI.",
+    "data": {
+      "learnMore": "Tìm hiểu thêm",
+      "training": "Theo mặc định, dữ liệu gửi tới API OpenAI không được dùng để huấn luyện mô hình.",
+      "monitoring": "OpenAI có thể giữ log giám sát lạm dụng chứa nội dung tối đa 30 ngày, hoặc lâu hơn khi pháp luật yêu cầu hay cần bảo vệ con người và dịch vụ.",
+      "server": "Máy chủ Art Spark không lưu nội dung chat. Lịch sử trò chuyện được giữ trên thiết bị này.",
+      "source": "Kiểm soát dữ liệu của OpenAI"
+    },
     "attach": {
       "button": "Đính kèm hình",
       "title": "Chia sẻ hình với nàng thơ",

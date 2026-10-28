@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import ChatPage from '@/pages/chat/ChatPage'
 import { useChat } from '@/store/chat'
@@ -6,6 +6,13 @@ import { useToasts } from '@/store/ui'
 import { AttachmentError, prepareImage } from './attachments'
 import { installDomStubs } from './test-utils'
 import viMessages from '@/i18n/vi.json'
+import { checkAiHealth } from '@/api/ai/transport'
+import { StrictMode } from 'react'
+
+vi.mock('@/api/ai/transport', async (original) => ({
+  ...(await original<typeof import('@/api/ai/transport')>()),
+  checkAiHealth: vi.fn(),
+}))
 
 it('keeps Vietnamese attachment errors in readable UTF-8', () => {
   expect(viMessages.chat.attach.errors).toMatchObject({
@@ -32,8 +39,42 @@ beforeEach(() => {
   useChat.getState().reset()
   useToasts.setState({ toasts: [] })
   vi.mocked(prepareImage).mockRejectedValue(new AttachmentError('unsupported'))
+  vi.mocked(checkAiHealth).mockReset().mockResolvedValue(null)
 })
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
+
+it('checks AI health once and shows an unconfigured banner', async () => {
+  vi.mocked(checkAiHealth).mockResolvedValue({ configured: false })
+  const page = render(
+    <StrictMode>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ChatPage />
+      </MemoryRouter>
+    </StrictMode>,
+  )
+  expect(await screen.findByText('chat.notConfigured')).toBeInTheDocument()
+  page.rerender(
+    <StrictMode>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <ChatPage />
+      </MemoryRouter>
+    </StrictMode>,
+  )
+  expect(checkAiHealth).toHaveBeenCalledTimes(1)
+})
+
+it('does not show the unconfigured banner when health cannot be checked', async () => {
+  render(
+    <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <ChatPage />
+    </MemoryRouter>,
+  )
+  await waitFor(() => expect(checkAiHealth).toHaveBeenCalledOnce())
+  expect(screen.queryByText('chat.notConfigured')).not.toBeInTheDocument()
+})
 
 it('reports image preparation failures without adding an attachment', async () => {
   render(

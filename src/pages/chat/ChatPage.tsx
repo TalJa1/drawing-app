@@ -20,6 +20,7 @@ import { useReducedMotion } from '@/app/theme'
 import { useChatVisibility } from '@/features/chat/motion'
 import { cn } from '@/lib/utils'
 import { useMediaQuery } from '@/lib/hooks'
+import { checkAiHealth } from '@/api/ai/transport'
 
 export default function ChatPage() {
   const { t } = useTranslation()
@@ -39,6 +40,18 @@ export default function ChatPage() {
   const [mode, setLocalMode] = useState<ChatMode>(active?.mode ?? 'ideas')
   const currentMode = active?.mode ?? mode
   const [sidebar, setSidebar] = useState(false)
+  const [notConfigured, setNotConfigured] = useState(false)
+  const healthCheck = useRef<ReturnType<typeof checkAiHealth> | null>(null)
+  useEffect(() => {
+    let mounted = true
+    healthCheck.current ??= checkAiHealth()
+    void healthCheck.current.then((health) => {
+      if (mounted) setNotConfigured(health?.configured === false)
+    })
+    return () => {
+      mounted = false
+    }
+  }, [])
   const desktop = useMediaQuery('(min-width: 1024px)')
   const { phase, send, stop } = useMuse()
   useEffect(() => () => stop(), [stop])
@@ -111,6 +124,9 @@ export default function ChatPage() {
                 hasMessages={!!active?.messages.length}
               />
 
+              {notConfigured && (
+                <p className="border-b border-line bg-paper-3 px-4 py-3 text-sm text-ink-soft">{t('chat.notConfigured')}</p>
+              )}
               <MessageList key={active?.id ?? '__new__'} conversation={active}>
                 <WelcomeState
                   mode={currentMode}

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { useReducedMotion } from '@/app/theme'
 import { CHAT_MOTION, chatVariants } from '../motion'
-import { Image, Paperclip, Send, Square } from 'lucide-react'
+import { Paperclip, Send, Square } from 'lucide-react'
 import { IconButton } from '@/components/IconButton'
 import { useChat } from '@/store/chat'
 import { toast } from '@/store/ui'
@@ -13,6 +13,7 @@ import { AttachmentError, prepareImage } from '../attachments'
 import type { PreparedImage } from '../attachments'
 import { AttachmentStrip } from './AttachmentStrip'
 import { AttachmentPicker } from './AttachmentPicker'
+import { ChatPrivacy } from './ChatPrivacy'
 
 export type ChatComposerHandle = { fill: (text: string) => void; focus: () => void }
 
@@ -209,10 +210,7 @@ export function ChatComposer({
           />
         )}
       </form>
-      <p className="mt-2 flex items-center gap-1.5 text-[11px] text-ink-faint">
-        <Image size={11} />
-        {t('chat.disclaimer')}
-      </p>
+      <ChatPrivacy />
       <AttachmentPicker
         open={picker}
         onClose={() => setPicker(false)}

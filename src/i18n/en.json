@@ -1027,7 +1027,8 @@
   },
   "chat": {
     "title": "Your creative muse",
-    "subtitle": "Ideas, colour advice, composition coaching and art history — a friendly AI companion (preview).",
+    "subtitle": "Ideas, colour advice, composition coaching and art history with your drawing assistant.",
+    "notConfigured": "The drawing assistant is not available yet. Please try again later.",
     "newChat": "New conversation",
     "history": "Conversations",
     "noHistory": "Your conversations will appear here.",
@@ -1117,7 +1118,14 @@
     "send": "Send",
     "stop": "Stop",
     "removeAttachment": "Remove image",
-    "disclaimer": "The muse is a front-end preview with scripted answers — a real AI joins with the back-end.",
+    "disclaimer": "Your questions and images are sent through the Art Spark server to OpenAI.",
+    "data": {
+      "learnMore": "Learn more",
+      "training": "By default, data sent to the OpenAI API is not used to train models.",
+      "monitoring": "OpenAI may retain abuse monitoring logs containing content for up to 30 days, or longer when required by law or needed to protect people and services.",
+      "server": "The Art Spark server does not store chat content. Your chat history stays on this device.",
+      "source": "OpenAI data controls"
+    },
     "attach": {
       "button": "Attach an image",
       "title": "Share an image with the muse",

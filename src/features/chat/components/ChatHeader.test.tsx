@@ -6,6 +6,7 @@ import { useMuse } from '../useMuse'
 import { installDomStubs, renderChat } from '../test-utils'
 
 vi.mock('@/api/ai/transport', () => ({
+  checkAiHealth: async () => null,
   getChatTransport: () => ({
     async *streamTurn(_request: unknown, signal: AbortSignal) {
       yield { type: 'status', phase: 'thinking' }
