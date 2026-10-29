@@ -348,10 +348,17 @@ export interface LessonSection {
   callout?: Localized
 }
 
+/** A quiz question as the API serves it. The right answer is NOT part of it: it is revealed after submitting. */
 export interface QuizQuestion {
   id: string
   prompt: Localized
   options: Localized[]
+}
+
+/** What the server keeps for a question and reveals once a quiz is submitted. */
+export interface QuizKey {
+  id: string
+  /** index of the right option */
   answer: number
   explain: Localized
 }

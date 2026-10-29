@@ -233,6 +233,9 @@ export function evaluateBadges(d: ProgressData, e: ProgressEvent, ctx: RulesCont
 const addUnique = <T>(arr: T[], v: T) => (arr.includes(v) ? arr : [...arr, v])
 
 /** Base XP an event is worth before badges/challenges. */
+/** XP of a quiz result: 40 for the share of right answers, plus 20 when all are right. */
+const quizXp = (correct: number, total: number) => Math.round((correct / total) * 40) + (correct === total ? 20 : 0)
+
 export function baseXp(e: ProgressEvent): number {
   switch (e.type) {
     case 'artworkScored':
@@ -242,7 +245,8 @@ export function baseXp(e: ProgressEvent): number {
     case 'lessonCompleted':
       return e.xp
     case 'quizCompleted':
-      return Math.round((e.correct / e.total) * 40) + (e.correct === e.total ? 20 : 0)
+      // only what is new is paid: a lesson never gives more than the XP of its best result
+      return quizXp(e.correct, e.total) - quizXp(e.prevCorrect ?? 0, e.total)
     case 'spotStyle':
       return Math.min(5, e.streak)
     case 'flashcardReviewed':

@@ -886,7 +886,10 @@
       "progress": "{{n}}/{{total}}",
       "correct": "Chính xác!",
       "notQuite": "Chưa đúng lắm.",
-      "finish": "Xem điểm"
+      "finish": "Xem điểm",
+      "review": "Xem lại các câu trả lời",
+      "yourAnswer": "Bạn chọn",
+      "rightAnswer": "Đáp án đúng"
     },
     "diagram": {
       "hue": "Sắc tướng",

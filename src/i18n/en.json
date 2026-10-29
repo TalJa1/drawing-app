@@ -886,7 +886,10 @@
       "progress": "{{n}} of {{total}}",
       "correct": "Correct!",
       "notQuite": "Not quite.",
-      "finish": "See my score"
+      "finish": "See my score",
+      "review": "Review your answers",
+      "yourAnswer": "Your answer",
+      "rightAnswer": "Right answer"
     },
     "diagram": {
       "hue": "Hue",

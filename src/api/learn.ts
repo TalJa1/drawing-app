@@ -1,5 +1,5 @@
-import type { Artist, ArtForm, ArtMovement, GlossaryTerm, Lesson, RewardSummary } from '@/types'
-import { LESSONS, LESSON_MAP } from '@/mocks/lessons'
+import type { Artist, ArtForm, ArtMovement, GlossaryTerm, Lesson, Localized, RewardSummary } from '@/types'
+import { LESSONS, LESSON_MAP, QUIZ_KEYS } from '@/mocks/lessons'
 import { MOVEMENTS, MOVEMENT_MAP } from '@/mocks/movements'
 import { ARTISTS, ARTIST_MAP } from '@/mocks/artists'
 import { ART_FORMS, ART_FORM_MAP } from '@/mocks/artForms'
@@ -67,27 +67,39 @@ export async function completeLesson(slug: string): Promise<RewardSummary | null
   return recordActivity({ type: 'lessonCompleted', slug, xp: lesson.xp })
 }
 
+/** What a reader learns about one question once the quiz is submitted. */
+export interface QuizReview {
+  id: string
+  /** index of the right option */
+  answer: number
+  explain: Localized
+}
+
 export interface QuizResult {
   correct: number
   total: number
   passed: boolean
   reward: RewardSummary | null
+  /** one per question, in order: the right option and why */
+  review: QuizReview[]
 }
 
-/** POST /lessons/:slug/quiz — grades answers server-side. */
+/** POST /lessons/:slug/quiz — grades answers server-side and only then reveals the right ones. */
 export async function submitQuiz(slug: string, answers: number[]): Promise<QuizResult> {
   await simulate({ latency: [400, 800], canFail: false })
   const lesson = found(LESSON_MAP[slug], 'Lesson')
+  const keys = found(QUIZ_KEYS[slug], 'Lesson')
   const qs = lesson.quiz.questions
-  const correct = qs.reduce((n, q, i) => n + (answers[i] === q.answer ? 1 : 0), 0)
+  const correct = keys.reduce((n, k, i) => n + (answers[i] === k.answer ? 1 : 0), 0)
   const passed = correct / qs.length >= 0.6
   const prev = useLearn.getState().lessons[slug]
   useLearn.getState().setLessonProgress(slug, {
     quizBest: Math.max(prev?.quizBest ?? 0, correct / qs.length),
     quizPassed: (prev?.quizPassed ?? false) || passed,
   })
-  // only the first attempt that improves the best score earns XP
+  // only a result that improves the best score earns XP, and only for the part that is new
   const improved = correct / qs.length > (prev?.quizBest ?? 0)
-  const reward = improved ? await recordActivity({ type: 'quizCompleted', slug, correct, total: qs.length }) : null
-  return { correct, total: qs.length, passed, reward }
+  const prevCorrect = Math.round((prev?.quizBest ?? 0) * qs.length) // right answers of the best result so far
+  const reward = improved ? await recordActivity({ type: 'quizCompleted', slug, correct, total: qs.length, prevCorrect }) : null
+  return { correct, total: qs.length, passed, reward, review: keys.map(({ id, answer, explain }) => ({ id, answer, explain })) }
 }
