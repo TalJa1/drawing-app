@@ -103,9 +103,12 @@ export default function ChatPage() {
           ]}
         />
         <div className="container-art">
-          <div className="grid h-[calc(100dvh-12rem)] min-h-[380px] gap-6 md:h-[calc(100dvh-11rem)] lg:min-h-[560px] lg:grid-cols-[272px_1fr]">
+          <div className="grid h-[calc(100dvh-12rem)] min-h-[380px] grid-rows-[minmax(0,1fr)] gap-6 md:h-[calc(100dvh-11rem)] lg:min-h-[560px] lg:grid-cols-[272px_1fr]">
             {desktop && (
-              <aside className="paper hidden rounded-[26px] border border-line p-4 shadow-paper lg:block" aria-label={t('chat.history')}>
+              <aside
+                className="paper hidden min-h-0 overflow-hidden rounded-[26px] border border-line p-4 shadow-paper lg:block"
+                aria-label={t('chat.history')}
+              >
                 <ConversationList />
               </aside>
             )}

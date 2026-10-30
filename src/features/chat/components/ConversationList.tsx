@@ -23,9 +23,10 @@ export function ConversationList({ onPick }: { onPick?: () => void }) {
   const [editing, setEditing] = useState<string | null>(null)
   const [confirm, setConfirm] = useState<Conversation | null>(null)
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 flex-col">
       <Button
         variant="ink"
+        className="shrink-0"
         icon={<MessageCirclePlus size={17} />}
         onClick={() => {
           if (activeId) cancelConversation(activeId)
@@ -36,7 +37,7 @@ export function ConversationList({ onPick }: { onPick?: () => void }) {
         {t('chat.newChat')}
       </Button>
       <p className="eyebrow mt-6 px-1">{t('chat.history')}</p>
-      <ul className="mt-2 flex-1 space-y-1 overflow-y-auto scrollbar-thin">
+      <ul className="mt-2 min-h-0 flex-1 space-y-1 overflow-y-auto scrollbar-thin">
         {conversations.length === 0 && <li className="px-2 py-3 text-sm text-ink-faint">{t('chat.noHistory')}</li>}
         {groups.map((group) => (
           <li key={group.key}>

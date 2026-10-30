@@ -245,6 +245,64 @@ async function prepareTallComposer(page: Page) {
   await page.getByRole('textbox').fill('Draw three shapes on a page.\n'.repeat(30))
 }
 
+test('long desktop history stays inside the frame and leaves reply versions clickable', async ({ page }) => {
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 1024, height: 768 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await freshChat(page)
+    await seedChatCards(page)
+    await page.evaluate(() => {
+      const stored = JSON.parse(localStorage.getItem('artspark:chat')!)
+      const current = stored.state.conversations[0]
+      stored.state.conversations = Array.from({ length: 13 }, (_, index) => ({
+        ...current,
+        id: index ? `history-${index}` : current.id,
+        title: `Afternoon drawing study and colour choices to remember ${index + 1}`,
+        updatedAt: new Date(Date.now() - index * 86400000).toISOString(),
+      }))
+      localStorage.setItem('artspark:chat', JSON.stringify(stored))
+    })
+    await page.reload()
+    await page.evaluate(() => window.scrollTo(0, 0))
+    const chat = page.locator('section').filter({ has: page.locator('#chat-input') })
+    const bottom = await chat.evaluate((node) => node.getBoundingClientRect().bottom)
+    const footerTop = await page.locator('footer').evaluate((node) => node.getBoundingClientRect().top)
+    expect(bottom).toBeLessThanOrEqual(Math.min(footerTop, viewport.height))
+    const history = page.getByRole('complementary', { name: 'Conversations' })
+    const last = history.getByRole('button', { name: /remember 13/ })
+    const list = history.locator('ul').first()
+    await list.evaluate((node) => {
+      node.scrollTop = 0
+    })
+    await last.focus()
+    const bounds = await last.boundingBox()
+    const listBounds = await list.boundingBox()
+    expect(bounds!.y).toBeGreaterThanOrEqual(listBounds!.y)
+    expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(listBounds!.y + listBounds!.height + 1)
+    await list.evaluate((node) => {
+      node.scrollTop = node.scrollHeight
+    })
+    await expect(last).toBeInViewport()
+    await expect(history.getByRole('button', { name: 'New conversation' })).toBeInViewport()
+    const previous = page.getByRole('button', { name: 'Previous version' })
+    const next = page.getByRole('button', { name: 'Next version' })
+    for (const button of [previous, next]) {
+      expect(
+        await button.evaluate((node) => {
+          const box = node.getBoundingClientRect()
+          return node.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2))
+        }),
+      ).toBe(true)
+    }
+    await previous.click()
+    await expect(chat).toContainText('Draw two shapes.')
+    await next.click()
+    await expect(chat).toContainText('Try drawing three simple shapes.')
+  }
+})
+
 for (const { width, height, packed } of [
   { width: 360, height: 430, packed: true },
   { width: 390, height: 667, packed: true },
