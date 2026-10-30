@@ -3,16 +3,22 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 
 async function freshChat(page: Page) {
   await page.addInitScript(() => {
-    if (sessionStorage.getItem('chat-e2e')) return
-    localStorage.clear()
-    localStorage.setItem(
-      'artspark:settings',
-      JSON.stringify({
-        state: { theme: 'light', language: 'en', motion: 'system', onboardingDone: true, customCursor: false },
-        version: 1,
-      }),
-    )
-    sessionStorage.setItem('chat-e2e', '1')
+    if (!sessionStorage.getItem('chat-e2e')) {
+      localStorage.clear()
+      localStorage.setItem(
+        'artspark:settings',
+        JSON.stringify({
+          state: { theme: 'light', language: 'en', motion: 'system', onboardingDone: true, customCursor: false },
+          version: 1,
+        }),
+      )
+      sessionStorage.setItem('chat-e2e', '1')
+    }
+    const seeded = sessionStorage.getItem('chat-e2e-state')
+    if (seeded !== null) {
+      localStorage.setItem('artspark:chat', seeded)
+      sessionStorage.removeItem('chat-e2e-state')
+    }
   })
   await page.goto('/chat')
   await expect(page.getByRole('textbox')).toBeVisible()
@@ -144,8 +150,8 @@ async function seedChatCards(page: Page, failed = false) {
       ],
       variants: [{ content: 'Draw two shapes.', cards: [], status: 'completed', createdAt }],
     }
-    localStorage.setItem(
-      'artspark:chat',
+    sessionStorage.setItem(
+      'chat-e2e-state',
       JSON.stringify({
         version: 2,
         state: {
@@ -207,7 +213,7 @@ test('touch layouts: every chat control is at least 44 by 44', async ({ page }) 
     stored.state.conversations[0].messages[0].attachments = [
       { kind: 'image', id: 'context-image', name: 'Context.jpg', blobKey: 'chat:context-image:full' },
     ]
-    localStorage.setItem('artspark:chat', JSON.stringify(stored))
+    sessionStorage.setItem('chat-e2e-state', JSON.stringify(stored))
   })
   await page.reload()
   await expect(page.getByRole('button', { name: 'Clear image context' })).toBeVisible()
@@ -311,7 +317,10 @@ test('mode picker offers every mode across short and tall mobile viewports', asy
       await page.setViewportSize({ width, height })
       await freshChat(page)
       await page.evaluate(() => {
-        localStorage.removeItem('artspark:chat')
+        sessionStorage.setItem(
+          'chat-e2e-state',
+          JSON.stringify({ version: 2, state: { conversations: [], activeId: null, draft: null, drafts: {} } }),
+        )
       })
       await page.reload()
       for (const hasMessages of [false, true]) {
@@ -389,7 +398,7 @@ test('card details are readable without hover and critique uses its own image ac
           exercise: 'Try three thumbnails',
         },
       ]
-      localStorage.setItem('artspark:chat', JSON.stringify(stored))
+      sessionStorage.setItem('chat-e2e-state', JSON.stringify(stored))
     })
     await page.reload()
     const card = page.locator('[data-card-type="critique"]')
@@ -536,8 +545,8 @@ async function seedRefinedState(page: Page, state: string) {
             title: `${current.title} ${index + 1}`,
           }))
         : [current]
-    localStorage.setItem(
-      'artspark:chat',
+    sessionStorage.setItem(
+      'chat-e2e-state',
       JSON.stringify({ version: 2, state: { conversations, activeId: empty ? null : current.id, draft: null, drafts: {} } }),
     )
   }, state)
@@ -636,7 +645,7 @@ test('long desktop history stays inside the frame and leaves reply versions clic
         title: `Afternoon drawing study and colour choices to remember ${index + 1}`,
         updatedAt: new Date(Date.now() - index * 86400000).toISOString(),
       }))
-      localStorage.setItem('artspark:chat', JSON.stringify(stored))
+      sessionStorage.setItem('chat-e2e-state', JSON.stringify(stored))
     })
     await page.reload()
     await page.evaluate(() => window.scrollTo(0, 0))
