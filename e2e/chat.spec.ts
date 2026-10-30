@@ -182,7 +182,7 @@ async function seedChatCards(page: Page, failed = false) {
 }
 
 async function smallChatTargets(scope: Locator) {
-  return scope.locator('button, a[href], input:not([type="file"]), textarea, summary').evaluateAll((nodes) =>
+  return scope.locator('button, a[href], input:not([type="file"]), textarea, select, summary').evaluateAll((nodes) =>
     nodes
       .filter((node) => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden')
       .flatMap((node) => {
@@ -465,6 +465,143 @@ test('all three welcome suggestions fit without scrolling at 390 by 844', async 
   }
 })
 
+async function seedRefinedState(page: Page, state: string) {
+  await page.evaluate((state) => {
+    const createdAt = '2026-10-30T04:00:00.000Z'
+    const canvas = document.createElement('canvas')
+    canvas.width = 80
+    canvas.height = 60
+    canvas.getContext('2d')!.fillRect(10, 10, 40, 30)
+    const image = {
+      kind: 'image',
+      id: 'matrix-image',
+      name: 'Synthetic drawing.jpg',
+      src: canvas.toDataURL('image/jpeg'),
+      blobKey: 'chat:matrix-image:full',
+    }
+    const cards =
+      state === 'critique'
+        ? [
+            {
+              type: 'critique',
+              imageId: image.id,
+              observations: ['A dark rectangle on a pale page.'],
+              strengths: ['Clear silhouette.'],
+              priorities: ['Try a softer edge.'],
+              exercise: 'Draw three small value studies.',
+            },
+          ]
+        : [
+            { type: 'palette', name: 'Study palette', colors: ['#112233', '#777777', '#DDEEFF'] },
+            { type: 'lesson', slug: 'still-life', reason: 'Learn to observe simple shapes.' },
+            { type: 'template', templateId: 'fruit-bowl', reason: 'Practise with a simple still life and a few large shapes.' },
+            { type: 'idea', title: 'Three shapes', description: 'Draw three objects on your desk.', difficulty: 'beginner', minutes: 10 },
+          ]
+    const current = {
+      id: 'matrix-conversation',
+      title: 'Afternoon drawing study and colour choices to remember for a landscape',
+      mode: 'ideas',
+      createdAt,
+      updatedAt: createdAt,
+      messages: [
+        {
+          id: 'matrix-user',
+          turnId: 'matrix-turn',
+          role: 'user',
+          content: 'Help me practise drawing.',
+          cards: [],
+          attachments: state === 'critique' ? [image] : [],
+          createdAt,
+        },
+        {
+          id: 'matrix-reply',
+          turnId: 'matrix-turn',
+          role: 'assistant',
+          content: state === 'error' ? '' : 'Start with simple shapes and compare the light and dark areas.',
+          cards: state === 'error' ? [] : cards,
+          attachments: [],
+          createdAt,
+          status: state === 'error' ? 'failed' : 'completed',
+          ...(state === 'error' ? { errorCode: 'network' } : {}),
+        },
+      ],
+    }
+    const empty = ['welcome', 'streaming', 'low'].includes(state)
+    const conversations = empty
+      ? []
+      : state === 'history'
+        ? Array.from({ length: 13 }, (_, index) => ({
+            ...current,
+            id: index ? `matrix-old-${index}` : current.id,
+            title: `${current.title} ${index + 1}`,
+          }))
+        : [current]
+    localStorage.setItem(
+      'artspark:chat',
+      JSON.stringify({ version: 2, state: { conversations, activeId: empty ? null : current.id, draft: null, drafts: {} } }),
+    )
+  }, state)
+  await page.reload()
+  await expect(page.locator('#chat-input')).toBeVisible()
+}
+
+test('refined chat: seven states stay accessible in both themes and viewports', async ({ page }, testInfo) => {
+  test.setTimeout(150_000)
+  const width = testInfo.project.name === 'mobile' ? 390 : 1440
+  await page.setViewportSize({ width, height: width === 390 ? 844 : 900 })
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await freshChat(page)
+  for (const theme of ['light', 'dark']) {
+    await page.evaluate((theme) => {
+      const stored = JSON.parse(localStorage.getItem('artspark:settings')!)
+      stored.state.theme = theme
+      localStorage.setItem('artspark:settings', JSON.stringify(stored))
+    }, theme)
+    for (const state of ['welcome', 'cards', 'critique', 'error', 'history', 'low', 'streaming']) {
+      await seedRefinedState(page, state)
+      const chat = page.locator('section').filter({ has: page.locator('#chat-input') })
+      let scope = chat
+      if (state === 'history' && width < 1024) {
+        await page.getByRole('button', { name: 'Conversations', exact: true }).click()
+        scope = page.getByRole('dialog', { name: 'Conversations' })
+      }
+      if (state === 'low') await prepareTallComposer(page)
+      if (state === 'streaming') {
+        await page.getByRole('textbox').fill('Give me 5 drawing ideas for beginners')
+        await page.getByRole('button', { name: 'Send', exact: true }).click()
+        await expect(page.getByRole('button', { name: 'Stop', exact: true })).toBeVisible()
+      }
+      await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
+      await expect(page.locator('main')).toHaveCSS('opacity', '1')
+      if (width < 1024) expect(await smallChatTargets(scope), `${theme} ${state} touch targets`).toEqual([])
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${theme} ${state} overflow`).toBe(true)
+      const selector = state === 'history' && width < 1024 ? '[role="dialog"]' : 'section[aria-label]'
+      const results = await new AxeBuilder({ page }).include(selector).analyze()
+      expect(
+        results.violations
+          .filter(({ impact }) => impact === 'serious' || impact === 'critical')
+          .map(({ id, nodes }) => ({ id, targets: nodes.map(({ target }) => target) })),
+        `${theme} ${state} axe`,
+      ).toEqual([])
+      await testInfo.attach(`${theme}-${state}`, { body: await page.screenshot(), contentType: 'image/png' })
+      if (state === 'streaming' && (await page.getByRole('button', { name: 'Stop', exact: true }).count()))
+        await page.getByRole('button', { name: 'Stop', exact: true }).click()
+    }
+  }
+})
+
+test('refined chat: cards reflow without horizontal scrolling at 320 pixels', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 })
+  await freshChat(page)
+  for (const state of ['welcome', 'cards', 'critique', 'error', 'low']) {
+    await seedRefinedState(page, state)
+    if (state === 'low') await prepareTallComposer(page)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), state).toBe(true)
+    const chat = page.locator('section').filter({ has: page.locator('#chat-input') })
+    await expect.poll(() => smallChatTargets(chat), { message: state }).toEqual([])
+  }
+})
+
 async function prepareTallComposer(page: Page) {
   await page.locator('#chat-input').evaluate(async (input) => {
     const canvas = document.createElement('canvas')
@@ -509,6 +646,11 @@ test('long desktop history stays inside the frame and leaves reply versions clic
     expect(bottom).toBeLessThanOrEqual(Math.min(footerTop, viewport.height))
     const history = page.getByRole('complementary', { name: 'Conversations' })
     const last = history.getByRole('button', { name: /remember 13/ })
+    const titleLines = await last
+      .locator('span')
+      .first()
+      .evaluate((node) => node.getBoundingClientRect().height / parseFloat(getComputedStyle(node).lineHeight))
+    expect(titleLines).toBeCloseTo(2, 1)
     const list = history.locator('ul').first()
     await list.evaluate((node) => {
       node.scrollTop = 0
