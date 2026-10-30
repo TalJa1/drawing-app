@@ -6,6 +6,7 @@ import { prepareImage } from '../attachments'
 import { putFile } from '@/api/imageStore'
 import { installDomStubs, renderChat } from '../test-utils'
 import { buildTurnRequest } from '../request'
+import { useSettings } from '@/store/settings'
 
 vi.mock('@/api/queries', () => ({ useArtworks: () => ({ data: [] }) }))
 vi.mock('@/api/imageStore', () => ({ putFile: vi.fn(), getFile: vi.fn(), deleteFile: vi.fn(), listKeys: vi.fn().mockResolvedValue([]) }))
@@ -37,6 +38,7 @@ afterEach(() => {
   cleanup()
   vi.useRealTimers()
   vi.unstubAllGlobals()
+  useSettings.setState({ motion: 'system' })
 })
 
 it('reset clears the mounted composer without restoring its old draft', async () => {
@@ -138,7 +140,18 @@ it('removed attachment is not sent', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'Remove image' }))
   fireEvent.click(screen.getByRole('button', { name: 'Send' }))
   expect(onSend).toHaveBeenCalledWith('Draw a tree', [])
-  expect(URL.revokeObjectURL).toHaveBeenCalled()
+  await waitFor(() => expect(URL.revokeObjectURL).toHaveBeenCalled())
+})
+
+it.each(['full', 'reduce'] as const)('last image removal respects %s motion and keeps its preview until exit completes', async (motion) => {
+  useSettings.setState({ motion })
+  const { input } = await setup()
+  fireEvent.paste(input, { clipboardData: { files: [new File(['image'], 'art.png', { type: 'image/png' })] } })
+  const preview = await screen.findByRole('img', { name: 'art.jpg' })
+  fireEvent.click(screen.getByRole('button', { name: 'Remove image' }))
+  if (motion === 'full') expect(preview).toBeInTheDocument()
+  else expect(preview).not.toBeInTheDocument()
+  await waitFor(() => expect(preview).not.toBeInTheDocument())
 })
 it('send and stop share the same size classes', async () => {
   const page = await setup()

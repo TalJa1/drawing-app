@@ -88,6 +88,26 @@ it('status region announces completion once', async () => {
   expect(observer).toHaveBeenCalledTimes(1)
   mutations.disconnect()
 })
+
+it('announces cards before text through the existing status region, then switches back on the first token', async () => {
+  const c = conversation([reply('live', { content: '', status: 'streaming' })])
+  const card = { type: 'palette' as const, name: 'Ready palette', colors: ['#112233', '#445566', '#778899'] }
+  useChat.setState({ conversations: [c], activeId: c.id })
+  useChatStream.setState({ active: { ...stream, content: '', cards: [card] } })
+  await renderChat(
+    <>
+      <MessageList conversation={c} />
+      <ChatStatus conversation={c} />
+    </>,
+  )
+  const status = screen.getByRole('status')
+  expect(status).toHaveTextContent('Your results are ready. Muse is writing the guidance…')
+  expect(screen.getAllByRole('status')).toHaveLength(1)
+  expect(screen.getAllByText('Your results are ready. Muse is writing the guidance…')).toHaveLength(2)
+  act(() => useChatStream.setState({ active: { ...stream, content: 'Start with a light sketch.', cards: [card] } }))
+  expect(status).toHaveTextContent('Writing a reply…')
+  expect(screen.queryByText('Your results are ready. Muse is writing the guidance…')).not.toBeInTheDocument()
+})
 it('retry is shown only on the last turn', async () => {
   const c = conversation([reply('old', { status: 'failed', errorCode: 'network' }), reply('last', { status: 'interrupted' })])
   useChat.setState({ conversations: [c], activeId: c.id })

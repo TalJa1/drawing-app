@@ -4,7 +4,7 @@ import { chatCardSchema } from '@/features/chat/contract'
 import { buildReply } from '@/api/chat'
 import { useSettings } from '@/store/settings'
 import { AiTransportError } from './errors'
-import { mockTransport } from './mockTransport'
+import { createMockTransport, mockTransport } from './mockTransport'
 import { getChatTransport } from './transport'
 
 const request: ChatTurnRequest = {
@@ -60,6 +60,22 @@ it('abort rejects with AbortError and never emits done', async () => {
   ctrl.abort()
   await expect(next).rejects.toMatchObject({ name: 'AbortError' })
   expect(await iterator.next()).toEqual({ done: true, value: undefined })
+})
+
+it('optionally emits valid cards before any text and keeps the guidance delay abortable', async () => {
+  const transport = createMockTransport({ cardsFirst: true, textDelayMs: 3000 })
+  const controller = new AbortController()
+  const events: ChatStreamEvent[] = []
+  const consume = (async () => {
+    for await (const event of transport.streamTurn(request, controller.signal)) events.push(event)
+  })()
+  await vi.advanceTimersByTimeAsync(1500)
+  expect(events.some((event) => event.type === 'card' && chatCardSchema.safeParse(event.card).success)).toBe(true)
+  expect(events.some((event) => event.type === 'token')).toBe(false)
+  const aborted = expect(consume).rejects.toMatchObject({ name: 'AbortError' })
+  controller.abort()
+  await aborted
+  expect(events.some((event) => event.type === 'done')).toBe(false)
 })
 
 it('mock palettes contain no duplicate hex (case-insensitive)', () => {

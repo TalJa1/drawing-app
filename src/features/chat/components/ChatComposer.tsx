@@ -136,16 +136,14 @@ export function ChatComposer({
           />
         </div>
       )}
-      {(images.length > 0 || preparing > 0) && (
-        <AttachmentStrip
-          images={images}
-          preparing={preparing}
-          onRemove={(id) => {
-            setImages((current) => current.filter((image) => image.id !== id))
-            imageCount.current--
-          }}
-        />
-      )}
+      <AttachmentStrip
+        images={images}
+        preparing={preparing}
+        onRemove={(id) => {
+          setImages((current) => current.filter((image) => image.id !== id))
+          imageCount.current--
+        }}
+      />
       <form
         onSubmit={(event) => {
           event.preventDefault()

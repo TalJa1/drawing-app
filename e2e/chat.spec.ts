@@ -404,6 +404,67 @@ test('card details are readable without hover and critique uses its own image ac
   }
 })
 
+test('mobile new conversation control stops a reply and avoids duplicate empty conversations', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await freshChat(page)
+  const create = page.locator('section').getByRole('button', { name: 'New conversation' })
+  await expect(create).toBeVisible()
+  const bounds = await create.boundingBox()
+  expect(bounds!.width).toBeGreaterThanOrEqual(44)
+  expect(bounds!.height).toBeGreaterThanOrEqual(44)
+  await page.getByRole('textbox').fill('Give me 5 drawing ideas for beginners')
+  await page.getByRole('button', { name: 'Send', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Stop', exact: true })).toBeVisible()
+  await create.click()
+  await create.click()
+  await expect(page.getByRole('button', { name: 'Stop', exact: true })).toHaveCount(0)
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('artspark:chat')!).state.conversations.length)).toBe(1)
+})
+
+test('cards arriving before text show an honest reply status in one live region', async ({ page }) => {
+  await page.route('**/src/api/ai/mockTransport.ts*', async (route) => {
+    const response = await route.fetch()
+    const body = await response.text()
+    expect(body).toContain('const mockTransport = createMockTransport();')
+    await route.fulfill({
+      response,
+      body: body.replace(
+        'const mockTransport = createMockTransport();',
+        'const mockTransport = createMockTransport({ cardsFirst: true, textDelayMs: 3000 });',
+      ),
+    })
+  })
+  await freshChat(page)
+  await page.getByRole('textbox').fill('Give me a palette for teal')
+  await page.getByRole('button', { name: 'Send', exact: true }).click()
+  const chat = page.locator('section').filter({ has: page.locator('#chat-input') })
+  const status = chat.getByRole('status')
+  await expect(status).toHaveText('Your results are ready. Muse is writing the guidance…')
+  await expect(chat.locator('[data-card-type="palette"]').first()).toBeVisible()
+  await expect(chat.getByRole('status')).toHaveCount(1)
+  await expect(status).toHaveText('Writing a reply…')
+})
+
+test('all three welcome suggestions fit without scrolling at 390 by 844', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await freshChat(page)
+  const thread = page.getByRole('region', { name: 'Messages' })
+  for (const mode of ['Find ideas', 'Mix colours', 'Improve composition', 'Explore art']) {
+    await page.getByRole('radio', { name: mode }).click()
+    const suggestions = page.getByRole('group', { name: 'Suggested prompts' }).getByRole('button')
+    await expect(suggestions).toHaveCount(3)
+    await thread.evaluate((node) => {
+      node.scrollTop = 0
+    })
+    const frame = await thread.boundingBox()
+    for (const suggestion of await suggestions.all()) {
+      const box = await suggestion.boundingBox()
+      expect(box!.y).toBeGreaterThanOrEqual(frame!.y)
+      expect(box!.y + box!.height).toBeLessThanOrEqual(frame!.y + frame!.height)
+    }
+  }
+})
+
 async function prepareTallComposer(page: Page) {
   await page.locator('#chat-input').evaluate(async (input) => {
     const canvas = document.createElement('canvas')

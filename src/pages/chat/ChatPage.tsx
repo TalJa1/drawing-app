@@ -53,7 +53,7 @@ export default function ChatPage() {
     }
   }, [])
   const desktop = useMediaQuery('(min-width: 1024px)')
-  const { phase, send, stop } = useMuse()
+  const { phase, send, stop, cancelConversation } = useMuse()
   useEffect(() => () => stop(), [stop])
   const busy = phase !== null
   const composer = useRef<ChatComposerHandle>(null)
@@ -122,6 +122,10 @@ export default function ChatPage() {
                 onModeChange={changeMode}
                 desktop={desktop}
                 onHistory={() => setSidebar(true)}
+                onNew={() => {
+                  if (activeId) cancelConversation(activeId)
+                  setActive(null)
+                }}
                 phase={phase}
                 replyStatus={active?.messages.at(-1)?.status}
                 hasMessages={!!active?.messages.length}

@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { History, LayoutGrid, Lightbulb, Palette, PanelLeft } from 'lucide-react'
+import { History, LayoutGrid, Lightbulb, Palette, PanelLeft, Plus } from 'lucide-react'
 import type { ChatMode } from '@/types'
 import { IconButton } from '@/components/IconButton'
 import { useReducedMotion } from '@/app/theme'
@@ -25,6 +25,7 @@ export function ChatHeader({
   onModeChange,
   desktop,
   onHistory,
+  onNew,
   phase = null,
   replyStatus,
   hasMessages = false,
@@ -34,6 +35,7 @@ export function ChatHeader({
   onModeChange: (mode: ChatMode) => void
   desktop: boolean
   onHistory: () => void
+  onNew?: () => void
   phase?: StreamPhase | null
   replyStatus?: ReplyStatus
   hasMessages?: boolean
@@ -67,6 +69,7 @@ export function ChatHeader({
           <h1 className="truncate font-display text-xl leading-tight sm:whitespace-normal sm:break-words">{title || t('chat.title')}</h1>
           <p className="mt-1 hidden text-xs text-ink-faint sm:block">{t('chat.subtitle')}</p>
         </div>
+        {!desktop && <IconButton noTooltip label={t('chat.newChat')} icon={<Plus size={18} />} onClick={onNew} className="h-11 w-11" />}
       </div>
       {compact ? (
         <div className="mt-3">

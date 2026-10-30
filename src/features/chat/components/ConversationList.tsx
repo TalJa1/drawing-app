@@ -74,7 +74,7 @@ export function ConversationList({ onPick }: { onPick?: () => void }) {
                         onPick?.()
                       }}
                     >
-                      <span className="block truncate text-sm font-medium">{c.title || t('chat.untitled')}</span>
+                      <span className="line-clamp-2 break-words text-sm font-medium">{c.title || t('chat.untitled')}</span>
                       <span className="block text-[11px] text-ink-faint">
                         {t(`chat.modes.${c.mode}.short`)} · {formatDate(c.updatedAt, i18n.language)}
                       </span>

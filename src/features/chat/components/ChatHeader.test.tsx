@@ -147,6 +147,19 @@ it('new conversation does not add an empty conversation', async () => {
   expect(screen.getByRole('textbox')).toHaveValue('Paint a small tree')
 })
 
+it('mobile header starts a new conversation without inserting duplicate empty conversations', async () => {
+  await renderChat(<ChatPage />)
+  fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Help me draw' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Send' }))
+  await waitFor(() => expect(useChatStream.getState().active).not.toBeNull())
+  fireEvent.click(screen.getByRole('button', { name: 'New conversation' }))
+  expect(useChatStream.getState().active).toBeNull()
+  expect(useChat.getState().activeId).toBeNull()
+  expect(useChat.getState().conversations).toHaveLength(1)
+  fireEvent.click(screen.getByRole('button', { name: 'New conversation' }))
+  expect(useChat.getState().conversations).toHaveLength(1)
+})
+
 it('the first message creates the conversation with the selected mode', async () => {
   const matchMedia = window.matchMedia
   vi.stubGlobal('matchMedia', (query: string) => ({ ...matchMedia(query), matches: query === '(min-width: 1024px)' }))

@@ -16,13 +16,20 @@ export function WelcomeState({ mode, name, onPrompt }: { mode: ChatMode; name: s
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: reduced ? 0.08 : CHAT_MOTION.welcome }}
-      className="mx-auto flex max-w-[720px] flex-col items-center pt-4 text-center"
+      className="mx-auto flex max-w-[720px] flex-col items-center text-left lg:pt-4 lg:text-center"
     >
-      <Muse size={150} />
-      <h2 className="display-md mt-4">{t('chat.emptyTitle', { name })}</h2>
-      <p className="mt-2 text-ink-soft">{t(`chat.modes.${mode}.intro`)}</p>
-      <p className="hand mt-2 text-xl text-accent-ink">{t('chat.emptyNote')}</p>
-      <div className="mt-6 grid w-full gap-3 sm:grid-cols-3" role="group" aria-label={t('chat.suggestions')}>
+      <div className="flex w-full items-start gap-3 lg:flex-col lg:items-center lg:gap-0">
+        <Muse size={150} className="h-[68px] w-[68px] shrink-0 lg:h-[135px] lg:w-[150px]" />
+        <div className="min-w-0">
+          <h2 className="display-md max-lg:text-[26px] max-lg:leading-tight lg:mt-4">
+            <span className="lg:hidden">{t('chat.welcomeTitle', { name })}</span>
+            <span className="hidden lg:inline">{t('chat.emptyTitle', { name })}</span>
+          </h2>
+          <p className="mt-1 text-xs leading-relaxed text-ink-soft lg:mt-2 lg:text-base">{t(`chat.modes.${mode}.intro`)}</p>
+        </div>
+      </div>
+      <p className="hand mt-2 hidden text-xl text-accent-ink lg:block">{t('chat.emptyNote')}</p>
+      <div className="mt-3 grid w-full gap-2 lg:mt-6 lg:grid-cols-3 lg:gap-3" role="group" aria-label={t('chat.suggestions')}>
         {prompts.map((prompt, index) => (
           <motion.button
             variants={variants.prompt}
@@ -34,9 +41,9 @@ export function WelcomeState({ mode, name, onPrompt }: { mode: ChatMode; name: s
             key={prompt}
             type="button"
             onClick={() => onPrompt(prompt)}
-            className="group relative min-h-11 rounded-2xl border border-line-strong bg-card p-4 text-left text-sm text-ink-soft hover:border-ink"
+            className="group relative min-h-11 rounded-2xl border border-line-strong bg-card px-3 py-2 text-left text-sm text-ink-soft hover:border-ink lg:p-4"
           >
-            <Compass size={16} className="mb-2 text-accent-ink" />
+            <Compass size={16} className="mb-2 hidden text-accent-ink lg:block" />
             {prompt}
             <span
               aria-hidden

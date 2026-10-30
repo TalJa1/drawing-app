@@ -26,7 +26,7 @@ function MessageImage({ attachment }: { attachment: ChatAttachment }) {
   )
 }
 
-function ReplyBody({ content, streaming }: { content: string; streaming: boolean }) {
+function ReplyBody({ content, streaming, hasCards }: { content: string; streaming: boolean; hasCards: boolean }) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
   const visible = useChatVisibility()
@@ -35,7 +35,7 @@ function ReplyBody({ content, streaming }: { content: string; streaming: boolean
     <div className="text-[0.97rem] leading-relaxed text-ink-soft">
       {streaming && !content ? (
         <p className="flex items-center gap-2">
-          {t('chat.status.thinking')}
+          {t(hasCards ? 'chat.status.preparingText' : 'chat.status.thinking')}
           <motion.span
             aria-hidden
             className="inline-block h-1 w-10 rounded-full bg-saffron"
@@ -98,7 +98,7 @@ function Content({ message, conversationId, last }: { message: ChatMessage; conv
             {message.role === 'user' ? (
               <p className="whitespace-pre-wrap">{message.content}</p>
             ) : (
-              <ReplyBody content={message.content} streaming={message.status === 'streaming'} />
+              <ReplyBody content={message.content} streaming={message.status === 'streaming'} hasCards={message.cards.length > 0} />
             )}
           </div>
         )}

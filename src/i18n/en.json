@@ -1043,6 +1043,7 @@
     "previousVersion": "Previous version",
     "nextVersion": "Next version",
     "status": {
+      "preparingText": "Your results are ready. Muse is writing the guidance…",
       "preparing": "Preparing images…",
       "connecting": "Connecting…",
       "thinking": "Muse is thinking…",
@@ -1110,6 +1111,7 @@
       }
     },
     "emptyTitle": "Hello, {{name}}! I'm your muse.",
+    "welcomeTitle": "Let's draw, {{name}}.",
     "emptyNote": "pick a suggestion below, or ask me anything",
     "thinking": "The muse is thinking…",
     "error": "The muse lost her train of thought.",
