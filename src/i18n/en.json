@@ -1037,6 +1037,7 @@
     "delete": "Delete conversation",
     "deleteTitle": "Delete this conversation?",
     "modeLabel": "Muse mode",
+    "nextMode": "This mode applies to your next question.",
     "messages": "Messages",
     "scrollToLatest": "Jump to latest",
     "previousVersion": "Previous version",

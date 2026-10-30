@@ -10,6 +10,7 @@ import { CHAT_MOTION } from '../motion'
 import type { ReplyStatus } from '@/types'
 import type { StreamPhase } from '../streamStore'
 import { cn } from '@/lib/utils'
+import { useMediaQuery } from '@/lib/hooks'
 
 const MODES = [
   { id: 'ideas', icon: Lightbulb },
@@ -39,6 +40,8 @@ export function ChatHeader({
 }) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
+  const short = useMediaQuery('(max-height: 700px)')
+  const compact = !desktop && (hasMessages || short)
   const state =
     phase === 'connecting' || phase === 'thinking'
       ? 'thinking'
@@ -65,52 +68,79 @@ export function ChatHeader({
           <p className="mt-1 hidden text-xs text-ink-faint sm:block">{t('chat.subtitle')}</p>
         </div>
       </div>
-      <div
-        role="radiogroup"
-        aria-label={t('chat.modeLabel')}
-        className="no-scrollbar mt-3 grid grid-cols-2 gap-1 sm:flex sm:overflow-x-auto max-lg:[@media(max-height:700px)]:flex max-lg:[@media(max-height:700px)]:overflow-x-auto"
-      >
-        {MODES.map(({ id, icon: Icon }, index) => (
-          <button
-            key={id}
-            type="button"
-            role="radio"
-            aria-checked={mode === id}
-            tabIndex={mode === id ? 0 : -1}
-            ref={(node) => {
-              refs.current[index] = node
-            }}
-            onClick={() => onModeChange(id)}
-            onKeyDown={(event) => {
-              const moves: Record<string, number> = {
-                ArrowRight: (index + 1) % MODES.length,
-                ArrowLeft: (index + MODES.length - 1) % MODES.length,
-                Home: 0,
-                End: MODES.length - 1,
-              }
-              const next = moves[event.key]
-              if (next === undefined) return
-              event.preventDefault()
-              onModeChange(MODES[next].id)
-              refs.current[next]?.focus()
-            }}
-            className={cn(
-              'relative inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3 text-xs font-semibold',
-              mode === id ? 'text-paper' : 'text-ink-soft',
-            )}
+      {compact ? (
+        <div className="mt-3">
+          <label htmlFor="chat-mode" className="sr-only">
+            {t('chat.modeLabel')}
+          </label>
+          <select
+            id="chat-mode"
+            value={mode}
+            onChange={(event) => onModeChange(event.target.value as ChatMode)}
+            aria-describedby="chat-mode-hint"
+            className="min-h-11 w-full rounded-xl border border-line-strong bg-card px-3 text-base text-ink"
           >
-            {mode === id && (
-              <motion.span
-                layoutId="chat-mode-pill"
-                className="absolute inset-0 rounded-full bg-ink"
-                transition={{ duration: reduced ? 0 : CHAT_MOTION.mode }}
-              />
-            )}
-            <Icon size={14} className="relative" />
-            <span className="relative">{t(`chat.modes.${id}.name`)}</span>
-          </button>
-        ))}
-      </div>
+            {MODES.map(({ id }) => (
+              <option key={id} value={id}>
+                {t(`chat.modes.${id}.name`)}
+              </option>
+            ))}
+          </select>
+          <p id="chat-mode-hint" className="mt-1 text-xs text-ink-faint">
+            {t('chat.nextMode')}
+          </p>
+        </div>
+      ) : (
+        <div
+          role="radiogroup"
+          aria-label={t('chat.modeLabel')}
+          className="no-scrollbar mt-3 grid grid-cols-2 gap-1 lg:flex lg:overflow-x-auto"
+        >
+          {MODES.map(({ id, icon: Icon }, index) => (
+            <button
+              key={id}
+              type="button"
+              role="radio"
+              aria-checked={mode === id}
+              tabIndex={mode === id ? 0 : -1}
+              ref={(node) => {
+                refs.current[index] = node
+              }}
+              onClick={() => onModeChange(id)}
+              onKeyDown={(event) => {
+                const moves: Record<string, number> = {
+                  ArrowRight: (index + 1) % MODES.length,
+                  ArrowLeft: (index + MODES.length - 1) % MODES.length,
+                  Home: 0,
+                  End: MODES.length - 1,
+                }
+                const next = moves[event.key]
+                if (next === undefined) return
+                event.preventDefault()
+                onModeChange(MODES[next].id)
+                refs.current[next]?.focus()
+              }}
+              className={cn(
+                'relative inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3 text-xs font-semibold',
+                mode === id ? 'text-paper' : 'text-ink-soft',
+              )}
+            >
+              {mode === id &&
+                (reduced ? (
+                  <span className="absolute inset-0 rounded-full bg-ink" />
+                ) : (
+                  <motion.span
+                    layoutId="chat-mode-pill"
+                    className="absolute inset-0 rounded-full bg-ink"
+                    transition={{ duration: reduced ? 0 : CHAT_MOTION.mode }}
+                  />
+                ))}
+              <Icon size={14} className="relative" />
+              <span className="relative">{t(`chat.modes.${id}.name`)}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </header>
   )
 }

@@ -304,6 +304,55 @@ test('placeholder contrast is at least 4.5 on the rendered light and dark backgr
   }
 })
 
+test('mode picker offers every mode across short and tall mobile viewports', async ({ page }) => {
+  test.setTimeout(90_000)
+  for (const width of [320, 360, 390])
+    for (const height of [430, 568, 667, 844]) {
+      await page.setViewportSize({ width, height })
+      await freshChat(page)
+      await page.evaluate(() => {
+        localStorage.removeItem('artspark:chat')
+      })
+      await page.reload()
+      for (const hasMessages of [false, true]) {
+        if (hasMessages) await seedChatCards(page)
+        if (hasMessages || height <= 700) {
+          const picker = page.getByRole('combobox', { name: 'Muse mode' })
+          await expect(picker).toBeVisible()
+          await expect(picker.locator('option')).toHaveCount(4)
+          for (const mode of ['ideas', 'colour', 'composition', 'history']) {
+            await picker.selectOption(mode)
+            await expect(picker).toHaveValue(mode)
+          }
+          const bounds = await picker.boundingBox()
+          expect(bounds!.x).toBeGreaterThanOrEqual(0)
+          expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width)
+        } else {
+          const radios = page.getByRole('radio')
+          await expect(radios).toHaveCount(4)
+          for (const radio of await radios.all()) {
+            await expect(radio).toBeInViewport()
+            const bounds = await radio.boundingBox()
+            expect(bounds!.x).toBeGreaterThanOrEqual(0)
+            expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width)
+          }
+        }
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+      }
+    }
+})
+
+test('new empty conversation keeps the mode chosen in the select', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 667 })
+  await freshChat(page)
+  const picker = page.getByRole('combobox', { name: 'Muse mode' })
+  await picker.selectOption('colour')
+  await page.getByRole('button', { name: 'Conversations', exact: true }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'New conversation' }).click()
+  await expect(picker).toHaveValue('colour')
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('artspark:chat')!).state.conversations)).toEqual([])
+})
+
 async function prepareTallComposer(page: Page) {
   await page.locator('#chat-input').evaluate(async (input) => {
     const canvas = document.createElement('canvas')

@@ -44,14 +44,68 @@ it('small screens hide the subtitle and show all four modes', async () => {
   expect(heading).toHaveClass('truncate', 'sm:whitespace-normal')
   expect(heading.nextElementSibling).toHaveClass('hidden', 'sm:block')
   const modes = screen.getByRole('radiogroup')
-  expect(modes).toHaveClass('grid', 'grid-cols-2', 'sm:flex')
+  expect(modes).toHaveClass('grid', 'grid-cols-2', 'lg:flex')
   expect(modes).not.toHaveClass('overflow-x-auto')
   expect(screen.getAllByRole('radio')).toHaveLength(4)
 })
 
 it('desktop mode row hides its scrollbar while keeping the mobile grid', async () => {
   await renderChat(<ChatHeader mode="ideas" onModeChange={vi.fn()} desktop onHistory={vi.fn()} />)
-  expect(screen.getByRole('radiogroup')).toHaveClass('no-scrollbar', 'sm:overflow-x-auto', 'grid-cols-2', 'sm:flex')
+  expect(screen.getByRole('radiogroup')).toHaveClass('no-scrollbar', 'lg:overflow-x-auto', 'grid-cols-2', 'lg:flex')
+})
+
+it.each([
+  { short: false, hasMessages: false, select: false },
+  { short: false, hasMessages: true, select: true },
+  { short: true, hasMessages: false, select: true },
+  { short: true, hasMessages: true, select: true },
+])('adapts the mobile picker: %j', async ({ short, hasMessages, select }) => {
+  const matchMedia = window.matchMedia
+  vi.stubGlobal('matchMedia', (query: string) => ({ ...matchMedia(query), matches: query === '(max-height: 700px)' && short }))
+  const onModeChange = vi.fn()
+  await renderChat(<ChatHeader mode="colour" onModeChange={onModeChange} desktop={false} onHistory={vi.fn()} hasMessages={hasMessages} />)
+  if (select) {
+    const picker = screen.getByRole('combobox', { name: 'Muse mode' })
+    expect(picker).toHaveValue('colour')
+    expect(within(picker).getAllByRole('option')).toHaveLength(4)
+    expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument()
+    expect(picker).toHaveAccessibleDescription('This mode applies to your next question.')
+    fireEvent.change(picker, { target: { value: 'history' } })
+    expect(onModeChange).toHaveBeenCalledExactlyOnceWith('history')
+  } else {
+    expect(screen.getAllByRole('radio')).toHaveLength(4)
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
+  }
+})
+
+it('switches picker on a height change and keeps desktop radios', async () => {
+  let short = false
+  let change = () => {}
+  const matchMedia = window.matchMedia
+  vi.stubGlobal('matchMedia', (query: string) =>
+    query === '(max-height: 700px)'
+      ? {
+          ...matchMedia(query),
+          get matches() {
+            return short
+          },
+          addEventListener: (_event: string, listener: () => void) => {
+            change = listener
+          },
+        }
+      : matchMedia(query),
+  )
+  const props = { mode: 'ideas' as const, onModeChange: vi.fn(), onHistory: vi.fn() }
+  const page = await renderChat(<ChatHeader {...props} desktop={false} />)
+  expect(screen.getByRole('radiogroup')).toBeInTheDocument()
+  act(() => {
+    short = true
+    change()
+  })
+  expect(screen.getByRole('combobox')).toHaveValue('ideas')
+  page.rerender(<ChatHeader {...props} desktop />)
+  expect(screen.getAllByRole('radio')).toHaveLength(4)
+  expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
 })
 
 it('prompt card fills the composer instead of sending', async () => {
