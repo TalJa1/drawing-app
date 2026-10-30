@@ -202,6 +202,16 @@ test('touch layouts: every chat control is at least 44 by 44', async ({ page }) 
   failures.push({ state: 'welcome', targets: await smallChatTargets(chat) })
   await seedChatCards(page)
   failures.push({ state: 'cards', targets: await smallChatTargets(chat) })
+  await page.evaluate(() => {
+    const stored = JSON.parse(localStorage.getItem('artspark:chat')!)
+    stored.state.conversations[0].messages[0].attachments = [
+      { kind: 'image', id: 'context-image', name: 'Context.jpg', blobKey: 'chat:context-image:full' },
+    ]
+    localStorage.setItem('artspark:chat', JSON.stringify(stored))
+  })
+  await page.reload()
+  await expect(page.getByRole('button', { name: 'Clear image context' })).toBeVisible()
+  failures.push({ state: 'image context', targets: await smallChatTargets(chat) })
   await seedChatCards(page, true)
   failures.push({ state: 'retry', targets: await smallChatTargets(chat) })
   await page.getByRole('button', { name: 'Conversations', exact: true }).click()
@@ -226,6 +236,72 @@ test('touch layouts: every chat control is at least 44 by 44', async ({ page }) 
   await expect(picker).toHaveCSS('transform', 'none')
   failures.push({ state: 'attachments', targets: await smallChatTargets(picker) })
   expect(failures.filter(({ targets }) => targets.length)).toEqual([])
+})
+
+test('placeholder contrast is at least 4.5 on the rendered light and dark background', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 390, height: 844 })
+  await freshChat(page)
+  for (const theme of ['light', 'dark']) {
+    await page.evaluate((theme) => {
+      const stored = JSON.parse(localStorage.getItem('artspark:settings')!)
+      stored.state.theme = theme
+      localStorage.setItem('artspark:settings', JSON.stringify(stored))
+    }, theme)
+    await page.reload()
+    const input = page.locator('#chat-input')
+    await expect(input).toBeVisible()
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme)
+    await expect(input.locator('xpath=ancestor::main')).toHaveCSS('opacity', '1')
+    await page.evaluate(() => document.fonts.ready)
+    const foreground = await input.evaluate((node) => {
+      const style = getComputedStyle(node, '::placeholder')
+      const canvas = document.createElement('canvas')
+      canvas.width = canvas.height = 1
+      const context = canvas.getContext('2d')!
+      context.fillStyle = style.color
+      context.fillRect(0, 0, 1, 1)
+      const rgba = [...context.getImageData(0, 0, 1, 1).data]
+      rgba[3] *= Number(style.opacity)
+      const box = node.getBoundingClientRect()
+      return { rgba, x: box.x + 20, y: box.y + 20, width: box.width - 40 }
+    })
+    const hiddenText = await page.addStyleTag({ content: '#chat-input::placeholder { color: transparent !important; }' })
+    const screenshot = await page.screenshot({ scale: 'css' })
+    await hiddenText.evaluate((node) => node.parentNode?.removeChild(node))
+    const ratio = await page.evaluate(
+      async ({ data, foreground }) => {
+        const image = new Image()
+        image.src = `data:image/png;base64,${data}`
+        await image.decode()
+        const canvas = document.createElement('canvas')
+        canvas.width = image.width
+        canvas.height = image.height
+        const context = canvas.getContext('2d')!
+        context.drawImage(image, 0, 0)
+        const luminance = (rgb: number[]) =>
+          rgb.slice(0, 3).reduce((sum, value, index) => {
+            const channel = value / 255
+            return sum + (channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4) * [0.2126, 0.7152, 0.0722][index]
+          }, 0)
+        return Math.min(
+          ...[0.15, 0.5, 0.85].map((position) => {
+            const background = [
+              ...context.getImageData(Math.round(foreground.x + foreground.width * position), Math.round(foreground.y), 1, 1).data,
+            ]
+            const alpha = foreground.rgba[3] / 255
+            const composite = foreground.rgba.slice(0, 3).map((value, index) => value * alpha + background[index] * (1 - alpha))
+            const a = luminance(composite)
+            const b = luminance(background)
+            return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+          }),
+        )
+      },
+      { data: screenshot.toString('base64'), foreground },
+    )
+    console.log(`Placeholder ${theme}: ${ratio.toFixed(3)}:1`)
+    expect(ratio).toBeGreaterThanOrEqual(4.5)
+  }
 })
 
 async function prepareTallComposer(page: Page) {

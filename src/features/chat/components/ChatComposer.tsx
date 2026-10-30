@@ -129,7 +129,7 @@ export function ChatComposer({
             {t('chat.activeImage.label', { name: imageContext.attachments.map((image) => image.name).join(', ') })}
           </span>
           <IconButton
-            className="!h-11 !w-11"
+            className="!h-11 !w-11 max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
             label={t('chat.activeImage.clear')}
             icon={<X size={14} />}
             onClick={() => useChat.getState().setImageContext(conversationId, null)}
@@ -186,7 +186,7 @@ export function ChatComposer({
             }
           }}
           placeholder={t('chat.placeholder')}
-          className="transition-[border-color,box-shadow] duration-150 focus:shadow-paper max-h-40 min-h-11 min-w-0 flex-1 resize-none rounded-[22px] border border-line-strong bg-card px-4 py-2.5 text-base text-ink placeholder:text-ink-faint/80 focus:border-ink max-lg:max-h-[clamp(2.75rem,calc(100dvh-32rem),10rem)]"
+          className="transition-[border-color,box-shadow] duration-150 focus:shadow-paper max-h-40 min-h-11 min-w-0 flex-1 resize-none rounded-[22px] border border-line-strong bg-card px-4 py-2.5 text-base text-ink placeholder:text-ink-faint placeholder:opacity-100 focus:border-ink max-lg:max-h-[clamp(2.75rem,calc(100dvh-32rem),10rem)]"
           style={{ fieldSizing: 'content', transitionDuration: reduced ? '0s' : `${CHAT_MOTION.focus}s` }}
         />
         {busy ? (
