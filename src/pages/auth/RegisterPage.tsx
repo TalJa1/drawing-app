@@ -8,6 +8,7 @@ import { AuthLayout } from '@/features/auth/AuthLayout'
 import { TextField } from '@/components/Form'
 import { Button } from '@/components/Button'
 import { register as registerUser } from '@/api/auth'
+import { authErrorKey } from './authErrors'
 import { toast } from '@/store/ui'
 
 const schema = z
@@ -35,8 +36,8 @@ export default function RegisterPage() {
       const { user } = await registerUser({ displayName: form.displayName, email: form.email, password: form.password })
       toast({ title: t('auth.welcome', { name: user.displayName }), description: t('auth.welcomeBody'), tone: 'gold' })
       navigate('/practice')
-    } catch {
-      setError('root', { message: 'common.errorGeneric' })
+    } catch (e) {
+      setError('root', { message: authErrorKey(e) })
     }
   }
 

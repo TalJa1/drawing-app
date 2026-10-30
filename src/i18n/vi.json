@@ -149,12 +149,14 @@
     "errors": {
       "emailRequired": "Vui lòng nhập email.",
       "emailInvalid": "Email này trông chưa đúng lắm.",
-      "passwordShort": "Mật khẩu cần ít nhất 6 ký tự.",
       "passwordShort8": "Mật khẩu cần ít nhất 8 ký tự.",
       "nameShort": "Tên họa sĩ cần ít nhất 2 ký tự.",
       "nameLong": "Tên họa sĩ nên dưới 40 ký tự.",
       "mismatch": "Hai mật khẩu không khớp.",
-      "invalid": "Email và mật khẩu không khớp. (Mẹo: trong bản xem trước, mọi mật khẩu trừ “wrongpass” đều dùng được.)"
+      "invalid": "Email và mật khẩu không khớp.",
+      "emailTaken": "Email này đã được đăng ký. Hãy đăng nhập hoặc dùng email khác.",
+      "rateLimited": "Bạn đã thử quá nhiều lần. Vui lòng đợi một lúc rồi thử lại.",
+      "offline": "Không kết nối được máy chủ. Hãy kiểm tra mạng rồi thử lại."
     }
   },
   "styleguide": {

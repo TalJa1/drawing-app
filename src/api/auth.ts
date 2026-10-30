@@ -1,7 +1,7 @@
 import type { User } from '@/types'
-import { uid } from '@/lib/random'
 import { useSession } from '@/store/session'
-import { ApiError, simulate } from './client'
+import type { components } from './schema'
+import { request } from './client'
 
 export interface LoginRequest {
   email: string
@@ -15,53 +15,43 @@ export interface AuthResponse {
   token: string
 }
 
-/** POST /auth/login — any email/password "works" in the mock. */
+// The server's shapes come from its OpenAPI (src/api/schema.d.ts). Assigning them to the app's own
+// types below makes `tsc` fail when the two drift apart.
+type AuthOut = components['schemas']['AuthOut']
+type UserOut = components['schemas']['UserOut']
+
+/** POST /auth/login */
 export async function login(req: LoginRequest): Promise<AuthResponse> {
-  await simulate({ latency: [500, 1100] })
-  if (req.password.toLowerCase() === 'wrongpass') throw new ApiError('Invalid credentials', 401, 'invalid_credentials')
-  const prev = useSession.getState().user
-  const name = req.email.split('@')[0].replace(/[._-]+/g, ' ')
-  const user: User = {
-    id: uid('u_'),
-    email: req.email,
-    displayName: prev.isGuest && prev.displayName !== 'Guest Artist' ? prev.displayName : name.charAt(0).toUpperCase() + name.slice(1),
-    bio: prev.bio,
-    avatarSeed: prev.avatarSeed === 'guest-artist' ? req.email : prev.avatarSeed,
-    createdAt: new Date().toISOString(),
-    isGuest: false,
-  }
-  const token = `mock.${btoa(encodeURIComponent(req.email))}.${Date.now()}`
-  useSession.getState().setSession(user, token)
-  return { user, token }
+  const res: AuthOut = await request<AuthOut>('POST', '/auth/login', { body: req })
+  useSession.getState().setSession(res.user, res.token)
+  return res
 }
 
 /** POST /auth/register */
 export async function register(req: RegisterRequest): Promise<AuthResponse> {
-  await simulate({ latency: [700, 1300] })
-  const prev = useSession.getState().user
-  const user: User = {
-    id: uid('u_'),
-    email: req.email,
-    displayName: req.displayName,
-    bio: prev.bio,
-    avatarSeed: prev.avatarSeed === 'guest-artist' ? req.displayName : prev.avatarSeed,
-    createdAt: new Date().toISOString(),
-    isGuest: false,
-  }
-  const token = `mock.${btoa(encodeURIComponent(req.email))}.${Date.now()}`
-  useSession.getState().setSession(user, token)
-  return { user, token }
+  const res: AuthOut = await request<AuthOut>('POST', '/auth/register', { body: req })
+  useSession.getState().setSession(res.user, res.token)
+  return res
 }
 
-/** POST /auth/logout */
+/** POST /auth/logout — the server has nothing to revoke (stateless token), so we sign out here whatever it says. */
 export async function logout(): Promise<void> {
-  await simulate({ latency: [150, 300], canFail: false })
+  try {
+    await request<void>('POST', '/auth/logout')
+  } catch {
+    /* offline or expired: the local sign-out below is what matters */
+  }
   useSession.getState().signOut()
 }
 
-/** PATCH /me */
+/** PATCH /me. A guest has no profile on the server, so a guest's change stays on this device. */
 export async function updateProfile(p: Partial<Pick<User, 'displayName' | 'bio' | 'avatarSeed'>>): Promise<User> {
-  await simulate({ latency: [250, 600] })
-  useSession.getState().updateProfile(p)
-  return useSession.getState().user
+  const { token } = useSession.getState()
+  if (!token) {
+    useSession.getState().updateProfile(p)
+    return useSession.getState().user
+  }
+  const user: UserOut = await request<UserOut>('PATCH', '/me', { body: p })
+  useSession.getState().setSession(user, token)
+  return user
 }

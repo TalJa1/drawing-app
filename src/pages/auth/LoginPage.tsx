@@ -8,12 +8,12 @@ import { AuthLayout } from '@/features/auth/AuthLayout'
 import { TextField } from '@/components/Form'
 import { Button } from '@/components/Button'
 import { login } from '@/api/auth'
-import { ApiError } from '@/api/client'
+import { authErrorKey } from './authErrors'
 import { toast } from '@/store/ui'
 
 const schema = z.object({
   email: z.string().trim().min(1, 'auth.errors.emailRequired').email('auth.errors.emailInvalid'),
-  password: z.string().min(6, 'auth.errors.passwordShort'),
+  password: z.string().min(8, 'auth.errors.passwordShort8'),
 })
 type Form = z.infer<typeof schema>
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
       toast({ title: t('auth.welcomeBack', { name: user.displayName }), tone: 'success' })
       navigate('/collection')
     } catch (e) {
-      setError('root', { message: e instanceof ApiError && e.status === 401 ? 'auth.errors.invalid' : 'common.errorGeneric' })
+      setError('root', { message: authErrorKey(e) })
     }
   }
 

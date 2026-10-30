@@ -149,12 +149,14 @@
     "errors": {
       "emailRequired": "Please enter your email.",
       "emailInvalid": "That email doesn't look quite right.",
-      "passwordShort": "Passwords need at least 6 characters.",
       "passwordShort8": "Passwords need at least 8 characters.",
       "nameShort": "Your artist name needs at least 2 characters.",
       "nameLong": "Keep your artist name under 40 characters.",
       "mismatch": "The passwords don't match.",
-      "invalid": "That email and password don't match. (Tip: in this preview, any password except “wrongpass” works.)"
+      "invalid": "That email and password don't match.",
+      "emailTaken": "That email is already registered. Sign in or use another one.",
+      "rateLimited": "Too many tries. Please wait a little and try again.",
+      "offline": "Can't reach the server. Check your connection and try again."
     }
   },
   "styleguide": {
