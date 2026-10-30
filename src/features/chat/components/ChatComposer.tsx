@@ -120,7 +120,7 @@ export function ChatComposer({
   }
   return (
     <div
-      className="border-t border-line bg-card/60 px-3 pt-3 sm:px-5"
+      className="shrink-0 scroll-mb-24 border-t border-line bg-card/60 px-3 pt-3 sm:px-5"
       style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
     >
       {!!imageContext?.attachments.length && images.length === 0 && (
@@ -186,7 +186,7 @@ export function ChatComposer({
             }
           }}
           placeholder={t('chat.placeholder')}
-          className="transition-[border-color,box-shadow] duration-150 focus:shadow-paper max-h-40 min-h-11 min-w-0 flex-1 resize-none rounded-[22px] border border-line-strong bg-card px-4 py-2.5 text-base text-ink placeholder:text-ink-faint/80 focus:border-ink"
+          className="transition-[border-color,box-shadow] duration-150 focus:shadow-paper max-h-40 min-h-11 min-w-0 flex-1 resize-none rounded-[22px] border border-line-strong bg-card px-4 py-2.5 text-base text-ink placeholder:text-ink-faint/80 focus:border-ink max-lg:max-h-[clamp(2.75rem,calc(100dvh-32rem),10rem)]"
           style={{ fieldSizing: 'content', transitionDuration: reduced ? '0s' : `${CHAT_MOTION.focus}s` }}
         />
         {busy ? (

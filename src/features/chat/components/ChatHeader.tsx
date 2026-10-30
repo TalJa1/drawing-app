@@ -68,7 +68,7 @@ export function ChatHeader({
       <div
         role="radiogroup"
         aria-label={t('chat.modeLabel')}
-        className="no-scrollbar mt-3 grid grid-cols-2 gap-1 sm:flex sm:overflow-x-auto"
+        className="no-scrollbar mt-3 grid grid-cols-2 gap-1 sm:flex sm:overflow-x-auto max-lg:[@media(max-height:700px)]:flex max-lg:[@media(max-height:700px)]:overflow-x-auto"
       >
         {MODES.map(({ id, icon: Icon }, index) => (
           <button

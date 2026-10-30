@@ -227,3 +227,58 @@ test('touch layouts: every chat control is at least 44 by 44', async ({ page }) 
   failures.push({ state: 'attachments', targets: await smallChatTargets(picker) })
   expect(failures.filter(({ targets }) => targets.length)).toEqual([])
 })
+
+async function prepareTallComposer(page: Page) {
+  await page.locator('#chat-input').evaluate(async (input) => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 100
+    canvas.height = 80
+    const context = canvas.getContext('2d')!
+    context.fillStyle = '#778899'
+    context.fillRect(0, 0, 100, 80)
+    const blob = await new Promise<Blob>((resolve) => canvas.toBlob((blob) => resolve(blob!), 'image/jpeg'))
+    const data = new DataTransfer()
+    for (let index = 0; index < 3; index++) data.items.add(new File([blob], `synthetic-${index}.jpg`, { type: 'image/jpeg' }))
+    input.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }))
+  })
+  await expect(page.getByRole('button', { name: 'Remove image' })).toHaveCount(3)
+  await page.getByRole('textbox').fill('Draw three shapes on a page.\n'.repeat(30))
+}
+
+for (const { width, height, packed } of [
+  { width: 360, height: 430, packed: true },
+  { width: 390, height: 667, packed: true },
+  { width: 390, height: 844, packed: false },
+]) {
+  test(`composer stays reachable at ${width}x${height} ${packed ? 'with images and a tall draft' : 'when empty'}`, async ({ page }) => {
+    await page.setViewportSize({ width, height })
+    await freshChat(page)
+    if (packed) await prepareTallComposer(page)
+    if (height === 430) {
+      await page.getByRole('textbox').focus()
+      await page.locator('#chat-input').evaluate((input) => input.closest('form')!.parentElement!.scrollIntoView({ block: 'end' }))
+    } else {
+      await page.evaluate(() => window.scrollTo(0, 0))
+      expect(await page.evaluate(() => window.scrollY)).toBe(0)
+    }
+    await expect
+      .poll(() =>
+        page.locator('#chat-input').evaluate((input) => {
+          const composer = input.closest('form')!.parentElement!
+          return [...composer.querySelectorAll('button, textarea, summary')]
+            .filter((node) => node.getClientRects().length)
+            .flatMap((node) => {
+              const box = node.getBoundingClientRect()
+              const hit = document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)
+              return box.top < 0 || box.bottom > innerHeight || !(hit === node || node.contains(hit))
+                ? [{ name: node.getAttribute('aria-label') || node.tagName, top: box.top, bottom: box.bottom, hit: hit?.tagName }]
+                : []
+            })
+        }),
+      )
+      .toEqual([])
+    if (height >= 568) expect(await page.evaluate(() => window.scrollY)).toBe(0)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    expect(await page.locator('#chat-input').evaluate((input) => parseFloat(getComputedStyle(input).fontSize))).toBeGreaterThanOrEqual(16)
+  })
+}
