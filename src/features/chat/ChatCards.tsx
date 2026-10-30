@@ -37,7 +37,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
     return (
       <div className="w-full max-w-sm rounded-2xl border border-line bg-card p-3 shadow-paper">
         <p className="mb-2 text-sm font-semibold">{card.name}</p>
-        <div className="flex h-14 overflow-hidden rounded-xl ring-1 ring-line-strong">
+        <div className="flex h-14 overflow-hidden rounded-xl ring-1 ring-line-strong max-lg:h-auto max-lg:min-h-14 max-lg:flex-wrap">
           {card.colors.map((c, index) => (
             <motion.button
               variants={chatVariants(reduced).swatch}
@@ -46,7 +46,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
               transition={{ duration: CHAT_MOTION.swatch, delay: reduced ? 0 : index * 0.03 }}
               key={c}
               type="button"
-              className="group flex flex-1 items-end justify-center pb-1 transition-[flex] hover:flex-[1.5]"
+              className="group flex flex-1 items-end justify-center pb-1 transition-[flex] hover:flex-[1.5] max-lg:min-h-14 max-lg:min-w-11"
               style={{ background: c, color: readableOn(c) }}
               aria-label={t('learn.copyColour', { hex: c })}
               onClick={async () => {
@@ -81,7 +81,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
             presentReward(await recordActivity({ type: 'paletteSent' }))
             navigate('/free-draw')
           }}
-          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-accent-ink hover:underline"
+          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-accent-ink hover:underline max-lg:min-h-11 max-lg:px-2"
         >
           <Send size={12} /> {t('learn.sendToStudio')}
         </button>
@@ -136,7 +136,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
         </div>
         <Link
           to={`/free-draw?prompt=${encodeURIComponent(card.title)}`}
-          className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent-ink hover:underline"
+          className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent-ink hover:underline max-lg:min-h-11 max-lg:px-2"
         >
           {t('chat.cards.sketchIt')} <ArrowRight size={12} />
         </Link>

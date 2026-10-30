@@ -51,7 +51,14 @@ export function ChatHeader({
   return (
     <header className="min-w-0 border-b border-line px-3 py-3 sm:px-5">
       <div className="flex min-w-0 items-center gap-2">
-        {!desktop && <IconButton label={t('chat.history')} icon={<PanelLeft size={18} />} onClick={onHistory} className="!h-11 !w-11" />}
+        {!desktop && (
+          <IconButton
+            label={t('chat.history')}
+            icon={<PanelLeft size={18} />}
+            onClick={onHistory}
+            className="!h-11 !w-11 max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
+          />
+        )}
         {hasMessages && <Muse size={42} state={state} />}
         <div className="min-w-0 flex-1">
           <h1 className="truncate font-display text-xl leading-tight sm:whitespace-normal sm:break-words">{title || t('chat.title')}</h1>

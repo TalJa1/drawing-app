@@ -86,7 +86,7 @@ export function AttachmentPicker({
       onClose={onClose}
       title={t('chat.attach.title')}
       size="lg"
-      className={reduced || !visible ? '[&_.skeleton]:after:animate-none' : undefined}
+      className={`max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11 ${reduced || !visible ? '[&_.skeleton]:after:animate-none' : ''}`}
     >
       <input
         ref={input}

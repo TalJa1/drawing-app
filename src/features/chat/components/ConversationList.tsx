@@ -52,7 +52,7 @@ export function ConversationList({ onPick }: { onPick?: () => void }) {
                       autoFocus
                       defaultValue={c.title}
                       aria-label={t('chat.rename')}
-                      className="m-1 h-8 flex-1 rounded-lg border border-line-strong bg-card px-2 text-sm"
+                      className="m-1 h-8 flex-1 rounded-lg border border-line-strong bg-card px-2 text-sm max-lg:!h-11 max-lg:min-w-0"
                       onBlur={(e) => {
                         rename(c.id, e.target.value.trim() || c.title)
                         setEditing(null)
@@ -79,9 +79,23 @@ export function ConversationList({ onPick }: { onPick?: () => void }) {
                       </span>
                     </button>
                   )}
-                  <span className="flex shrink-0 opacity-100 transition-opacity md:opacity-0 md:group-focus-within:opacity-100 md:group-hover:opacity-100">
-                    <IconButton size="sm" label={t('chat.rename')} icon={<Pencil size={14} />} onClick={() => setEditing(c.id)} noTooltip />
-                    <IconButton size="sm" label={t('chat.delete')} icon={<Trash2 size={14} />} onClick={() => setConfirm(c)} noTooltip />
+                  <span className="flex shrink-0 opacity-100 transition-opacity lg:opacity-0 lg:group-focus-within:opacity-100 lg:group-hover:opacity-100">
+                    <IconButton
+                      size="sm"
+                      className="max-lg:!h-11 max-lg:!w-11"
+                      label={t('chat.rename')}
+                      icon={<Pencil size={14} />}
+                      onClick={() => setEditing(c.id)}
+                      noTooltip
+                    />
+                    <IconButton
+                      size="sm"
+                      className="max-lg:!h-11 max-lg:!w-11"
+                      label={t('chat.delete')}
+                      icon={<Trash2 size={14} />}
+                      onClick={() => setConfirm(c)}
+                      noTooltip
+                    />
                   </span>
                 </li>
               ))}
@@ -89,7 +103,14 @@ export function ConversationList({ onPick }: { onPick?: () => void }) {
           </li>
         ))}
       </ul>
-      <Modal open={!!confirm} onClose={() => setConfirm(null)} title={t('chat.deleteTitle')} description={confirm?.title} size="sm">
+      <Modal
+        open={!!confirm}
+        onClose={() => setConfirm(null)}
+        title={t('chat.deleteTitle')}
+        description={confirm?.title}
+        size="sm"
+        className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
+      >
         <div className="flex gap-3">
           <Button variant="outline" className="flex-1" onClick={() => setConfirm(null)}>
             {t('common.cancel')}

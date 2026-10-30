@@ -50,6 +50,7 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <Button
             size="sm"
+            className="max-lg:!h-11"
             variant="ghost"
             icon={<RefreshCw size={14} />}
             disabled={remaining > 0 || phase !== null}
@@ -67,6 +68,7 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
         <div className="flex flex-wrap gap-0.5">
           <IconButton
             size="sm"
+            className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
             label={t('common.copy')}
             icon={
               <motion.span key={copied ? 'copied' : 'copy'} variants={chatVariants(reduced).threadSwap} initial="hidden" animate="visible">
@@ -81,6 +83,7 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
           />
           <IconButton
             size="sm"
+            className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
             label={t('chat.helpful')}
             active={message.rating === 'up'}
             icon={<ThumbsUp size={14} />}
@@ -90,6 +93,7 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
           />
           <IconButton
             size="sm"
+            className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
             label={t('chat.notHelpful')}
             active={message.rating === 'down'}
             icon={<ThumbsDown size={14} />}
@@ -101,6 +105,7 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
           {last && (
             <IconButton
               size="sm"
+              className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
               label={t('chat.regenerate')}
               icon={<RefreshCw size={14} />}
               disabled={phase !== null || remaining > 0}
@@ -113,6 +118,7 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
         <div className="flex items-center gap-1">
           <IconButton
             size="sm"
+            className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
             label={t('chat.previousVersion')}
             icon={<ChevronLeft size={14} />}
             disabled={version === 0 || phase !== null}
@@ -123,6 +129,7 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
           </span>
           <IconButton
             size="sm"
+            className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
             label={t('chat.nextVersion')}
             icon={<ChevronRight size={14} />}
             disabled={version === message.variants.length || phase !== null}

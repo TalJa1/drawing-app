@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Page } from '@playwright/test'
+import { expect, test, type Locator, type Page } from '@playwright/test'
 
 async function freshChat(page: Page) {
   await page.addInitScript(() => {
@@ -124,4 +124,106 @@ test('axe: no serious/critical violations on /chat in light and dark', async ({ 
     const violations = results.violations.filter((violation) => violation.impact === 'serious' || violation.impact === 'critical')
     expect(violations.map(({ id, nodes }) => ({ id, targets: nodes.map((node) => node.target) }))).toEqual([])
   }
+})
+
+async function seedChatCards(page: Page, failed = false) {
+  await page.evaluate((failed) => {
+    const createdAt = new Date().toISOString()
+    const message = {
+      id: 'touch-reply',
+      role: 'assistant',
+      turnId: 'touch-turn',
+      createdAt,
+      content: 'Try drawing three simple shapes.',
+      attachments: [],
+      status: failed ? 'failed' : 'completed',
+      ...(failed ? { errorCode: 'network' } : {}),
+      cards: [
+        { type: 'palette', name: 'Touch palette', colors: ['#112233', '#445566', '#778899', '#AABBCC', '#DDEEFF', '#112244'] },
+        { type: 'idea', title: 'Simple shapes', description: 'Draw three shapes.', difficulty: 'beginner', minutes: 10 },
+      ],
+      variants: [{ content: 'Draw two shapes.', cards: [], status: 'completed', createdAt }],
+    }
+    localStorage.setItem(
+      'artspark:chat',
+      JSON.stringify({
+        version: 2,
+        state: {
+          activeId: 'touch-conversation',
+          draft: null,
+          drafts: {},
+          conversations: [
+            {
+              id: 'touch-conversation',
+              title: 'Touch conversation',
+              mode: 'ideas',
+              createdAt,
+              updatedAt: createdAt,
+              messages: [
+                {
+                  id: 'touch-question',
+                  role: 'user',
+                  turnId: 'touch-turn',
+                  createdAt,
+                  content: 'Suggest a palette.',
+                  cards: [],
+                  attachments: [],
+                },
+                message,
+              ],
+            },
+          ],
+        },
+      }),
+    )
+  }, failed)
+  await page.reload()
+  await expect(page.getByRole('button', { name: 'Send palette to studio' })).toBeVisible()
+}
+
+async function smallChatTargets(scope: Locator) {
+  return scope.locator('button, a[href], input:not([type="file"]), textarea, summary').evaluateAll((nodes) =>
+    nodes
+      .filter((node) => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden')
+      .flatMap((node) => {
+        const box = node.getBoundingClientRect()
+        return box.width < 44 || box.height < 44
+          ? [{ name: node.getAttribute('aria-label') || node.textContent?.trim(), width: box.width, height: box.height }]
+          : []
+      }),
+  )
+}
+
+test('touch layouts: every chat control is at least 44 by 44', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await freshChat(page)
+  const chat = page.locator('section[aria-label]').filter({ has: page.locator('#chat-input') })
+  const failures = []
+  failures.push({ state: 'welcome', targets: await smallChatTargets(chat) })
+  await seedChatCards(page)
+  failures.push({ state: 'cards', targets: await smallChatTargets(chat) })
+  await seedChatCards(page, true)
+  failures.push({ state: 'retry', targets: await smallChatTargets(chat) })
+  await page.getByRole('button', { name: 'Conversations', exact: true }).click()
+  const sheet = page.getByRole('dialog', { name: 'Conversations' })
+  await expect(sheet).toBeVisible()
+  await expect(sheet).toHaveCSS('transform', 'none')
+  failures.push({ state: 'history', targets: await smallChatTargets(sheet) })
+  await sheet.getByRole('button', { name: 'Rename conversation', exact: true }).click()
+  failures.push({ state: 'rename', targets: await smallChatTargets(sheet) })
+  await sheet.getByRole('textbox', { name: 'Rename conversation' }).press('Enter')
+  await sheet.getByRole('button', { name: 'Delete conversation', exact: true }).click()
+  const deletion = page.getByRole('dialog').filter({ has: page.getByRole('button', { name: 'Cancel', exact: true }) })
+  await expect(deletion).toBeVisible()
+  await expect(deletion).toHaveCSS('transform', 'none')
+  failures.push({ state: 'delete', targets: await smallChatTargets(deletion) })
+  await deletion.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await sheet.getByRole('button', { name: 'Close', exact: true }).click()
+  await expect(sheet).not.toBeVisible()
+  await page.getByRole('button', { name: 'Attach an image', exact: true }).click()
+  const picker = page.getByRole('dialog').filter({ has: page.locator('input[type="file"]') })
+  await expect(picker).toBeVisible()
+  await expect(picker).toHaveCSS('transform', 'none')
+  failures.push({ state: 'attachments', targets: await smallChatTargets(picker) })
+  expect(failures.filter(({ targets }) => targets.length)).toEqual([])
 })
