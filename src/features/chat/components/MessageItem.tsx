@@ -84,7 +84,7 @@ function Content({ message, conversationId, last }: { message: ChatMessage; conv
           <Muse size={34} still />
         </span>
       )}
-      <div className={cn('flex min-w-0 max-w-[85%] flex-col gap-2', message.role === 'user' && 'items-end')}>
+      <div className={cn('flex min-w-0 flex-col gap-2', message.role === 'user' ? 'max-w-[85%] items-end' : 'flex-1')}>
         {message.attachments.map((attachment) => (
           <MessageImage key={attachment.id} attachment={attachment} />
         ))}
@@ -113,10 +113,11 @@ function Content({ message, conversationId, last }: { message: ChatMessage; conv
           </motion.p>
         )}
         {!!message.cards.length && (
-          <div className="flex flex-wrap gap-3">
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] items-start gap-3 lg:grid-cols-[repeat(2,minmax(0,1fr))]">
             {message.cards.map((card, index) => (
               <motion.div
                 key={index}
+                className={cn('min-w-0', card.type === 'critique' && 'lg:col-span-2')}
                 variants={variants.card}
                 initial={message.status === 'streaming' ? 'hidden' : false}
                 animate="visible"

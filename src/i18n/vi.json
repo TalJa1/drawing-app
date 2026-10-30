@@ -1146,7 +1146,15 @@
     },
     "cards": {
       "template": "Mẫu vẽ",
+      "source": {
+        "palette": "Bảng màu · Muse đề xuất",
+        "idea": "Ý tưởng · Muse đề xuất",
+        "critique": "Nhận xét ảnh · Muse đề xuất",
+        "lesson": "Bài học · Thư viện Art Spark",
+        "template": "Mẫu vẽ · Thư viện Art Spark"
+      },
       "critique": {
+        "imageCaution": "Gợi ý dựa trên ảnh; hãy đối chiếu với bài vẽ thật.",
         "observations": "Quan sát",
         "strengths": "Điểm hiệu quả",
         "priorities": "Ưu tiên cải thiện",

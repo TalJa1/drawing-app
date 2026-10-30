@@ -10,7 +10,7 @@ import { TEMPLATE_MAP } from '@/mocks/templates'
 import { LESSON_MAP } from '@/mocks/lessons'
 import { useL } from '@/i18n/useL'
 import { copyText, svgToDataUrl } from '@/lib/utils'
-import { readableOn } from '@/lib/color'
+import { contrastRatio, readableOn } from '@/lib/color'
 import { recordActivity } from '@/api/progress'
 import { presentReward, toast } from '@/store/ui'
 import { useStudio } from '@/store/studio'
@@ -20,6 +20,17 @@ import { useLevel } from '@/features/gamification/hooks'
 import { CritiqueCard } from './cards/CritiqueCard'
 
 export function ChatCardView({ card, animate = false, conversationId }: { card: ChatCard; animate?: boolean; conversationId?: string }) {
+  const { t } = useTranslation()
+  if ((card.type === 'lesson' && !LESSON_MAP[card.slug]) || (card.type === 'template' && !TEMPLATE_MAP[card.templateId])) return null
+  return (
+    <div className="w-full min-w-0" data-card-type={card.type}>
+      <p className="mb-2 text-[11px] font-semibold text-ink-faint">{t(`chat.cards.source.${card.type}`)}</p>
+      <CardContent card={card} animate={animate} conversationId={conversationId} />
+    </div>
+  )
+}
+
+function CardContent({ card, animate, conversationId }: { card: ChatCard; animate: boolean; conversationId?: string }) {
   const { t } = useTranslation()
   const L = useL()
   const reduced = useReducedMotion()
@@ -35,9 +46,9 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
 
   if (card.type === 'palette')
     return (
-      <div className="w-full max-w-sm rounded-2xl border border-line bg-card p-3 shadow-paper">
+      <div className="w-full rounded-2xl border border-line bg-card p-3 shadow-paper">
         <p className="mb-2 text-sm font-semibold">{card.name}</p>
-        <div className="flex h-14 overflow-hidden rounded-xl ring-1 ring-line-strong max-lg:h-auto max-lg:min-h-14 max-lg:flex-wrap">
+        <div className="flex flex-wrap overflow-hidden rounded-xl ring-1 ring-line-strong">
           {card.colors.map((c, index) => (
             <motion.button
               variants={chatVariants(reduced).swatch}
@@ -46,7 +57,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
               transition={{ duration: CHAT_MOTION.swatch, delay: reduced ? 0 : index * 0.03 }}
               key={c}
               type="button"
-              className="group flex flex-1 items-end justify-center pb-1 transition-[flex] hover:flex-[1.5] max-lg:min-h-14 max-lg:min-w-11"
+              className="relative flex min-h-14 min-w-14 flex-1 items-end justify-center pb-1"
               style={{ background: c, color: readableOn(c) }}
               aria-label={t('learn.copyColour', { hex: c })}
               onClick={async () => {
@@ -59,8 +70,13 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
                 })
               }}
             >
-              {copied?.color === c && <Check size={14} className="self-center" />}
-              <span className="font-mono text-[9.5px] opacity-0 transition-opacity group-hover:opacity-90">{c.toUpperCase()}</span>
+              {copied?.color === c && <Check size={14} className="absolute top-2" />}
+              <span
+                className="rounded px-0.5 font-mono text-[11px]"
+                style={{ background: contrastRatio(c, readableOn(c)) < 4.5 ? readableOn(readableOn(c)) : undefined }}
+              >
+                {c.toUpperCase()}
+              </span>
             </motion.button>
           ))}
         </div>
@@ -92,20 +108,21 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
     const tpl = TEMPLATE_MAP[card.templateId]
     if (!tpl) return null
     const locked = tpl.unlockLevel > level
-    const className = 'group flex w-full max-w-sm items-center gap-3 rounded-2xl border border-line bg-card p-2.5 shadow-paper'
+    const className =
+      'group grid w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-3 rounded-2xl border border-line bg-card p-3 shadow-paper'
     const contents = (
       <>
         <img src={svgToDataUrl(tpl.svg)} alt="" className="h-16 w-20 shrink-0 rounded-lg border border-line bg-white object-contain" />
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">{t('chat.cards.template')}</p>
-          <p className="truncate font-display text-lg leading-tight">{L(tpl.title)}</p>
+          <p className="font-display text-lg leading-tight">{L(tpl.title)}</p>
           <p className="inline-flex items-center gap-1.5 text-xs text-ink-faint">
             <DifficultyDots level={DIFF_LEVEL[tpl.difficulty]} label={t(`difficulty.${tpl.difficulty}`)} />{' '}
             {t('common.minutes', { count: tpl.minutes })}
           </p>
           {card.reason && <p className="mt-1 text-xs text-ink-soft">{card.reason}</p>}
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-paper">
+        <span className="col-span-2 inline-flex min-h-11 items-center justify-center gap-1 justify-self-start rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-paper">
           {locked ? <LockKeyhole size={12} /> : <Brush size={12} />}
           {locked ? t('chat.cards.unlockLevel', { level: tpl.unlockLevel }) : t('chat.cards.drawThis')}
         </span>
@@ -122,7 +139,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
 
   if (card.type === 'idea')
     return (
-      <div className="w-full max-w-[17rem] rounded-2xl border border-line bg-card p-4 shadow-paper">
+      <div className="w-full rounded-2xl border border-line bg-card p-4 shadow-paper">
         <p className="font-display text-lg leading-tight">{card.title}</p>
         <p className="mt-1 text-sm text-ink-soft">{card.description}</p>
         <div className="mt-3 flex items-center justify-between text-xs text-ink-faint">
@@ -150,7 +167,7 @@ export function ChatCardView({ card, animate = false, conversationId }: { card: 
   return (
     <Link
       to={`/learn/lessons/${lesson.slug}`}
-      className="flex w-full max-w-sm items-center gap-3 rounded-2xl border border-line bg-card p-3 shadow-paper hover:shadow-lift"
+      className="flex w-full items-center gap-3 rounded-2xl border border-line bg-card p-3 shadow-paper hover:shadow-lift"
     >
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cerulean/15 text-cerulean">
         <BookOpen size={20} />

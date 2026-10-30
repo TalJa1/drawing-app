@@ -1146,7 +1146,15 @@
     },
     "cards": {
       "template": "Template",
+      "source": {
+        "palette": "Palette · Suggested by Muse",
+        "idea": "Idea · Suggested by Muse",
+        "critique": "Image feedback · Suggested by Muse",
+        "lesson": "Lesson · Art Spark library",
+        "template": "Template · Art Spark library"
+      },
       "critique": {
+        "imageCaution": "Suggestions based on this image. Check against your drawing.",
         "observations": "Observations",
         "strengths": "What works",
         "priorities": "What to improve",

@@ -353,6 +353,57 @@ test('new empty conversation keeps the mode chosen in the select', async ({ page
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('artspark:chat')!).state.conversations)).toEqual([])
 })
 
+test('card details are readable without hover and critique uses its own image across viewports', async ({ page }) => {
+  for (const width of [390, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 })
+    await freshChat(page)
+    await seedChatCards(page)
+    await page.mouse.move(0, 0)
+    for (const hex of ['#112233', '#445566', '#778899', '#AABBCC', '#DDEEFF', '#112244']) {
+      const swatch = page.getByRole('button', { name: new RegExp(hex, 'i') })
+      const label = swatch.getByText(hex, { exact: true })
+      await expect(label).toHaveCSS('opacity', '1')
+      const box = await swatch.boundingBox()
+      expect(box!.width).toBeGreaterThanOrEqual(44)
+      expect(box!.height).toBeGreaterThanOrEqual(56)
+    }
+    await page.evaluate(() => {
+      const stored = JSON.parse(localStorage.getItem('artspark:chat')!)
+      const current = stored.state.conversations[0]
+      const canvas = document.createElement('canvas')
+      canvas.width = 100
+      canvas.height = 80
+      current.messages[0].attachments = ['older', 'selected', 'newer'].map((id) => ({
+        kind: 'image',
+        id,
+        name: `${id}.jpg`,
+        src: canvas.toDataURL('image/jpeg'),
+      }))
+      current.messages[1].cards = [
+        {
+          type: 'critique',
+          imageId: 'selected',
+          observations: ['Clear shapes'],
+          strengths: ['Good contrast'],
+          priorities: ['Soften edges'],
+          exercise: 'Try three thumbnails',
+        },
+      ]
+      localStorage.setItem('artspark:chat', JSON.stringify(stored))
+    })
+    await page.reload()
+    const card = page.locator('[data-card-type="critique"]')
+    await expect(card.getByRole('img', { name: 'selected.jpg' })).toBeVisible()
+    await expect(card.getByText('selected.jpg', { exact: true })).toBeVisible()
+    await expect(card.getByRole('img', { name: 'newer.jpg' })).toHaveCount(0)
+    const reply = page.getByRole('region', { name: 'Messages' }).locator('ol.mx-auto > li').last()
+    const bubble = reply
+      .getByText('Try drawing three simple shapes.', { exact: true })
+      .locator('xpath=ancestor::div[contains(@class,"rounded-tl-md")]')
+    expect(Math.abs((await card.boundingBox())!.width - (await bubble.boundingBox())!.width)).toBeLessThanOrEqual(1)
+  }
+})
+
 async function prepareTallComposer(page: Page) {
   await page.locator('#chat-input').evaluate(async (input) => {
     const canvas = document.createElement('canvas')

@@ -8,6 +8,7 @@ import { useStudio } from '@/store/studio'
 import { copyText } from '@/lib/utils'
 import { recordActivity } from '@/api/progress'
 import { useChat } from '@/store/chat'
+import { contrastRatio } from '@/lib/color'
 
 vi.mock('@/features/gamification/hooks', () => ({ useLevel: () => ({ level: 1 }) }))
 vi.mock('@/api/progress', () => ({ recordActivity: vi.fn(async () => null) }))
@@ -39,6 +40,49 @@ it('critique card renders observations, priorities and exercise', async () => {
   await renderChat(<ChatCardView card={critique} />)
   for (const text of [...critique.observations, ...critique.strengths, ...critique.priorities, critique.exercise])
     expect(screen.getByText(text)).toBeInTheDocument()
+  expect(screen.getByText('Image feedback · Suggested by Muse')).toBeInTheDocument()
+  expect(screen.getByText('Suggestions based on this image. Check against your drawing.')).toBeInTheDocument()
+  expect(screen.getByText('This image is no longer available. Attach it again.')).toBeInTheDocument()
+})
+
+it('critique shows the filename and preview belonging to imageId, including older turns', async () => {
+  const id = useChat.getState().create()
+  for (const turn of ['old', 'new'])
+    useChat.getState().addMessage(id, {
+      id: `user_${turn}`,
+      turnId: turn,
+      role: 'user',
+      content: 'Drawing',
+      cards: [],
+      attachments: [{ kind: 'image', id: `a_${turn}`, name: `${turn}.jpg`, src: `data:image/jpeg;base64,${turn}` }],
+      createdAt: '2026-10-30T00:00:00Z',
+    })
+  await renderChat(<ChatCardView card={critique} conversationId={id} />)
+  expect(screen.getByRole('img', { name: 'old.jpg' })).toHaveAttribute('src', 'data:image/jpeg;base64,old')
+  expect(screen.getByText('old.jpg')).toBeInTheDocument()
+  expect(screen.queryByRole('img', { name: 'new.jpg' })).not.toBeInTheDocument()
+})
+
+it('all five card types identify their source', async () => {
+  const template = Object.values(TEMPLATE_MAP).find((item) => item.unlockLevel === 1)!
+  const lesson = Object.values(LESSON_MAP)[0]
+  await renderChat(
+    <>
+      <ChatCardView card={paletteCard} />
+      <ChatCardView card={{ type: 'idea', title: 'Tree', description: 'Draw a tree', difficulty: 'beginner', minutes: 10 }} />
+      <ChatCardView card={critique} />
+      <ChatCardView card={{ type: 'template', templateId: template.id }} />
+      <ChatCardView card={{ type: 'lesson', slug: lesson.slug }} />
+    </>,
+  )
+  for (const label of [
+    'Palette · Suggested by Muse',
+    'Idea · Suggested by Muse',
+    'Image feedback · Suggested by Muse',
+    'Template · Art Spark library',
+    'Lesson · Art Spark library',
+  ])
+    expect(screen.getByText(label)).toBeInTheDocument()
 })
 
 it('critique follow-up selects its own image and focuses the composer', async () => {
@@ -99,6 +143,23 @@ it('palette send sets the pending palette and navigates to /free-draw', async ()
 it('palette shows roles and note', async () => {
   await renderChat(<ChatCardView card={{ ...paletteCard, roles: ['dominant', 'support', 'accent'], note: 'Keep the accent small' }} />)
   for (const label of ['Dominant', 'Support', 'Accent', 'Keep the accent small']) expect(screen.getByText(label)).toBeInTheDocument()
+})
+
+it('HEX labels keep AA contrast even for mid-tone swatches', async () => {
+  const colors = ['#000000', '#FFFFFF', '#777777', '#888888', '#FF0000', '#00AA88']
+  await renderChat(<ChatCardView card={{ type: 'palette', name: 'Contrast', colors }} />)
+  for (const color of colors) {
+    const label = screen.getByText(color)
+    const button = label.closest('button')!
+    const toHex = (value: string) =>
+      `#${value
+        .match(/\d+/g)!
+        .slice(0, 3)
+        .map((number) => Number(number).toString(16).padStart(2, '0'))
+        .join('')}`
+    const background = label.style.background ? toHex(label.style.background) : color
+    expect(contrastRatio(toHex(button.style.color), background)).toBeGreaterThanOrEqual(4.5)
+  }
 })
 
 it('copying a swatch confirms locally and resets the check', async () => {
