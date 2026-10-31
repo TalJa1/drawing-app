@@ -288,7 +288,10 @@ Before SSE, errors use `{ "error": { "code", "message", "traceId", "details"? } 
 `retryAfterMs` is optional on SSE errors; FE converts an HTTP `Retry-After` to milliseconds.
 `network` means fetch failed; `protocol` means invalid SSE/response; `client` is an unexpected
 local failure; `image_missing` means a selected image cannot be loaded. Client-only codes
-are never server SSE error codes. One active turn is allowed across the FE; BE permits
+are never server SSE error codes.
+The SSE validator accepts exactly the five codes above; HTTP-only codes in an SSE
+event are a `protocol` failure and preserve already received content.
+One active turn is allowed across the FE; BE permits
 one stream per identity and three globally, 20 turns per 600 seconds per identity, and
 an in-memory daily USD budget. The entire turn deadline is 120 seconds with a 45-second
 upstream idle timeout. Stop, conversation changes and leaving the page abort the request.

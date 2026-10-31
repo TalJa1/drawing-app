@@ -1,12 +1,27 @@
 import { z } from 'zod'
 import { API_BASE } from '@/api/client'
 import { useSession } from '@/store/session'
-import { chatStreamEventSchema, PROTOCOL_VERSION } from '@/features/chat/contract'
+import { PROTOCOL_VERSION } from '@/features/chat/contract'
 import type { ChatTransport } from './transport'
 import { AiTransportError } from './errors'
 import { parseSSE } from './sse'
 
-const envelopeSchema = z.object({ error: z.object({ code: z.string() }) })
+const envelopeSchema = z.object({
+  error: z.object({
+    code: z.enum([
+      'unauthorized',
+      'ai_not_configured',
+      'service_unavailable',
+      'rate_limited',
+      'ai_busy',
+      'ai_budget_exceeded',
+      'payload_too_large',
+      'unsupported_media_type',
+      'bad_request',
+      'validation_error',
+    ]),
+  }),
+})
 const healthSchema = z.object({ configured: z.boolean(), protocolVersion: z.literal(PROTOCOL_VERSION) })
 
 function authHeaders(): Record<string, string> {
@@ -17,11 +32,10 @@ function authHeaders(): Record<string, string> {
 async function httpError(response: Response): Promise<AiTransportError> {
   const value: unknown = await response.json().catch(() => null)
   const envelope = envelopeSchema.safeParse(value)
-  const event = chatStreamEventSchema.safeParse({ type: 'error', code: envelope.success ? envelope.data.error.code : 'upstream' })
   const header = response.headers.get('Retry-After')
   const seconds = header === null || !header.trim() ? NaN : Number(header)
   const retryAfterMs = Number.isFinite(seconds) && seconds >= 0 ? seconds * 1000 : undefined
-  return new AiTransportError(event.success && event.data.type === 'error' ? event.data.code : 'upstream', retryAfterMs)
+  return new AiTransportError(envelope.success ? envelope.data.error.code : 'upstream', retryAfterMs)
 }
 
 export const serverTransport: ChatTransport = {
