@@ -18,7 +18,7 @@ import {
   Trophy,
   WandSparkles,
 } from 'lucide-react'
-import type { GenStyle } from '@/types'
+import type { GenStyle, Template } from '@/types'
 import { ButtonLink, Button } from '@/components/Button'
 import { Magnetic } from '@/components/Magnetic'
 import { Frame, WallLabel } from '@/components/Frame'
@@ -37,7 +37,7 @@ import { BadgeMedal } from '@/features/gamification/BadgeMedal'
 import { LessonDiagram } from '@/features/learn/LessonDiagram'
 import { TemplateImage } from '@/features/practice/TemplateCard'
 import { BADGE_MAP } from '@/mocks/badges'
-import { TEMPLATE_MAP } from '@/mocks/templates'
+import { useTemplateLookup } from '@/api/queries'
 import { TESTIMONIALS } from '@/mocks/palettes'
 import { useL } from '@/i18n/useL'
 import { colouriseTemplate } from '@/lib/raster'
@@ -52,9 +52,10 @@ const HAND_COLOURED: Record<string, string[]> = {
   fox: ['#E4572E', '#F6F1E7', '#E4572E', '#F6F1E7', '#F6F1E7', '#F6F1E7', '#E4572E', '#4A3426', '#4A3426', '#F6F1E7'],
 }
 
-function colouredTemplate(id: string, seed: string, coverage = 1) {
-  const t = TEMPLATE_MAP[id]
-  return svgToDataUrl(colouriseTemplate(t.svg, t.suggestedPalette, seeded(seed), coverage, HAND_COLOURED[id]))
+/** A showcase piece comes from the server's template list; until it has arrived (or if it lacks the id) there is nothing to colour. */
+function colouredTemplate(t: Template | undefined, seed: string, coverage = 1) {
+  if (!t) return undefined
+  return svgToDataUrl(colouriseTemplate(t.svg, t.suggestedPalette, seeded(seed), coverage, HAND_COLOURED[t.id]))
 }
 
 /* ---------------- hero ---------------- */
@@ -67,7 +68,8 @@ function Hero() {
   const y1 = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -140])
   const y2 = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -60])
   const y3 = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : -220])
-  const fox = useMemo(() => colouredTemplate('fox', 'hero-fox'), [])
+  const templateOf = useTemplateLookup()
+  const fox = useMemo(() => colouredTemplate(templateOf('fox'), 'hero-fox'), [templateOf])
 
   return (
     <section ref={ref} className="relative isolate overflow-hidden pb-24 pt-32 md:pt-40">
@@ -113,7 +115,7 @@ function Hero() {
             <div className="float-y" style={{ '--r': '3deg', '--d': '7s' } as React.CSSProperties}>
               <Frame tone="gold" frameWidth={12} matWidth={12}>
                 <div className="aspect-[4/3]">
-                  <img src={fox} alt={t('home.heroArtAlt')} className="h-full w-full object-contain" />
+                  {fox && <img src={fox} alt={t('home.heroArtAlt')} className="h-full w-full object-contain" />}
                 </div>
               </Frame>
             </div>
@@ -219,18 +221,22 @@ const FEATURES = [
   { key: 'collection', to: '/collection', icon: GalleryVerticalEnd },
 ] as const
 
+/** The practice mock-up shows these server templates; one the server does not have is left out. */
+const SHOWCASE_IDS = ['sunflower', 'koi', 'mandala-lotus', 'lighthouse', 'cat', 'pho']
+
 function FeatureMock({ k }: { k: (typeof FEATURES)[number]['key'] }) {
   const { t } = useTranslation()
   const L = useL()
+  const templateOf = useTemplateLookup()
   if (k === 'practice')
     return (
       <div className="grid grid-cols-3 gap-3 p-4">
-        {['sunflower', 'koi', 'mandala-lotus', 'lighthouse', 'cat', 'pho'].map((id, i) => (
-          <div key={id} className="overflow-hidden rounded-xl border-[5px] border-[var(--mat)] bg-white shadow-paper">
+        {SHOWCASE_IDS.flatMap((id) => templateOf(id) ?? []).map((tpl, i) => (
+          <div key={tpl.id} className="overflow-hidden rounded-xl border-[5px] border-[var(--mat)] bg-white shadow-paper">
             <div className="aspect-[4/3] p-1">
-              <TemplateImage template={TEMPLATE_MAP[id]} />
+              <TemplateImage template={tpl} />
             </div>
-            <p className="truncate px-1.5 pb-1 font-display text-[11px] text-inkwell">{L(TEMPLATE_MAP[id].title)}</p>
+            <p className="truncate px-1.5 pb-1 font-display text-[11px] text-inkwell">{L(tpl.title)}</p>
             {i === 0 && <span className="sr-only">{t('practice.daily.badge')}</span>}
           </div>
         ))}
@@ -418,7 +424,8 @@ function Features() {
 
 function JudgePreview() {
   const { t } = useTranslation()
-  const cat = useMemo(() => colouredTemplate('mushroom-house', 'judge-demo'), [])
+  const templateOf = useTemplateLookup()
+  const cat = useMemo(() => colouredTemplate(templateOf('mushroom-house'), 'judge-demo'), [templateOf])
   return (
     <section className="relative overflow-hidden bg-[#141210] py-24 text-[#f6f1e7]">
       <div
@@ -430,7 +437,7 @@ function JudgePreview() {
         <Reveal>
           <Frame tone="gold" frameWidth={16} matWidth={16} tilt={-1.5}>
             <div className="aspect-[4/3]">
-              <img src={cat} alt={t('home.judgeArtAlt')} className="h-full w-full object-contain" />
+              {cat && <img src={cat} alt={t('home.judgeArtAlt')} className="h-full w-full object-contain" />}
             </div>
           </Frame>
         </Reveal>
@@ -549,16 +556,20 @@ const WALL: ({ gen: GenStyle } | { tpl: string })[] = [
   { gen: 'abstract' },
 ]
 
+/** `slot` is the place on the wall, so a tile keeps its frame and tilt whether or not its neighbours have loaded. */
+type WallItem = { kind: 'gen'; style: GenStyle; key: string; slot: number } | { kind: 'tpl'; src: string; key: string; slot: number }
+
 function GalleryWall() {
   const { t } = useTranslation()
+  const templateOf = useTemplateLookup()
   const items = useMemo(
     () =>
-      WALL.map((w, i) =>
-        'tpl' in w
-          ? { kind: 'tpl' as const, src: colouredTemplate(w.tpl, `wall-${i}`), key: w.tpl }
-          : { kind: 'gen' as const, style: w.gen, key: w.gen },
-      ),
-    [],
+      WALL.flatMap((w, slot): WallItem[] => {
+        if (!('tpl' in w)) return [{ kind: 'gen', style: w.gen, key: w.gen, slot }]
+        const src = colouredTemplate(templateOf(w.tpl), `wall-${slot}`)
+        return src ? [{ kind: 'tpl', src, key: w.tpl, slot }] : []
+      }),
+    [templateOf],
   )
   return (
     <section className="relative py-24">
@@ -575,20 +586,20 @@ function GalleryWall() {
           align="center"
         />
         <ul className="mt-14 columns-2 gap-6 md:columns-3 lg:columns-4">
-          {items.map((it, i) => (
-            <Reveal key={it.key + i} as="li" delay={(i % 4) * 0.06} className="mb-6 break-inside-avoid">
+          {items.map((it, n) => (
+            <Reveal key={it.key + it.slot} as="li" delay={(n % 4) * 0.06} className="mb-6 break-inside-avoid">
               <Frame
                 frameWidth={8}
                 matWidth={8}
-                tone={i % 5 === 0 ? 'gold' : i % 3 === 0 ? 'light' : 'wood'}
-                tilt={((i * 17) % 5) - 2}
-                label={<WallLabel title={t(`home.wallLabels.${i % 6}`)} lines={[t('home.sampleArtwork')]} />}
+                tone={it.slot % 5 === 0 ? 'gold' : it.slot % 3 === 0 ? 'light' : 'wood'}
+                tilt={((it.slot * 17) % 5) - 2}
+                label={<WallLabel title={t(`home.wallLabels.${it.slot % 6}`)} lines={[t('home.sampleArtwork')]} />}
               >
-                <div className={i % 3 === 1 ? 'aspect-[3/4]' : 'aspect-[4/3]'}>
+                <div className={it.slot % 3 === 1 ? 'aspect-[3/4]' : 'aspect-[4/3]'}>
                   {it.kind === 'tpl' ? (
                     <img src={it.src} alt="" className="h-full w-full object-contain" />
                   ) : (
-                    <GenerativeArt style={it.style} seed={`wall-${i}`} aspect={i % 3 === 1 ? 'portrait' : 'landscape'} />
+                    <GenerativeArt style={it.style} seed={`wall-${it.slot}`} aspect={it.slot % 3 === 1 ? 'portrait' : 'landscape'} />
                   )}
                 </div>
               </Frame>

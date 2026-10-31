@@ -1,4 +1,21 @@
+import type { Template } from '@/types'
 import { buildReply, detectIntent } from './chat'
+
+const SERVER_TEMPLATES: Template[] = [
+  {
+    id: 'starter',
+    title: { en: 'Starter', vi: 'Khởi đầu' },
+    category: 'animals',
+    difficulty: 'beginner',
+    minutes: 10,
+    svg: '<svg xmlns="http://www.w3.org/2000/svg"/>',
+    tags: [],
+    popularity: 1,
+    unlockLevel: 1,
+    createdAt: '2026-01-01T00:00:00.000Z',
+    suggestedPalette: [],
+  },
+]
 
 describe('mock AI muse', () => {
   it('detects intents in English and Vietnamese', () => {
@@ -22,10 +39,31 @@ describe('mock AI muse', () => {
   })
 
   it('returns idea and template cards for idea requests, in the requested language', () => {
-    const r = buildReply({ message: 'cho mình vài ý tưởng vẽ', mode: 'ideas', lang: 'vi' })
+    const r = buildReply({ message: 'cho mình vài ý tưởng vẽ', mode: 'ideas', lang: 'vi' }, SERVER_TEMPLATES)
     expect(r.cards.some((c) => c.type === 'idea')).toBe(true)
     expect(r.cards.some((c) => c.type === 'template')).toBe(true)
     expect(r.text).toMatch(/ý tưởng/)
+  })
+
+  it('only suggests a beginner template the server has', () => {
+    for (const seed of ['a', 'b', 'c', 'd']) {
+      const r = buildReply({ message: 'drawing ideas please', mode: 'ideas', lang: 'en', seed }, SERVER_TEMPLATES)
+      const card = r.cards.find((c) => c.type === 'template')
+      expect(card).toEqual({ type: 'template', templateId: 'starter' })
+    }
+  })
+
+  it('leaves the template card out when it has no templates (offline, or none are beginner)', () => {
+    const ask = { message: 'drawing ideas please', mode: 'ideas', lang: 'en' } as const
+    expect(buildReply(ask).cards.some((c) => c.type === 'template')).toBe(false)
+    expect(buildReply(ask, [{ ...SERVER_TEMPLATES[0], difficulty: 'advanced' }]).cards.some((c) => c.type === 'template')).toBe(false)
+    expect(buildReply(ask).cards.some((c) => c.type === 'idea')).toBe(true)
+  })
+
+  it('the 7-day challenge points at the sunflower only if the server has it', () => {
+    const ask = { message: 'Create a 7-day drawing challenge for me', mode: 'ideas', lang: 'en' } as const
+    expect(buildReply(ask, [{ ...SERVER_TEMPLATES[0], id: 'sunflower' }]).cards).toEqual([{ type: 'template', templateId: 'sunflower' }])
+    expect(buildReply(ask, SERVER_TEMPLATES).cards).toEqual([])
   })
 
   it('regenerates differently with a new seed', () => {

@@ -9,8 +9,7 @@ import { Skeleton } from '@/components/Progress'
 import { Highlight } from '@/components/art/Brush'
 import { Washes } from '@/components/art/Washes'
 import { Button } from '@/components/Button'
-import { useArtworks, useTemplates } from '@/api/queries'
-import { dailyTemplateId } from '@/api/templates'
+import { useArtworks, useDailyTemplateQuery, useTemplates } from '@/api/queries'
 import { TEMPLATE_CATEGORIES } from '@/mocks/templates'
 import { fuzzyIncludes } from '@/lib/utils'
 import { useLevel } from '@/features/gamification/hooks'
@@ -32,8 +31,9 @@ export default function PracticeLibraryPage() {
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState<Sort>('popular')
   const [notDone, setNotDone] = useState(false)
-  const dailyId = dailyTemplateId()
-  const daily = templates?.find((x) => x.id === dailyId)
+  const dailyQuery = useDailyTemplateQuery()
+  const dailyId = dailyQuery.data
+  const daily = dailyId ? templates?.find((x) => x.id === dailyId) : undefined
   const { data: artworks } = useArtworks()
   const today = dayKey()
   const dailyDone = (artworks ?? []).some((a) => a.templateId === dailyId && !!a.score && dayKey(new Date(a.score.scoredAt)) === today)
@@ -52,7 +52,7 @@ export default function PracticeLibraryPage() {
           fuzzyIncludes(t(`practice.categories.${x.category}`), query),
       )
     const sorted = [...l]
-    if (sort === 'new') sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    if (sort === 'new') sorted.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
     if (sort === 'popular') sorted.sort((a, b) => b.popularity - a.popularity)
     if (sort === 'easiest') sorted.sort((a, b) => DIFF_LEVEL[a.difficulty] - DIFF_LEVEL[b.difficulty] || a.minutes - b.minutes)
     return sorted
@@ -87,7 +87,11 @@ export default function PracticeLibraryPage() {
         />
 
         <div className="mt-10">
-          {daily ? <DailyChallengeBanner template={daily} done={dailyDone} /> : <Skeleton className="h-72 rounded-[30px]" />}
+          {daily ? (
+            <DailyChallengeBanner template={daily} done={dailyDone} />
+          ) : isLoading || dailyQuery.isPending ? (
+            <Skeleton className="h-72 rounded-[30px]" />
+          ) : null}
         </div>
 
         {/* ---------- filters ---------- */}

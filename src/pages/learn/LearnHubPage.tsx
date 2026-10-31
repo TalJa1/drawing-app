@@ -34,7 +34,7 @@ import { ArtWheel } from '@/features/learn/ArtWheel'
 import { ArtFormCover } from '@/features/learn/ArtFormCover'
 import { searchAtlas } from '@/features/learn/search'
 import { DIFF_LEVEL } from '@/features/practice/constants'
-import { useArtForms, useArtists, useLessons, useMovements } from '@/api/queries'
+import { useArtForms, useArtists, useGlossary, useLessons, useMovements } from '@/api/queries'
 import { TIMELINE } from '@/mocks/movements'
 import { ARTISTS } from '@/mocks/artists'
 import { ART_FACTS } from '@/mocks/palettes'
@@ -315,7 +315,11 @@ export default function LearnHubPage() {
   const bookmarks = useLearn((s) => s.bookmarks)
   const toggleBookmark = useLearn((s) => s.toggleBookmark)
   const formsViewed = useProgress((s) => s.stats.artFormsViewed)
-  const hits = useMemo(() => searchAtlas(q, lang), [q, lang])
+  const { data: glossary } = useGlossary()
+  const hits = useMemo(
+    () => searchAtlas(q, lang, { artForms: forms ?? [], lessons: lessons ?? [], glossary: glossary ?? [] }),
+    [q, lang, forms, lessons, glossary],
+  )
 
   const shownLessons = (lessons ?? []).filter((l) =>
     topic === 'all' ? true : topic === 'saved' ? bookmarks.includes(l.slug) : l.topic === topic,

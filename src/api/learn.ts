@@ -1,14 +1,21 @@
 import type { Artist, ArtForm, ArtMovement, GlossaryTerm, Lesson, Localized, RewardSummary } from '@/types'
-import { LESSONS, LESSON_MAP, QUIZ_KEYS } from '@/mocks/lessons'
+import { LESSON_MAP, QUIZ_KEYS } from '@/mocks/lessons'
 import { MOVEMENTS, MOVEMENT_MAP } from '@/mocks/movements'
 import { ARTISTS, ARTIST_MAP } from '@/mocks/artists'
-import { ART_FORMS, ART_FORM_MAP } from '@/mocks/artForms'
-import { GLOSSARY } from '@/mocks/glossary'
 import { useLearn } from '@/store/learn'
-import { ApiError, simulate } from './client'
+import type { components } from './schema'
+import type { Assert, Wire } from './contract'
+import { ApiError, request, simulate } from './client'
 import { recordActivity } from './progress'
 
-/* Content endpoints (a CMS later). Short latency; cached forever by TanStack Query. */
+// The server's shapes (from its OpenAPI) must be usable as the app's types; if one side changes
+// without the other, `tsc` fails here.
+export type LessonOnTheWire = Assert<Wire<components['schemas']['LessonOut']>, Lesson>
+export type ArtFormOnTheWire = Assert<Wire<components['schemas']['ArtFormOut']>, ArtForm>
+export type GlossaryTermOnTheWire = Assert<Wire<components['schemas']['GlossaryTermOut']>, GlossaryTerm>
+
+/* Movements and artists have no endpoint on the server (plan 6.4): they stay local, with a short
+   simulated wait. Cached forever by TanStack Query. */
 const content = { latency: [250, 600] as [number, number] }
 
 function found<T>(v: T | undefined, what: string): T {
@@ -16,13 +23,13 @@ function found<T>(v: T | undefined, what: string): T {
   return v
 }
 
-export async function getLessons(): Promise<Lesson[]> {
-  await simulate(content)
-  return LESSONS
+/** GET /lessons */
+export function getLessons(): Promise<Lesson[]> {
+  return request<Lesson[]>('GET', '/lessons')
 }
-export async function getLesson(slug: string): Promise<Lesson> {
-  await simulate(content)
-  return found(LESSON_MAP[slug], 'Lesson')
+/** GET /lessons/{slug} — the quiz comes without its right answers; they are given on submit. */
+export function getLesson(slug: string): Promise<Lesson> {
+  return request<Lesson>('GET', `/lessons/${encodeURIComponent(slug)}`)
 }
 export async function getMovements(): Promise<ArtMovement[]> {
   await simulate(content)
@@ -40,17 +47,17 @@ export async function getArtist(slug: string): Promise<Artist> {
   await simulate(content)
   return found(ARTIST_MAP[slug], 'Artist')
 }
-export async function getArtForms(): Promise<ArtForm[]> {
-  await simulate(content)
-  return ART_FORMS
+/** GET /art-forms */
+export function getArtForms(): Promise<ArtForm[]> {
+  return request<ArtForm[]>('GET', '/art-forms')
 }
-export async function getArtForm(slug: string): Promise<ArtForm> {
-  await simulate(content)
-  return found(ART_FORM_MAP[slug], 'Art form')
+/** GET /art-forms/{slug} */
+export function getArtForm(slug: string): Promise<ArtForm> {
+  return request<ArtForm>('GET', `/art-forms/${encodeURIComponent(slug)}`)
 }
-export async function getGlossary(): Promise<GlossaryTerm[]> {
-  await simulate(content)
-  return GLOSSARY
+/** GET /glossary */
+export function getGlossary(): Promise<GlossaryTerm[]> {
+  return request<GlossaryTerm[]>('GET', '/glossary')
 }
 
 /** POST /lessons/:slug/progress */

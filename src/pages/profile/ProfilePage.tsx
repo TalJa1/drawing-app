@@ -11,6 +11,7 @@ import { Select, Slider, Switch, TextField } from '@/components/Form'
 import { XPBar } from '@/components/Gamification'
 import { Highlight } from '@/components/art/Brush'
 import { updateProfile } from '@/api/auth'
+import { useLessons } from '@/api/queries'
 import { exportData, deleteAllData } from '@/api/account'
 import { clearDemoData, isDemoActive, seedDemoData } from '@/api/demo'
 import { queryClient } from '@/app/queryClient'
@@ -22,7 +23,7 @@ import { useStudio } from '@/store/studio'
 import { toast } from '@/store/ui'
 import { downloadBlob } from '@/lib/utils'
 import { useLevel } from '@/features/gamification/hooks'
-import { LESSONS, TRACKS } from '@/mocks/lessons'
+import { TRACKS } from '@/mocks/lessons'
 import { useL } from '@/i18n/useL'
 import { cn } from '@/lib/utils'
 
@@ -48,6 +49,7 @@ export default function ProfilePage() {
   const settings = useSettings()
   const { level, rank } = useLevel()
   const lessons = useLearn((s) => s.lessons)
+  const { data: allLessons } = useLessons()
   const demoOn = useCollection((s) => s.artworks.some((a) => a.demo))
   const [name, setName] = useState(user.displayName)
   const [bio, setBio] = useState(user.bio)
@@ -208,7 +210,8 @@ export default function ProfilePage() {
                 })}
               </ul>
               <p className="mt-3 text-sm text-ink-faint">
-                {t('profile.lessonsDone', { count: Object.values(lessons).filter((l) => l.completed).length, total: LESSONS.length })}{' '}
+                {allLessons &&
+                  `${t('profile.lessonsDone', { count: Object.values(lessons).filter((l) => l.completed).length, total: allLessons.length })} `}
                 <Link to="/learn" className="link-ink">
                   {t('nav.learn')}
                 </Link>

@@ -3,7 +3,7 @@
    cards) and streams it token by token like a real LLM endpoint (SSE).
    Replace `streamChatReply` with a fetch() to the real chat endpoint.
    ------------------------------------------------------------------ */
-import type { ChatAttachment, ChatCard, ChatMode, ChatStreamEvent, Lang } from '@/types'
+import type { ChatAttachment, ChatCard, ChatMode, ChatStreamEvent, Lang, Template } from '@/types'
 import { seeded, shuffle } from '@/lib/random'
 import { fuzzyIncludes, matchesPhrase, sleep } from '@/lib/utils'
 import { hexToHsl, hslToHex, scheme } from '@/lib/color'
@@ -18,10 +18,12 @@ import {
   type Intent,
 } from '@/mocks/chatReplies'
 import { MOVEMENTS } from '@/mocks/movements'
-import { TEMPLATES } from '@/mocks/templates'
 import { PALETTES } from '@/mocks/palettes'
 import { useSettings } from '@/store/settings'
+import { queryClient } from '@/app/queryClient'
 import { ApiError } from './client'
+import { qk } from './queries'
+import { getTemplates } from './templates'
 
 export interface ChatRequest {
   message: string
@@ -82,8 +84,11 @@ function harmonyPalettes(base: string, lang: Lang, label: string): ChatCard[] {
   ]
 }
 
-/** Pure reply builder (unit-testable). */
-export function buildReply(req: ChatRequest): ChatReply {
+/**
+ * Pure reply builder (unit-testable). `templates` is the server's list: the template card is only
+ * offered from it, so a reply never points at a template the app does not have.
+ */
+export function buildReply(req: ChatRequest, templates: readonly Template[] = []): ChatReply {
   const { message, mode, lang } = req
   const rng = seeded(`${message}|${mode}|${req.seed ?? ''}`)
   const intent = detectIntent(message, mode, !!req.attachments?.length)
@@ -131,11 +136,8 @@ export function buildReply(req: ChatRequest): ChatReply {
           minutes: i.minutes,
         }),
       )
-      const t = shuffle(
-        rng,
-        TEMPLATES.filter((x) => x.difficulty === 'beginner'),
-      )[0]
-      cards.push({ type: 'template', templateId: t.id })
+      const starters = templates.filter((x) => x.difficulty === 'beginner')
+      if (starters.length) cards.push({ type: 'template', templateId: shuffle(rng, starters)[0].id })
       break
     }
     case 'colour': {
@@ -202,7 +204,7 @@ export function buildReply(req: ChatRequest): ChatReply {
         'Each day you complete keeps your streak flame burning. 🔥 You’ve got this!',
         'Mỗi ngày hoàn thành sẽ giữ ngọn lửa chuỗi của bạn cháy sáng. 🔥 Bạn làm được mà!',
       )}`
-      cards.push({ type: 'template', templateId: 'sunflower' })
+      if (templates.some((x) => x.id === 'sunflower')) cards.push({ type: 'template', templateId: 'sunflower' })
       break
     case 'feedback': {
       const hasImg = !!req.attachments?.length
@@ -239,7 +241,9 @@ export async function* streamChatReply(req: ChatRequest, signal?: AbortSignal): 
   if (useSettings.getState().simulateErrors && Math.random() < 0.15) {
     throw new ApiError('The muse lost her train of thought. Try again?', 503, 'simulated_failure')
   }
-  const reply = buildReply(req)
+  // the chat itself is still a mock, but the templates it suggests are the real ones; without them (offline) it just leaves the card out
+  const templates = await queryClient.ensureQueryData({ queryKey: qk.templates, queryFn: getTemplates }).catch(() => [])
+  const reply = buildReply(req, templates)
   const tokens = reply.text.match(/\s*\S+/g) ?? []
   for (const tok of tokens) {
     if (signal?.aborted) return

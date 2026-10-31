@@ -14,9 +14,8 @@ import { LineChart } from '@/components/charts/LineChart'
 import { CalendarHeatmap } from '@/components/charts/CalendarHeatmap'
 import { Highlight } from '@/components/art/Brush'
 import { Washes } from '@/components/art/Washes'
-import { useArtworks, qk } from '@/api/queries'
+import { useArtworks, useTemplateLookup, qk } from '@/api/queries'
 import { seedDemoData } from '@/api/demo'
-import { templateById } from '@/api/templates'
 import { useL } from '@/i18n/useL'
 import { cn } from '@/lib/utils'
 import { formatDate, formatMinutes } from '@/lib/date'
@@ -108,6 +107,7 @@ function GalleryItem({ art, onOpen, index }: { art: Artwork; onOpen: () => void;
 export default function CollectionPage() {
   const { t, i18n } = useTranslation()
   const L = useL()
+  const templateOf = useTemplateLookup()
   const { data, isLoading } = useArtworks()
   const [tab, setTab] = useState<Tab>('all')
   const [sort, setSort] = useState<Sort>('new')
@@ -276,7 +276,7 @@ export default function CollectionPage() {
                 <option value="all">{t('common.all')}</option>
                 {templatesUsed.map((id) => (
                   <option key={id} value={id}>
-                    {L(templateById(id)?.title)}
+                    {L(templateOf(id)?.title)}
                   </option>
                 ))}
               </Select>

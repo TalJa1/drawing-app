@@ -8,10 +8,9 @@ import { Button } from '@/components/Button'
 import { IconButton } from '@/components/IconButton'
 import { Meter } from '@/components/Progress'
 import { WallLabel } from '@/components/Frame'
-import { useDeleteArtwork, useUpdateArtwork } from '@/api/queries'
+import { useDeleteArtwork, useTemplateLookup, useUpdateArtwork } from '@/api/queries'
 import { getImageBlob } from '@/api/artworks'
 import { recordActivity } from '@/api/progress'
-import { templateById } from '@/api/templates'
 import { useL } from '@/i18n/useL'
 import { cn, downloadBlob } from '@/lib/utils'
 import { formatDate, formatMinutes } from '@/lib/date'
@@ -37,7 +36,8 @@ export function Lightbox({
   const remove = useDeleteArtwork()
   const [confirmDelete, setConfirmDelete] = useState(false)
   const art = index !== null ? artworks[index] : null
-  const template = templateById(art?.templateId)
+  const templateOf = useTemplateLookup()
+  const template = templateOf(art?.templateId)
 
   const go = (d: number) => {
     if (index === null) return

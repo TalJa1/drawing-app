@@ -632,6 +632,59 @@ export interface components {
       /** Badges */
       badges: components['schemas']['BadgeOut'][]
     }
+    /**
+     * ArtFormOut
+     * @description An art form as `GET /art-forms[/{slug}]` serves it.
+     */
+    ArtFormOut: {
+      /** Slug */
+      slug: string
+      name: components['schemas']['Localized']
+      /**
+       * Family
+       * @enum {string}
+       */
+      family: 'drawing' | 'painting' | 'print' | '3d' | 'lens' | 'digital' | 'word' | 'street' | 'space' | 'craft'
+      definition: components['schemas']['Localized']
+      history: components['schemas']['Localized']
+      examples: components['schemas']['LocalizedList']
+      tools: components['schemas']['LocalizedList']
+      /**
+       * Difficulty
+       * @enum {string}
+       */
+      difficulty: 'beginner' | 'intermediate' | 'advanced' | 'master'
+      exercise: components['schemas']['Localized']
+      /** Relatedlessons */
+      relatedLessons: string[]
+      /**
+       * Coverstyle
+       * @enum {string}
+       */
+      coverStyle:
+        | 'hatching'
+        | 'washes'
+        | 'impasto'
+        | 'blocks'
+        | 'ink'
+        | 'print'
+        | 'stone'
+        | 'clay'
+        | 'lens'
+        | 'pixels'
+        | 'panels'
+        | 'letters'
+        | 'spray'
+        | 'collage'
+        | 'columns'
+        | 'weave'
+        | 'space'
+        | 'dots'
+        | 'geometry'
+        | 'lacquer'
+      /** Palette */
+      palette: string[]
+    }
     /** ArtworkOut */
     ArtworkOut: {
       /** Id */
@@ -800,6 +853,21 @@ export interface components {
        */
       serverTime: string
     }
+    /**
+     * GlossaryTermOut
+     * @description A glossary term as `GET /glossary` serves it.
+     */
+    GlossaryTermOut: {
+      /** Id */
+      id: string
+      term: components['schemas']['Localized']
+      definition: components['schemas']['Localized']
+      /**
+       * Category
+       * @enum {string}
+       */
+      category: 'colour' | 'technique' | 'composition' | 'material' | 'history' | 'form'
+    }
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -847,6 +915,76 @@ export interface components {
        */
       serverTime: string
     }
+    /**
+     * LessonOut
+     * @description A lesson as `GET /lessons[/{slug}]` serves it: the quiz has no right answers (see above).
+     */
+    LessonOut: {
+      /** Slug */
+      slug: string
+      title: components['schemas']['Localized']
+      summary: components['schemas']['Localized']
+      /**
+       * Topic
+       * @enum {string}
+       */
+      topic: 'composition' | 'colour' | 'light' | 'perspective' | 'drawing' | 'technique' | 'figure' | 'subject' | 'history'
+      /**
+       * Track
+       * @enum {string}
+       */
+      track: 'beginner' | 'colour' | 'history'
+      /**
+       * Difficulty
+       * @enum {string}
+       */
+      difficulty: 'beginner' | 'intermediate' | 'advanced' | 'master'
+      /** Minutes */
+      minutes: number
+      /** Sections */
+      sections: components['schemas']['LessonSection'][]
+      tryIt: components['schemas']['TryIt']
+      quiz: components['schemas']['app__schemas__content__QuizOut']
+      /** Xp */
+      xp: number
+    }
+    /** LessonSection */
+    LessonSection: {
+      heading: components['schemas']['Localized']
+      body: components['schemas']['Localized']
+      /** Diagram */
+      diagram?:
+        | (
+            | 'thirds'
+            | 'golden'
+            | 'leading'
+            | 'wheel'
+            | 'value'
+            | 'warmcool'
+            | 'schemes'
+            | 'psychology'
+            | 'shadow'
+            | 'onepoint'
+            | 'twopoint'
+            | 'proportion'
+            | 'line'
+            | 'hatching'
+            | 'blending'
+            | 'texture'
+            | 'gesture'
+            | 'face'
+            | 'hand'
+            | 'anatomy'
+            | 'stilllife'
+            | 'landscape'
+            | 'watercolour'
+            | 'negative'
+            | 'contour'
+            | 'atmos'
+          )
+        | null
+      callout?: components['schemas']['Localized'] | null
+    }
     /** LessonStateOut */
     LessonStateOut: {
       /** Progress */
@@ -877,6 +1015,13 @@ export interface components {
       en: string
       /** Vi */
       vi: string
+    }
+    /** LocalizedList */
+    LocalizedList: {
+      /** En */
+      en: string[]
+      /** Vi */
+      vi: string[]
     }
     /** LocalizedText */
     LocalizedText: {
@@ -952,17 +1097,16 @@ export interface components {
       /** Answers */
       answers: number[]
     }
-    /** QuizOut */
-    QuizOut: {
-      /** Correct */
-      correct: number
-      /** Total */
-      total: number
-      /** Passed */
-      passed: boolean
-      reward: components['schemas']['RewardOut'] | null
-      /** Review */
-      review: components['schemas']['QuestionReview'][]
+    /**
+     * QuizQuestionOut
+     * @description A question as the public API serves it: no `answer` and no `explain` (given on submit).
+     */
+    QuizQuestionOut: {
+      /** Id */
+      id: string
+      prompt: components['schemas']['Localized']
+      /** Options */
+      options: components['schemas']['Localized'][]
     }
     /** RegisterIn */
     RegisterIn: {
@@ -1191,6 +1335,52 @@ export interface components {
       /** Aesthetics */
       aesthetics: number
     }
+    /**
+     * TemplateOut
+     * @description A template as `GET /templates[/{id}]` serves it (no `image_url` until the PNG exists).
+     */
+    TemplateOut: {
+      /** Id */
+      id: string
+      title: components['schemas']['Localized']
+      /**
+       * Category
+       * @enum {string}
+       */
+      category: 'animals' | 'landscapes' | 'portraits' | 'objects' | 'flowers' | 'architecture' | 'fantasy' | 'patterns' | 'food'
+      /**
+       * Difficulty
+       * @enum {string}
+       */
+      difficulty: 'beginner' | 'intermediate' | 'advanced' | 'master'
+      /** Minutes */
+      minutes: number
+      /** Unlocklevel */
+      unlockLevel: number
+      /** Svg */
+      svg: string
+      /** Imageurl */
+      imageUrl?: string | null
+      /** Suggestedpalette */
+      suggestedPalette: string[]
+      /** Popularity */
+      popularity: number
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string
+      /** Tags */
+      tags: string[]
+    }
+    /** TryIt */
+    TryIt: {
+      /** Tool */
+      tool: string
+      /** Palette */
+      palette: string[]
+      prompt: components['schemas']['Localized']
+    }
     /** UserOut */
     UserOut: {
       /**
@@ -1229,6 +1419,25 @@ export interface components {
       input?: unknown
       /** Context */
       ctx?: Record<string, never>
+    }
+    /** QuizOut */
+    app__schemas__content__QuizOut: {
+      /** Lessonslug */
+      lessonSlug: string
+      /** Questions */
+      questions: components['schemas']['QuizQuestionOut'][]
+    }
+    /** QuizOut */
+    app__schemas__learning__QuizOut: {
+      /** Correct */
+      correct: number
+      /** Total */
+      total: number
+      /** Passed */
+      passed: boolean
+      reward: components['schemas']['RewardOut'] | null
+      /** Review */
+      review: components['schemas']['QuestionReview'][]
     }
   }
   responses: never
@@ -1298,7 +1507,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': unknown
+          'application/json': components['schemas']['TemplateOut'][]
         }
       }
     }
@@ -1320,7 +1529,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': unknown
+          'application/json': components['schemas']['TemplateOut']
         }
       }
       /** @description Validation Error */
@@ -1349,7 +1558,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': unknown
+          'application/json': components['schemas']['LessonOut'][]
         }
       }
     }
@@ -1371,7 +1580,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': unknown
+          'application/json': components['schemas']['LessonOut']
         }
       }
       /** @description Validation Error */
@@ -1400,7 +1609,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': unknown
+          'application/json': components['schemas']['ArtFormOut'][]
         }
       }
     }
@@ -1422,7 +1631,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': unknown
+          'application/json': components['schemas']['ArtFormOut']
         }
       }
       /** @description Validation Error */
@@ -1451,7 +1660,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': unknown
+          'application/json': components['schemas']['GlossaryTermOut'][]
         }
       }
     }
@@ -2076,7 +2285,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['QuizOut']
+          'application/json': components['schemas']['app__schemas__learning__QuizOut']
         }
       }
       /** @description Validation Error */

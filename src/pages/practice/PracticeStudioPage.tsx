@@ -10,11 +10,10 @@ import { analyse, computeRegions, coverageOf, ghostMask, type Regions } from '@/
 import { ScoringCeremony } from '@/features/practice/ScoringCeremony'
 import { TemplateImage } from '@/features/practice/TemplateCard'
 import { DIFF_LEVEL } from '@/features/practice/constants'
-import { useTemplate } from '@/api/queries'
+import { useDailyTemplateId, useTemplate } from '@/api/queries'
 import { submitArtwork } from '@/api/artworks'
 import { scoreArtwork } from '@/api/scoring'
 import { recordActivity } from '@/api/progress'
-import { dailyTemplateId } from '@/api/templates'
 import { ApiError } from '@/api/client'
 import { useCollection } from '@/store/collection'
 import { useLastResult } from '@/store/ui'
@@ -41,6 +40,7 @@ function PracticeStudio({ template }: { template: Template }) {
   const timer = useRef<number | undefined>(undefined)
   const pending = useRef<StudioContext | null>(null)
   const setLast = useLastResult((s) => s.set)
+  const dailyId = useDailyTemplateId() // the server's answer; the local score below only needs to know if this is it
   const title = L(template.title)
 
   const onEngine = useCallback(
@@ -116,7 +116,7 @@ function PracticeStudio({ template }: { template: Template }) {
         templateId: template.id,
         category: template.category,
         seconds: ctx.seconds,
-        isDaily: template.id === dailyTemplateId(),
+        isDaily: template.id === dailyId,
         distinctHues: analysis.distinctHues,
         previousBest: previous,
       })

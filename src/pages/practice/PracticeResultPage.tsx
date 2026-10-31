@@ -16,10 +16,9 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import type { Artwork, Template } from '@/types'
-import { useArtwork, useTemplates, useUpdateArtwork } from '@/api/queries'
+import { useArtwork, useTemplateLookup, useTemplates, useUpdateArtwork } from '@/api/queries'
 import { getImageBlob, getImageUrl } from '@/api/artworks'
 import { recordActivity } from '@/api/progress'
-import { templateById } from '@/api/templates'
 import { useL } from '@/i18n/useL'
 import { cn, copyText, downloadBlob } from '@/lib/utils'
 import { celebrate } from '@/lib/confetti'
@@ -422,7 +421,8 @@ export default function PracticeResultPage() {
   const { artworkId = '' } = useParams()
   const { t } = useTranslation()
   const { data: artwork, isLoading, isError } = useArtwork(artworkId)
-  const template = templateById(artwork?.templateId)
+  const templateOf = useTemplateLookup()
+  const template = templateOf(artwork?.templateId)
 
   if (isLoading)
     return (

@@ -1,37 +1,28 @@
-import type { Difficulty, Template, TemplateCategory } from '@/types'
-import { TEMPLATES, TEMPLATE_MAP } from '@/mocks/templates'
-import { hashString } from '@/lib/random'
-import { dayKey } from '@/lib/date'
-import { ApiError, simulate } from './client'
+import type { Template } from '@/types'
+import type { components } from './schema'
+import type { Assert, Wire } from './contract'
+import { request } from './client'
 
-export interface TemplateQuery {
-  category?: TemplateCategory | 'all'
-  difficulty?: Difficulty | 'all'
-  search?: string
-  sort?: 'new' | 'popular' | 'easiest'
-}
+// The server's shape (from its OpenAPI) must be usable as the app's `Template`; if one side changes
+// without the other, `tsc` fails here.
+export type TemplateOnTheWire = Assert<Wire<components['schemas']['TemplateOut']>, Template>
 
 /** GET /templates — filtering happens client-side in the UI for snappy chips. */
-export async function getTemplates(): Promise<Template[]> {
-  await simulate({ latency: [300, 700] })
-  return TEMPLATES
+export function getTemplates(): Promise<Template[]> {
+  return request<Template[]>('GET', '/templates')
 }
 
-/** GET /templates/:id */
-export async function getTemplate(id: string): Promise<Template> {
-  await simulate({ latency: [150, 400] })
-  const t = TEMPLATE_MAP[id]
-  if (!t) throw new ApiError('Template not found', 404, 'not_found')
-  return t
+/** GET /templates/{id} */
+export function getTemplate(id: string): Promise<Template> {
+  return request<Template>('GET', `/templates/${encodeURIComponent(id)}`)
 }
 
-/** Synchronous lookup for already-loaded templates (thumbnails, labels). */
-export function templateById(id: string | undefined): Template | undefined {
-  return id ? TEMPLATE_MAP[id] : undefined
-}
-
-/** GET /challenges/daily-template — deterministic per local day. Beginner/intermediate only. */
-export function dailyTemplateId(date = new Date()): string {
-  const pool = TEMPLATES.filter((t) => t.difficulty === 'beginner' || t.difficulty === 'intermediate')
-  return pool[hashString(`daily:${dayKey(date)}`) % pool.length].id
+/**
+ * GET /challenges/daily-template — the template of the day. The server decides it (it is also the
+ * one that credits the "template of the day" challenge, from the day a drawing is saved, in the
+ * caller's time zone), so the app asks instead of keeping a second copy of the rule.
+ */
+export async function getDailyTemplateId(): Promise<string> {
+  const res = await request<{ templateId: string }>('GET', '/challenges/daily-template')
+  return res.templateId
 }

@@ -11,9 +11,8 @@ import { Pill } from '@/components/Chip'
 import { Skeleton } from '@/components/Progress'
 import { Markdown } from '@/components/Markdown'
 import { Highlight } from '@/components/art/Brush'
-import { useLesson } from '@/api/queries'
+import { useLesson, useLessons } from '@/api/queries'
 import { completeLesson, saveLessonProgress } from '@/api/learn'
-import { LESSONS } from '@/mocks/lessons'
 import { LessonDiagram } from '@/features/learn/LessonDiagram'
 import { Quiz } from '@/features/learn/Quiz'
 import { useL } from '@/i18n/useL'
@@ -28,6 +27,7 @@ export default function LessonPage() {
   const L = useL()
   const navigate = useNavigate()
   const { data: lesson, isLoading, isError } = useLesson(slug)
+  const { data: allLessons } = useLessons()
   const state = useLearn((s) => s.lessons[slug])
   const saved = useLearn((s) => s.bookmarks.includes(slug))
   const toggleBookmark = useLearn((s) => s.toggleBookmark)
@@ -82,8 +82,8 @@ export default function LessonPage() {
       </Page>
     )
 
-  const idx = LESSONS.findIndex((l) => l.slug === lesson.slug)
-  const next = LESSONS[(idx + 1) % LESSONS.length]
+  const idx = allLessons?.findIndex((l) => l.slug === lesson.slug) ?? -1
+  const next = allLessons && idx >= 0 ? allLessons[(idx + 1) % allLessons.length] : undefined
   const tryIt = () => {
     const st = useStudio.getState()
     st.setTool(lesson.tryIt.tool as ToolId)
@@ -171,16 +171,18 @@ export default function LessonPage() {
             <Quiz quiz={lesson.quiz} />
           </Card>
 
-          <Link
-            to={`/learn/lessons/${next.slug}`}
-            className="group flex items-center justify-between rounded-[22px] border border-line p-6 transition-colors hover:bg-ink/[0.03]"
-          >
-            <div>
-              <p className="eyebrow">{t('learn.nextLesson')}</p>
-              <p className="mt-2 font-display text-2xl">{L(next.title)}</p>
-            </div>
-            <ArrowRight className="transition-transform group-hover:translate-x-1" />
-          </Link>
+          {next && (
+            <Link
+              to={`/learn/lessons/${next.slug}`}
+              className="group flex items-center justify-between rounded-[22px] border border-line p-6 transition-colors hover:bg-ink/[0.03]"
+            >
+              <div>
+                <p className="eyebrow">{t('learn.nextLesson')}</p>
+                <p className="mt-2 font-display text-2xl">{L(next.title)}</p>
+              </div>
+              <ArrowRight className="transition-transform group-hover:translate-x-1" />
+            </Link>
+          )}
         </div>
       </div>
     </Page>

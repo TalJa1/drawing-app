@@ -2,8 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, BookOpen, Brush, Clock, Send } from 'lucide-react'
 import type { ChatCard } from '@/types'
-import { TEMPLATE_MAP } from '@/mocks/templates'
-import { LESSON_MAP } from '@/mocks/lessons'
+import { useLessonLookup, useTemplateLookup } from '@/api/queries'
 import { useL } from '@/i18n/useL'
 import { copyText, svgToDataUrl } from '@/lib/utils'
 import { readableOn } from '@/lib/color'
@@ -18,6 +17,8 @@ export function ChatCardView({ card }: { card: ChatCard }) {
   const L = useL()
   const navigate = useNavigate()
   const setPalette = useStudio((s) => s.setPendingPalette)
+  const templateOf = useTemplateLookup()
+  const lessonOf = useLessonLookup()
 
   if (card.type === 'palette')
     return (
@@ -54,7 +55,7 @@ export function ChatCardView({ card }: { card: ChatCard }) {
     )
 
   if (card.type === 'template') {
-    const tpl = TEMPLATE_MAP[card.templateId]
+    const tpl = templateOf(card.templateId)
     if (!tpl) return null
     return (
       <Link
@@ -100,7 +101,7 @@ export function ChatCardView({ card }: { card: ChatCard }) {
       </div>
     )
 
-  const lesson = LESSON_MAP[card.slug]
+  const lesson = lessonOf(card.slug)
   if (!lesson) return null
   return (
     <Link
