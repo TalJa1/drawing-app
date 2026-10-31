@@ -1,21 +1,20 @@
 import { useCallback, useRef, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence } from 'framer-motion'
 import { Eye, EyeOff, Ghost, Lock, Sparkles } from 'lucide-react'
-import type { Template } from '@/types'
+import type { Artwork, Template } from '@/types'
 import { Studio, type StudioContext } from '@/features/drawing/ui/Studio'
 import type { DrawingEngine } from '@/features/drawing/engine/Engine'
 import { analyse, computeRegions, coverageOf, ghostMask, type Regions } from '@/features/drawing/analysis'
 import { ScoringCeremony } from '@/features/practice/ScoringCeremony'
 import { TemplateImage } from '@/features/practice/TemplateCard'
 import { DIFF_LEVEL } from '@/features/practice/constants'
-import { useDailyTemplateId, useTemplate } from '@/api/queries'
-import { submitArtwork } from '@/api/artworks'
+import { useTemplate } from '@/api/queries'
+import { apiErrorKey, submitArtwork } from '@/api/artworks'
 import { scoreArtwork } from '@/api/scoring'
-import { recordActivity } from '@/api/progress'
-import { ApiError } from '@/api/client'
-import { useCollection } from '@/store/collection'
+import { loginState } from '@/features/auth/loginRedirect'
+import { useSession } from '@/store/session'
 import { useLastResult } from '@/store/ui'
 import { useLevel } from '@/features/gamification/hooks'
 import { useL } from '@/i18n/useL'
@@ -33,14 +32,16 @@ function PracticeStudio({ template }: { template: Template }) {
   const { t } = useTranslation()
   const L = useL()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [regions, setRegions] = useState<Regions | null>(null)
   const [coverage, setCoverage] = useState(0)
   const [confirm, setConfirm] = useState<{ ctx: StudioContext; preview: string } | null>(null)
   const [ceremony, setCeremony] = useState<{ preview: string; error: string | null } | null>(null)
   const timer = useRef<number | undefined>(undefined)
   const pending = useRef<StudioContext | null>(null)
+  // the drawing already saved by this attempt: a retry after a failed scoring must not upload it again
+  const saved = useRef<Artwork | null>(null)
   const setLast = useLastResult((s) => s.set)
-  const dailyId = useDailyTemplateId() // the server's answer; the local score below only needs to know if this is it
   const title = L(template.title)
 
   const onEngine = useCallback(
@@ -82,6 +83,12 @@ function PracticeStudio({ template }: { template: Template }) {
   }
 
   const openConfirm = async (ctx: StudioContext) => {
+    if (!useSession.getState().token) {
+      // the score and the picture belong to an account: keep what is drawn, sign in, and come back to it
+      await ctx.saveDraft()
+      navigate('/login', { state: loginState(pathname) })
+      return
+    }
     const thumb = await makeThumbnail(ctx.engine.composite(), 520)
     setConfirm({ ctx, preview: await blobToDataUrl(thumb) })
   }
@@ -94,11 +101,7 @@ function PracticeStudio({ template }: { template: Template }) {
       const engine = ctx.engine
       const canvas = engine.composite()
       const analysis = analyse(engine.analysisPixels().paint.data, regions, template.suggestedPalette, engine.strokes)
-      const previous = useCollection
-        .getState()
-        .artworks.filter((a) => a.templateId === template.id && a.score)
-        .reduce<number | undefined>((m, a) => Math.max(m ?? 0, a.score!.overall), undefined)
-      const artwork = await submitArtwork({
+      saved.current ??= await submitArtwork({
         title,
         templateId: template.id,
         image: await canvasToBlob(canvas, 'image/png'),
@@ -109,17 +112,9 @@ function PracticeStudio({ template }: { template: Template }) {
         medium: t('practice.medium'),
         analysis,
       })
-      const score = await scoreArtwork(artwork.id)
-      const reward = await recordActivity({
-        type: 'artworkScored',
-        score,
-        templateId: template.id,
-        category: template.category,
-        seconds: ctx.seconds,
-        isDaily: template.id === dailyId,
-        distinctHues: analysis.distinctHues,
-        previousBest: previous,
-      })
+      const artwork = saved.current
+      // the server judges what it saved, and pays the XP (including the daily and personal-best bonuses)
+      const { reward } = await scoreArtwork(artwork.id)
       await ctx.clearDraft()
       void queryClient.invalidateQueries({ queryKey: qk.artworks })
       // keep the ceremony on screen for at least ~3.5 s — it's part of the magic
@@ -128,13 +123,14 @@ function PracticeStudio({ template }: { template: Template }) {
       setLast(artwork.id, reward)
       navigate(`/practice/result/${artwork.id}`)
     } catch (e) {
-      setCeremony((c) => (c ? { ...c, error: e instanceof ApiError ? e.message : t('common.errorGeneric') } : c))
+      setCeremony((c) => (c ? { ...c, error: t(apiErrorKey(e)) } : c))
     }
   }
 
   const startScoring = () => {
     if (!confirm) return
     pending.current = confirm.ctx
+    saved.current = null // a new attempt, a new drawing
     setCeremony({ preview: confirm.preview, error: null })
     setConfirm(null)
     void runScoring(confirm.ctx)

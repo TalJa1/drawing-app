@@ -1,8 +1,9 @@
-/* Gamification endpoints. The server would run the same pure rules
-   (features/gamification/rules.ts) and return a RewardSummary. */
+/* Gamification endpoints. For a signed-in user the server is the one that decides XP, badges and
+   streaks (the same rules as features/gamification/rules.ts); the events not connected yet, and a
+   guest's activity, still run those rules here on the device. */
 import type { Badge, Challenge, LeaderboardEntry, RewardSummary } from '@/types'
 import { activeChallenges, applyEvent, challengeKey, levelFromXp, type RulesContext } from '@/features/gamification/rules'
-import type { ProgressEvent } from '@/features/gamification/types'
+import type { ProgressEvent, ProgressStats, StreakState } from '@/features/gamification/types'
 import { BADGES } from '@/mocks/badges'
 import { LESSONS } from '@/mocks/lessons'
 import { MOVEMENTS } from '@/mocks/movements'
@@ -11,7 +12,21 @@ import { TEMPLATE_CATEGORIES } from '@/mocks/templates'
 import { LEADERBOARD_SAMPLE } from '@/mocks/leaderboard'
 import { progressSnapshot, useProgress } from '@/store/progress'
 import { useSession } from '@/store/session'
-import { ApiError, simulate } from './client'
+import type { components } from './schema'
+import type { Assert, Wire } from './contract'
+import { ApiError, request, simulate } from './client'
+
+type ProgressOut = components['schemas']['ProgressOut']
+type StatsOut = components['schemas']['StatsOut']
+type StreakOut = components['schemas']['StreakOut']
+
+// The server's shape (from its OpenAPI) must match what the app keeps; if one side changes without the
+// other, `tsc` fails here. (`categoriesTried` is a plain list of strings on the wire; the app narrows it.)
+export type StatsKeysOnTheWire = Assert<keyof StatsOut, keyof ProgressStats>
+export type StatsKeysInTheApp = Assert<keyof ProgressStats, keyof StatsOut>
+export type StatsOnTheWire = Assert<Omit<Wire<StatsOut>, 'categoriesTried'>, Omit<ProgressStats, 'categoriesTried'>>
+// (no `Wire` here: `lastDay` is always sent, as a date or null, and the app keeps it as that)
+export type StreakOnTheWire = Assert<Omit<StreakOut, 'live'>, StreakState>
 
 export function rulesContext(now = new Date()): RulesContext {
   return {
@@ -25,8 +40,73 @@ export function rulesContext(now = new Date()): RulesContext {
   }
 }
 
+let syncCount = 0
+
+/**
+ * GET /me/progress — makes the account's numbers the ones this device shows. Challenges are not part of
+ * that answer (they have their own endpoints), so the ones kept here stay as they are.
+ * Rejects when the server cannot be reached; callers that already have what they came for ignore that.
+ */
+export async function syncProgress(): Promise<void> {
+  const token = useSession.getState().token
+  if (!token) return
+  const mine = ++syncCount
+  const p = await request<ProgressOut>('GET', '/me/progress')
+  // an answer is dropped when a newer refresh was started meanwhile, or when someone else signed in
+  if (mine !== syncCount || useSession.getState().token !== token) return
+  if (typeof p?.xp !== 'number' || !p.stats || !p.streak) {
+    throw new ApiError('The server sent something we could not read.', 200, 'server_error')
+  }
+  const { live: _live, ...streak } = p.streak
+  void _live
+  useProgress.getState().replace({
+    xp: p.xp,
+    badges: p.badges,
+    streak: streak as StreakState,
+    activity: p.activity,
+    stats: p.stats as ProgressStats,
+    scoreHistory: p.scoreHistory,
+    challenges: useProgress.getState().challenges,
+  })
+}
+
+function nothingEarned(): RewardSummary {
+  const p = useProgress.getState()
+  const level = levelFromXp(p.xp)
+  return {
+    xpGained: 0,
+    xpBefore: p.xp,
+    xpAfter: p.xp,
+    levelBefore: level,
+    levelAfter: level,
+    newBadges: [],
+    streak: p.streak.current,
+    streakExtended: false,
+    completedChallenges: [],
+  }
+}
+
+/** Events the server decides by itself, when a drawing is saved or scored: the app never reports them. */
+const DECIDED_BY_THE_SERVER = new Set<ProgressEvent['type']>(['artworkSaved', 'artworkScored'])
+
 /** POST /progress/events — record an activity, get XP/badges back. */
 export async function recordActivity(event: ProgressEvent): Promise<RewardSummary> {
+  const signedIn = !!useSession.getState().token
+  if (signedIn && DECIDED_BY_THE_SERVER.has(event.type)) {
+    throw new ApiError('The server decides that by itself when the drawing is saved or scored.', 422, 'event_not_allowed')
+  }
+  if (signedIn && event.type === 'download') {
+    // a download is a small bonus on top of a file that is already saved: if the bonus cannot be paid
+    // (offline, a daily limit...) the person is not told off for it, they just earn nothing this time
+    try {
+      const reward = await request<RewardSummary>('POST', '/progress/events', { body: { type: 'download' } })
+      await syncProgress().catch(() => {}) // the reward stands even if the refresh does not get through
+      return reward
+    } catch {
+      return nothingEarned()
+    }
+  }
+  // not connected to the account yet, or a guest: the rules run here
   await simulate({ latency: [60, 180], canFail: false })
   const { data, reward } = applyEvent(progressSnapshot(), event, rulesContext())
   useProgress.getState().replace(data)

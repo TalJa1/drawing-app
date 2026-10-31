@@ -1,7 +1,9 @@
 /* TanStack Query bindings. Components use these hooks rather than calling the api functions. */
 import { useMemo } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { dayKey } from '@/lib/date'
+import { queryClient } from '@/app/queryClient'
+import { useSession } from '@/store/session'
 import { getDailyTemplateId, getTemplate, getTemplatePopularity, getTemplates } from './templates'
 import { deleteArtwork, getArtwork, listArtworks, updateArtwork } from './artworks'
 import { getAchievements, getChallenges, getLeaderboard, claimChallenge } from './progress'
@@ -30,6 +32,21 @@ export const qk = {
   artForm: (slug: string) => ['artForms', slug] as const,
   glossary: ['glossary'] as const,
 }
+
+/**
+ * What belongs to one account must not be seen by the next person on this browser. When the token
+ * changes (sign-out, or someone else signs in) the queries holding an account's data are cancelled and
+ * dropped. Returns the function that stops watching.
+ */
+export function watchAccountChange(client: QueryClient): () => void {
+  return useSession.subscribe((s, prev) => {
+    if (s.token === prev.token) return
+    const mine = { queryKey: qk.artworks } // ['artworks'] and ['artworks', id]
+    void client.cancelQueries(mine)
+    client.removeQueries(mine)
+  })
+}
+watchAccountChange(queryClient)
 
 export const useTemplates = () => useQuery({ queryKey: qk.templates, queryFn: getTemplates, ...forever })
 export const useTemplate = (id: string) => useQuery({ queryKey: qk.template(id), queryFn: () => getTemplate(id), ...forever })
@@ -72,8 +89,11 @@ export function useDailyTemplateId(): string | undefined {
   return useDailyTemplateQuery().data
 }
 
-export const useArtworks = () => useQuery({ queryKey: qk.artworks, queryFn: listArtworks, staleTime: 0 })
-export const useArtwork = (id: string) => useQuery({ queryKey: qk.artwork(id), queryFn: () => getArtwork(id), staleTime: 0, retry: 0 })
+// The artworks belong to an account: a guest has none, and asking would only be answered with a 401.
+const useSignedIn = () => useSession((s) => !!s.token)
+export const useArtworks = () => useQuery({ queryKey: qk.artworks, queryFn: listArtworks, staleTime: 0, enabled: useSignedIn() })
+export const useArtwork = (id: string) =>
+  useQuery({ queryKey: qk.artwork(id), queryFn: () => getArtwork(id), staleTime: 0, retry: 0, enabled: useSignedIn() })
 
 export function useUpdateArtwork() {
   const qc = useQueryClient()

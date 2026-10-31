@@ -98,7 +98,21 @@
     "boundaryTitle": "Ối — một hũ màu vừa bị đổ.",
     "boundaryBody": "Một phần của trang này không hiển thị được. Tác phẩm đã lưu của bạn vẫn an toàn. Hãy thử lại hoặc quay về xưởng vẽ.",
     "tryAgain": "Thử lại",
-    "goHome": "Về trang chủ"
+    "goHome": "Về trang chủ",
+    "api": {
+      "template_locked": "Mẫu này chưa mở khóa. Hãy vẽ thêm để đạt cấp cần thiết.",
+      "rate_limited": "Bạn đã đạt giới hạn hôm nay. Vui lòng thử lại sau.",
+      "payload_too_large": "Bức tranh này quá lớn để lưu.",
+      "unsupported_media_type": "Định dạng ảnh này chưa được hỗ trợ.",
+      "not_found": "Không tìm thấy bức tranh này. Có thể nó đã bị xóa.",
+      "missing_analysis": "Bức vẽ này chưa có gì để chấm điểm.",
+      "not_scorable": "Chỉ bức vẽ luyện tập mới được chấm điểm.",
+      "scoring_not_configured": "Hiện chưa thể chấm điểm. Bức vẽ của bạn đã được lưu.",
+      "unauthorized": "Vui lòng đăng nhập lại để tiếp tục.",
+      "network_error": "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.",
+      "timeout": "Máy chủ phản hồi quá lâu. Hãy thử lại sau giây lát.",
+      "service_unavailable": "Xưởng vẽ đang bận. Vui lòng thử lại sau giây lát."
+    }
   },
   "gamification": {
     "streakDays_one": "Chuỗi {{count}} ngày",
@@ -124,12 +138,13 @@
     "legendary": "Huyền thoại"
   },
   "auth": {
-    "signedOut": "Đã đăng xuất. Phòng tranh của bạn vẫn ở trên thiết bị này.",
+    "signedOut": "Đã đăng xuất. Phòng tranh của bạn được giữ trong tài khoản.",
     "artAlt": "Một bức tranh ấn tượng tạo sinh",
     "artNote": "chào mừng tới xưởng vẽ",
     "loginTitleA": "Chào mừng",
     "loginTitleB": "trở lại",
     "loginLede": "Cầm cọ lên ngay tại nơi bạn đã dừng.",
+    "needAccount": "Tranh của bạn được lưu trong tài khoản. Hãy đăng nhập, bạn sẽ được đưa quay lại ngay.",
     "registerTitleA": "Gia nhập",
     "registerTitleB": "xưởng vẽ",
     "registerLede": "Tạo tài khoản để giữ phòng tranh, chuỗi ngày và huy hiệu ở một nơi.",
@@ -600,7 +615,7 @@
     "notJudged": "Tranh vẽ tự do không được chấm điểm — chỉ để vui thôi.",
     "reopen": "Mở trong xưởng vẽ",
     "deleteTitle": "Xóa tác phẩm này?",
-    "deleteBody": "Tác phẩm sẽ bị xóa khỏi phòng tranh trên thiết bị này. XP và huy hiệu vẫn được giữ.",
+    "deleteBody": "Tác phẩm sẽ bị xóa khỏi phòng tranh của bạn. XP và huy hiệu vẫn được giữ.",
     "deleted": "Đã xóa tác phẩm",
     "achievementsLink": "Muốn săn huy hiệu? Ghé",
     "empty": {
@@ -664,7 +679,7 @@
     "titleA": "Góc nhỏ",
     "titleB": "của họa sĩ",
     "lede": "Chọn diện mạo, chỉnh xưởng vẽ theo tay bạn, và giữ dữ liệu trong tay chính bạn.",
-    "guestNudge": "Bạn đang vẽ với tư cách khách — mọi thứ được lưu trên thiết bị này. Đăng nhập để đồng bộ phòng tranh giữa các thiết bị (sẽ có khi kết nối máy chủ thật).",
+    "guestNudge": "Bạn đang vẽ với tư cách khách — tiến trình được lưu trên thiết bị này. Hãy đăng nhập để giữ tranh trong tài khoản và xem trên mọi thiết bị.",
     "avatar": "Ảnh đại diện của bạn",
     "chooseAvatar": "Chọn ảnh đại diện",
     "avatarOption": "Ảnh đại diện {{name}}",

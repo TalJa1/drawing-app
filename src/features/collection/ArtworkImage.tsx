@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { getImageUrl } from '@/api/artworks'
 import { cn } from '@/lib/utils'
 
-/** Loads an artwork image (IndexedDB blob → object URL) with a paint-shimmer placeholder. */
+/** Loads an artwork picture from the account (fetched with the token → object URL) with a paint-shimmer placeholder. */
 export function ArtworkImage({
   imageKey,
   alt,

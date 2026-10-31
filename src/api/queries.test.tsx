@@ -1,7 +1,17 @@
 import type { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
-import { useDailyTemplateId, useLessonLookup, useTemplateLookup, useTemplatePopularityQuery } from './queries'
+import { GUEST, useSession } from '@/store/session'
+import {
+  qk,
+  useArtwork,
+  useArtworks,
+  useDailyTemplateId,
+  useLessonLookup,
+  useTemplateLookup,
+  useTemplatePopularityQuery,
+  watchAccountChange,
+} from './queries'
 
 const fetchMock = vi.fn()
 const json = (status: number, body: unknown) =>
@@ -141,5 +151,89 @@ describe('useTemplatePopularityQuery', () => {
     const { result } = renderHook(() => useTemplatePopularityQuery(), { wrapper: wrapper() })
     await waitFor(() => expect(fetchMock).toHaveBeenCalled())
     expect(result.current.data).toBeUndefined()
+  })
+})
+
+describe('watchAccountChange: nothing of one person is left for the next', () => {
+  const signedIn = (id: string) => useSession.setState({ user: { ...GUEST, id, isGuest: false }, token: `tok-${id}` })
+  let stop = () => {}
+  afterEach(() => {
+    stop()
+    useSession.setState({ user: GUEST, token: null })
+  })
+
+  function seeded() {
+    const client = new QueryClient()
+    client.setQueryData(qk.artworks, [{ id: 'a1' }])
+    client.setQueryData(qk.artwork('a1'), { id: 'a1' })
+    client.setQueryData(qk.templates, [{ id: 'fox' }])
+    stop = watchAccountChange(client)
+    return client
+  }
+
+  it('forgets the artworks when someone signs out', () => {
+    signedIn('u1')
+    const client = seeded()
+    useSession.setState({ user: GUEST, token: null })
+    expect(client.getQueryData(qk.artworks)).toBeUndefined()
+    expect(client.getQueryData(qk.artwork('a1'))).toBeUndefined()
+  })
+
+  it('forgets them when another person signs in on top', () => {
+    signedIn('u1')
+    const client = seeded()
+    signedIn('u2')
+    expect(client.getQueryData(qk.artworks)).toBeUndefined()
+  })
+
+  it('keeps what is the same for everyone (the templates)', () => {
+    signedIn('u1')
+    const client = seeded()
+    useSession.setState({ user: GUEST, token: null })
+    expect(client.getQueryData(qk.templates)).toEqual([{ id: 'fox' }])
+  })
+
+  it('does nothing while the token stays the same (a profile edit, say)', () => {
+    signedIn('u1')
+    const client = seeded()
+    useSession.setState({ user: { ...GUEST, id: 'u1', isGuest: false, displayName: 'New name' } })
+    expect(client.getQueryData(qk.artworks)).toEqual([{ id: 'a1' }])
+  })
+
+  it('stops watching when told to', () => {
+    signedIn('u1')
+    const client = seeded()
+    stop()
+    useSession.setState({ user: GUEST, token: null })
+    expect(client.getQueryData(qk.artworks)).toEqual([{ id: 'a1' }])
+  })
+})
+
+describe('useArtworks / useArtwork: only for someone with an account', () => {
+  afterEach(() => useSession.setState({ user: GUEST, token: null }))
+
+  it('does not ask the server for a guest (it would only answer 401)', async () => {
+    useSession.setState({ user: GUEST, token: null })
+    const { result } = renderHook(() => ({ list: useArtworks(), one: useArtwork('a1') }), { wrapper: wrapper() })
+    await new Promise((r) => setTimeout(r, 30))
+    expect(fetchMock).not.toHaveBeenCalled()
+    expect(result.current.list.data).toBeUndefined()
+    expect(result.current.list.isLoading).toBe(false)
+  })
+
+  it('asks for the list of a signed-in user', async () => {
+    useSession.setState({ user: { ...GUEST, id: 'u1', isGuest: false }, token: 'tok' })
+    fetchMock.mockImplementation(async () => json(200, [{ id: 'a1' }]))
+    const { result } = renderHook(() => useArtworks(), { wrapper: wrapper() })
+    await waitFor(() => expect(result.current.data).toEqual([{ id: 'a1' }]))
+    expect(urls()).toEqual(['/api/v1/artworks?limit=500'])
+  })
+
+  it('asks for one artwork of a signed-in user', async () => {
+    useSession.setState({ user: { ...GUEST, id: 'u1', isGuest: false }, token: 'tok' })
+    fetchMock.mockImplementation(async () => json(200, { id: 'a1' }))
+    const { result } = renderHook(() => useArtwork('a1'), { wrapper: wrapper() })
+    await waitFor(() => expect(result.current.data).toEqual({ id: 'a1' }))
+    expect(urls()).toEqual(['/api/v1/artworks/a1'])
   })
 })

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,6 +8,8 @@ import { AuthLayout } from '@/features/auth/AuthLayout'
 import { TextField } from '@/components/Form'
 import { Button } from '@/components/Button'
 import { login } from '@/api/auth'
+import { syncProgress } from '@/api/progress'
+import { loginTarget } from '@/features/auth/loginRedirect'
 import { authErrorKey } from './authErrors'
 import { toast } from '@/store/ui'
 
@@ -20,6 +22,8 @@ type Form = z.infer<typeof schema>
 export default function LoginPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const wanted = loginTarget(state, '') !== '' // the guest was sent here from a page that needs an account
   const {
     register,
     handleSubmit,
@@ -30,8 +34,9 @@ export default function LoginPage() {
   const onSubmit = async (data: Form) => {
     try {
       const { user } = await login(data)
+      void syncProgress().catch(() => {}) // the device now shows the account's numbers; the page does not wait for it
       toast({ title: t('auth.welcomeBack', { name: user.displayName }), tone: 'success' })
-      navigate('/collection')
+      navigate(loginTarget(state, '/collection'))
     } catch (e) {
       setError('root', { message: authErrorKey(e) })
     }
@@ -47,6 +52,11 @@ export default function LoginPage() {
       lede={t('auth.loginLede')}
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+        {wanted && (
+          <p role="status" className="rounded-xl border border-line bg-paper-2 px-4 py-3 text-sm text-ink-soft">
+            {t('auth.needAccount')}
+          </p>
+        )}
         <TextField
           label={t('auth.email')}
           type="email"
@@ -71,7 +81,7 @@ export default function LoginPage() {
         </Button>
         <p className="text-center text-sm text-ink-soft">
           {t('auth.noAccount')}{' '}
-          <Link to="/register" className="link-ink">
+          <Link to="/register" state={state} className="link-ink">
             {t('auth.createAccount')}
           </Link>
         </p>

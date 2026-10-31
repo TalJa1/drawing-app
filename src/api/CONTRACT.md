@@ -78,14 +78,18 @@ order is this number, highest first; the server keeps it for minutes, so it can 
 
 ## Artworks — `src/api/artworks.ts`
 
-| Function                                  | Method & path                                             | Request                                                                       | Response                   |
-| ----------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------- |
-| `saveArtwork(req)` / `submitArtwork(req)` | `POST /artworks` (or `PUT /artworks/:id` when `id` given) | `multipart/form-data`: `image` (PNG), `thumbnail` (JPEG), `meta` (JSON below) | `Artwork`                  |
-| `listArtworks()`                          | `GET /artworks`                                           | –                                                                             | `Artwork[]` (newest first) |
-| `getArtwork(id)`                          | `GET /artworks/:id`                                       | –                                                                             | `Artwork`                  |
-| `updateArtwork(id, p)`                    | `PATCH /artworks/:id`                                     | `{ favourite?, title? }`                                                      | `Artwork`                  |
-| `deleteArtwork(id)`                       | `DELETE /artworks/:id`                                    | –                                                                             | `204`                      |
-| `getImageUrl(key)`                        | (signed URL from `Artwork.imageKey` / `thumbKey`)         | –                                                                             | URL string                 |
+Artworks belong to an account: a guest has none (the app sends them to sign in). Nothing is kept on the
+device any more.
+
+| Function                                 | Method & path                         | Request                                                                       | Response                                           |
+| ---------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------- |
+| `saveArtwork(req)`                       | `POST /artworks`                      | `multipart/form-data`: `image` (PNG), `thumbnail` (JPEG), `meta` (JSON below) | `{ artwork, reward? }` (see below)                 |
+| `submitArtwork(req)`                     | `POST /artworks` (`kind=practice`)    | same                                                                          | `Artwork`                                          |
+| `listArtworks()`                         | `GET /artworks?limit=500&cursor=`     | –                                                                             | `Artwork[]` (newest first; every page is followed) |
+| `getArtwork(id)`                         | `GET /artworks/:id`                   | –                                                                             | `Artwork`                                          |
+| `updateArtwork(id, p)`                   | `PATCH /artworks/:id`                 | `{ favourite?, title? }` (nothing else can change)                            | `Artwork`                                          |
+| `deleteArtwork(id)`                      | `DELETE /artworks/:id`                | –                                                                             | `204`                                              |
+| `getImageUrl(key)` / `getImageBlob(key)` | `GET /artworks/:id/image` or `/thumb` | – (needs the bearer token)                                                    | object URL / `Blob`                                |
 
 ```json
 // meta
@@ -93,26 +97,41 @@ order is this number, highest first; the server keeps it for minutes, so it can 
   "timeSpent": 840, "medium": "Digital · marker & watercolour", "analysis": { /* ArtworkAnalysis */ } }
 
 // Artwork
-{ "id": "art_x", "kind": "practice", "title": "Sitting Fox", "templateId": "fox",
+{ "id": "3f1c2a64-…", "kind": "practice", "title": "Sitting Fox", "templateId": "fox",
   "createdAt": "…", "updatedAt": "…", "timeSpent": 840, "width": 1200, "height": 900,
-  "imageKey": "https://cdn/…/art_x.png", "thumbKey": "https://cdn/…/art_x.jpg",
+  "imageKey": "/api/v1/artworks/3f1c2a64-…/image", "thumbKey": "/api/v1/artworks/3f1c2a64-…/thumb",
   "favourite": false, "medium": "…", "analysis": { … }, "score": { /* ScoreResult */ } }
 ```
 
+- **`reward`** — the answer to `POST /artworks` also carries `reward` (a `RewardSummary`) when, and only
+  when, that request created a **free** drawing: it pays at once. A practice drawing pays when it is
+  scored, and the same PNG sent again (`200` instead of `201`) pays nothing, so `reward` is absent then.
+  `saveArtwork` hands it back apart from the artwork and refreshes the XP shown (`GET /me/progress`).
+- **Pictures** — `imageKey` / `thumbKey` are API paths, and the server gives a picture only to its owner,
+  so an `<img src>` cannot load it. `getImageUrl` fetches the bytes with the token and returns an object
+  URL; each picture is fetched once and let go of when the user signs out. Only `/api/v1/artworks/<uuid>/image|thumb`
+  keys are ever fetched with the token.
+- **Errors** — `template_locked` (403), `not_found` (404), `rate_limited` (429, 60 uploads a day),
+  `payload_too_large` (413), `unsupported_media_type` (415). The app shows its own sentence per code
+  (`errors.api.*`), not the server's English text.
+
 `analysis` (`ArtworkAnalysis`) is computed client-side by `features/drawing/analysis.ts`
 (coverage of template regions, spill outside the outlines, hue buckets, harmony, value range,
-saturation, a 9×12 coverage grid). A real AI judge can ignore it and score the image directly,
-but it is cheap to send and useful as model features or for the heatmap.
+saturation, a 9×12 coverage grid). The server stores it, checks it against the PNG, and scores from it.
 
-## AI scoring — `src/api/scoring.ts`
+## Scoring — `src/api/scoring.ts`
 
-| Function                  | Method & path              | Response      |
-| ------------------------- | -------------------------- | ------------- |
-| `scoreArtwork(artworkId)` | `POST /artworks/:id/score` | `ScoreResult` |
+| Function                  | Method & path              | Response                                        |
+| ------------------------- | -------------------------- | ----------------------------------------------- |
+| `scoreArtwork(artworkId)` | `POST /artworks/:id/score` | `{ score: ScoreResult, reward: RewardSummary }` |
+
+No body: the server judges the drawing it saved (from its `analysis`) and pays the XP, including the
+template-of-the-day and personal-best bonuses. It then refreshes the XP shown (`GET /me/progress`).
+Errors: `missing_analysis` / `not_scorable` (422), `not_found`, `rate_limited`, `scoring_not_configured` (501).
 
 ```json
 // ScoreResult — all numbers 0–100, rank ∈ starter | rising | steady | gallery | masterpiece
-{ "artworkId": "art_x", "similarity": 88, "colour": 81, "overall": 85,
+{ "artworkId": "3f1c2a64-…", "similarity": 88, "colour": 81, "overall": 85,
   "sub": { "lineAccuracy": 90, "composition": 86, "proportion": 88,
            "harmony": 80, "suitability": 83, "aesthetics": 79 },
   "rank": "gallery",
@@ -124,8 +143,8 @@ but it is cheap to send and useful as model features or for the heatmap.
   "scoredAt": "2026-10-21T09:00:00.000Z" }
 ```
 
-Expected latency 2–6 s; the UI shows a "scoring ceremony" while waiting. Rank thresholds:
-<40 starter, 40–59 rising, 60–74 steady, 75–89 gallery, ≥90 masterpiece.
+Rank thresholds: <40 starter, 40–59 rising, 60–74 steady, 75–89 gallery, ≥90 masterpiece.
+The old local judge (`buildScore`) is kept only for the demo artworks; nothing that scores a user's drawing calls it.
 
 ## Progress & gamification — `src/api/progress.ts`
 
@@ -161,7 +180,19 @@ Expected latency 2–6 s; the UI shows a "scoring ceremony" while waiting. Rank 
 }
 ```
 
-The server must run the **same pure rules** as `features/gamification/rules.ts`
+**Which side decides what (while the screens are being connected one by one):**
+
+- For a signed-in user the server decides the XP of `artworkSaved` (free drawings, in the answer to
+  `POST /artworks`), `artworkScored` (in the answer to `POST /artworks/:id/score`) and `download`
+  (`POST /progress/events`). The app never reports the first two (`recordActivity` refuses them with
+  `event_not_allowed`), and after each of these it refreshes the numbers with **`syncProgress()`**
+  (`GET /me/progress`), also done right after signing in. A failed `download` earns nothing and says nothing.
+- Every other event (`viewed`, `lessonCompleted`, `quizCompleted`, `glossary`, challenges …) and everything a
+  guest does still runs the rules **on the device** for now. Until those are connected, XP earned that way
+  is local and is replaced by the account's numbers at the next refresh.
+- `GET /me/progress` has no challenges; the ones kept on the device are left untouched by the refresh.
+
+The server runs the **same pure rules** as `features/gamification/rules.ts`
 (`applyEvent`, `xpForScore`, `levelFromXp`, `evaluateBadges`, `updateStreak`) — they are
 deliberately side-effect free so they can be shared or ported. Day boundaries use the
 user's local timezone (send `X-Timezone`).

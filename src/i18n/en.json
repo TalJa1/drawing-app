@@ -98,7 +98,21 @@
     "boundaryTitle": "Oops — a paint pot tipped over.",
     "boundaryBody": "Something on this page didn’t render. Your saved work is safe. Try again, or head back to the studio.",
     "tryAgain": "Try again",
-    "goHome": "Back home"
+    "goHome": "Back home",
+    "api": {
+      "template_locked": "That template isn’t unlocked yet. Keep drawing to reach its level.",
+      "rate_limited": "You’ve reached today’s limit. Please try again later.",
+      "payload_too_large": "That picture is too large to save.",
+      "unsupported_media_type": "That picture format isn’t supported.",
+      "not_found": "We couldn’t find that artwork. It may have been deleted.",
+      "missing_analysis": "This drawing has nothing to score yet.",
+      "not_scorable": "Only practice drawings can be scored.",
+      "scoring_not_configured": "Scoring isn’t available right now. Your drawing is saved.",
+      "unauthorized": "Please sign in again to continue.",
+      "network_error": "Can’t reach the server. Check your connection and try again.",
+      "timeout": "The server took too long to answer. Try again in a moment.",
+      "service_unavailable": "The studio is busy right now. Please try again in a moment."
+    }
   },
   "gamification": {
     "streakDays_one": "{{count}}-day streak",
@@ -124,12 +138,13 @@
     "legendary": "Legendary"
   },
   "auth": {
-    "signedOut": "Signed out. Your gallery stays on this device.",
+    "signedOut": "Signed out. Your gallery is kept in your account.",
     "artAlt": "A generative impressionist painting",
     "artNote": "welcome to the atelier",
     "loginTitleA": "Welcome",
     "loginTitleB": "back",
     "loginLede": "Pick up your brushes right where you left them.",
+    "needAccount": "Your artworks are kept in your account. Sign in and we’ll take you right back.",
     "registerTitleA": "Join the",
     "registerTitleB": "atelier",
     "registerLede": "Create an account to keep your gallery, streaks and badges in one place.",
@@ -600,7 +615,7 @@
     "notJudged": "Free-draw pieces aren't judged — they're just for joy.",
     "reopen": "Open in studio",
     "deleteTitle": "Delete this artwork?",
-    "deleteBody": "It will be removed from your gallery on this device. Your XP and badges stay.",
+    "deleteBody": "It will be removed from your gallery. Your XP and badges stay.",
     "deleted": "Artwork deleted",
     "achievementsLink": "Hungry for badges? Visit",
     "empty": {
@@ -664,7 +679,7 @@
     "titleA": "The artist's",
     "titleB": "corner",
     "lede": "Choose your look, tune the studio to your hand, and keep your data in your own hands.",
-    "guestNudge": "You're drawing as a guest — everything is saved on this device. Sign in to sync your gallery across devices (coming with the real back-end).",
+    "guestNudge": "You're drawing as a guest — your progress is kept on this device. Sign in to keep your artworks in your account and see them on every device.",
     "avatar": "Your avatar",
     "chooseAvatar": "Choose an avatar",
     "avatarOption": "Avatar {{name}}",

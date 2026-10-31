@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,6 +8,8 @@ import { AuthLayout } from '@/features/auth/AuthLayout'
 import { TextField } from '@/components/Form'
 import { Button } from '@/components/Button'
 import { register as registerUser } from '@/api/auth'
+import { syncProgress } from '@/api/progress'
+import { loginTarget } from '@/features/auth/loginRedirect'
 import { authErrorKey } from './authErrors'
 import { toast } from '@/store/ui'
 
@@ -24,6 +26,8 @@ type Form = z.infer<typeof schema>
 export default function RegisterPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const wanted = loginTarget(state, '') !== '' // the guest was sent here from a page that needs an account
   const {
     register,
     handleSubmit,
@@ -35,7 +39,8 @@ export default function RegisterPage() {
     try {
       const { user } = await registerUser({ displayName: form.displayName, email: form.email, password: form.password })
       toast({ title: t('auth.welcome', { name: user.displayName }), description: t('auth.welcomeBody'), tone: 'gold' })
-      navigate('/practice')
+      void syncProgress().catch(() => {}) // a new account starts from the server's zero, not from what this device had
+      navigate(loginTarget(state, '/practice'))
     } catch (e) {
       setError('root', { message: authErrorKey(e) })
     }
@@ -51,6 +56,11 @@ export default function RegisterPage() {
       lede={t('auth.registerLede')}
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">
+        {wanted && (
+          <p role="status" className="rounded-xl border border-line bg-paper-2 px-4 py-3 text-sm text-ink-soft">
+            {t('auth.needAccount')}
+          </p>
+        )}
         <TextField
           label={t('auth.displayName')}
           autoComplete="nickname"
@@ -89,7 +99,7 @@ export default function RegisterPage() {
         </Button>
         <p className="text-center text-sm text-ink-soft">
           {t('auth.haveAccount')}{' '}
-          <Link to="/login" className="link-ink">
+          <Link to="/login" state={state} className="link-ink">
             {t('nav.signIn')}
           </Link>
         </p>

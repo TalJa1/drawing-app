@@ -102,7 +102,7 @@ export interface Artwork {
   timeSpent: number
   width: number
   height: number
-  /** Key of the image blob in IndexedDB (or a URL once a server exists) */
+  /** The picture's address on the API (`/api/v1/artworks/:id/image`); `getImageUrl` loads it with the token */
   imageKey: string
   thumbKey: string
   favourite: boolean

@@ -702,6 +702,54 @@ export interface components {
       /** Palette */
       palette: string[]
     }
+    /**
+     * ArtworkCreatedOut
+     * @description The answer to `POST /artworks`: the artwork, and the XP a NEW free drawing just earned.
+     *
+     *     `reward` is there only when this request created a free drawing. It is left out for a practice
+     *     drawing (it pays when it is scored), for the same PNG sent again (it pays once) and on every
+     *     read: it describes one save, not the artwork.
+     */
+    ArtworkCreatedOut: {
+      /** Id */
+      id: string
+      /** Kind */
+      kind: string
+      /** Title */
+      title: string
+      /** Templateid */
+      templateId?: string | null
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string
+      /** Timespent */
+      timeSpent: number
+      /** Width */
+      width: number
+      /** Height */
+      height: number
+      /** Imagekey */
+      imageKey: string
+      /** Thumbkey */
+      thumbKey: string
+      /** Favourite */
+      favourite: boolean
+      /** Medium */
+      medium: string
+      /** Analysis */
+      analysis?: {
+        [key: string]: unknown
+      } | null
+      score?: components['schemas']['ScoreResultOut'] | null
+      reward?: components['schemas']['RewardOut'] | null
+    }
     /** ArtworkOut */
     ArtworkOut: {
       /** Id */
@@ -2049,7 +2097,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['ArtworkOut']
+          'application/json': components['schemas']['ArtworkCreatedOut']
         }
       }
       /** @description Validation Error */

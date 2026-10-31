@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown, Dices, Download, ImageDown, MessageCircle, Save } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -11,8 +11,10 @@ import { Modal } from '@/components/Modal'
 import { TextField } from '@/components/Form'
 import { canvasToBlob, makeThumbnail } from '@/lib/raster'
 import { downloadBlob } from '@/lib/utils'
-import { saveArtwork } from '@/api/artworks'
+import { apiErrorKey, saveArtwork } from '@/api/artworks'
 import { recordActivity } from '@/api/progress'
+import { loginState } from '@/features/auth/loginRedirect'
+import { useSession } from '@/store/session'
 import { INSPIRATION_PROMPTS } from '@/mocks/palettes'
 import { useL } from '@/i18n/useL'
 import { presentReward, toast } from '@/store/ui'
@@ -89,6 +91,7 @@ export default function FreeDrawPage() {
   const { t } = useTranslation()
   const L = useL()
   const navigate = useNavigate()
+  const { pathname, search } = useLocation()
   const [params] = useSearchParams()
   const [preset, setPreset] = useState<Preset>((params.get('size') as Preset) in PRESETS ? (params.get('size') as Preset) : 'classic')
   const [bg, setBg] = useState<BackgroundKind>('white')
@@ -108,6 +111,13 @@ export default function FreeDrawPage() {
     setPrompt(p)
   }, [])
 
+  /** Saving belongs to an account: a guest keeps what is drawn (as a draft), signs in, and comes back. */
+  const askToSave = async (ctx: StudioContext) => {
+    if (useSession.getState().token) return setSaving(ctx)
+    await ctx.saveDraft()
+    navigate('/login', { state: loginState(pathname + search) })
+  }
+
   const save = async () => {
     if (!saving) return
     setBusy(true)
@@ -115,7 +125,7 @@ export default function FreeDrawPage() {
       const canvas = saving.engine.composite()
       const image = await canvasToBlob(canvas, 'image/png')
       const thumbnail = await makeThumbnail(canvas)
-      await saveArtwork({
+      const { reward } = await saveArtwork({
         kind: 'free',
         title: title.trim() || (prompt ? L(prompt) : t('freeDraw.untitled')),
         image,
@@ -125,23 +135,19 @@ export default function FreeDrawPage() {
         timeSpent: saving.seconds,
         medium: t('freeDraw.medium'),
       })
-      const reward = await recordActivity({
-        type: 'artworkSaved',
-        kind: 'free',
-        seconds: saving.seconds,
-      })
       await saving.clearDraft()
       void queryClient.invalidateQueries({ queryKey: qk.artworks })
+      // only a NEW drawing pays: saving the very same picture again earns nothing, and says so by having no reward
       toast({
         title: t('freeDraw.saved'),
-        description: t('freeDraw.savedXp', { xp: reward.xpGained }),
+        description: reward ? t('freeDraw.savedXp', { xp: reward.xpGained }) : undefined,
         tone: 'success',
       })
-      presentReward(reward)
+      if (reward) presentReward(reward)
       setSaving(null)
       setTitle('')
-    } catch {
-      toast({ title: t('common.errorGeneric'), tone: 'error' })
+    } catch (e) {
+      toast({ title: t(apiErrorKey(e)), tone: 'error' })
     } finally {
       setBusy(false)
     }
@@ -263,7 +269,13 @@ export default function FreeDrawPage() {
         description={t('freeDraw.description')}
         primary={(ctx) => (
           <>
-            <Button size="sm" variant="outline" icon={<Save size={16} />} onClick={() => setSaving(ctx)} disabled={ctx.engine.isEmpty()}>
+            <Button
+              size="sm"
+              variant="outline"
+              icon={<Save size={16} />}
+              onClick={() => void askToSave(ctx)}
+              disabled={ctx.engine.isEmpty()}
+            >
               <span className="hidden sm:inline">{t('freeDraw.saveToCollection')}</span>
             </Button>
             <DownloadMenu ctx={ctx} />

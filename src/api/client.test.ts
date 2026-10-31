@@ -1,5 +1,5 @@
 import { useSession, GUEST } from '@/store/session'
-import { ApiError, REQUEST_TIMEOUT_MS, request } from './client'
+import { ApiError, REQUEST_TIMEOUT_MS, UPLOAD_TIMEOUT_MS, request, requestBlob, requestWithHeaders } from './client'
 
 const fetchMock = vi.fn()
 
@@ -211,5 +211,123 @@ describe('request: a token the server no longer accepts', () => {
     })
     await request('GET', '/me').catch(() => {})
     expect(useSession.getState().token).toBe('tok-NEW')
+  })
+})
+
+describe('request: sending files (multipart)', () => {
+  const form = () => {
+    const f = new FormData()
+    f.append('image', new Blob(['png'], { type: 'image/png' }), 'a.png')
+    return f
+  }
+
+  it('sends the FormData as it is and leaves the Content-Type to the browser (it adds the boundary)', async () => {
+    fetchMock.mockResolvedValue(json(201, { id: 'a1' }))
+    const f = form()
+    await request('POST', '/artworks', { form: f })
+    const { init, headers } = lastCall()
+    expect(init.body).toBe(f)
+    expect(headers.has('Content-Type')).toBe(false)
+    expect(headers.get('Accept')).toBe('application/json')
+  })
+
+  it('still carries the token and the request id', async () => {
+    signedIn()
+    fetchMock.mockResolvedValue(json(201, {}))
+    await request('POST', '/artworks', { form: form() })
+    const { headers } = lastCall()
+    expect(headers.get('Authorization')).toBe('Bearer tok-123')
+    expect(headers.get('X-Request-ID')).toBeTruthy()
+  })
+
+  it('allows an upload more time than an ordinary call, and no more than that', async () => {
+    expect(UPLOAD_TIMEOUT_MS).toBeGreaterThan(REQUEST_TIMEOUT_MS)
+    vi.useFakeTimers()
+    let seen: AbortSignal | undefined
+    fetchMock.mockImplementation(
+      (_url: string, init: RequestInit) =>
+        new Promise((_, reject) => {
+          seen = init.signal as AbortSignal
+          seen.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')))
+        }),
+    )
+    const pending = request('POST', '/artworks', { form: form() }).catch((e) => e)
+    await vi.advanceTimersByTimeAsync(REQUEST_TIMEOUT_MS + 1)
+    expect(seen?.aborted).toBe(false)
+    await vi.advanceTimersByTimeAsync(UPLOAD_TIMEOUT_MS - REQUEST_TIMEOUT_MS - 1)
+    expect(seen?.aborted).toBe(true)
+    expect(await pending).toMatchObject({ status: 0, code: 'timeout' })
+  })
+
+  it('maps the upload limit (429 + Retry-After) like any other call', async () => {
+    fetchMock.mockResolvedValue(json(429, { error: { code: 'rate_limited', message: 'Daily limit' } }, { 'Retry-After': '3600' }))
+    await expect(request('POST', '/artworks', { form: form() })).rejects.toMatchObject({
+      status: 429,
+      code: 'rate_limited',
+      retryAfter: 3600,
+    })
+  })
+})
+
+describe('requestWithHeaders: when the answer has a header that matters', () => {
+  it('returns the parsed body and the response headers', async () => {
+    fetchMock.mockResolvedValue(json(200, [{ id: 'a1' }], { 'X-Next-Cursor': 'cur-2' }))
+    const out = await requestWithHeaders<{ id: string }[]>('GET', '/artworks?limit=500')
+    expect(out.data).toEqual([{ id: 'a1' }])
+    expect(out.headers.get('X-Next-Cursor')).toBe('cur-2')
+    expect(lastCall().url).toBe('/api/v1/artworks?limit=500')
+  })
+
+  it('has no cursor header on the last page', async () => {
+    fetchMock.mockResolvedValue(json(200, []))
+    const out = await requestWithHeaders('GET', '/artworks')
+    expect(out.headers.get('X-Next-Cursor')).toBeNull()
+  })
+
+  it('fails like request() does', async () => {
+    fetchMock.mockResolvedValue(json(403, { error: { code: 'template_locked', message: 'Locked' } }))
+    await expect(requestWithHeaders('GET', '/artworks')).rejects.toMatchObject({ status: 403, code: 'template_locked' })
+  })
+})
+
+describe('requestBlob: pictures that need the token', () => {
+  const png = () => new Response('PNGDATA', { status: 200, headers: { 'Content-Type': 'image/png' } })
+
+  it('asks for an image with the bearer token and returns the bytes', async () => {
+    signedIn()
+    fetchMock.mockResolvedValue(png())
+    const blob = await requestBlob('/artworks/a1/image')
+    const { url, init, headers } = lastCall()
+    expect(url).toBe('/api/v1/artworks/a1/image')
+    expect(init.method).toBe('GET')
+    expect(headers.get('Authorization')).toBe('Bearer tok-123')
+    expect(headers.get('Accept')).toMatch(/^image\//)
+    expect(await blob.text()).toBe('PNGDATA')
+    expect(blob.type).toBe('image/png')
+  })
+
+  it('turns the error envelope into an ApiError (not a broken picture)', async () => {
+    signedIn()
+    fetchMock.mockResolvedValue(json(404, { error: { code: 'not_found', message: 'No such artwork' } }))
+    await expect(requestBlob('/artworks/x/image')).rejects.toMatchObject({ status: 404, code: 'not_found' })
+  })
+
+  it('signs the user out when the token is no longer good', async () => {
+    signedIn()
+    fetchMock.mockResolvedValue(json(401, { error: { code: 'unauthorized', message: 'Please sign in' } }))
+    await requestBlob('/artworks/a1/image').catch(() => {})
+    expect(useSession.getState().token).toBeNull()
+  })
+
+  it('reports a dead network as network_error', async () => {
+    fetchMock.mockRejectedValue(new TypeError('Failed to fetch'))
+    await expect(requestBlob('/artworks/a1/image')).rejects.toMatchObject({ status: 0, code: 'network_error' })
+  })
+
+  it('uses the ordinary time limit and leaves no timer behind', async () => {
+    vi.useFakeTimers()
+    fetchMock.mockResolvedValue(png())
+    await requestBlob('/artworks/a1/image')
+    expect(vi.getTimerCount()).toBe(0)
   })
 })

@@ -4,6 +4,7 @@ import { MainLayout } from './MainLayout'
 import { StudioLayout } from './StudioLayout'
 import { LazyPage as P } from './LazyPage'
 import { RouteError } from './RouteError'
+import { RequireAuth } from '@/features/auth/RequireAuth'
 
 export const router = createBrowserRouter(
   [
@@ -27,7 +28,14 @@ export const router = createBrowserRouter(
             { path: 'learn/flashcards', element: <P page="flashcards" /> },
             { path: 'learn/spot-the-style', element: <P page="spotStyle" /> },
             { path: 'chat', element: <P page="chat" /> },
-            { path: 'collection', element: <P page="collection" /> },
+            {
+              path: 'collection',
+              element: (
+                <RequireAuth>
+                  <P page="collection" />
+                </RequireAuth>
+              ),
+            },
             { path: 'achievements', element: <P page="achievements" /> },
             { path: 'profile', element: <P page="profile" /> },
             { path: 'login', element: <P page="login" /> },
