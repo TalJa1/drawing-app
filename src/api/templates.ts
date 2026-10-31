@@ -7,6 +7,16 @@ import { request } from './client'
 // without the other, `tsc` fails here.
 export type TemplateOnTheWire = Assert<Wire<components['schemas']['TemplateOut']>, Template>
 
+/** How many different people practised each template lately (GET /template-popularity). */
+export interface TemplatePopularity {
+  windowDays: number
+  /** When the server counted, as an ISO date-time in UTC. */
+  asOf: string
+  /** Every template of the server's list: id -> number of people. A template nobody practised is 0. */
+  counts: Record<string, number>
+}
+export type TemplatePopularityOnTheWire = Assert<Wire<components['schemas']['TemplatePopularityOut']>, TemplatePopularity>
+
 /** GET /templates — filtering happens client-side in the UI for snappy chips. */
 export function getTemplates(): Promise<Template[]> {
   return request<Template[]>('GET', '/templates')
@@ -25,4 +35,12 @@ export function getTemplate(id: string): Promise<Template> {
 export async function getDailyTemplateId(): Promise<string> {
   const res = await request<{ templateId: string }>('GET', '/challenges/daily-template')
   return res.templateId
+}
+
+/**
+ * GET /template-popularity — people who practised each template in the last `windowDays` days.
+ * Public. The server keeps the numbers for minutes, so asking often costs nothing.
+ */
+export function getTemplatePopularity(): Promise<TemplatePopularity> {
+  return request<TemplatePopularity>('GET', '/template-popularity')
 }

@@ -183,6 +183,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/v1/template-popularity': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Template Popularity */
+    get: operations['template_popularity_api_v1_template_popularity_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/v1/auth/register': {
     parameters: {
       query?: never
@@ -1373,6 +1390,26 @@ export interface components {
       /** Tags */
       tags: string[]
     }
+    /**
+     * TemplatePopularityOut
+     * @description Documentation and validation only: the route sends ready-made bytes (services/popularity.py).
+     *
+     *     `counts` has every template of the catalogue, in catalogue order; a template nobody practised
+     *     in the window is 0. The value is a number of people, not of drawings.
+     */
+    TemplatePopularityOut: {
+      /** Windowdays */
+      windowDays: number
+      /**
+       * Asof
+       * Format: date-time
+       */
+      asOf: string
+      /** Counts */
+      counts: {
+        [key: string]: number
+      }
+    }
     /** TryIt */
     TryIt: {
       /** Tool */
@@ -1692,6 +1729,26 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  template_popularity_api_v1_template_popularity_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['TemplatePopularityOut']
         }
       }
     }

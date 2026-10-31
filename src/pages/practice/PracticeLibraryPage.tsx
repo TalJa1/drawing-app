@@ -9,13 +9,14 @@ import { Skeleton } from '@/components/Progress'
 import { Highlight } from '@/components/art/Brush'
 import { Washes } from '@/components/art/Washes'
 import { Button } from '@/components/Button'
-import { useArtworks, useDailyTemplateQuery, useTemplates } from '@/api/queries'
+import { useArtworks, useDailyTemplateQuery, useTemplatePopularityQuery, useTemplates } from '@/api/queries'
 import { TEMPLATE_CATEGORIES } from '@/mocks/templates'
 import { fuzzyIncludes } from '@/lib/utils'
 import { useLevel } from '@/features/gamification/hooks'
 import { TemplateCard } from '@/features/practice/TemplateCard'
 import { DailyChallengeBanner } from '@/features/practice/DailyChallengeBanner'
 import { useBestScores } from '@/features/practice/useBestScores'
+import { byPopularity } from '@/features/practice/popularity'
 import { DIFF_LEVEL, DIFF_ORDER } from '@/features/practice/constants'
 import { dayKey } from '@/lib/date'
 
@@ -32,6 +33,7 @@ export default function PracticeLibraryPage() {
   const [sort, setSort] = useState<Sort>('popular')
   const [notDone, setNotDone] = useState(false)
   const dailyQuery = useDailyTemplateQuery()
+  const popularityCounts = useTemplatePopularityQuery().data?.counts
   const dailyId = dailyQuery.data
   const daily = dailyId ? templates?.find((x) => x.id === dailyId) : undefined
   const { data: artworks } = useArtworks()
@@ -53,10 +55,10 @@ export default function PracticeLibraryPage() {
       )
     const sorted = [...l]
     if (sort === 'new') sorted.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
-    if (sort === 'popular') sorted.sort((a, b) => b.popularity - a.popularity)
+    if (sort === 'popular') sorted.sort(byPopularity(popularityCounts))
     if (sort === 'easiest') sorted.sort((a, b) => DIFF_LEVEL[a.difficulty] - DIFF_LEVEL[b.difficulty] || a.minutes - b.minutes)
     return sorted
-  }, [templates, category, difficulty, notDone, query, sort, best, t])
+  }, [templates, category, difficulty, notDone, query, sort, best, popularityCounts, t])
 
   const reset = () => {
     setCategory('all')

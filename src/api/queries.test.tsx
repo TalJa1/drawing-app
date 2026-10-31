@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
-import { useDailyTemplateId, useLessonLookup, useTemplateLookup } from './queries'
+import { useDailyTemplateId, useLessonLookup, useTemplateLookup, useTemplatePopularityQuery } from './queries'
 
 const fetchMock = vi.fn()
 const json = (status: number, body: unknown) =>
@@ -88,5 +88,58 @@ describe('useDailyTemplateId', () => {
     const second = renderHook(() => useDailyTemplateId(), { wrapper: w })
     await waitFor(() => expect(second.result.current).toBe('fox'))
     expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('useTemplatePopularityQuery', () => {
+  const body = { windowDays: 30, asOf: '2026-10-31T03:00:00Z', counts: { fox: 3, cat: 0 } }
+
+  it('is the counts the server sends, and nothing before it answers', async () => {
+    fetchMock.mockImplementation(async () => json(200, body))
+    const { result } = renderHook(() => useTemplatePopularityQuery(), { wrapper: wrapper() })
+    expect(result.current.data).toBeUndefined()
+    await waitFor(() => expect(result.current.data?.counts).toEqual({ fox: 3, cat: 0 }))
+    expect(urls()).toEqual(['/api/v1/template-popularity'])
+  })
+
+  it('does not ask again within a minute, and asks again after it', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 9, 31, 10, 0, 0))
+    fetchMock.mockImplementation(async () => json(200, body))
+    const w = wrapper()
+    const first = renderHook(() => useTemplatePopularityQuery(), { wrapper: w })
+    await waitFor(() => expect(first.result.current.data).toBeDefined())
+    first.unmount()
+
+    vi.setSystemTime(new Date(2026, 9, 31, 10, 0, 59))
+    const soon = renderHook(() => useTemplatePopularityQuery(), { wrapper: w })
+    await waitFor(() => expect(soon.result.current.data).toBeDefined())
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    soon.unmount()
+
+    vi.setSystemTime(new Date(2026, 9, 31, 10, 1, 1))
+    const later = renderHook(() => useTemplatePopularityQuery(), { wrapper: w })
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2))
+    later.unmount()
+  })
+
+  it('does not ask again when the window regains focus, even when the numbers are old', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 9, 31, 10, 0, 0))
+    fetchMock.mockImplementation(async () => json(200, body))
+    const { result } = renderHook(() => useTemplatePopularityQuery(), { wrapper: wrapper() })
+    await waitFor(() => expect(result.current.data).toBeDefined())
+    vi.setSystemTime(new Date(2026, 9, 31, 10, 30, 0)) // stale by now
+    window.dispatchEvent(new Event('visibilitychange'))
+    window.dispatchEvent(new Event('focus'))
+    await new Promise((r) => setTimeout(r, 50))
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('has no data when the server fails, and does not throw', async () => {
+    fetchMock.mockRejectedValue(new TypeError('Failed to fetch'))
+    const { result } = renderHook(() => useTemplatePopularityQuery(), { wrapper: wrapper() })
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled())
+    expect(result.current.data).toBeUndefined()
   })
 })

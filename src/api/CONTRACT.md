@@ -44,12 +44,13 @@ gallery/progress (the client can upload `GET /me/export` output).
 
 ## Templates — `src/api/templates.ts`
 
-| Function                | Method & path                                    | Response                  |
-| ----------------------- | ------------------------------------------------ | ------------------------- |
-| `getTemplates()`        | `GET /templates`                                 | `Template[]`              |
-| `getTemplate(id)`       | `GET /templates/:id`                             | `Template`                |
-| (`<img src>`)           | `GET /templates/:id/image` (= `imageUrl`)        | `image/png` 1200×900      |
-| `dailyTemplateId(date)` | `GET /challenges/daily-template?date=YYYY-MM-DD` | `{ "templateId": "fox" }` |
+| Function                  | Method & path                                                                                | Response                                                                   |
+| ------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `getTemplates()`          | `GET /templates`                                                                             | `Template[]`                                                               |
+| `getTemplate(id)`         | `GET /templates/:id`                                                                         | `Template`                                                                 |
+| (`<img src>`)             | `GET /templates/:id/image` (= `imageUrl`)                                                    | `image/png` 1200×900                                                       |
+| `getDailyTemplateId()`    | `GET /challenges/daily-template` (optional `?date=YYYY-MM-DD`; the server uses `X-Timezone`) | `{ "templateId": "fox" }`                                                  |
+| `getTemplatePopularity()` | `GET /template-popularity` (public)                                                          | `{ "windowDays": 30, "asOf": ISODate, "counts": { "fox": 12, "cat": 0 } }` |
 
 ```json
 // Template. `svg` is always sent (the studio colours and draws on it). `imageUrl` is a
@@ -70,6 +71,10 @@ gallery/progress (the client can upload `GET /me/export` output).
   "tags": ["fox"]
 }
 ```
+
+`counts` has every template the server lists; the value is the number of different people who saved a
+practice drawing of it in the last `windowDays` days (0 when nobody did). The library's "Most popular"
+order is this number, highest first; the server keeps it for minutes, so it can lag a little.
 
 ## Artworks — `src/api/artworks.ts`
 
@@ -124,13 +129,13 @@ Expected latency 2–6 s; the UI shows a "scoring ceremony" while waiting. Rank 
 
 ## Progress & gamification — `src/api/progress.ts`
 
-| Function                        | Method & path                                               | Request         | Response                                           |
-| ------------------------------- | ----------------------------------------------------------- | --------------- | -------------------------------------------------- |
-| `recordActivity(event)`         | `POST /progress/events`                                     | `ProgressEvent` | `RewardSummary`                                    |
-| `getChallenges()`               | `GET /challenges`                                           | –               | `ChallengeStatus[]`                                |
-| `claimChallenge(id, periodKey)` | `POST /challenges/:id/claim`                                | `{ periodKey }` | `RewardSummary`                                    |
-| `getAchievements()`             | `GET /achievements`                                         | –               | `{ badges: (Badge & { unlockedAt?: ISODate })[] }` |
-| `getLeaderboard(scope)` | `GET /leaderboard?scope=weekly\|all` | –               | `LeaderboardEntry[]` (sorted)                      |
+| Function                        | Method & path                        | Request         | Response                                           |
+| ------------------------------- | ------------------------------------ | --------------- | -------------------------------------------------- |
+| `recordActivity(event)`         | `POST /progress/events`              | `ProgressEvent` | `RewardSummary`                                    |
+| `getChallenges()`               | `GET /challenges`                    | –               | `ChallengeStatus[]`                                |
+| `claimChallenge(id, periodKey)` | `POST /challenges/:id/claim`         | `{ periodKey }` | `RewardSummary`                                    |
+| `getAchievements()`             | `GET /achievements`                  | –               | `{ badges: (Badge & { unlockedAt?: ISODate })[] }` |
+| `getLeaderboard(scope)`         | `GET /leaderboard?scope=weekly\|all` | –               | `LeaderboardEntry[]` (sorted)                      |
 
 `ProgressEvent` is a tagged union (`features/gamification/types.ts`), e.g.
 

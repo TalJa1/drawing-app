@@ -2,7 +2,7 @@
 import { useMemo } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { dayKey } from '@/lib/date'
-import { getDailyTemplateId, getTemplate, getTemplates } from './templates'
+import { getDailyTemplateId, getTemplate, getTemplatePopularity, getTemplates } from './templates'
 import { deleteArtwork, getArtwork, listArtworks, updateArtwork } from './artworks'
 import { getAchievements, getChallenges, getLeaderboard, claimChallenge } from './progress'
 import { getArtForm, getArtForms, getArtist, getArtists, getGlossary, getLesson, getLessons, getMovement, getMovements } from './learn'
@@ -13,6 +13,8 @@ export const qk = {
   templates: ['templates'] as const,
   dailyTemplate: (day: string) => ['dailyTemplate', day] as const,
   template: (id: string) => ['templates', id] as const,
+  // not under 'templates': ['templates', 'popularity'] would also be the key of a template whose id is "popularity"
+  templatePopularity: ['templatePopularity'] as const,
   artworks: ['artworks'] as const,
   artwork: (id: string) => ['artworks', id] as const,
   achievements: ['achievements'] as const,
@@ -31,6 +33,20 @@ export const qk = {
 
 export const useTemplates = () => useQuery({ queryKey: qk.templates, queryFn: getTemplates, ...forever })
 export const useTemplate = (id: string) => useQuery({ queryKey: qk.template(id), queryFn: () => getTemplate(id), ...forever })
+
+/**
+ * How many people practised each template lately, for the "Most popular" order. Fresh for a minute
+ * (the server itself keeps the numbers for 15), and not asked again just because the window got
+ * focus: the order should not shuffle under someone's cursor. `data` is `undefined` while loading
+ * and when it fails; the library then keeps the API's order.
+ */
+export const useTemplatePopularityQuery = () =>
+  useQuery({
+    queryKey: qk.templatePopularity,
+    queryFn: getTemplatePopularity,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  })
 
 /** Find a template by id in the list (shared with `useTemplates`); `undefined` until it has loaded. */
 export function useTemplateLookup() {
