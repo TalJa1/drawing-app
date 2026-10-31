@@ -210,6 +210,13 @@ are unsupported. History stays on the client; AI uses no conversation database.
 
 `action` is `send|regenerate`; `mode` is `ideas|colour|composition|history`; `lang` is
 `en|vi` (the message language takes precedence). `learner` may be `null` (level 1).
+All request fields use camelCase, including nested objects; snake_case aliases are
+rejected. Types are strict: booleans are not numbers, and strings are not coerced.
+Integral JSON numbers such as 1 and 1.0 have the same meaning. `learner` is required.
+History `status` is optional but cannot be null; `imageMissing` must be a boolean;
+`cards`, when present, must be an array. All string limits count Unicode code points.
+Optional card `roles`, `note` and `reason` may be null; producers omit null fields and
+FE normalizes null to omission. Invalid old cards are dropped individually.
 History roles are `user|assistant`. Assistant status is `completed|stopped|interrupted`.
 A user history item may carry `images` or `imageMissing: true`; the latter asks the model
 to acknowledge the missing image. `imageMissing` is not a field of the current message.

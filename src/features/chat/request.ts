@@ -19,7 +19,7 @@ async function imagePayload(attachment: ChatAttachment): Promise<ImagePayload | 
   })
   return {
     id: attachment.id,
-    name: attachment.name.slice(0, LIMITS.maxImageNameChars),
+    name: Array.from(attachment.name).slice(0, LIMITS.maxImageNameChars).join(''),
     mime: 'image/jpeg',
     dataUrl,
     width: attachment.width,
@@ -63,7 +63,10 @@ export async function buildTurnRequest(
     else turns.push({ id: message.turnId, items: [item] })
   }
   let history = turns.flatMap((turn) => turn.items)
-  while (history.length > LIMITS.maxHistoryItems || history.reduce((count, item) => count + item.text.length, 0) > LIMITS.maxHistoryChars) {
+  while (
+    history.length > LIMITS.maxHistoryItems ||
+    history.reduce((count, item) => count + Array.from(item.text).length, 0) > LIMITS.maxHistoryChars
+  ) {
     turns.shift()
     history = turns.flatMap((turn) => turn.items)
   }

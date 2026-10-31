@@ -18,21 +18,31 @@ export const LIMITS = {
   maxCardsPerTurn: 6,
 } as const
 export const ID_PATTERN = /^[A-Za-z0-9._-]{1,64}$/
-const shortId = z.string().min(1).max(LIMITS.maxIdChars)
-const reason = z.string().max(160).optional()
-const point = z.string().min(1).max(240)
+const boundedString = (min: number, max: number) =>
+  z.string().refine((value) => {
+    const length = Array.from(value).length
+    return length >= min && length <= max
+  }, `Expected ${min}–${max} Unicode characters`)
+const shortId = boundedString(1, LIMITS.maxIdChars)
+const reason = boundedString(0, 160)
+  .nullish()
+  .transform((value) => value ?? undefined)
+const point = boundedString(1, 240)
 
 export const chatCardSchema: z.ZodType<ChatCard> = z.discriminatedUnion('type', [
   z
     .strictObject({
       type: z.literal('palette'),
-      name: z.string().min(1).max(40),
+      name: boundedString(1, 40),
       colors: z
         .array(z.string().regex(/^#[0-9a-f]{6}$/i))
         .min(3)
         .max(6),
-      roles: z.array(z.enum(['dominant', 'support', 'accent'])).optional(),
-      note: z.string().max(160).optional(),
+      roles: z
+        .array(z.enum(['dominant', 'support', 'accent']))
+        .nullish()
+        .transform((value) => value ?? undefined),
+      note: reason,
     })
     .refine((c) => new Set(c.colors.map((hex) => hex.toLowerCase())).size === c.colors.length, 'Duplicate colours')
     .refine((c) => !c.roles || c.roles.length === c.colors.length, 'Roles must match colours'),
@@ -40,8 +50,8 @@ export const chatCardSchema: z.ZodType<ChatCard> = z.discriminatedUnion('type', 
   z.strictObject({ type: z.literal('lesson'), slug: shortId.refine((id) => Object.hasOwn(LESSON_MAP, id)), reason }),
   z.strictObject({
     type: z.literal('idea'),
-    title: z.string().min(1).max(60),
-    description: z.string().min(1).max(220),
+    title: boundedString(1, 60),
+    description: boundedString(1, 220),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced', 'master']),
     minutes: z.number().int().min(5).max(120),
   }),
@@ -117,7 +127,7 @@ export type ChatTurnRequest = {
 
 const imageSchema = z.strictObject({
   id: shortId,
-  name: z.string().min(1).max(LIMITS.maxImageNameChars),
+  name: boundedString(1, LIMITS.maxImageNameChars),
   mime: z.literal('image/jpeg'),
   dataUrl: z
     .string()
@@ -144,14 +154,17 @@ export const chatTurnRequestSchema: z.ZodType<ChatTurnRequest> = z
     action: z.enum(['send', 'regenerate']),
     mode: z.enum(['ideas', 'colour', 'composition', 'history']),
     lang: z.enum(['en', 'vi']),
-    message: z.strictObject({ text: z.string().max(LIMITS.maxMessageChars), images: z.array(imageSchema).max(LIMITS.maxImagesPerRequest) }),
+    message: z.strictObject({
+      text: boundedString(0, LIMITS.maxMessageChars),
+      images: z.array(imageSchema).max(LIMITS.maxImagesPerRequest),
+    }),
     history: z
       .array(
         z
           .strictObject({
             role: z.enum(['user', 'assistant']),
             text: z.string(),
-            cards: z.unknown().transform(parseHistoryCards).optional(),
+            cards: z.array(z.unknown()).transform(parseHistoryCards).optional(),
             images: z.array(imageSchema).max(LIMITS.maxImagesPerRequest).optional(),
             imageMissing: z.boolean().optional(),
             status: z.enum(['completed', 'stopped', 'interrupted']).optional(),
@@ -161,7 +174,7 @@ export const chatTurnRequestSchema: z.ZodType<ChatTurnRequest> = z
       .max(LIMITS.maxHistoryItems),
     learner: z.strictObject({ level: z.number().int().min(1), completedLessons: z.array(shortId) }).nullable(),
   })
-  .refine((r) => r.history.reduce((n, item) => n + item.text.length, 0) <= LIMITS.maxHistoryChars, 'History exceeds text limit')
+  .refine((r) => r.history.reduce((n, item) => n + Array.from(item.text).length, 0) <= LIMITS.maxHistoryChars, 'History exceeds text limit')
   .refine(
     (r) => [r.message, ...r.history].reduce((n, item) => n + (item.images?.length ?? 0), 0) <= LIMITS.maxImagesPerRequest,
     'Too many images',

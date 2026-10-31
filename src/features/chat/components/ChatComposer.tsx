@@ -34,7 +34,7 @@ export function ChatComposer({
 }) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
-  const [text, setText] = useState(initialText.slice(0, LIMITS.maxMessageChars))
+  const [text, setText] = useState(Array.from(initialText).slice(0, LIMITS.maxMessageChars).join(''))
   const [images, setImages] = useState<PreparedImage[]>([])
   const [preparing, setPreparing] = useState(0)
   const [picker, setPicker] = useState(false)
@@ -51,9 +51,14 @@ export function ChatComposer({
   const imageCount = useRef(0)
   const alive = useRef(true)
   const changeText = (value: string) => {
-    const next = value.slice(0, LIMITS.maxMessageChars)
+    const next = Array.from(value).slice(0, LIMITS.maxMessageChars).join('')
     latest.current = next
     setText(next)
+  }
+  const nativeTextLimit = (value: string) => LIMITS.maxMessageChars + value.length - Array.from(value).length
+  const allowInsertedText = (field: HTMLTextAreaElement, inserted: string) => {
+    const next = field.value.slice(0, field.selectionStart) + inserted + field.value.slice(field.selectionEnd)
+    field.maxLength = nativeTextLimit(next)
   }
   useImperativeHandle(
     ref,
@@ -167,8 +172,9 @@ export function ChatComposer({
           id="chat-input"
           ref={input}
           rows={1}
-          maxLength={LIMITS.maxMessageChars}
+          maxLength={nativeTextLimit(text)}
           value={text}
+          onBeforeInput={(event) => allowInsertedText(event.currentTarget, (event.nativeEvent as InputEvent).data ?? '')}
           onChange={(event) => changeText(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing && event.keyCode !== 229) {
@@ -181,7 +187,7 @@ export function ChatComposer({
             if (files.length && !busy) {
               event.preventDefault()
               void paste(files)
-            }
+            } else allowInsertedText(event.currentTarget, event.clipboardData.getData('text/plain'))
           }}
           placeholder={t('chat.placeholder')}
           className="transition-[border-color,box-shadow] duration-150 focus:shadow-paper max-h-40 min-h-11 min-w-0 flex-1 resize-none rounded-[22px] border border-line-strong bg-card px-4 py-2.5 text-base text-ink placeholder:text-ink-faint placeholder:opacity-100 focus:border-ink max-lg:max-h-[clamp(2.75rem,calc(100dvh-32rem),10rem)]"
