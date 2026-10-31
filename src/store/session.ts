@@ -29,11 +29,8 @@ export const useSession = create<SessionState>()(
       token: null,
       setSession: (user, token) => set({ user, token }),
       updateProfile: (p) => set((s) => ({ user: { ...s.user, ...p } })),
-      signOut: () =>
-        set((s) => ({
-          token: null,
-          user: { ...GUEST, displayName: s.user.displayName, avatarSeed: s.user.avatarSeed },
-        })),
+      // back to the plain guest: nothing of the account that left stays on screen
+      signOut: () => set({ token: null, user: GUEST }),
     }),
     {
       name: STORE_KEYS.session,

@@ -8,3 +8,15 @@ describe('stored session', () => {
     expect(opts.migrate?.(old, 1)).toEqual({ user: GUEST, token: null })
   })
 })
+
+describe('signOut', () => {
+  it('goes back to the plain guest: no name, avatar or bio of the account that left', () => {
+    useSession.setState({
+      user: { ...GUEST, id: 'u1', email: 'lan@example.com', isGuest: false, displayName: 'Lan', bio: 'Hi', avatarSeed: 'lan-seed' },
+      token: 'tok-123',
+    })
+    useSession.getState().signOut()
+    expect(useSession.getState().user).toEqual(GUEST)
+    expect(useSession.getState().token).toBeNull()
+  })
+})

@@ -125,7 +125,6 @@
   },
   "auth": {
     "signedOut": "Đã đăng xuất. Phòng tranh của bạn vẫn ở trên thiết bị này.",
-    "mockNote": "Bản xem trước giao diện: email và mật khẩu bất kỳ đều dùng được, và không có gì rời khỏi thiết bị này.",
     "artAlt": "Một bức tranh ấn tượng tạo sinh",
     "artNote": "chào mừng tới xưởng vẽ",
     "loginTitleA": "Chào mừng",

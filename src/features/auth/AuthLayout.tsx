@@ -15,7 +15,6 @@ export function AuthLayout({ title, lede, children }: { title: ReactNode; lede: 
           <h1 className="display-lg">{title}</h1>
           <p className="mt-4 text-lg text-ink-soft">{lede}</p>
           <div className="mt-8">{children}</div>
-          <p className="mt-6 text-xs text-ink-faint">{t('auth.mockNote')}</p>
         </div>
         <div className="hidden lg:block">
           <div className="relative mx-auto max-w-md">

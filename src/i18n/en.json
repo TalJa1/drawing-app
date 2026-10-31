@@ -125,7 +125,6 @@
   },
   "auth": {
     "signedOut": "Signed out. Your gallery stays on this device.",
-    "mockNote": "Front-end preview: any email and password will work, and nothing leaves this device.",
     "artAlt": "A generative impressionist painting",
     "artNote": "welcome to the atelier",
     "loginTitleA": "Welcome",
