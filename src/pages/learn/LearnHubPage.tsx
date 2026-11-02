@@ -35,6 +35,8 @@ import { ArtFormCover } from '@/features/learn/ArtFormCover'
 import { searchAtlas } from '@/features/learn/search'
 import { DIFF_LEVEL } from '@/features/practice/constants'
 import { useArtForms, useArtists, useGlossary, useLessons, useMovements } from '@/api/queries'
+import { setBookmark } from '@/api/learn'
+import { toast } from '@/store/ui'
 import { TIMELINE } from '@/mocks/movements'
 import { ARTISTS } from '@/mocks/artists'
 import { ART_FACTS } from '@/mocks/palettes'
@@ -313,7 +315,6 @@ export default function LearnHubPage() {
   const { data: movements } = useMovements()
   const lessonState = useLearn((s) => s.lessons)
   const bookmarks = useLearn((s) => s.bookmarks)
-  const toggleBookmark = useLearn((s) => s.toggleBookmark)
   const formsViewed = useProgress((s) => s.stats.artFormsViewed)
   const { data: glossary } = useGlossary()
   const hits = useMemo(
@@ -568,7 +569,7 @@ export default function LearnHubPage() {
                     className="absolute right-3 top-3"
                     label={saved ? t('learn.unbookmark') : t('learn.bookmark')}
                     icon={saved ? <BookmarkCheck size={16} className="text-accent-ink" /> : <Bookmark size={16} />}
-                    onClick={() => toggleBookmark(l.slug)}
+                    onClick={() => void setBookmark(l.slug, !saved).catch(() => toast({ title: t('learn.bookmarkFailed'), tone: 'error' }))}
                   />
                 </li>
               )

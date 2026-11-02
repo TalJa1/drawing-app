@@ -36,7 +36,14 @@ export const router = createBrowserRouter(
                 </RequireAuth>
               ),
             },
-            { path: 'achievements', element: <P page="achievements" /> },
+            {
+              path: 'achievements',
+              element: (
+                <RequireAuth>
+                  <P page="achievements" />
+                </RequireAuth>
+              ),
+            },
             { path: 'profile', element: <P page="profile" /> },
             { path: 'login', element: <P page="login" /> },
             { path: 'register', element: <P page="register" /> },

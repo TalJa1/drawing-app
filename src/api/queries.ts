@@ -38,12 +38,17 @@ export const qk = {
  * changes (sign-out, or someone else signs in) the queries holding an account's data are cancelled and
  * dropped. Returns the function that stops watching.
  */
+const ACCOUNT_QUERIES = [qk.artworks, qk.challenges, qk.achievements, ['leaderboard']] as const
+
 export function watchAccountChange(client: QueryClient): () => void {
   return useSession.subscribe((s, prev) => {
     if (s.token === prev.token) return
-    const mine = { queryKey: qk.artworks } // ['artworks'] and ['artworks', id]
-    void client.cancelQueries(mine)
-    client.removeQueries(mine)
+    // everything that belongs to one account: ['artworks'] and ['artworks', id], the challenges, the badges and
+    // both rankings (['leaderboard', scope])
+    for (const queryKey of ACCOUNT_QUERIES) {
+      void client.cancelQueries({ queryKey })
+      client.removeQueries({ queryKey })
+    }
   })
 }
 watchAccountChange(queryClient)
@@ -111,8 +116,8 @@ export function useDeleteArtwork() {
   })
 }
 
-export const useAchievements = () => useQuery({ queryKey: qk.achievements, queryFn: getAchievements, staleTime: 0 })
-export const useChallenges = () => useQuery({ queryKey: qk.challenges, queryFn: getChallenges, staleTime: 0 })
+export const useAchievements = () => useQuery({ queryKey: qk.achievements, queryFn: getAchievements, staleTime: 0, enabled: useSignedIn() })
+export const useChallenges = () => useQuery({ queryKey: qk.challenges, queryFn: getChallenges, staleTime: 0, enabled: useSignedIn() })
 export function useClaimChallenge() {
   const qc = useQueryClient()
   return useMutation({
@@ -120,11 +125,14 @@ export function useClaimChallenge() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: qk.challenges })
       void qc.invalidateQueries({ queryKey: qk.achievements })
+      void qc.invalidateQueries({ queryKey: ['leaderboard'] }) // the XP changed, so did the ranking
     },
+    // a refused claim means this page is out of date (claimed on another device, progress moved): look again
+    onError: () => void qc.invalidateQueries({ queryKey: qk.challenges }),
   })
 }
 export const useLeaderboard = (scope: 'weekly' | 'all') =>
-  useQuery({ queryKey: qk.leaderboard(scope), queryFn: () => getLeaderboard(scope), staleTime: 30_000 })
+  useQuery({ queryKey: qk.leaderboard(scope), queryFn: () => getLeaderboard(scope), staleTime: 30_000, enabled: useSignedIn() })
 
 export const useLessons = () => useQuery({ queryKey: qk.lessons, queryFn: getLessons, ...forever })
 

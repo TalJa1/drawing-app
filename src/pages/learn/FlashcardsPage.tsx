@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft, Check, RefreshCw, RotateCcw } from 'lucide-react'
@@ -7,10 +7,13 @@ import { Page, SectionHeading } from '@/components/Layout'
 import { Button } from '@/components/Button'
 import { Skeleton } from '@/components/Progress'
 import { useGlossary } from '@/api/queries'
+import { apiErrorKey } from '@/api/artworks'
+import { reviewCard, syncLearning } from '@/api/learn'
 import { recordActivity } from '@/api/progress'
 import { useL } from '@/i18n/useL'
 import { cn } from '@/lib/utils'
 import { useLearn, type FlashcardState } from '@/store/learn'
+import { useSession } from '@/store/session'
 import { presentReward, toast } from '@/store/ui'
 import { burst } from '@/lib/confetti'
 import { useNow } from '@/lib/hooks'
@@ -38,7 +41,14 @@ export default function FlashcardsPage() {
   const [i, setI] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [known, setKnown] = useState(0)
+  const [saving, setSaving] = useState(false)
+  const signedIn = useSession((s) => !!s.token)
   const now = useNow(30_000).getTime()
+
+  // another device may have answered some cards since this one last asked
+  useEffect(() => {
+    if (signedIn) void syncLearning().catch(() => {})
+  }, [signedIn])
 
   if (!data)
     return (
@@ -61,11 +71,24 @@ export default function FlashcardsPage() {
   const current = session && i < session.length ? byId[session[i]] : null
   const finished = session && i >= session.length
 
-  const answer = (knewIt: boolean) => {
-    if (!current) return
-    const prev = cards[current.id]?.box ?? 0
-    const box = knewIt ? Math.min(4, prev + 1) : 0
-    setCard(current.id, schedule(box))
+  const answer = async (knewIt: boolean) => {
+    if (!current || saving) return
+    if (signedIn) {
+      // the server works out the box and the due time; the card is only moved on once it has
+      setSaving(true)
+      try {
+        await reviewCard(current.id, knewIt)
+      } catch (e) {
+        toast({ title: t('learn.cards.answerFailed'), description: t(apiErrorKey(e)), tone: 'error' })
+        return
+      } finally {
+        setSaving(false)
+      }
+    } else {
+      const prev = cards[current.id]?.box ?? 0
+      const box = knewIt ? Math.min(4, prev + 1) : 0
+      setCard(current.id, schedule(box))
+    }
     if (knewIt) setKnown((k) => k + 1)
     setFlipped(false)
     const nextI = i + 1
@@ -152,10 +175,22 @@ export default function FlashcardsPage() {
                   )}
                   aria-hidden={!flipped}
                 >
-                  <Button variant="outline" icon={<RotateCcw size={16} />} onClick={() => answer(false)} tabIndex={flipped ? 0 : -1}>
+                  <Button
+                    variant="outline"
+                    icon={<RotateCcw size={16} />}
+                    onClick={() => void answer(false)}
+                    disabled={saving}
+                    tabIndex={flipped ? 0 : -1}
+                  >
                     {t('learn.cards.again2')}
                   </Button>
-                  <Button variant="ink" icon={<Check size={16} />} onClick={() => answer(true)} tabIndex={flipped ? 0 : -1}>
+                  <Button
+                    variant="ink"
+                    icon={<Check size={16} />}
+                    onClick={() => void answer(true)}
+                    disabled={saving}
+                    tabIndex={flipped ? 0 : -1}
+                  >
                     {t('learn.cards.knew')}
                   </Button>
                 </div>

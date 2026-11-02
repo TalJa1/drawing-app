@@ -5,6 +5,7 @@ import { Check, RotateCcw, X } from 'lucide-react'
 import type { Quiz as QuizT } from '@/types'
 import { useL } from '@/i18n/useL'
 import { cn } from '@/lib/utils'
+import { apiErrorKey } from '@/api/artworks'
 import { submitQuiz, type QuizResult } from '@/api/learn'
 import { Button } from '@/components/Button'
 import { presentReward } from '@/store/ui'
@@ -22,26 +23,37 @@ export function Quiz({ quiz }: { quiz: QuizT }) {
   const [picked, setPicked] = useState<number | null>(null)
   const [result, setResult] = useState<QuizResult | null>(null)
   const [busy, setBusy] = useState(false)
+  /** i18n key of why the answers did not go through (null: no problem) */
+  const [failed, setFailed] = useState<string | null>(null)
   const q = quiz.questions[i]
   const total = quiz.questions.length
 
+  /** the answers go to the API as a whole; when that fails they are kept, for "Try again" */
+  const submit = async (all: number[]) => {
+    setBusy(true)
+    setFailed(null)
+    try {
+      const r = await submitQuiz(quiz.lessonSlug, all)
+      setResult(r)
+      if (r.correct === r.total) burst(0.5, 0.6)
+      presentReward(r.reward)
+    } catch (e) {
+      setFailed(apiErrorKey(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const next = async () => {
-    const all = [...answers, picked!]
+    // the answer to this question takes its own place (after a failed send it may be changed)
+    const all = [...answers.slice(0, i), picked!]
     setAnswers(all)
     setPicked(null)
     if (i + 1 < total) {
       setI(i + 1)
       return
     }
-    setBusy(true)
-    try {
-      const r = await submitQuiz(quiz.lessonSlug, all)
-      setResult(r)
-      if (r.correct === r.total) burst(0.5, 0.6)
-      presentReward(r.reward)
-    } finally {
-      setBusy(false)
-    }
+    await submit(all)
   }
 
   const restart = () => {
@@ -49,6 +61,7 @@ export function Quiz({ quiz }: { quiz: QuizT }) {
     setAnswers([])
     setPicked(null)
     setResult(null)
+    setFailed(null)
   }
 
   if (result)
@@ -151,6 +164,15 @@ export function Quiz({ quiz }: { quiz: QuizT }) {
           <Button className="mt-5" variant="ink" onClick={() => void next()} disabled={picked === null || busy} data-autofocus>
             {i + 1 < total ? t('common.next') : busy ? t('common.loading') : t('learn.quiz.finish')}
           </Button>
+          {failed && (
+            <div role="alert" className="mt-4 rounded-2xl border border-vermilion/40 bg-vermilion/5 p-4 text-sm">
+              <p className="font-semibold">{t('learn.quiz.notSent')}</p>
+              <p className="mt-1 text-ink-soft">{t(failed)}</p>
+              <Button className="mt-3" size="sm" variant="outline" onClick={() => void submit(answers)} disabled={busy}>
+                {t('errors.tryAgain')}
+              </Button>
+            </div>
+          )}
         </motion.fieldset>
       </AnimatePresence>
     </div>

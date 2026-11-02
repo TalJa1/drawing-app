@@ -10,12 +10,19 @@ export interface FlashcardState {
   due: number
 }
 
-interface LearnState {
+/** What the learning screens show; also what the account's learning is turned into (api/learn.ts). */
+export interface LearnData {
   lessons: Record<string, LessonProgress>
   bookmarks: string[]
   lastLesson: string | null
   flashcards: Record<string, FlashcardState>
   spotBest: number
+}
+
+interface LearnState extends LearnData {
+  /** makes `d` the whole state (the account's learning replaces what the device had) */
+  replace: (d: LearnData) => void
+  setBookmark: (slug: string, on: boolean) => void
   setLessonProgress: (slug: string, p: Partial<LessonProgress>) => void
   toggleBookmark: (slug: string) => void
   setFlashcard: (id: string, f: FlashcardState) => void
@@ -39,6 +46,11 @@ export const useLearn = create<LearnState>()(
       lastLesson: null,
       flashcards: {},
       spotBest: 0,
+      replace: (d) => set(d),
+      setBookmark: (slug, on) =>
+        set((s) => ({
+          bookmarks: on ? (s.bookmarks.includes(slug) ? s.bookmarks : [...s.bookmarks, slug]) : s.bookmarks.filter((b) => b !== slug),
+        })),
       setLessonProgress: (slug, p) =>
         set((s) => {
           const cur = s.lessons[slug] ?? emptyLesson()

@@ -1,6 +1,6 @@
 import type { components } from './schema'
 import { useSession, GUEST } from '@/store/session'
-import { login, logout, register, updateProfile } from './auth'
+import { getMe, login, logout, register, updateProfile } from './auth'
 import { ApiError } from './client'
 
 type UserOut = components['schemas']['UserOut']
@@ -121,5 +121,53 @@ describe('updateProfile', () => {
     expect(fetchMock).not.toHaveBeenCalled()
     expect(out.displayName).toBe('Mai')
     expect(useSession.getState().user.displayName).toBe('Mai')
+  })
+})
+
+describe('getMe (GET /me)', () => {
+  beforeEach(() => useSession.setState({ user: { ...USER, createdAt: USER.createdAt }, token: 'jwt-1' }))
+
+  it('does nothing for a guest: there is no account to ask', async () => {
+    useSession.setState({ user: GUEST, token: null })
+    await expect(getMe()).resolves.toBeNull()
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('shows the profile as the server has it now (it may have been changed on another device)', async () => {
+    fetchMock.mockResolvedValue(json(200, { ...USER, displayName: 'Lan (renamed)', bio: 'new bio' }))
+    const out = await getMe()
+    expect(call()).toEqual({ url: '/api/v1/me', method: 'GET', body: undefined })
+    expect(out?.displayName).toBe('Lan (renamed)')
+    const s = useSession.getState()
+    expect([s.user.displayName, s.user.bio, s.token]).toEqual(['Lan (renamed)', 'new bio', 'jwt-1'])
+  })
+
+  it('keeps what the device had when the server cannot be reached, and says so', async () => {
+    fetchMock.mockRejectedValue(new TypeError('Failed to fetch'))
+    await expect(getMe()).rejects.toBeInstanceOf(ApiError)
+    expect(useSession.getState().user.displayName).toBe('Lan')
+    expect(useSession.getState().token).toBe('jwt-1')
+  })
+
+  it('signs out when the token is no longer good (the app already does that for any 401)', async () => {
+    fetchMock.mockResolvedValue(err(401, 'unauthorized'))
+    await expect(getMe()).rejects.toMatchObject({ status: 401 })
+    expect(useSession.getState().token).toBeNull()
+  })
+
+  it('drops an answer for someone who signed out or was replaced while it was on its way', async () => {
+    fetchMock.mockImplementation(async () => {
+      useSession.setState({ user: { ...USER, id: 'someone-else', displayName: 'Mai' }, token: 'jwt-2' })
+      return json(200, USER)
+    })
+    await expect(getMe()).resolves.toBeNull()
+    expect(useSession.getState().user.displayName).toBe('Mai')
+    expect(useSession.getState().token).toBe('jwt-2')
+  })
+
+  it.each([[{}], [null], [{ id: 5 }], ['x']])('refuses an answer that is not a profile (%j) and keeps the old one', async (body) => {
+    fetchMock.mockResolvedValue(json(200, body))
+    await expect(getMe()).rejects.toMatchObject({ code: 'server_error' })
+    expect(useSession.getState().user.displayName).toBe('Lan')
   })
 })

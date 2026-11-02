@@ -25,6 +25,10 @@ Conventions
 | `register(req)`    | `POST /auth/register` | `{ email, password, displayName }`    | `AuthResponse`                       |
 | `logout()`         | `POST /auth/logout`   | –                                     | `204`                                |
 | `updateProfile(p)` | `PATCH /me`           | `{ displayName?, bio?, avatarSeed? }` | `User`                               |
+| `getMe()`          | `GET /me`             | –                                     | `User` (a guest has none: no call)   |
+
+`getMe()` runs once when the app is opened while signed in (`App.tsx`), so a profile changed on another device shows up
+here. If the server cannot be reached the profile already on screen stays; a `401` signs the person out (client).
 
 ```json
 // User
@@ -161,9 +165,21 @@ The old local judge (`buildScore`) is kept only for the demo artworks; nothing t
 | ------------------------------- | ------------------------------------ | --------------- | -------------------------------------------------- |
 | `recordActivity(event)`         | `POST /progress/events`              | `ProgressEvent` | `RewardSummary`                                    |
 | `getChallenges()`               | `GET /challenges`                    | –               | `ChallengeStatus[]`                                |
-| `claimChallenge(id, periodKey)` | `POST /challenges/:id/claim`         | `{ periodKey }` | `RewardSummary`                                    |
+| `claimChallenge(id, periodKey)` | `POST /challenges/:id/claim`         | `{ periodKey }` | `RewardSummary` (XP comes from the definition)     |
 | `getAchievements()`             | `GET /achievements`                  | –               | `{ badges: (Badge & { unlockedAt?: ISODate })[] }` |
-| `getLeaderboard(scope)`         | `GET /leaderboard?scope=weekly\|all` | –               | `LeaderboardEntry[]` (sorted)                      |
+| `getLeaderboard(scope)`         | `GET /leaderboard?scope=weekly\|all` | –               | `LeaderboardEntry[]` (sorted, best first)          |
+
+These four need an account (a guest gets `401`), so the **Achievements page is behind `RequireAuth`** (a guest is sent
+to sign in and brought back) and the hooks do not ask while nobody is signed in. A list that is not a list is
+treated as a failure (the page shows a retry), never as "nobody here". `ChallengeStatus` is
+`{ challenge, periodKey, progress, claimed, theme? }`; claim with the `periodKey` the server named. Claim failures:
+`404 not_found`, `409 already_claimed`, `422 incomplete` (the page has a sentence of its own for each).
+After a claim the app refreshes the XP (`syncProgress()`) and the challenges, badges and rankings; a refused claim
+refreshes the challenges only.
+
+`LeaderboardEntry` is `{ id, name, avatarSeed, xp, weeklyXp, level, isCurrentUser? }`: **real people only** (no sample
+users, no `country`), `id` is the rank as a string, `isCurrentUser` is present only when true. With few accounts the
+list is short; one entry that is the person themselves is shown as "you are the only one so far".
 
 `ProgressEvent` is a tagged union (`features/gamification/types.ts`), e.g.
 
@@ -196,10 +212,18 @@ The old local judge (`buildScore`) is kept only for the demo artworks; nothing t
   (`POST /progress/events`). The app never reports the first two (`recordActivity` refuses them with
   `event_not_allowed`), and after each of these it refreshes the numbers with **`syncProgress()`**
   (`GET /me/progress`), also done right after signing in. A failed `download` earns nothing and says nothing.
-- Every other event (`viewed`, `lessonCompleted`, `quizCompleted`, `glossary`, challenges …) and everything a
-  guest does still runs the rules **on the device** for now. Until those are connected, XP earned that way
-  is local and is replaced by the account's numbers at the next refresh.
-- `GET /me/progress` has no challenges; the ones kept on the device are left untouched by the refresh.
+- What only the browser can witness is also reported to `POST /progress/events` for a signed-in user:
+  `download`, `viewed`, `flashcardReviewed`, `spotStyle`, `colorLab`, `paletteSent`, `glossary`
+  (sent exactly as shaped, never with an `xp`). A failure (offline, rate limit) earns nothing and says nothing.
+- **Lessons and quizzes (lot 4c):** for a signed-in user the server decides `lessonCompleted` and `quizCompleted`
+  (in the answers of `POST /lessons/:slug/complete` and `POST /lessons/:slug/quiz`); the app never reports them as events, and after a
+  reward it refreshes with `syncProgress()`. So the challenges `d-lesson`, `w-lessons` and `w-quiz` now move for a signed-in user.
+  A guest still runs the rules on the device (nothing is sent), and the quiz of a guest is graded from the local mock keys until lot 6.
+- **`chatMessage` is never sent**: the AI chat is outside the backend, which refuses the event (`422 event_not_allowed`).
+  The app still counts chat messages on the device, but for a signed-in user the challenge `w-chat` and the badge
+  `muse-friend` **cannot be completed** until the owner decides how chat should count.
+- `GET /me/progress` has no challenges (they have their own endpoint); the ones kept on the device are left untouched by the refresh
+  and are no longer shown to anyone (the page reads `GET /challenges`).
 
 The server runs the **same pure rules** as `features/gamification/rules.ts`
 (`applyEvent`, `xpForScore`, `levelFromXp`, `evaluateBadges`, `updateStreak`) — they are
@@ -208,16 +232,38 @@ user's local timezone (send `X-Timezone`).
 
 ## Learning content — `src/api/learn.ts`
 
-| Function                               | Method & path                                      | Response                             |
-| -------------------------------------- | -------------------------------------------------- | ------------------------------------ |
-| `getLessons()` / `getLesson(slug)`     | `GET /lessons`, `GET /lessons/:slug`               | `Lesson[]` / `Lesson`                |
-| `getMovements()` / `getMovement(slug)` | `GET /movements[/:slug]`                           | `ArtMovement[]` / `ArtMovement`      |
-| `getArtists()` / `getArtist(slug)`     | `GET /artists[/:slug]`                             | `Artist[]` / `Artist`                |
-| `getArtForms()` / `getArtForm(slug)`   | `GET /art-forms[/:slug]`                           | `ArtForm[]` / `ArtForm`              |
-| `getGlossary()`                        | `GET /glossary`                                    | `GlossaryTerm[]`                     |
-| `saveLessonProgress(slug, progress)`   | `PUT /lessons/:slug/progress` `{ progress: 0–1 }`  | `204`                                |
-| `completeLesson(slug)`                 | `POST /lessons/:slug/complete`                     | `RewardSummary \| null`              |
-| `submitQuiz(slug, answers)`            | `POST /lessons/:slug/quiz` `{ answers: number[] }` | `{ correct, total, passed, reward }` |
+| Function                               | Method & path                                      | Response                                                               |
+| -------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
+| `getLessons()` / `getLesson(slug)`     | `GET /lessons`, `GET /lessons/:slug`               | `Lesson[]` / `Lesson`                                                  |
+| `getMovements()` / `getMovement(slug)` | `GET /movements[/:slug]`                           | `ArtMovement[]` / `ArtMovement`                                        |
+| `getArtists()` / `getArtist(slug)`     | `GET /artists[/:slug]`                             | `Artist[]` / `Artist`                                                  |
+| `getArtForms()` / `getArtForm(slug)`   | `GET /art-forms[/:slug]`                           | `ArtForm[]` / `ArtForm`                                                |
+| `getGlossary()`                        | `GET /glossary`                                    | `GlossaryTerm[]`                                                       |
+| `saveLessonProgress(slug, progress)`   | `PUT /lessons/:slug/progress` `{ progress: 0–1 }`  | `204` (the server keeps the largest)                                   |
+| `completeLesson(slug)`                 | `POST /lessons/:slug/complete`                     | `RewardSummary \| null` (null: paid before)                            |
+| `submitQuiz(slug, answers)`            | `POST /lessons/:slug/quiz` `{ answers: number[] }` | `{ correct, total, passed, reward \| null, review[] }`                 |
+| `setBookmark(slug, on)`                | `PUT` / `DELETE /me/bookmarks/:slug`               | `204`                                                                  |
+| `reviewCard(termId, knewIt)`           | `PUT /me/flashcards/:termId` `{ knewIt: boolean }` | `{ termId, box, due, serverTime }`                                     |
+| `syncLearning()`                       | `GET /me/learning`                                 | `{ lessons, bookmarks, lastLesson, flashcards, spotBest, serverTime }` |
+
+**Who keeps the learning state (lot 4c).** A **guest** keeps lessons, bookmarks and flashcards on the device (`useLearn`);
+nothing is sent. A **signed-in** person's state is the server's:
+
+- `syncLearning()` runs when the app opens signed in, when the flashcards page opens, and right after signing in; its answer
+  **replaces** what the device had (`useLearn.replace`). A guest's local learning is therefore **not** merged into the account.
+- `syncProgress()` (XP, streak, badges, activity) likewise runs when the app opens signed in, besides after sign-in and after every
+  reward, so a reward earned on another device shows up without signing in again. Failing to reach the server leaves what the device shows.
+- Whenever the token changes (sign-in, sign-up, sign-out, a different account) **both** `useLearn` and `useProgress` are emptied
+  at once (a subscription in `api/learn.ts`), so nothing of one person is shown to the next.
+- `completeLesson`, `submitQuiz` and `reviewCard` write to the device only after the server answered. If it does not, they throw
+  (the lesson is not marked finished, so opening it again retries; the quiz keeps the answers for "Try again"; the card stays).
+  `saveLessonProgress` shows the progress at once and never throws (the next scroll sends it again). `setBookmark` shows the
+  bookmark at once and puts it back if the server says no (it throws, the page says so).
+- **Flashcards:** the server owns the box and the due time (`knewIt` is all the app sends). Times are the server's clock:
+  `due` is stored on the device as `Date.now() + (due − serverTime)`, so a wrong phone clock does not move a card.
+  `PUT` is applied one card at a time and the page ignores a second press while one is being saved.
+  The guest's rule stays in `FlashcardsPage.tsx` (the backend's parity test reads that file).
+- Writes are limited to 120 per minute per user (`429 rate_limited`).
 
 Artist works and movement examples carry an optional `imageUrl` — today they are rendered
 as generative SVG placeholders; a CMS can supply licensed/public-domain images.

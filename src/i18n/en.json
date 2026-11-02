@@ -672,7 +672,13 @@
     "weekly": "This week",
     "allTime": "All time",
     "you": "you",
-    "sampleNote": "Other artists on this leaderboard are fictional sample users — a real leaderboard arrives with accounts."
+    "leaderboardAlone": "You're the only one on the board so far. Others will show up here as they join and earn XP.",
+    "leaderboardEmpty": "Nobody has earned XP in this view yet.",
+    "claimError": {
+      "already_claimed": "You've already claimed this reward.",
+      "incomplete": "This challenge isn't finished yet. Keep going!",
+      "not_found": "That challenge is no longer available."
+    }
   },
   "profile": {
     "eyebrow": "Profile",
@@ -814,6 +820,7 @@
     "done": "Done",
     "bookmark": "Save lesson",
     "unbookmark": "Remove from saved",
+    "bookmarkFailed": "We couldn’t update your saved lessons. Please try again.",
     "noSaved": "No lessons here yet — tap the bookmark on any lesson to save it.",
     "toolsTitleA": "Play with",
     "toolsTitleB": "what you learn",
@@ -888,6 +895,7 @@
     "readTime_one": "{{count}} min read",
     "readTime_other": "{{count}} min read",
     "lessonComplete": "Lesson complete!",
+    "completeFailed": "We couldn’t record that you finished this lesson. Open it again to retry.",
     "lessonXp": "+{{xp}} XP — now try the quiz for more",
     "tryItNow": "Try it now",
     "openStudio": "Open the studio with {{tool}}",
@@ -905,7 +913,8 @@
       "finish": "See my score",
       "review": "Review your answers",
       "yourAnswer": "Your answer",
-      "rightAnswer": "Right answer"
+      "rightAnswer": "Right answer",
+      "notSent": "Your answers weren’t sent."
     },
     "diagram": {
       "hue": "Hue",
@@ -1022,7 +1031,8 @@
       "tapToFlip": "tap to flip",
       "again2": "Review again",
       "knew": "I knew it",
-      "sessionDone": "Study session complete"
+      "sessionDone": "Study session complete",
+      "answerFailed": "We couldn’t save that answer. Please try again."
     },
     "spot": {
       "eyebrow": "Spot the Style",

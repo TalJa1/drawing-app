@@ -1,7 +1,7 @@
 import type { User } from '@/types'
 import { useSession } from '@/store/session'
 import type { components } from './schema'
-import { request } from './client'
+import { ApiError, request } from './client'
 
 export interface LoginRequest {
   email: string
@@ -52,6 +52,21 @@ export async function updateProfile(p: Partial<Pick<User, 'displayName' | 'bio' 
     return useSession.getState().user
   }
   const user: UserOut = await request<UserOut>('PATCH', '/me', { body: p })
+  useSession.getState().setSession(user, token)
+  return user
+}
+
+/**
+ * GET /me — the profile as the server has it now (it may have been changed on another device), shown on this
+ * one. A guest has none. Rejects when the server cannot be reached; the profile already shown is kept then.
+ */
+export async function getMe(): Promise<User | null> {
+  const { token } = useSession.getState()
+  if (!token) return null
+  const user = await request<UserOut>('GET', '/me')
+  if (typeof user?.id !== 'string') throw new ApiError('The server sent something we could not read.', 200, 'server_error')
+  // the answer is meant for whoever asked: if someone else has signed in (or out) meanwhile, it is dropped
+  if (useSession.getState().token !== token) return null
   useSession.getState().setSession(user, token)
   return user
 }

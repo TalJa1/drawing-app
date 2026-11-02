@@ -12,7 +12,7 @@ import { Skeleton } from '@/components/Progress'
 import { Markdown } from '@/components/Markdown'
 import { Highlight } from '@/components/art/Brush'
 import { useLesson, useLessons } from '@/api/queries'
-import { completeLesson, saveLessonProgress } from '@/api/learn'
+import { completeLesson, saveLessonProgress, setBookmark } from '@/api/learn'
 import { LessonDiagram } from '@/features/learn/LessonDiagram'
 import { Quiz } from '@/features/learn/Quiz'
 import { useL } from '@/i18n/useL'
@@ -20,51 +20,12 @@ import { useLearn } from '@/store/learn'
 import { useStudio } from '@/store/studio'
 import { presentReward, toast } from '@/store/ui'
 import type { ToolId } from '@/features/drawing/engine/types'
+import type { Lesson } from '@/types'
 
 export default function LessonPage() {
   const { slug = '' } = useParams()
   const { t } = useTranslation()
-  const L = useL()
-  const navigate = useNavigate()
   const { data: lesson, isLoading, isError } = useLesson(slug)
-  const { data: allLessons } = useLessons()
-  const state = useLearn((s) => s.lessons[slug])
-  const saved = useLearn((s) => s.bookmarks.includes(slug))
-  const toggleBookmark = useLearn((s) => s.toggleBookmark)
-  const articleRef = useRef<HTMLElement>(null)
-  const endRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: articleRef, offset: ['start start', 'end end'] })
-  const [completedNow, setCompletedNow] = useState(false)
-
-  // save reading progress as you scroll
-  useEffect(() => {
-    if (!lesson) return
-    let last = 0
-    return scrollYProgress.on('change', (v) => {
-      if (v - last > 0.08 || v >= 0.99) {
-        last = v
-        void saveLessonProgress(lesson.slug, Math.min(1, v))
-      }
-    })
-  }, [lesson, scrollYProgress])
-
-  // reaching the end of the reading marks the lesson complete
-  useEffect(() => {
-    const el = endRef.current
-    if (!el || !lesson) return
-    const io = new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) return
-      io.disconnect()
-      void completeLesson(lesson.slug).then((r) => {
-        if (!r) return
-        setCompletedNow(true)
-        toast({ title: t('learn.lessonComplete'), description: t('learn.lessonXp', { xp: r.xpGained }), tone: 'gold' })
-        presentReward(r)
-      })
-    })
-    io.observe(el)
-    return () => io.disconnect()
-  }, [lesson, t])
 
   if (isLoading)
     return (
@@ -81,6 +42,58 @@ export default function LessonPage() {
         <EmptyState title={t('learn.notFound')} action={<ButtonLink to="/learn">{t('learn.backToAtlas')}</ButtonLink>} />
       </Page>
     )
+  return <LessonReader lesson={lesson} />
+}
+
+/**
+ * The lesson itself. It is a component of its own, shown only once the lesson has arrived, because `useScroll`
+ * looks for its target (the <article>) once, when the component mounts: mounted any earlier (while the page
+ * still shows its loading skeleton) the scroll progress stays at 0, the bar never moves and no progress is saved.
+ */
+function LessonReader({ lesson }: { lesson: Lesson }) {
+  const { t } = useTranslation()
+  const L = useL()
+  const navigate = useNavigate()
+  const { data: allLessons } = useLessons()
+  const state = useLearn((s) => s.lessons[lesson.slug])
+  const saved = useLearn((s) => s.bookmarks.includes(lesson.slug))
+  const articleRef = useRef<HTMLElement>(null)
+  const endRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: articleRef, offset: ['start start', 'end end'] })
+  const [completedNow, setCompletedNow] = useState(false)
+
+  // save reading progress as you scroll
+  useEffect(() => {
+    let last = 0
+    return scrollYProgress.on('change', (v) => {
+      if (v - last > 0.08 || v >= 0.99) {
+        last = v
+        void saveLessonProgress(lesson.slug, Math.min(1, v))
+      }
+    })
+  }, [lesson, scrollYProgress])
+
+  // reaching the end of the reading marks the lesson complete
+  useEffect(() => {
+    const el = endRef.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return
+      io.disconnect()
+      completeLesson(lesson.slug).then(
+        (r) => {
+          if (!r) return
+          setCompletedNow(true)
+          toast({ title: t('learn.lessonComplete'), description: t('learn.lessonXp', { xp: r.xpGained }), tone: 'gold' })
+          presentReward(r)
+        },
+        // the lesson was not marked finished, so opening it again tries again
+        () => toast({ title: t('learn.completeFailed'), tone: 'error' }),
+      )
+    })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [lesson, t])
 
   const idx = allLessons?.findIndex((l) => l.slug === lesson.slug) ?? -1
   const next = allLessons && idx >= 0 ? allLessons[(idx + 1) % allLessons.length] : undefined
@@ -119,7 +132,7 @@ export default function LessonPage() {
               className="ml-auto"
               label={saved ? t('learn.unbookmark') : t('learn.bookmark')}
               icon={saved ? <BookmarkCheck size={18} className="text-accent-ink" /> : <Bookmark size={18} />}
-              onClick={() => toggleBookmark(lesson.slug)}
+              onClick={() => void setBookmark(lesson.slug, !saved).catch(() => toast({ title: t('learn.bookmarkFailed'), tone: 'error' }))}
             />
           </div>
           <h1 className="display-lg mt-5">

@@ -195,9 +195,7 @@ export interface LeaderboardEntry {
   xp: number
   weeklyXp: number
   level: number
-  country: string
   isCurrentUser?: boolean
-  sample: true | false
 }
 
 export interface RewardSummary {

@@ -672,7 +672,13 @@
     "weekly": "Tuần này",
     "allTime": "Mọi thời đại",
     "you": "bạn",
-    "sampleNote": "Những họa sĩ khác trên bảng này là người dùng mẫu hư cấu — bảng xếp hạng thật sẽ có khi có tài khoản."
+    "leaderboardAlone": "Hiện chỉ có mình bạn trên bảng. Những người khác sẽ xuất hiện ở đây khi họ tham gia và kiếm XP.",
+    "leaderboardEmpty": "Ở mục này chưa có ai kiếm được XP.",
+    "claimError": {
+      "already_claimed": "Bạn đã nhận phần thưởng này rồi.",
+      "incomplete": "Thử thách này chưa hoàn thành. Hãy tiếp tục nhé!",
+      "not_found": "Thử thách này không còn nữa."
+    }
   },
   "profile": {
     "eyebrow": "Hồ sơ",
@@ -814,6 +820,7 @@
     "done": "Xong",
     "bookmark": "Lưu bài học",
     "unbookmark": "Bỏ lưu",
+    "bookmarkFailed": "Chưa cập nhật được danh sách bài đã lưu. Bạn thử lại nhé.",
     "noSaved": "Chưa có bài nào — nhấn biểu tượng đánh dấu ở bài học bất kỳ để lưu.",
     "toolsTitleA": "Chơi với",
     "toolsTitleB": "điều bạn học",
@@ -888,6 +895,7 @@
     "readTime_one": "{{count}} phút đọc",
     "readTime_other": "{{count}} phút đọc",
     "lessonComplete": "Hoàn thành bài học!",
+    "completeFailed": "Chưa ghi nhận được việc bạn đã hoàn thành bài này. Mở lại bài để thử lần nữa.",
     "lessonXp": "+{{xp}} XP — làm thêm trắc nghiệm để nhận nữa nhé",
     "tryItNow": "Thử ngay",
     "openStudio": "Mở xưởng vẽ với {{tool}}",
@@ -905,7 +913,8 @@
       "finish": "Xem điểm",
       "review": "Xem lại các câu trả lời",
       "yourAnswer": "Bạn chọn",
-      "rightAnswer": "Đáp án đúng"
+      "rightAnswer": "Đáp án đúng",
+      "notSent": "Câu trả lời của bạn chưa được gửi."
     },
     "diagram": {
       "hue": "Sắc tướng",
@@ -1022,7 +1031,8 @@
       "tapToFlip": "chạm để lật",
       "again2": "Ôn lại",
       "knew": "Mình đã thuộc",
-      "sessionDone": "Hoàn thành phiên học"
+      "sessionDone": "Hoàn thành phiên học",
+      "answerFailed": "Chưa lưu được câu trả lời. Bạn thử lại nhé."
     },
     "spot": {
       "eyebrow": "Đoán phong cách",
