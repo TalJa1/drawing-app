@@ -17,6 +17,7 @@ import { LessonDiagram } from '@/features/learn/LessonDiagram'
 import { Quiz } from '@/features/learn/Quiz'
 import { useL } from '@/i18n/useL'
 import { useLearn } from '@/store/learn'
+import { useSession } from '@/store/session'
 import { useStudio } from '@/store/studio'
 import { presentReward, toast } from '@/store/ui'
 import type { ToolId } from '@/features/drawing/engine/types'
@@ -61,7 +62,13 @@ function LessonReader({ lesson }: { lesson: Lesson }) {
   const articleRef = useRef<HTMLElement>(null)
   const endRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: articleRef, offset: ['start start', 'end end'] })
-  const [completedNow, setCompletedNow] = useState(false)
+  const token = useSession((s) => s.token)
+  // "finished just now" belongs to the person who finished it: when somebody else is there (signed out, another
+  // account), the lesson is not finished for them and the mark goes away without the page being left. It is forgotten
+  // for good (not just hidden): every guest has the same "no token", so a guest who is back must not get it back.
+  const [finishedBy, setFinishedBy] = useState<{ token: string | null } | null>(null)
+  if (finishedBy !== null && finishedBy.token !== token) setFinishedBy(null) // React redraws at once, before showing anything
+  const completedNow = finishedBy !== null
 
   // save reading progress as you scroll
   useEffect(() => {
@@ -72,7 +79,7 @@ function LessonReader({ lesson }: { lesson: Lesson }) {
         void saveLessonProgress(lesson.slug, Math.min(1, v))
       }
     })
-  }, [lesson, scrollYProgress])
+  }, [lesson.slug, scrollYProgress])
 
   // reaching the end of the reading marks the lesson complete
   useEffect(() => {
@@ -81,10 +88,13 @@ function LessonReader({ lesson }: { lesson: Lesson }) {
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting) return
       io.disconnect()
+      const sentBy = useSession.getState().token
       completeLesson(lesson.slug).then(
         (r) => {
           if (!r) return
-          setCompletedNow(true)
+          // the reward belongs to whoever sent the request: if the person has changed meanwhile, it is not shown to the one there now
+          if (useSession.getState().token !== sentBy) return
+          setFinishedBy({ token: sentBy })
           toast({ title: t('learn.lessonComplete'), description: t('learn.lessonXp', { xp: r.xpGained }), tone: 'gold' })
           presentReward(r)
         },
@@ -94,7 +104,7 @@ function LessonReader({ lesson }: { lesson: Lesson }) {
     })
     io.observe(el)
     return () => io.disconnect()
-  }, [lesson, t])
+  }, [lesson.slug, t])
 
   const idx = allLessons?.findIndex((l) => l.slug === lesson.slug) ?? -1
   const next = allLessons && idx >= 0 ? allLessons[(idx + 1) % allLessons.length] : undefined
