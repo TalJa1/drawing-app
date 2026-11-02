@@ -1113,8 +1113,6 @@
     "emptyTitle": "Xin chào, {{name}}! Mình là nàng thơ của bạn.",
     "welcomeTitle": "Cùng vẽ nhé, {{name}}.",
     "emptyNote": "chọn một gợi ý bên dưới, hoặc hỏi mình bất cứ điều gì",
-    "thinking": "Nàng thơ đang suy nghĩ…",
-    "error": "Nàng thơ vừa quên mất mạch suy nghĩ.",
     "helpful": "Hữu ích",
     "notHelpful": "Chưa hữu ích",
     "regenerate": "Tạo lại câu trả lời",

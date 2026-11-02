@@ -1113,8 +1113,6 @@
     "emptyTitle": "Hello, {{name}}! I'm your muse.",
     "welcomeTitle": "Let's draw, {{name}}.",
     "emptyNote": "pick a suggestion below, or ask me anything",
-    "thinking": "The muse is thinking…",
-    "error": "The muse lost her train of thought.",
     "helpful": "Helpful",
     "notHelpful": "Not helpful",
     "regenerate": "Regenerate answer",
