@@ -5,7 +5,7 @@ import { levelFromXp } from '@/features/gamification/rules'
 import { buildTurnRequest } from './request'
 import { learnerSnapshot } from './useMuse'
 import { loadChatImage } from './chatImages'
-import { chatTurnRequestSchema } from './contract'
+import { chatTurnRequestSchema } from './requestSchema'
 import { useChat } from '@/store/chat'
 
 vi.mock('./chatImages', () => ({ loadChatImage: vi.fn() }))

@@ -1,4 +1,5 @@
-import { chatCardSchema, chatTurnRequestSchema } from './contract'
+import { chatCardSchema } from './contract'
+import { chatTurnRequestSchema } from './requestSchema'
 
 const request = () => ({
   protocolVersion: 1,

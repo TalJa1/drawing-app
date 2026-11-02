@@ -1,4 +1,5 @@
-import { chatCardSchema, chatStreamEventSchema, chatTurnRequestSchema, parseHistoryCards } from './contract'
+import { chatCardSchema, chatStreamEventSchema, parseHistoryCards } from './contract'
+import { chatTurnRequestSchema } from './requestSchema'
 
 const image = {
   id: 'a_1',
