@@ -1,7 +1,7 @@
 import type { AiErrorCode, ChatMessage, ChatMode, ChatStreamEvent, Conversation, ReplyStatus, ReplyVariant } from '@/types'
 import type { ChatTransport } from '@/api/ai/transport'
 import { AiTransportError } from '@/api/ai/errors'
-import { titleFor } from '@/api/chat'
+import { titleFor } from './title'
 import { uid } from '@/lib/random'
 import { useChat } from '@/store/chat'
 import type { PreparedImage } from './attachments'

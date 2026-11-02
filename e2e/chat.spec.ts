@@ -1057,12 +1057,12 @@ test('cards arriving before text show an honest reply status in one live region'
   await page.route('**/src/api/ai/mockTransport.ts*', async (route) => {
     const response = await route.fetch()
     const body = await response.text()
-    expect(body).toContain('const mockTransport = createMockTransport();')
+    expect(body).toContain('const mockTransport = /* @__PURE__ */ createMockTransport();')
     await route.fulfill({
       response,
       body: body.replace(
-        'const mockTransport = createMockTransport();',
-        'const mockTransport = createMockTransport({ cardsFirst: true, textDelayMs: 3000 });',
+        'const mockTransport = /* @__PURE__ */ createMockTransport();',
+        'const mockTransport = /* @__PURE__ */ createMockTransport({ cardsFirst: true, textDelayMs: 3000 });',
       ),
     })
   })

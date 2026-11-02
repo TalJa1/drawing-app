@@ -64,4 +64,4 @@ export function createMockTransport({
   }
 }
 
-export const mockTransport = createMockTransport()
+export const mockTransport = /* @__PURE__ */ createMockTransport()
