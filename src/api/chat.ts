@@ -19,9 +19,7 @@ import {
 } from '@/mocks/chatReplies'
 import { MOVEMENTS } from '@/mocks/movements'
 import { PALETTES } from '@/mocks/palettes'
-import { useSettings } from '@/store/settings'
 import { queryClient } from '@/app/queryClient'
-import { ApiError } from './client'
 import { qk } from './queries'
 import { getTemplates } from './templates'
 
@@ -238,9 +236,6 @@ export function buildReply(req: ChatRequest, templates: readonly Template[] = []
 export async function* streamChatReply(req: ChatRequest, signal?: AbortSignal): AsyncGenerator<ChatStreamEvent> {
   // "thinking" time before the first token
   await sleep(600 + Math.random() * 700)
-  if (useSettings.getState().simulateErrors && Math.random() < 0.15) {
-    throw new ApiError('The muse lost her train of thought. Try again?', 503, 'simulated_failure')
-  }
   // the chat itself is still a mock, but the templates it suggests are the real ones; without them (offline) it just leaves the card out
   const templates = await queryClient.ensureQueryData({ queryKey: qk.templates, queryFn: getTemplates }).catch(() => [])
   const reply = buildReply(req, templates)

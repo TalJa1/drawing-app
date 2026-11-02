@@ -109,8 +109,6 @@ export interface Artwork {
   medium: string
   analysis?: ArtworkAnalysis
   score?: ScoreResult
-  /** true for seeded demo artworks */
-  demo?: boolean
 }
 
 export interface SubScores {

@@ -1,23 +1,20 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Dices, Download, LogIn, Sparkles, Trash2 } from 'lucide-react'
+import { Dices, Download, LogIn, Sparkles } from 'lucide-react'
 import { Page, SectionHeading } from '@/components/Layout'
 import { Card } from '@/components/Card'
 import { Avatar } from '@/components/Avatar'
 import { Button, ButtonLink } from '@/components/Button'
-import { Modal } from '@/components/Modal'
 import { Select, Slider, Switch, TextField } from '@/components/Form'
 import { XPBar } from '@/components/Gamification'
 import { Highlight } from '@/components/art/Brush'
 import { updateProfile } from '@/api/auth'
 import { useLessons } from '@/api/queries'
-import { exportData, deleteAllData } from '@/api/account'
-import { clearDemoData, isDemoActive, seedDemoData } from '@/api/demo'
-import { queryClient } from '@/app/queryClient'
+import { exportData } from '@/api/account'
+import { apiErrorKey } from '@/api/artworks'
 import { useSession } from '@/store/session'
 import { useSettings, type DrawingPrefs, type MotionPref, type ThemePref } from '@/store/settings'
-import { useCollection } from '@/store/collection'
 import { useLearn } from '@/store/learn'
 import { useStudio } from '@/store/studio'
 import { toast } from '@/store/ui'
@@ -50,13 +47,11 @@ export default function ProfilePage() {
   const { level, rank } = useLevel()
   const lessons = useLearn((s) => s.lessons)
   const { data: allLessons } = useLessons()
-  const demoOn = useCollection((s) => s.artworks.some((a) => a.demo))
   const [name, setName] = useState(user.displayName)
   const [bio, setBio] = useState(user.bio)
   const [seed, setSeed] = useState(user.avatarSeed)
   const [saving, setSaving] = useState(false)
-  const [demoBusy, setDemoBusy] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [exporting, setExporting] = useState(false)
 
   const save = async () => {
     setSaving(true)
@@ -70,29 +65,19 @@ export default function ProfilePage() {
     }
   }
 
-  const toggleDemo = async (on: boolean) => {
-    setDemoBusy(true)
-    try {
-      if (on && !isDemoActive()) await seedDemoData()
-      if (!on) await clearDemoData()
-      await queryClient.invalidateQueries()
-      toast({ title: on ? t('profile.demoLoaded') : t('profile.demoCleared'), tone: 'success' })
-    } finally {
-      setDemoBusy(false)
-    }
-  }
-
   const doExport = async () => {
-    const blob = await exportData()
-    downloadBlob(blob, `art-spark-data-${new Date().toISOString().slice(0, 10)}.json`)
-    toast({ title: t('profile.exported'), tone: 'success' })
-  }
-
-  const doDelete = async () => {
-    await deleteAllData()
-    await queryClient.invalidateQueries()
-    setConfirmDelete(false)
-    toast({ title: t('profile.deleted'), tone: 'info' })
+    setExporting(true)
+    const asked = useSession.getState().token // the file is that account's: if somebody else (or nobody) is signed in when it arrives, it is dropped
+    try {
+      const blob = await exportData()
+      if (useSession.getState().token !== asked) return
+      downloadBlob(blob, `art-spark-data-${new Date().toISOString().slice(0, 10)}.json`)
+      toast({ title: t('profile.exported'), tone: 'success' })
+    } catch (e) {
+      if (useSession.getState().token === asked) toast({ title: t(apiErrorKey(e)), tone: 'error' })
+    } finally {
+      setExporting(false)
+    }
   }
 
   const setDrawing = (p: Partial<DrawingPrefs>) => {
@@ -297,48 +282,19 @@ export default function ProfilePage() {
               />
             </Card>
 
-            <Card className="space-y-5 p-6 sm:p-8">
-              <h2 className="font-display text-2xl">{t('profile.data')}</h2>
-              <Switch
-                checked={demoOn}
-                onChange={(v) => void toggleDemo(v)}
-                label={t('profile.demo')}
-                description={demoBusy ? t('common.loading') : t('profile.demoHint')}
-              />
-              <Switch
-                checked={settings.simulateErrors}
-                onChange={settings.setSimulateErrors}
-                label={t('profile.simulateErrors')}
-                description={t('profile.simulateErrorsHint')}
-              />
-              <div className="flex flex-wrap gap-3 pt-2">
-                <Button variant="outline" icon={<Download size={16} />} onClick={() => void doExport()}>
-                  {t('profile.export')}
-                </Button>
-                <Button variant="ghost" icon={<Trash2 size={16} />} className="text-accent-ink" onClick={() => setConfirmDelete(true)}>
-                  {t('profile.deleteAll')}
-                </Button>
-              </div>
-            </Card>
+            {!user.isGuest && (
+              <Card className="space-y-5 p-6 sm:p-8">
+                <h2 className="font-display text-2xl">{t('profile.data')}</h2>
+                <div className="flex flex-wrap gap-3 pt-2">
+                  <Button variant="outline" icon={<Download size={16} />} disabled={exporting} onClick={() => void doExport()}>
+                    {t('profile.export')}
+                  </Button>
+                </div>
+              </Card>
+            )}
           </div>
         </div>
       </div>
-      <Modal
-        open={confirmDelete}
-        onClose={() => setConfirmDelete(false)}
-        title={t('profile.deleteTitle')}
-        description={t('profile.deleteBody')}
-        size="sm"
-      >
-        <div className="flex gap-3">
-          <Button variant="outline" className="flex-1" onClick={() => setConfirmDelete(false)}>
-            {t('common.cancel')}
-          </Button>
-          <Button variant="pigment" className="flex-1" onClick={() => void doDelete()}>
-            {t('profile.deleteConfirm')}
-          </Button>
-        </div>
-      </Modal>
     </Page>
   )
 }

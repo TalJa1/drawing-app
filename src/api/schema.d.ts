@@ -473,23 +473,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/api/v1/me/flashcards': {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    /** Get Flashcards */
-    get: operations['get_flashcards_api_v1_me_flashcards_get']
-    put?: never
-    post?: never
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   '/api/v1/me/flashcards/{term_id}': {
     parameters: {
       query?: never
@@ -887,18 +870,6 @@ export interface components {
     FlashcardIn: {
       /** Knewit */
       knewIt: boolean
-    }
-    /** FlashcardsOut */
-    FlashcardsOut: {
-      /** Flashcards */
-      flashcards: {
-        [key: string]: components['schemas']['CardOut']
-      }
-      /**
-       * Servertime
-       * Format: date-time
-       */
-      serverTime: string
     }
     /**
      * GlossaryTermOut
@@ -2409,26 +2380,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['HTTPValidationError']
-        }
-      }
-    }
-  }
-  get_flashcards_api_v1_me_flashcards_get: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: never
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['FlashcardsOut']
         }
       }
     }

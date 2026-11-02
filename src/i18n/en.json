@@ -622,8 +622,7 @@
       "title": "Every masterpiece begins with one brave line.",
       "body": "Your gallery is waiting for its first piece. Colour a template or let loose in Free Draw.",
       "note": "the frames are polished and ready…",
-      "cta": "Colour your first template",
-      "demo": "Preview with demo artworks"
+      "cta": "Colour your first template"
     }
   },
   "achievements": {
@@ -721,19 +720,8 @@
     "tour": "Show the studio tour again",
     "tourHint": "Replays the quick walkthrough next time you open the studio.",
     "data": "Your data",
-    "demo": "Demo data",
-    "demoHint": "Fill your gallery with sample artworks, scores and a streak to preview a lived-in app.",
-    "demoLoaded": "Demo gallery loaded",
-    "demoCleared": "Demo data removed",
-    "simulateErrors": "Simulate server hiccups (developer)",
-    "simulateErrorsHint": "Makes the mock API fail now and then so you can see the error states.",
     "export": "Export my data (JSON)",
-    "exported": "Your data has been downloaded",
-    "deleteAll": "Delete all local data",
-    "deleteTitle": "Delete everything?",
-    "deleteBody": "This removes your artworks, drafts, XP, badges, lessons and chats from this device. It cannot be undone.",
-    "deleteConfirm": "Delete everything",
-    "deleted": "All local data deleted. A fresh page awaits."
+    "exported": "Your data has been downloaded"
   },
   "learn": {
     "tracks": {

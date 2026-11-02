@@ -7,7 +7,7 @@ import { useProgress } from '@/store/progress'
 import { useSession } from '@/store/session'
 import type { components } from './schema'
 import type { Assert, Wire } from './contract'
-import { ApiError, request, simulate } from './client'
+import { ApiError, request } from './client'
 import { recordActivity, syncProgress } from './progress'
 
 // The server's shapes (from its OpenAPI) must be usable as the app's types; if one side changes
@@ -24,9 +24,8 @@ export type QuizReviewOnTheWire = Assert<Wire<components['schemas']['QuestionRev
 export type LearningKeysOnTheWire = Assert<keyof components['schemas']['LearningOut'], keyof LearnData | 'serverTime'>
 export type LearningKeysInTheApp = Assert<keyof LearnData | 'serverTime', keyof components['schemas']['LearningOut']>
 
-/* Movements and artists have no endpoint on the server (plan 6.4): they stay local, with a short
-   simulated wait. Cached forever by TanStack Query. */
-const content = { latency: [250, 600] as [number, number] }
+/* Movements and artists have no endpoint on the server (plan 6.4): they are static content kept in the app.
+   Cached forever by TanStack Query. */
 
 function found<T>(v: T | undefined, what: string): T {
   if (!v) throw new ApiError(`${what} not found`, 404, 'not_found')
@@ -42,19 +41,15 @@ export function getLesson(slug: string): Promise<Lesson> {
   return request<Lesson>('GET', `/lessons/${encodeURIComponent(slug)}`)
 }
 export async function getMovements(): Promise<ArtMovement[]> {
-  await simulate(content)
   return MOVEMENTS
 }
 export async function getMovement(slug: string): Promise<ArtMovement> {
-  await simulate(content)
   return found(MOVEMENT_MAP[slug], 'Movement')
 }
 export async function getArtists(): Promise<Artist[]> {
-  await simulate(content)
   return ARTISTS
 }
 export async function getArtist(slug: string): Promise<Artist> {
-  await simulate(content)
   return found(ARTIST_MAP[slug], 'Artist')
 }
 /** GET /art-forms */
@@ -140,7 +135,6 @@ export async function submitQuiz(slug: string, answers: number[]): Promise<QuizR
     if (result.reward) await syncProgress().catch(() => {}) // the reward stands even if the refresh does not get through
     return result
   }
-  await simulate({ latency: [400, 800], canFail: false })
   const lesson = found(LESSON_MAP[slug], 'Lesson')
   const keys = found(QUIZ_KEYS[slug], 'Lesson')
   const qs = lesson.quiz.questions

@@ -59,7 +59,7 @@ export function blobToDataUrl(blob: Blob): Promise<string> {
 
 /**
  * Colour a line-art template by giving its white-filled shapes pigment fills.
- * Used for demo artworks and the landing page showcase.
+ * Used for the landing page showcase.
  */
 export function colouriseTemplate(svg: string, palette: string[], rng: () => number, coverage = 1, sequence?: string[]): string {
   let i = 0

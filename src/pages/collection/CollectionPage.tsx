@@ -14,8 +14,7 @@ import { LineChart } from '@/components/charts/LineChart'
 import { CalendarHeatmap } from '@/components/charts/CalendarHeatmap'
 import { Highlight } from '@/components/art/Brush'
 import { Washes } from '@/components/art/Washes'
-import { useArtworks, useTemplateLookup, qk } from '@/api/queries'
-import { seedDemoData } from '@/api/demo'
+import { useArtworks, useTemplateLookup } from '@/api/queries'
 import { useL } from '@/i18n/useL'
 import { cn } from '@/lib/utils'
 import { formatDate, formatMinutes } from '@/lib/date'
@@ -23,8 +22,6 @@ import { useProgress } from '@/store/progress'
 import { useLiveStreak } from '@/features/gamification/hooks'
 import { ArtworkImage } from '@/features/collection/ArtworkImage'
 import { Lightbox } from '@/features/collection/Lightbox'
-import { queryClient } from '@/app/queryClient'
-import { toast } from '@/store/ui'
 import { useNow } from '@/lib/hooks'
 
 type Tab = 'all' | 'practice' | 'free' | 'favourites'
@@ -115,7 +112,6 @@ export default function CollectionPage() {
   const [templateFilter, setTemplateFilter] = useState('all')
   const [open, setOpen] = useState<number | null>(null)
   const [table, setTable] = useState(false)
-  const [seeding, setSeeding] = useState(false)
   const progress = useProgress()
   const streak = useLiveStreak()
   const all = useMemo(() => data ?? [], [data])
@@ -146,17 +142,6 @@ export default function CollectionPage() {
 
   const history = progress.scoreHistory.slice(-20)
   const locale = i18n.language === 'vi' ? 'vi-VN' : 'en-GB'
-
-  const loadDemo = async () => {
-    setSeeding(true)
-    try {
-      await seedDemoData()
-      await queryClient.invalidateQueries({ queryKey: qk.artworks })
-      toast({ title: t('profile.demoLoaded'), tone: 'success' })
-    } finally {
-      setSeeding(false)
-    }
-  }
 
   return (
     <Page>
@@ -300,9 +285,6 @@ export default function CollectionPage() {
                   <ButtonLink to="/practice" variant="pigment" icon={<Brush size={17} />}>
                     {t('collection.empty.cta')}
                   </ButtonLink>
-                  <Button variant="outline" onClick={() => void loadDemo()} disabled={seeding}>
-                    {seeding ? t('common.loading') : t('collection.empty.demo')}
-                  </Button>
                 </div>
               }
             />

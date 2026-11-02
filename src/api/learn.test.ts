@@ -18,9 +18,6 @@ import {
   syncLearning,
 } from './learn'
 
-// no waiting in tests
-vi.mock('./client', async (original) => ({ ...(await original<typeof import('./client')>()), simulate: async () => {} }))
-
 const THREE = 'rule-of-thirds' // 3 questions
 const FOUR = 'hue-value-saturation' // 4 questions
 

@@ -16,7 +16,7 @@ type ArtworkCreatedOut = components['schemas']['ArtworkCreatedOut']
 // (an app interface has no index signature, so it cannot be compared). So: every field the server sends
 // is one the app has, and an app artwork can be read as the server's for the rest.
 export type ArtworkKeysOnTheWire = Assert<keyof ArtworkOut, keyof Artwork>
-export type ArtworkOnTheWire = Assert<Omit<Artwork, 'demo' | 'score' | 'analysis'>, Omit<Wire<ArtworkOut>, 'score' | 'analysis'>>
+export type ArtworkOnTheWire = Assert<Omit<Artwork, 'score' | 'analysis'>, Omit<Wire<ArtworkOut>, 'score' | 'analysis'>>
 export type RewardOnTheWire = Assert<Wire<components['schemas']['RewardOut']>, RewardSummary>
 
 export interface SaveArtworkRequest {

@@ -25,7 +25,6 @@ export default defineConfig(({ mode }) => {
             groups: [
               {
                 name: 'react',
-                // react-dom/server is only used (lazily) by the demo-data seeder
                 test: /node_modules[\\/](react|scheduler|react-router|react-router-dom|@remix-run)[\\/]|node_modules[\\/]react-dom[\\/](?!server|cjs[\\/]react-dom-server)/,
                 priority: 40,
               },

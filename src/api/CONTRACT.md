@@ -1,9 +1,9 @@
 # Art Spark — API contract (v0, derived from the mock layer)
 
 Every screen talks to the "server" only through the typed functions in `src/api/*`.
-Today they are mocks (latency via `simulate()`, data in Zustand + IndexedDB). This
-document is the spec for the real back-end: implement these endpoints, then replace
-each function body with a `fetch()` call. Signatures and the TypeScript types in
+The functions started as mocks and were connected to the real back-end lot by lot; what
+is still local (a guest's data in Zustand + IndexedDB, the static content of movements,
+artists and the chat) is marked in the sections below. Signatures and the TypeScript types in
 `src/types/index.ts` are the source of truth for JSON shapes.
 
 Conventions
@@ -13,7 +13,7 @@ Conventions
 - Bilingual content uses `Localized = { "en": string, "vi": string }`.
 - Errors: HTTP status + `{ "error": { "code": string, "message": string } }`.
   The client maps them to `ApiError(message, status, code)`. Codes used by the UI:
-  `not_found`, `invalid_credentials`, `already_claimed`, `incomplete`, `missing_analysis`, `simulated_failure`.
+  `not_found`, `invalid_credentials`, `already_claimed`, `incomplete`, `missing_analysis`.
 
 ---
 
@@ -43,8 +43,8 @@ here. If the server cannot be reached the profile already on screen stays; a `40
 }
 ```
 
-Guests can use everything; on first login the server should merge the guest's local
-gallery/progress (the client can upload `GET /me/export` output).
+Guests can use the app on the device. Nothing a guest made is uploaded or merged when they sign in
+(see "Who keeps the learning state" below for what happens to the device's data).
 
 ## Templates — `src/api/templates.ts`
 
@@ -157,7 +157,7 @@ Errors: `missing_analysis` / `not_scorable` (422), `not_found`, `rate_limited`, 
 ```
 
 Rank thresholds: <40 starter, 40–59 rising, 60–74 steady, 75–89 gallery, ≥90 masterpiece.
-The old local judge (`buildScore`) is kept only for the demo artworks; nothing that scores a user's drawing calls it.
+The old local judge (`buildScore`) is kept only as the reference the server's judge is tested against; nothing that scores a user's drawing calls it.
 
 ## Progress & gamification — `src/api/progress.ts`
 
@@ -218,7 +218,7 @@ list is short; one entry that is the person themselves is shown as "you are the 
 - **Lessons and quizzes (lot 4c):** for a signed-in user the server decides `lessonCompleted` and `quizCompleted`
   (in the answers of `POST /lessons/:slug/complete` and `POST /lessons/:slug/quiz`); the app never reports them as events, and after a
   reward it refreshes with `syncProgress()`. So the challenges `d-lesson`, `w-lessons` and `w-quiz` now move for a signed-in user.
-  A guest still runs the rules on the device (nothing is sent), and the quiz of a guest is graded from the local mock keys until lot 6.
+  A guest still runs the rules on the device (nothing is sent), and the quiz of a guest is graded from the local keys on the device (a decision of lot 4c, kept in lot 6).
 - **`chatMessage` is never sent**: the AI chat is outside the backend, which refuses the event (`422 event_not_allowed`).
   The app still counts chat messages on the device, but for a signed-in user the challenge `w-chat` and the badge
   `muse-friend` **cannot be completed** until the owner decides how chat should count.
@@ -285,10 +285,15 @@ Cards: `palette { name, colors[] }`, `template { templateId }`, `idea { title, d
 `lesson { slug }`. Attachments are `{ kind: "image", src: <data URL or uploaded URL>, artworkId?, name }`.
 Conversations are stored client-side today; a `GET/POST /conversations` resource can be added later.
 
-## Account & dev — `src/api/account.ts`, `src/api/demo.ts`
+## Account — `src/api/account.ts`
 
-| Function                             | Method & path                           | Response                                                                |
-| ------------------------------------ | --------------------------------------- | ----------------------------------------------------------------------- |
-| `exportData()`                       | `GET /me/export`                        | JSON file (user, settings, artworks, progress, learning, conversations) |
-| `deleteAllData()`                    | none — clears this device only (demo)   | —                                                                       |
-| `seedDemoData()` / `clearDemoData()` | dev only (`POST/DELETE /dev/demo-data`) | `204`                                                                   |
+| Function       | Method & path    | Response                                                                                           |
+| -------------- | ---------------- | -------------------------------------------------------------------------------------------------- |
+| `exportData()` | `GET /me/export` | JSON file: `exportedAt`, `app`, `user`, `progress`, `learning`, `artworks`, `xpLedger` (see below) |
+
+- The file is **what the server keeps** (the pictures themselves are not inside: each artwork carries `imageKey`/`thumbKey`). Settings of the
+  device and chats are not in it. The app saves the server's JSON (re-indented, nothing added or removed) as `art-spark-data-YYYY-MM-DD.json`; the date is the device's own day, not the server's `Content-Disposition`.
+- At most 10 exports per hour per account; the 11th answers `429 rate_limited` (shown as a toast, no file is saved). The button is only
+  shown to a signed-in person: a guest has nothing on the server.
+- There is **no** `DELETE /me` and no "delete all local data" button (UC-26 dropped by the project owner, 02/11/2026).
+- There is no `GET /me/flashcards` either: the cards come in `GET /me/learning` and are answered with `PUT /me/flashcards/:termId`.

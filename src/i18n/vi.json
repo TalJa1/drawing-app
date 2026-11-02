@@ -622,8 +622,7 @@
       "title": "Mọi kiệt tác đều bắt đầu từ một nét vẽ dũng cảm.",
       "body": "Phòng tranh đang chờ tác phẩm đầu tiên. Hãy tô một mẫu hoặc thả hồn trong Vẽ tự do.",
       "note": "khung tranh đã được lau sáng bóng…",
-      "cta": "Tô mẫu đầu tiên",
-      "demo": "Xem trước với tranh mẫu"
+      "cta": "Tô mẫu đầu tiên"
     }
   },
   "achievements": {
@@ -721,19 +720,8 @@
     "tour": "Xem lại hướng dẫn xưởng vẽ",
     "tourHint": "Phát lại phần hướng dẫn nhanh khi bạn mở xưởng vẽ lần tới.",
     "data": "Dữ liệu của bạn",
-    "demo": "Dữ liệu mẫu",
-    "demoHint": "Lấp đầy phòng tranh bằng tác phẩm, điểm số và chuỗi ngày mẫu để xem trước ứng dụng khi đã dùng nhiều.",
-    "demoLoaded": "Đã tải phòng tranh mẫu",
-    "demoCleared": "Đã xóa dữ liệu mẫu",
-    "simulateErrors": "Giả lập lỗi máy chủ (nhà phát triển)",
-    "simulateErrorsHint": "Khiến API giả thỉnh thoảng lỗi để bạn xem các trạng thái lỗi.",
     "export": "Xuất dữ liệu (JSON)",
-    "exported": "Đã tải xuống dữ liệu của bạn",
-    "deleteAll": "Xóa toàn bộ dữ liệu cục bộ",
-    "deleteTitle": "Xóa tất cả?",
-    "deleteBody": "Thao tác này xóa tác phẩm, bản nháp, XP, huy hiệu, bài học và cuộc trò chuyện khỏi thiết bị. Không thể hoàn tác.",
-    "deleteConfirm": "Xóa tất cả",
-    "deleted": "Đã xóa toàn bộ dữ liệu cục bộ. Một trang mới đang chờ bạn."
+    "exported": "Đã tải xuống dữ liệu của bạn"
   },
   "learn": {
     "tracks": {

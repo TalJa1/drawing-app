@@ -12,7 +12,7 @@ import { progressSnapshot, useProgress } from '@/store/progress'
 import { useSession } from '@/store/session'
 import type { components } from './schema'
 import type { Assert, Wire } from './contract'
-import { ApiError, request, simulate } from './client'
+import { ApiError, request } from './client'
 
 type ProgressOut = components['schemas']['ProgressOut']
 type StatsOut = components['schemas']['StatsOut']
@@ -135,7 +135,6 @@ export async function recordActivity(event: ProgressEvent): Promise<RewardSummar
     }
   }
   // a guest, or an event the account does not count yet: the rules run here
-  await simulate({ latency: [60, 180], canFail: false })
   const { data, reward } = applyEvent(progressSnapshot(), event, rulesContext())
   useProgress.getState().replace(data)
   return reward

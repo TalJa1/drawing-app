@@ -1,13 +1,8 @@
 /* ------------------------------------------------------------------
    The one place that talks to the back-end: `request()`.
-   Every function in src/api/*.ts that has been connected to the real
-   API goes through it. `simulate()` below still fakes latency for the
-   endpoints that have not been connected yet (and for the chat, which
-   has no server); it goes away when the last mock does.
+   Every function in src/api/*.ts that talks to the server goes through it.
    ------------------------------------------------------------------ */
-import { sleep } from '@/lib/utils'
 import { useSession } from '@/store/session'
-import { useSettings } from '@/store/settings'
 
 export class ApiError extends Error {
   status: number
@@ -23,22 +18,6 @@ export class ApiError extends Error {
     this.name = 'ApiError'
     this.status = status
     this.code = code
-  }
-}
-
-export interface SimulateOptions {
-  /** [min, max] latency in ms (default 300–1500, as a real network would vary) */
-  latency?: [number, number]
-  /** set false for endpoints that should never randomly fail (e.g. local saves) */
-  canFail?: boolean
-}
-
-/** Latency + configurable random failure. */
-export async function simulate({ latency = [300, 1500], canFail = true }: SimulateOptions = {}) {
-  const [min, max] = latency
-  await sleep(min + Math.random() * (max - min))
-  if (canFail && useSettings.getState().simulateErrors && Math.random() < 0.2) {
-    throw new ApiError('The studio lights flickered. Please try again.', 503, 'simulated_failure')
   }
 }
 

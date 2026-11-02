@@ -1,7 +1,8 @@
 /* ------------------------------------------------------------------
    Scoring. A drawing is judged by the server (`scoreArtwork`). The judge below (`buildScore` and
-   its parts) is the old local one, kept only to make the sample artworks of the demo (demo.ts) and
-   for its own tests; nothing that scores a user's drawing calls it.
+   its parts) is the old local one. It stays as the reference the server's judge is tested against
+   (the back-end's parity tests read this file and `mocks/judgeFeedback.ts`) and for its own tests;
+   nothing that scores a user's drawing calls it.
    ------------------------------------------------------------------ */
 import type { ArtworkAnalysis, Localized, RankLabel, RewardSummary, ScoreResult, SubScores } from '@/types'
 import { seeded } from '@/lib/random'
