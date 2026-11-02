@@ -1,11 +1,7 @@
-/* ------------------------------------------------------------------
-   Fake AI muse. Pattern-matches intent, builds a rich reply (markdown +
-   cards) and streams it token by token like a real LLM endpoint (SSE).
-   Replace `streamChatReply` with a fetch() to the real chat endpoint.
-   ------------------------------------------------------------------ */
-import type { ChatAttachment, ChatCard, ChatMode, ChatStreamEvent, Lang } from '@/types'
+// Mock reply builder used only by the development mock transport.
+import type { ChatAttachment, ChatCard, ChatMode, Lang } from '@/types'
 import { seeded, shuffle } from '@/lib/random'
-import { fuzzyIncludes, matchesPhrase, sleep } from '@/lib/utils'
+import { fuzzyIncludes, matchesPhrase } from '@/lib/utils'
 import { hexToHsl, hslToHex, scheme } from '@/lib/color'
 import {
   COLOUR_NAMES,
@@ -20,8 +16,6 @@ import {
 import { MOVEMENTS } from '@/mocks/movements'
 import { TEMPLATES } from '@/mocks/templates'
 import { PALETTES } from '@/mocks/palettes'
-import { useSettings } from '@/store/settings'
-import { ApiError } from './client'
 
 export interface ChatRequest {
   message: string
@@ -234,26 +228,4 @@ export function buildReply(req: ChatRequest): ChatReply {
       )
   }
   return { intent, text, cards }
-}
-
-/** POST /chat/stream — Server-Sent-Events style stream of tokens then cards. */
-export async function* streamChatReply(req: ChatRequest, signal?: AbortSignal): AsyncGenerator<ChatStreamEvent> {
-  // "thinking" time before the first token
-  await sleep(600 + Math.random() * 700)
-  if (useSettings.getState().simulateErrors && Math.random() < 0.15) {
-    throw new ApiError('The muse lost her train of thought. Try again?', 503, 'simulated_failure')
-  }
-  const reply = buildReply(req)
-  const tokens = reply.text.match(/\s*\S+/g) ?? []
-  for (const tok of tokens) {
-    if (signal?.aborted) return
-    yield { type: 'token', text: tok }
-    await sleep(14 + Math.random() * 38)
-  }
-  for (const card of reply.cards) {
-    if (signal?.aborted) return
-    await sleep(120)
-    yield { type: 'card', card }
-  }
-  yield { type: 'done', finish: 'completed' }
 }
