@@ -20,6 +20,8 @@ import LessonPage from './LessonPage'
 const scrollTargets = vi.hoisted(() => [] as (HTMLElement | null)[])
 /** how many times something subscribed to the reading progress (`scrollYProgress.on('change', …)`) */
 const scrollSubscriptions = vi.hoisted(() => ({ count: 0 }))
+/** when set, an observer told to watch the end of the lesson reports "in view" at once (as a real one does when it is on screen) */
+const intersecting = vi.hoisted(() => ({ endInView: false }))
 const patchedProgress = vi.hoisted(() => new WeakSet<object>())
 /** every IntersectionObserver the page makes, with the element it was told to watch (other components make their own) */
 const watchers = vi.hoisted(() => [] as { callback: (entries: { isIntersecting: boolean }[]) => void; el: Element | null }[])
@@ -207,9 +209,20 @@ function mount(client = new QueryClient({ defaultOptions: { queries: { retry: fa
 }
 
 beforeAll(async () => {
-  await i18n
-    .use(initReactI18next)
-    .init({ lng: 'en', fallbackLng: 'en', resources: { en: { translation: en } }, interpolation: { escapeValue: false } })
+  await i18n.use(initReactI18next).init({
+    lng: 'en',
+    fallbackLng: 'en',
+    resources: {
+      en: { translation: en },
+      vi: {
+        translation: {
+          ...en,
+          learn: { ...en.learn, lessonComplete: 'Xong bài!', lessonXp: 'Nhận {{xp}} XP', completeFailed: 'Chưa ghi nhận được.' },
+        },
+      }, // one text that differs, to see which language a message came in
+    },
+    interpolation: { escapeValue: false },
+  })
   vi.stubGlobal('matchMedia', (query: string) => ({
     matches: false,
     media: query,
@@ -230,6 +243,8 @@ beforeAll(async () => {
       }
       observe(el: Element) {
         this.watcher.el = el
+        const isEnd = el === document.querySelector('article')?.lastElementChild
+        if (intersecting.endInView && isEnd) queueMicrotask(() => this.watcher.callback([{ isIntersecting: true }]))
       }
       unobserve() {}
       disconnect() {}
@@ -239,7 +254,9 @@ beforeAll(async () => {
     },
   )
 })
-beforeEach(() => {
+beforeEach(async () => {
+  await i18n.changeLanguage('en')
+  intersecting.endInView = false
   fetchMock.mockReset()
   vi.stubGlobal('fetch', fetchMock)
   scrollTargets.length = 0
@@ -469,5 +486,70 @@ describe('LessonPage, when the data of the lesson on the page is refreshed', () 
 
     expect(endWatchers()).toBe(1) // not a second one (it would call "finished" a second time if the end is in view)
     expect(scrollSubscriptions.count).toBe(subscriptions) // and the "send progress every so often" memory is kept
+  })
+})
+
+describe('LessonPage, when the language is changed', () => {
+  const changeLanguage = (lng: string) => act(async () => void (await i18n.changeLanguage(lng)))
+
+  it('does not set up the watcher of the end of the lesson again', async () => {
+    fetchMock.mockImplementation(async (url: string) => (url.endsWith('/lessons') ? json([LESSON, NEXT]) : json({})))
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    client.setQueryData(['lessons', LESSON.slug], LESSON)
+    mount(client)
+    await screen.findByRole('heading', { name: 'The rule of thirds' })
+    const end = () => document.querySelector('article')?.lastElementChild
+    const endBefore = end()
+    const subscriptions = scrollSubscriptions.count // the page's own and the bar's (framer-motion subscribes by itself too)
+    expect(watchers.filter((w) => w.el === end())).toHaveLength(1)
+
+    await changeLanguage('vi')
+    expect(end()).toBe(endBefore) // the reader itself was not built again (a new one would have a new end)
+    expect(watchers.filter((w) => w.el === end())).toHaveLength(1)
+    expect(scrollSubscriptions.count).toBe(subscriptions) // nor was the watcher of the reading progress set up again
+  })
+
+  it('does not finish the lesson a second time when its end is already on the screen', async () => {
+    serverAnswers()
+    await signInAs('u1')
+    intersecting.endInView = true // a short lesson: the end is on the screen as soon as it opens
+    renderLessons(twoKnownLessons())
+    await screen.findByRole('heading', { name: 'The rule of thirds' })
+    await vi.waitFor(() => expect(useToasts.getState().toasts.map((t) => t.title)).toContain('Lesson complete!'))
+    expect(completeRequests()).toBe(1)
+
+    await changeLanguage('vi')
+    await act(async () => new Promise((resolve) => setTimeout(resolve, 30))) // time enough for a second request, if one is going to be made
+    expect(completeRequests()).toBe(1)
+    expect(useToasts.getState().toasts.filter((t) => t.title === 'Lesson complete!')).toHaveLength(1)
+  })
+
+  it('tells a reward that comes in after the change in the language of the moment', async () => {
+    let release: () => void = () => {}
+    serverAnswers(new Promise<void>((resolve) => (release = resolve)))
+    await signInAs('u1')
+    renderLessons(twoKnownLessons())
+    await screen.findByRole('heading', { name: 'The rule of thirds' })
+
+    await reachTheEnd()
+    await vi.waitFor(() => expect(completeRequests()).toBe(1))
+    await changeLanguage('vi') // the reader switches language while the request is on its way
+    release()
+    await vi.waitFor(() => expect(useToasts.getState().toasts.map((t) => t.title)).toEqual(['Xong bài!']))
+    expect(useToasts.getState().toasts[0].description).toBe('Nhận 13 XP') // the XP of the reward, in the same language
+  })
+
+  it('tells a refusal that comes in after the change in the language of the moment', async () => {
+    let release: () => void = () => {}
+    serverAnswers(new Promise<void>((resolve) => (release = resolve)), true) // the server will refuse (401)
+    await signInAs('u1')
+    renderLessons(twoKnownLessons())
+    await screen.findByRole('heading', { name: 'The rule of thirds' })
+
+    await reachTheEnd()
+    await vi.waitFor(() => expect(completeRequests()).toBe(1))
+    await changeLanguage('vi')
+    release()
+    await vi.waitFor(() => expect(useToasts.getState().toasts.map((t) => t.title)).toEqual(['Chưa ghi nhận được.']))
   })
 })

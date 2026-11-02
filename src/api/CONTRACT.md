@@ -290,5 +290,5 @@ Conversations are stored client-side today; a `GET/POST /conversations` resource
 | Function                             | Method & path                           | Response                                                                |
 | ------------------------------------ | --------------------------------------- | ----------------------------------------------------------------------- |
 | `exportData()`                       | `GET /me/export`                        | JSON file (user, settings, artworks, progress, learning, conversations) |
-| `deleteAllData()`                    | `DELETE /me`                            | `204`                                                                   |
+| `deleteAllData()`                    | none — clears this device only (demo)   | —                                                                       |
 | `seedDemoData()` / `clearDemoData()` | dev only (`POST/DELETE /dev/demo-data`) | `204`                                                                   |

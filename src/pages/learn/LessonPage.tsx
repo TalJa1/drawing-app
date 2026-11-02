@@ -54,6 +54,12 @@ export default function LessonPage() {
  */
 function LessonReader({ lesson }: { lesson: Lesson }) {
   const { t } = useTranslation()
+  // what is said when the reward comes in is said in the language of that moment; keeping `t` in a ref (not in the
+  // deps of the effect below) means that changing the language does not set the watcher of the end up again
+  const tRef = useRef(t)
+  useEffect(() => {
+    tRef.current = t
+  }, [t])
   const L = useL()
   const navigate = useNavigate()
   const { data: allLessons } = useLessons()
@@ -95,16 +101,17 @@ function LessonReader({ lesson }: { lesson: Lesson }) {
           // the reward belongs to whoever sent the request: if the person has changed meanwhile, it is not shown to the one there now
           if (useSession.getState().token !== sentBy) return
           setFinishedBy({ token: sentBy })
-          toast({ title: t('learn.lessonComplete'), description: t('learn.lessonXp', { xp: r.xpGained }), tone: 'gold' })
+          const say = tRef.current
+          toast({ title: say('learn.lessonComplete'), description: say('learn.lessonXp', { xp: r.xpGained }), tone: 'gold' })
           presentReward(r)
         },
         // the lesson was not marked finished, so opening it again tries again
-        () => toast({ title: t('learn.completeFailed'), tone: 'error' }),
+        () => toast({ title: tRef.current('learn.completeFailed'), tone: 'error' }),
       )
     })
     io.observe(el)
     return () => io.disconnect()
-  }, [lesson.slug, t])
+  }, [lesson.slug])
 
   const idx = allLessons?.findIndex((l) => l.slug === lesson.slug) ?? -1
   const next = allLessons && idx >= 0 ? allLessons[(idx + 1) % allLessons.length] : undefined

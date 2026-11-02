@@ -265,15 +265,7 @@ export interface paths {
     get: operations['read_me_api_v1_me_get']
     put?: never
     post?: never
-    /**
-     * Delete Me
-     * @description UC-26: delete the account and everything of it. Not undoable (see services/account.py).
-     *
-     *     The password is asked again. A wrong one is 403 `invalid_password` (not 401: the token is fine)
-     *     and counts towards a per-user limit, checked BEFORE the slow hash and before any object is
-     *     touched; right passwords and storage failures never count.
-     */
-    delete: operations['delete_me_api_v1_me_delete']
+    delete?: never
     options?: never
     head?: never
     /** Update Me */
@@ -887,16 +879,6 @@ export interface components {
     DailyTemplateOut: {
       /** Templateid */
       templateId: string
-    }
-    /**
-     * DeleteAccountIn
-     * @description The password is asked again: a stolen token alone must not be enough to erase an account.
-     *
-     *     Only length-limited (no minimum): whether it is right is decided by the hash, not by the policy.
-     */
-    DeleteAccountIn: {
-      /** Password */
-      password: string
     }
     /**
      * FlashcardIn
@@ -1901,37 +1883,6 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['UserOut']
-        }
-      }
-    }
-  }
-  delete_me_api_v1_me_delete: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['DeleteAccountIn']
-      }
-    }
-    responses: {
-      /** @description Successful Response */
-      204: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['HTTPValidationError']
         }
       }
     }
