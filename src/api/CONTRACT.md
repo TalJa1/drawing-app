@@ -188,7 +188,9 @@ the transport; the default is mock in development and server in production.
 Both routes resolve identity. A valid JWT identifies the user. Guests (including mock
 tokens) are accepted only when `AI_REQUIRE_AUTH=false` and the client IP is loopback.
 Send `Content-Type: application/json` and `X-Request-ID: <requestId>`; compressed bodies
-are unsupported. History stays on the client; AI uses no conversation database.
+are unsupported. Any `Content-Encoding` header is rejected with 415, including
+`identity` and an empty value; JSON media-type parameters such as charset are allowed.
+History stays on the client; AI uses no conversation database.
 
 ```json
 {
@@ -211,7 +213,7 @@ are unsupported. History stays on the client; AI uses no conversation database.
 `action` is `send|regenerate`; `mode` is `ideas|colour|composition|history`; `lang` is
 `en|vi` (the message language takes precedence). `learner` may be `null` (level 1).
 All request fields use camelCase, including nested objects; snake_case aliases are
-rejected. Types are strict: booleans are not numbers, and strings are not coerced.
+rejected. Unknown fields are rejected. Types are strict: booleans are not numbers, and strings are not coerced.
 Integral JSON numbers such as 1 and 1.0 have the same meaning. `learner` is required.
 History `status` is optional but cannot be null; `imageMissing` must be a boolean;
 `cards`, when present, must be an array. All string limits count Unicode code points.
@@ -267,23 +269,30 @@ client copy. EOF without a terminal event and `done: incomplete` become `interru
 Abort becomes `stopped`; errors become `failed`. Every path preserves received text.
 Cards supplement a written answer and an immediate action. Requests for steps receive
 written steps; requests for both a lesson and a template receive both cards. The server
-allows at most three model rounds; a valid card-only round without text gets a
+recognizes explicit requests through a request verb attached directly to a card type,
+preserving Vietnamese accents. Mentions, thanks, explanations, negation and text-only
+requests do not force cards; critique requires an image. If requested types are missing,
+at most one repair round forces that function, or a strict bundle of only the missing
+types. Repair cards pass the same schema/catalog/level/image checks and six-card cap.
+A clear request may be repaired even if the first round returned only text. A failed
+repair ends with `done: incomplete`, reason `other`, without an unbounded retry.
+The total remains at most three model rounds, sharing the deadline and budget; a valid card-only round without text gets a
 `tool_choice: "none"` text round when another round remains. The final round disables
 tools. Every model image has an `Image id: <id>` label for critique references.
 
 Before SSE, errors use `{ "error": { "code", "message", "traceId", "details"? } }`.
 
-| HTTP / location | Codes                                                                           |
-| --------------- | ------------------------------------------------------------------------------- |
-| 401             | `unauthorized` (required token missing/invalid)                                 |
-| 503             | `ai_not_configured` (no key), `service_unavailable` (JWT configuration missing) |
-| 429             | `rate_limited`, `ai_busy`, `ai_budget_exceeded`; `Retry-After` in seconds       |
-| 413             | `payload_too_large`                                                             |
-| 415             | `unsupported_media_type` (non-JSON, compressed body, non-JPEG image)            |
-| 400             | `bad_request` (malformed JSON)                                                  |
-| 422             | `validation_error` (schema, oversize/corrupt image, decompression bomb)         |
-| SSE `error`     | `upstream`, `timeout`, `model_unavailable`, `rate_limited`, `ai_not_configured` |
-| Client only     | `network`, `protocol`, `client`, `image_missing`                                |
+| HTTP / location | Codes                                                                            |
+| --------------- | -------------------------------------------------------------------------------- |
+| 401             | `unauthorized` (required token missing/invalid)                                  |
+| 503             | `ai_not_configured` (no key), `service_unavailable` (JWT configuration missing)  |
+| 429             | `rate_limited`, `ai_busy`, `ai_budget_exceeded`; `Retry-After` in seconds        |
+| 413             | `payload_too_large`                                                              |
+| 415             | `unsupported_media_type` (non-JSON, any Content-Encoding header, non-JPEG image) |
+| 400             | `bad_request` (malformed JSON)                                                   |
+| 422             | `validation_error` (schema, oversize/corrupt image, decompression bomb)          |
+| SSE `error`     | `upstream`, `timeout`, `model_unavailable`, `rate_limited`, `ai_not_configured`  |
+| Client only     | `network`, `protocol`, `client`, `image_missing`                                 |
 
 `retryAfterMs` is optional on SSE errors; FE converts an HTTP `Retry-After` to milliseconds.
 `network` means fetch failed; `protocol` means invalid SSE/response; `client` is an unexpected
