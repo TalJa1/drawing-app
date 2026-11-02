@@ -1,6 +1,117 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test, type Locator, type Page } from '@playwright/test'
 
+test.describe('batch12 server transport image cancellation', () => {
+  test.skip(!process.env.BATCH12_FAKE_URL, 'Requires the owned TCP fake upstream and real backend')
+
+  for (const phase of ['prepare', 'stream'] as const) {
+    for (const action of ['switch', 'delete', 'leave'] as const) {
+      test(`${phase}: ${action} keeps image and text in their conversation`, async ({ page, request }, testInfo) => {
+        await request.post(`${process.env.BATCH12_FAKE_URL}/control`, {
+          data: { mode: 'infinite', delay: 0.03, text: 'Draw one small shape. ' },
+        })
+        await freshChat(page)
+        const ids = await page.evaluate(async () => {
+          const modulePath = '/src/store/chat.ts'
+          const { useChat } = await import(/* @vite-ignore */ modulePath)
+          useChat.getState().reset()
+          const source = useChat.getState().create()
+          useChat.getState().rename(source, 'source chat')
+          const target = useChat.getState().create()
+          useChat.getState().rename(target, 'target chat')
+          useChat.getState().setActive(source)
+          return { source, target }
+        })
+        const sent: { message: { text: string; images: unknown[] }; conversationId: string }[] = []
+        page.on('request', (outgoing) => {
+          if (outgoing.url().endsWith('/ai/chat/stream')) sent.push(outgoing.postDataJSON())
+        })
+        await page.evaluate(() => {
+          const original = window.createImageBitmap
+          const gate = new Promise<void>((resolve) => Reflect.set(window, '__batch12Release', resolve))
+          window.createImageBitmap = new Proxy(original, {
+            apply(target, receiver, args) {
+              Reflect.set(window, '__batch12Decoding', true)
+              return gate.then(() => Reflect.apply(target, receiver, args))
+            },
+          })
+        })
+        await page.getByRole('textbox').fill('Look at these shapes')
+        await page.getByRole('textbox').evaluate(async (input) => {
+          const canvas = document.createElement('canvas')
+          canvas.width = 80
+          canvas.height = 60
+          const ctx = canvas.getContext('2d')!
+          ctx.fillStyle = '#204060'
+          ctx.fillRect(0, 0, 80, 60)
+          const blob = await new Promise<Blob>((resolve) => canvas.toBlob((value) => resolve(value!), 'image/png'))
+          const data = new DataTransfer()
+          data.items.add(new File([blob], 'synthetic-race.png', { type: 'image/png' }))
+          input.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }))
+        })
+        await page.waitForFunction(() => Reflect.get(window, '__batch12Decoding') === true)
+        await expect(page.getByRole('button', { name: 'Send', exact: true })).toBeDisabled()
+        if (phase === 'stream') {
+          await page.evaluate(() => Reflect.get(window, '__batch12Release')())
+          await expect(page.getByRole('button', { name: 'Send', exact: true })).toBeEnabled()
+          await page.getByRole('button', { name: 'Send', exact: true }).click()
+          await expect(page.getByRole('button', { name: 'Stop', exact: true })).toBeVisible()
+          await expect.poll(() => sent.length).toBe(1)
+          expect(sent[0].message.images).toHaveLength(1)
+          await expect
+            .poll(async () => (await (await request.get(`${process.env.BATCH12_FAKE_URL}/entries`)).json()).at(-1)?.events ?? 0)
+            .toBeGreaterThan(1)
+        }
+        if (action === 'leave') {
+          await page.locator('nav a[href="/learn"]:visible').first().click()
+        } else {
+          const historyButton = page.getByRole('button', { name: 'Conversations', exact: true })
+          if (await historyButton.isVisible()) await historyButton.click()
+          if (action === 'switch') await page.getByRole('button', { name: /target chat/ }).click()
+          else {
+            const row = page.getByRole('button', { name: /source chat/ }).locator('..')
+            await row.hover()
+            await row.getByRole('button', { name: 'Delete conversation', exact: true }).click()
+            await page.getByRole('dialog').getByRole('button', { name: 'Delete', exact: true }).click()
+            const closeSheet = page.getByRole('dialog', { name: 'Conversations' }).getByRole('button', { name: 'Close', exact: true })
+            if (await closeSheet.isVisible()) await closeSheet.click()
+          }
+        }
+        if (phase === 'prepare') await page.evaluate(() => Reflect.get(window, '__batch12Release')())
+        await expect.poll(async () => (await (await request.get(`${process.env.BATCH12_BE_URL}/__audit/state`)).json()).slots).toBe(0)
+        if (phase === 'stream') {
+          await expect
+            .poll(async () => (await (await request.get(`${process.env.BATCH12_FAKE_URL}/entries`)).json()).at(-1)?.closed)
+            .toBeTruthy()
+        }
+        await page.waitForTimeout(250)
+        const state = await page.evaluate(async () => {
+          const modulePath = '/src/store/chat.ts'
+          return (await import(/* @vite-ignore */ modulePath)).useChat.getState()
+        })
+        const target = state.conversations.find((conversation: { id: string }) => conversation.id === ids.target)
+        expect(target.messages).toHaveLength(0)
+        expect(sent).toHaveLength(phase === 'stream' ? 1 : 0)
+        if (action === 'leave') await page.goto('/chat')
+        await expect(page.getByRole('textbox')).toBeVisible()
+        await expect(page.getByRole('textbox').locator('../..').getByRole('img', { name: 'synthetic-race.png', exact: true })).toHaveCount(
+          0,
+        )
+        await page.screenshot({ path: testInfo.outputPath(`${phase}-${action}.png`) })
+        await request.post(`${process.env.BATCH12_FAKE_URL}/control`, {
+          data: { mode: 'normal', chunks: 2, delay: 0.03, text: 'Draw a fresh line. ' },
+        })
+        await page.getByRole('textbox').fill('A fresh drawing question')
+        await page.getByRole('button', { name: 'Send', exact: true }).click()
+        await expect.poll(() => sent.length).toBe(phase === 'stream' ? 2 : 1)
+        expect(sent.at(-1)!.message.images).toHaveLength(0)
+        if (action !== 'leave') expect(sent.at(-1)!.conversationId).not.toBe(ids.source)
+        await expect.poll(async () => (await (await request.get(`${process.env.BATCH12_BE_URL}/__audit/state`)).json()).slots).toBe(0)
+      })
+    }
+  }
+})
+
 async function freshChat(page: Page) {
   await page.addInitScript(() => {
     if (!sessionStorage.getItem('chat-e2e')) {
