@@ -51,10 +51,9 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
         <div className="flex flex-wrap overflow-hidden rounded-xl ring-1 ring-line-strong">
           {card.colors.map((c, index) => (
             <motion.button
-              variants={chatVariants(reduced).swatch}
+              variants={chatVariants(reduced, index * 0.03).swatch}
               initial={animate ? 'hidden' : false}
               animate="visible"
-              transition={{ duration: CHAT_MOTION.swatch, delay: reduced ? 0 : index * 0.03 }}
               key={c}
               type="button"
               className="relative flex min-h-14 min-w-14 flex-1 items-end justify-center pb-1"
@@ -70,7 +69,16 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
                 })
               }}
             >
-              {copied?.color === c && <Check size={14} className="absolute top-2" />}
+              {copied?.color === c && (
+                <motion.span
+                  className="absolute top-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: reduced ? 0.08 : CHAT_MOTION.copy }}
+                >
+                  <Check size={14} />
+                </motion.span>
+              )}
               <span
                 className="rounded px-0.5 font-mono text-[11px]"
                 style={{ background: contrastRatio(c, readableOn(c)) < 4.5 ? readableOn(readableOn(c)) : undefined }}

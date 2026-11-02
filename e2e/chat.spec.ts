@@ -1,5 +1,517 @@
 import AxeBuilder from '@axe-core/playwright'
-import { expect, test, type Locator, type Page } from '@playwright/test'
+import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test'
+import { writeFile } from 'node:fs/promises'
+
+type MotionRecord = {
+  source: string
+  property: string
+  inChat: boolean
+  stage: string
+  tag: string
+  action: string
+  card: string
+  text: string
+  duration: number
+  delay: number
+  iterations: number
+  frames: string
+  started: number
+  finished?: number
+}
+
+async function traceChatMotion(page: Page) {
+  await page.route('**/node_modules/.vite/deps/framer-motion.js*', async (route) => {
+    const response = await route.fetch()
+    const body = await response.text()
+    const anchor = 'options.allowFlatten = !valueTransition.type && !valueTransition.ease;'
+    expect(body.split(anchor)).toHaveLength(2)
+    await route.fulfill({
+      response,
+      body: body.replace(anchor, `${anchor}\nglobalThis.__chatRecordMotion?.(options, element, shouldSkip);`),
+    })
+  })
+  await page.addInitScript(() => {
+    const records: MotionRecord[] = []
+    Reflect.set(window, '__chatMotion', records)
+    Reflect.set(window, '__chatMotionStage', 'welcome')
+    Reflect.set(
+      window,
+      '__chatRecordMotion',
+      (
+        options: {
+          name: string
+          keyframes: unknown
+          motionValue?: { get: () => unknown }
+          duration?: number
+          delay?: number
+          repeat?: number
+          onComplete: () => void
+        },
+        element: { current?: Element },
+        skipped: boolean,
+      ) => {
+        const node = element?.current
+        const record: MotionRecord = {
+          source: skipped ? 'instant' : 'resolved',
+          property: options.name,
+          inChat: false,
+          stage: String(Reflect.get(window, '__chatMotionStage')),
+          tag: node?.tagName?.toLowerCase() ?? '',
+          action: node?.closest('button')?.getAttribute('aria-label') ?? '',
+          card: (node?.closest('[data-card-type]') ?? node?.querySelector('[data-card-type]'))?.getAttribute('data-card-type') ?? '',
+          text: node?.textContent?.trim().slice(0, 100) ?? '',
+          duration: options.duration ?? 0,
+          delay: options.delay ?? 0,
+          iterations: options.repeat === Infinity ? -1 : (options.repeat ?? 0) + 1,
+          frames: JSON.stringify(
+            Array.isArray(options.keyframes)
+              ? options.keyframes.map((value) => (value === null ? options.motionValue?.get() : value))
+              : options.keyframes,
+          ),
+          started: performance.now(),
+        }
+        records.push(record)
+        requestAnimationFrame(() => {
+          const current = element?.current
+          record.inChat =
+            !!current?.closest('section')?.querySelector('#chat-input') ||
+            current?.closest('[role="dialog"]')?.getAttribute('aria-label') === 'Conversations'
+        })
+        const complete = options.onComplete
+        options.onComplete = () => {
+          record.finished = performance.now()
+          complete()
+        }
+      },
+    )
+    const original = Element.prototype.animate
+    Element.prototype.animate = function (frames, options) {
+      const animation = original.call(this, frames, options)
+      if (this.closest('main, [role="dialog"]')) {
+        const timing = animation.effect!.getTiming()
+        const record: MotionRecord = {
+          source: 'waapi',
+          property: 'native',
+          inChat: !!this.closest('section')?.querySelector('#chat-input'),
+          stage: String(Reflect.get(window, '__chatMotionStage')),
+          tag: this.tagName.toLowerCase(),
+          action: this.closest('button')?.getAttribute('aria-label') ?? '',
+          card: (this.closest('[data-card-type]') ?? this.querySelector('[data-card-type]'))?.getAttribute('data-card-type') ?? '',
+          text: this.textContent?.trim().slice(0, 100) ?? '',
+          duration: Number(timing.duration),
+          delay: Number(timing.delay),
+          iterations: timing.iterations === Infinity ? -1 : Number(timing.iterations),
+          frames: JSON.stringify(frames),
+          started: performance.now(),
+        }
+        records.push(record)
+        void animation.finished
+          .then(() => {
+            record.finished = performance.now()
+          })
+          .catch(() => undefined)
+      }
+      return animation
+    }
+  })
+}
+
+async function motionStage(page: Page, stage: string) {
+  await page.evaluate((stage) => Reflect.set(window, '__chatMotionStage', stage), stage)
+}
+
+async function saveMotion(testInfo: TestInfo, records: MotionRecord[]) {
+  const path = testInfo.outputPath('actual-motion.json')
+  await writeFile(path, JSON.stringify(records, null, 2), 'utf8')
+  await testInfo.attach('actual-motion', { path, contentType: 'application/json' })
+}
+
+async function tabTo(page: Page, target: Locator) {
+  for (let count = 0; count < 80; count++) {
+    if (await target.evaluate((node) => node === document.activeElement)) return
+    await page.keyboard.press('Tab')
+  }
+  await expect(target).toBeFocused()
+}
+
+async function holdImageDecode(page: Page) {
+  await page.evaluate(() => {
+    const original = window.createImageBitmap
+    const gate = new Promise<void>((resolve) => Reflect.set(window, '__motionReleaseImage', resolve))
+    window.createImageBitmap = new Proxy(original, {
+      apply: (target, receiver, args) => gate.then(() => Reflect.apply(target, receiver, args)),
+    })
+  })
+}
+
+async function installControlledReply(page: Page) {
+  await page.evaluate(async () => {
+    const path = '/src/api/ai/mockTransport.ts'
+    const { mockTransport } = await import(/* @vite-ignore */ path)
+    Reflect.set(window, '__motionReplyCalls', 0)
+    mockTransport.streamTurn = async function* (
+      req: { message: { images: { id: string }[] }; history: { images?: { id: string }[] }[] },
+      signal: AbortSignal,
+    ) {
+      Reflect.set(window, '__motionReplyCalls', Number(Reflect.get(window, '__motionReplyCalls')) + 1)
+      yield { type: 'status', phase: 'thinking' }
+      await new Promise((resolve) => setTimeout(resolve, 200))
+      signal.throwIfAborted()
+      const image = [...req.message.images, ...req.history.flatMap((item) => item.images ?? [])][0]
+      yield { type: 'card', card: { type: 'palette', name: 'Motion palette', colors: ['#112233', '#445566', '#778899'] } }
+      if (image)
+        yield {
+          type: 'card',
+          card: {
+            type: 'critique',
+            imageId: image.id,
+            observations: ['Two separate colour fields.'],
+            strengths: ['Clear separation.'],
+            priorities: ['Try one smaller shape.'],
+            exercise: 'Draw two simple rectangles.',
+          },
+        }
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      yield { type: 'token', text: 'Draw one small shape. ' }
+      await new Promise<void>((resolve) => {
+        Reflect.set(window, '__motionFinishReply', resolve)
+        signal.addEventListener('abort', () => resolve(), { once: true })
+      })
+      signal.throwIfAborted()
+      if (Reflect.get(window, '__motionReplyError')) yield { type: 'error', code: 'upstream' }
+      else yield { type: 'done', finish: 'completed' }
+    }
+  })
+}
+
+for (const reduced of [false, true]) {
+  test(`motion runtime: ${reduced ? 'reduced' : 'full'} keyboard upload and pending image`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.emulateMedia({ reducedMotion: reduced ? 'reduce' : 'no-preference' })
+    await traceChatMotion(page)
+    await freshChat(page)
+    await installControlledReply(page)
+    await holdImageDecode(page)
+    const encoded = await page.evaluate(() => {
+      const canvas = document.createElement('canvas')
+      canvas.width = 80
+      canvas.height = 60
+      canvas.getContext('2d')!.fillRect(0, 0, 80, 60)
+      return canvas.toDataURL('image/png').split(',')[1]
+    })
+    const input = page.getByRole('textbox')
+    await input.focus()
+    await page.keyboard.type('Review these shapes')
+    await page.keyboard.press('Shift+Tab')
+    await expect(page.getByRole('button', { name: 'Attach an image', exact: true })).toBeFocused()
+    await page.keyboard.press('Enter')
+    const dialog = page.getByRole('dialog')
+    const upload = dialog.getByRole('button', { name: /upload/i })
+    await tabTo(page, upload)
+    const chooser = page.waitForEvent('filechooser')
+    await page.keyboard.press('Enter')
+    await (await chooser).setFiles({ name: 'keyboard-motion.png', mimeType: 'image/png', buffer: Buffer.from(encoded, 'base64') })
+    await expect(dialog.getByRole('img', { name: 'Preparing image' })).toBeVisible()
+    await expect(upload).toBeDisabled()
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
+    await input.focus()
+    await input.evaluate((node, encoded) => {
+      const bytes = Uint8Array.from(atob(encoded), (char) => char.charCodeAt(0))
+      const transfer = new DataTransfer()
+      transfer.items.add(new File([bytes], 'paste-motion.png', { type: 'image/png' }))
+      node.dispatchEvent(new ClipboardEvent('paste', { clipboardData: transfer, bubbles: true, cancelable: true }))
+    }, encoded)
+    const send = page.getByRole('button', { name: 'Send', exact: true })
+    await expect(send).toBeDisabled()
+    await expect(page.getByRole('img', { name: 'Preparing image' })).toBeVisible()
+    const shimmer = await page.getByRole('img', { name: 'Preparing image' }).evaluate((node) => {
+      const style = getComputedStyle(node, '::after')
+      return { name: style.animationName, seconds: parseFloat(style.animationDuration), iterations: style.animationIterationCount }
+    })
+    if (reduced) {
+      expect(shimmer.iterations).not.toBe('infinite')
+      expect(shimmer.seconds).toBeLessThanOrEqual(0.00001)
+    } else {
+      expect(shimmer.name).not.toBe('none')
+      expect(shimmer.iterations).toBe('infinite')
+    }
+    await page.keyboard.press('Enter')
+    expect(await page.evaluate(() => Reflect.get(window, '__motionReplyCalls'))).toBe(0)
+    await writeFile(testInfo.outputPath('pending-image.json'), JSON.stringify({ reduced, shimmer, callsWhilePending: 0 }, null, 2), 'utf8')
+    const size = await send.boundingBox()
+    expect(size!.width).toBe(44)
+    expect(size!.height).toBe(44)
+    expect(await input.evaluate((node) => parseFloat(getComputedStyle(node).maxHeight))).toBeLessThanOrEqual(160)
+    await motionStage(page, 'image-add')
+    await page.evaluate(() => Reflect.get(window, '__motionReleaseImage')())
+    await expect(page.getByRole('img', { name: 'keyboard-motion.png', exact: true })).toBeVisible()
+    await expect(page.getByRole('img', { name: 'paste-motion.png', exact: true })).toBeVisible()
+    await expect(page.getByRole('img', { name: 'Preparing image' })).toHaveCount(0)
+    await page.waitForTimeout(250)
+    await motionStage(page, 'image-remove')
+    await tabTo(
+      page,
+      page
+        .getByRole('img', { name: 'keyboard-motion.png', exact: true })
+        .locator('..')
+        .getByRole('button', { name: 'Remove image', exact: true }),
+    )
+    await page.keyboard.press('Enter')
+    await expect(page.getByRole('img', { name: 'keyboard-motion.png', exact: true })).toHaveCount(0)
+    await tabTo(page, input)
+    await motionStage(page, 'image-send')
+    await page.keyboard.press('Enter')
+    await expect(page.locator('[data-card-type="critique"]')).toBeVisible()
+    await expect(page.getByRole('status')).toHaveText('Writing a reply…')
+    await page.waitForTimeout(450)
+    const stopSize = await page.getByRole('button', { name: 'Stop', exact: true }).boundingBox()
+    expect(stopSize!.width).toBe(44)
+    expect(stopSize!.height).toBe(44)
+    await motionStage(page, 'stop')
+    await tabTo(page, page.getByRole('button', { name: 'Stop', exact: true }))
+    await page.keyboard.press('Enter')
+    const retry = page.getByRole('button', { name: 'Try again', exact: true })
+    await expect(retry).toBeVisible()
+    await expect(page.locator('ol.mx-auto > li').last()).toContainText('Draw one small shape.')
+    await page.waitForTimeout(220)
+    await page.evaluate(() => Reflect.set(window, '__motionReplyError', true))
+    await tabTo(page, retry)
+    await page.keyboard.press('Enter')
+    await expect(input).toBeFocused()
+    await expect(page.getByRole('status')).toHaveText('Writing a reply…')
+    await motionStage(page, 'error')
+    await page.evaluate(() => Reflect.get(window, '__motionFinishReply')())
+    await expect(retry).toBeVisible()
+    await page.waitForTimeout(250)
+    await page.evaluate(() => Reflect.set(window, '__motionReplyError', false))
+    await tabTo(page, retry)
+    await page.keyboard.press('Enter')
+    await expect(page.getByRole('status')).toHaveText('Writing a reply…')
+    await motionStage(page, 'finish')
+    await page.evaluate(() => Reflect.get(window, '__motionFinishReply')())
+    await expect(page.getByRole('button', { name: 'Stop', exact: true })).toHaveCount(0)
+    await page.waitForTimeout(250)
+    const records = await page.evaluate(() => Reflect.get(window, '__chatMotion') as MotionRecord[])
+    await saveMotion(testInfo, records)
+    const effective = records.filter((item) => item.source === 'resolved')
+    const duration = (full: number) => (reduced ? 80 : full)
+    expect(effective.some((item) => item.stage === 'image-add' && item.duration === duration(210))).toBe(true)
+    expect(
+      effective.some(
+        (item) => item.stage === 'image-send' && item.card === 'critique' && item.tag === 'section' && item.duration === duration(240),
+      ),
+    ).toBe(true)
+    expect(effective.some((item) => item.stage === 'stop' && item.tag === 'p' && item.duration === duration(150))).toBe(true)
+    expect(effective.some((item) => item.stage === 'error' && item.tag === 'p' && item.duration === duration(200))).toBe(true)
+    expect(effective.some((item) => item.stage === 'finish' && item.tag === 'div' && item.duration === duration(150))).toBe(true)
+    if (reduced) {
+      expect(effective.filter((item) => item.stage === 'image-remove' && item.inChat)).toEqual([])
+      expect(effective.filter((item) => item.inChat && item.iterations === -1)).toEqual([])
+    } else {
+      expect(effective.some((item) => item.stage === 'image-remove' && item.duration === 160)).toBe(true)
+    }
+    await page.screenshot({ path: testInfo.outputPath('keyboard-pending-final.png') })
+  })
+}
+
+for (const reduced of [false, true]) {
+  test(`motion runtime: ${reduced ? 'reduced' : 'full'} welcome and reply transitions`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.emulateMedia({ reducedMotion: reduced ? 'reduce' : 'no-preference' })
+    await traceChatMotion(page)
+    await freshChat(page)
+    await page.waitForTimeout(550)
+    const hidden = await page.evaluate(async () => {
+      const nodes = Array.from(document.querySelectorAll('section svg[data-state], section svg[data-state] g'))
+      Object.defineProperty(document, 'hidden', { configurable: true, value: true })
+      document.dispatchEvent(new Event('visibilitychange'))
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      const before = nodes.map((node) => getComputedStyle(node).transform)
+      await new Promise((resolve) => setTimeout(resolve, 150))
+      const after = nodes.map((node) => getComputedStyle(node).transform)
+      Reflect.deleteProperty(document, 'hidden')
+      document.dispatchEvent(new Event('visibilitychange'))
+      return { before, after }
+    })
+    expect(hidden.after).toEqual(hidden.before)
+    await motionStage(page, 'focus')
+    await page.getByRole('textbox').focus()
+    const focusSeconds = await page.getByRole('textbox').evaluate((node) => parseFloat(getComputedStyle(node).transitionDuration))
+    if (reduced) expect(focusSeconds).toBeLessThanOrEqual(0.00001)
+    else expect(focusSeconds).toBe(0.16)
+    await motionStage(page, 'hover')
+    await page.getByRole('group', { name: 'Suggested prompts' }).getByRole('button').first().hover()
+    await page.waitForTimeout(250)
+    await motionStage(page, 'tap')
+    await page.mouse.down()
+    await page.waitForTimeout(80)
+    await page.mouse.up()
+    await motionStage(page, 'hover-out')
+    await page.getByRole('textbox').hover()
+    await page.waitForTimeout(250)
+    await motionStage(page, 'mode')
+    await page.getByRole('radio', { name: 'Mix colours' }).click()
+    await page.waitForTimeout(300)
+    await motionStage(page, 'send')
+    await page.getByRole('textbox').fill('Give me a palette for teal')
+    await page.getByRole('button', { name: 'Send', exact: true }).click()
+    await expect(page.locator('[data-card-type="palette"]').first()).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Stop', exact: true })).toHaveCount(0)
+    await page.waitForTimeout(300)
+    await motionStage(page, 'copy')
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(page.url()).origin })
+    await page.evaluate(() => {
+      const button = document.querySelector('[data-card-type="palette"] button')!
+      let appeared = 0
+      const observer = new MutationObserver(() => {
+        if (button.querySelector('.lucide-check')) appeared ||= performance.now()
+        else if (appeared) {
+          Reflect.set(window, '__copyConfirmationMs', performance.now() - appeared)
+          observer.disconnect()
+        }
+      })
+      observer.observe(button, { childList: true, subtree: true })
+    })
+    await page.locator('[data-card-type="palette"] button').first().click()
+    await expect(page.locator('[data-card-type="palette"] .lucide-check').first()).toBeVisible()
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('#1F8A8A')
+    await page.waitForTimeout(1600)
+    const copyMs = await page.evaluate(() => Number(Reflect.get(window, '__copyConfirmationMs')))
+    expect(copyMs).toBeGreaterThanOrEqual(1100)
+    expect(copyMs).toBeLessThanOrEqual(1400)
+    await page.setViewportSize({ width: 390, height: 844 })
+    const mode = page.getByRole('combobox')
+    await expect(mode).toBeVisible()
+    await page.waitForTimeout(250)
+    const oldMode = await mode.inputValue()
+    await motionStage(page, 'native-select')
+    await mode.focus()
+    await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
+    expect(await mode.inputValue()).not.toBe(oldMode)
+    await motionStage(page, 'sheet')
+    await page.getByRole('button', { name: 'Conversations', exact: true }).click()
+    await expect(page.getByRole('dialog', { name: 'Conversations' })).toBeVisible()
+    await page.waitForTimeout(300)
+    const records = await page.evaluate(() => Reflect.get(window, '__chatMotion') as MotionRecord[])
+    await saveMotion(testInfo, records)
+    const effective = records.filter((item) => item.source === 'resolved')
+    const duration = (full: number) => (reduced ? 80 : full)
+    expect(effective.some((item) => item.stage === 'welcome' && item.duration === duration(425))).toBe(true)
+    expect(effective.some((item) => item.tag === 'li' && item.stage === 'send' && item.duration === duration(210))).toBe(true)
+    expect(effective.some((item) => item.card === 'palette' && item.duration === duration(200))).toBe(true)
+    expect(effective.some((item) => item.stage === 'copy' && item.card === 'palette' && item.duration === duration(140))).toBe(true)
+    expect(effective.some((item) => item.stage === 'sheet' && item.duration === duration(250))).toBe(true)
+    if (!reduced) {
+      expect(
+        effective.some(
+          (item) =>
+            item.tag === 'li' &&
+            item.stage === 'send' &&
+            item.property === 'y' &&
+            Number(JSON.parse(item.frames)[0]) >= 6 &&
+            Number(JSON.parse(item.frames)[0]) <= 10,
+        ),
+      ).toBe(true)
+      const promptDelays = effective
+        .filter((item) => item.stage === 'welcome' && item.tag === 'button' && item.property === 'opacity')
+        .map((item) => item.delay)
+      for (const delay of [0, 60, 120]) expect(promptDelays.some((value) => value === delay)).toBe(true)
+      expect(effective.some((item) => item.duration >= 5000 && item.duration <= 8000 && item.iterations === -1)).toBe(true)
+      expect(
+        effective.some((item) => item.stage === 'hover' && item.duration >= 140 && item.duration <= 200 && item.frames.includes('-2')),
+      ).toBe(true)
+      expect(effective.some((item) => item.stage === 'tap' && item.property === 'scale' && item.duration === 170)).toBe(true)
+      expect(effective.some((item) => item.stage === 'hover-out' && item.property === 'y' && item.duration === 170)).toBe(true)
+      expect(effective.some((item) => item.stage === 'mode' && item.duration >= 180 && item.duration <= 240)).toBe(true)
+      expect(
+        effective.some((item) => item.stage === 'send' && item.action === 'Stop' && item.duration >= 120 && item.duration <= 180),
+      ).toBe(true)
+      expect(effective.some((item) => item.stage === 'send' && item.duration === 2400 && item.iterations === -1)).toBe(true)
+      expect(effective.some((item) => item.stage === 'send' && item.duration >= 30 && item.duration <= 50)).toBe(true)
+      expect(
+        effective.some(
+          (item) => item.card === 'palette' && item.tag === 'div' && item.duration >= 220 && item.duration <= 300 && item.delay === 50,
+        ),
+      ).toBe(true)
+      expect(effective.some((item) => item.card === 'palette' && item.tag === 'button' && item.delay === 30)).toBe(true)
+    } else {
+      const chat = effective.filter((item) => item.inChat)
+      expect(chat.filter((item) => item.iterations === -1)).toEqual([])
+      expect(chat.filter((item) => ['x', 'y', 'scale', 'scaleY', 'rotate'].includes(item.property) && item.duration > 0)).toEqual([])
+      expect(chat.every((item) => item.delay === 0)).toBe(true)
+    }
+    expect(effective.filter((item) => item.stage === 'native-select' && item.inChat && item.duration > 0)).toEqual([])
+  })
+}
+
+for (const reduced of [false, true]) {
+  test(`motion runtime: ${reduced ? 'reduced' : 'full'} thread swap and new-message control`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.emulateMedia({ reducedMotion: reduced ? 'reduce' : 'no-preference' })
+    await traceChatMotion(page)
+    await freshChat(page)
+    await installControlledReply(page)
+    await page.evaluate(async () => {
+      const path = '/src/store/chat.ts'
+      const { useChat } = await import(/* @vite-ignore */ path)
+      const now = new Date().toISOString()
+      const make = (id: string, title: string) => ({
+        id,
+        title,
+        mode: 'ideas',
+        createdAt: now,
+        updatedAt: now,
+        messages: Array.from({ length: 30 }, (_, i) => ({
+          id: `${id}-${i}`,
+          turnId: `${id}-t-${Math.floor(i / 2)}`,
+          role: i % 2 ? 'assistant' : 'user',
+          content: `${title} ${i}. Draw simple shapes and compare their spacing. `.repeat(3),
+          cards: [],
+          attachments: [],
+          createdAt: now,
+          ...(i % 2 ? { status: 'completed' } : {}),
+        })),
+      })
+      useChat.setState({ conversations: [make('motion-a', 'History Alpha'), make('motion-b', 'History Beta')], activeId: 'motion-a' })
+    })
+    await expect(page.getByRole('heading', { name: 'History Alpha', exact: true })).toBeVisible()
+    await motionStage(page, 'thread-swap')
+    await page.getByRole('button', { name: /History Beta/ }).click()
+    await expect(page.getByRole('heading', { name: 'History Beta', exact: true })).toBeVisible()
+    await page.waitForTimeout(220)
+    const thread = page.getByRole('region', { name: 'Messages', exact: true })
+    expect(
+      await thread.locator('svg[data-state]').evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).transform === 'none')),
+    ).toBe(true)
+    await thread.evaluate((node) => {
+      node.scrollTop = 0
+      node.dispatchEvent(new Event('scroll'))
+    })
+    await motionStage(page, 'new-message')
+    await page.getByRole('textbox').fill('A new drawing question')
+    await page.getByRole('button', { name: 'Send', exact: true }).click()
+    const latest = page.getByRole('button', { name: 'Jump to latest', exact: true })
+    await expect(latest).toBeVisible()
+    await page.waitForTimeout(220)
+    await latest.click()
+    await expect(latest).toHaveCount(0)
+    await page.getByRole('button', { name: 'Stop', exact: true }).click()
+    await expect(page.getByRole('button', { name: 'Stop', exact: true })).toHaveCount(0)
+    const records = await page.evaluate(() => Reflect.get(window, '__chatMotion') as MotionRecord[])
+    await saveMotion(testInfo, records)
+    const effective = records.filter((item) => item.source === 'resolved')
+    expect(effective.filter((item) => item.stage === 'thread-swap' && item.inChat && item.tag === 'li')).toEqual([])
+    expect(effective.some((item) => item.stage === 'thread-swap' && item.duration === (reduced ? 80 : 150))).toBe(true)
+    expect(
+      effective.some(
+        (item) =>
+          item.stage === 'new-message' && item.tag === 'button' && item.text === 'Jump to latest' && item.duration === (reduced ? 80 : 160),
+      ),
+    ).toBe(true)
+  })
+}
 
 test.describe('batch12 server transport image cancellation', () => {
   test.skip(!process.env.BATCH12_FAKE_URL, 'Requires the owned TCP fake upstream and real backend')

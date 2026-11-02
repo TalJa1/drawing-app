@@ -15,7 +15,7 @@ import type { ChatComposerHandle } from '@/features/chat/components/ChatComposer
 import { MessageList } from '@/features/chat/components/MessageList'
 import { ChatStatus } from '@/features/chat/components/ChatStatus'
 import { HistorySheet } from '@/features/chat/components/HistorySheet'
-import { MotionConfig } from 'framer-motion'
+import { AnimatePresence, MotionConfig } from 'framer-motion'
 import { useReducedMotion } from '@/app/theme'
 import { useChatVisibility } from '@/features/chat/motion'
 import { cn } from '@/lib/utils'
@@ -90,77 +90,79 @@ export default function ChatPage() {
 
   return (
     <MotionConfig reducedMotion={reduced ? 'always' : 'never'}>
-      <Page
-        className={cn(
-          '!pb-24 md:!pb-10',
-          (reduced || !visible) && '[&_.wash]:animate-none [&_.skeleton]:animate-none [&_.skeleton]:after:animate-none',
-        )}
-      >
-        <Washes
-          washes={[
-            { color: 'var(--rose)', size: '34vmax', top: '-10%', right: '-10%' },
-            { color: 'var(--cerulean)', size: '28vmax', bottom: '-10%', left: '-12%', delay: -10 },
-          ]}
-        />
-        <div className="container-art">
-          <div className="grid h-[calc(100dvh-12rem)] min-h-[380px] grid-rows-[minmax(0,1fr)] gap-6 md:h-[calc(100dvh-11rem)] lg:min-h-[560px] lg:grid-cols-[272px_1fr]">
-            {desktop && (
-              <aside
-                className="paper hidden min-h-0 overflow-hidden rounded-[26px] border border-line p-4 shadow-paper lg:block"
-                aria-label={t('chat.history')}
-              >
-                <ConversationList />
-              </aside>
-            )}
-            <section
-              className="paper relative flex min-h-0 flex-col overflow-hidden rounded-[26px] border border-line shadow-paper"
-              aria-label={t('chat.title')}
-            >
-              <ChatHeader
-                title={active?.title}
-                mode={currentMode}
-                onModeChange={changeMode}
-                desktop={desktop}
-                onHistory={() => setSidebar(true)}
-                onNew={() => {
-                  if (activeId) cancelConversation(activeId)
-                  setActive(null)
-                }}
-                phase={phase}
-                replyStatus={active?.messages.at(-1)?.status}
-                hasMessages={!!active?.messages.length}
-              />
-
-              {notConfigured && (
-                <p className="border-b border-line bg-paper-3 px-4 py-3 text-sm text-ink-soft">{t('chat.notConfigured')}</p>
+      <AnimatePresence>
+        <Page
+          className={cn(
+            '!pb-24 md:!pb-10',
+            (reduced || !visible) && '[&_.wash]:animate-none [&_.skeleton]:animate-none [&_.skeleton]:after:animate-none',
+          )}
+        >
+          <Washes
+            washes={[
+              { color: 'var(--rose)', size: '34vmax', top: '-10%', right: '-10%' },
+              { color: 'var(--cerulean)', size: '28vmax', bottom: '-10%', left: '-12%', delay: -10 },
+            ]}
+          />
+          <div className="container-art">
+            <div className="grid h-[calc(100dvh-12rem)] min-h-[380px] grid-rows-[minmax(0,1fr)] gap-6 md:h-[calc(100dvh-11rem)] lg:min-h-[560px] lg:grid-cols-[272px_1fr]">
+              {desktop && (
+                <aside
+                  className="paper hidden min-h-0 overflow-hidden rounded-[26px] border border-line p-4 shadow-paper lg:block"
+                  aria-label={t('chat.history')}
+                >
+                  <ConversationList />
+                </aside>
               )}
-              <MessageList key={active?.id ?? '__new__'} conversation={active}>
-                <WelcomeState
+              <section
+                className="paper relative flex min-h-0 flex-col overflow-hidden rounded-[26px] border border-line shadow-paper"
+                aria-label={t('chat.title')}
+              >
+                <ChatHeader
+                  title={active?.title}
                   mode={currentMode}
-                  name={user.displayName.split(' ')[0]}
-                  onPrompt={(prompt) => composer.current?.fill(prompt)}
+                  onModeChange={changeMode}
+                  desktop={desktop}
+                  onHistory={() => setSidebar(true)}
+                  onNew={() => {
+                    if (activeId) cancelConversation(activeId)
+                    setActive(null)
+                  }}
+                  phase={phase}
+                  replyStatus={active?.messages.at(-1)?.status}
+                  hasMessages={!!active?.messages.length}
                 />
-              </MessageList>
-              <ChatStatus conversation={active} />
 
-              <ChatComposer
-                key={`composer:${composerId}:${resetVersion}`}
-                ref={composer}
-                conversationId={composerId}
-                initialText={draft ?? drafts[composerId] ?? ''}
-                busy={busy}
-                onSend={submit}
-                onStop={stop}
-              />
-            </section>
+                {notConfigured && (
+                  <p className="border-b border-line bg-paper-3 px-4 py-3 text-sm text-ink-soft">{t('chat.notConfigured')}</p>
+                )}
+                <MessageList key={active?.id ?? '__new__'} conversation={active}>
+                  <WelcomeState
+                    mode={currentMode}
+                    name={user.displayName.split(' ')[0]}
+                    onPrompt={(prompt) => composer.current?.fill(prompt)}
+                  />
+                </MessageList>
+                <ChatStatus conversation={active} />
+
+                <ChatComposer
+                  key={`composer:${composerId}:${resetVersion}`}
+                  ref={composer}
+                  conversationId={composerId}
+                  initialText={draft ?? drafts[composerId] ?? ''}
+                  busy={busy}
+                  onSend={submit}
+                  onStop={stop}
+                />
+              </section>
+            </div>
           </div>
-        </div>
-        {!desktop && (
-          <HistorySheet open={sidebar} onClose={() => setSidebar(false)}>
-            <ConversationList onPick={() => setSidebar(false)} />
-          </HistorySheet>
-        )}
-      </Page>
+          {!desktop && (
+            <HistorySheet open={sidebar} onClose={() => setSidebar(false)}>
+              <ConversationList onPick={() => setSidebar(false)} />
+            </HistorySheet>
+          )}
+        </Page>
+      </AnimatePresence>
     </MotionConfig>
   )
 }

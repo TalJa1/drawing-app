@@ -18,7 +18,11 @@ export function MessageList({ conversation, children }: { conversation: Conversa
   const reduced = useReducedMotion()
   const thread = useRef<HTMLDivElement>(null)
   const stick = useRef(true)
-  const [initialIds] = useState(() => new Set(conversation?.messages.map((message) => message.id)))
+  const [initialIds] = useState(() => {
+    const active = useChatStream.getState().active
+    const liveTurn = active?.conversationId === conversation?.id ? active?.turnId : undefined
+    return new Set(conversation?.messages.filter((message) => message.turnId !== liveTurn).map((message) => message.id))
+  })
   const [latest, setLatest] = useState(false)
   const id = conversation?.id ?? '__new__'
   useLayoutEffect(() => {

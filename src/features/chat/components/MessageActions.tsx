@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { useReducedMotion } from '@/app/theme'
-import { CHAT_MOTION, chatVariants } from '../motion'
+import { CHAT_MOTION } from '../motion'
 import { Check, ChevronLeft, ChevronRight, Copy, RefreshCw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import type { ChatMessage } from '@/types'
 import { IconButton } from '@/components/IconButton'
@@ -71,7 +71,12 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
             className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
             label={t('common.copy')}
             icon={
-              <motion.span key={copied ? 'copied' : 'copy'} variants={chatVariants(reduced).threadSwap} initial="hidden" animate="visible">
+              <motion.span
+                key={copied ? 'copied' : 'copy'}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: reduced ? 0.08 : CHAT_MOTION.copy }}
+              >
                 {copied ? <Check size={14} /> : <Copy size={14} />}
               </motion.span>
             }
@@ -101,7 +106,16 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
               useChat.getState().updateMessage(conversationId, message.id, { rating: message.rating === 'down' ? undefined : 'down' })
             }
           />
-          {copied && <span className="self-center text-xs text-ink-faint">{t('common.copied')}</span>}
+          {copied && (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: reduced ? 0.08 : CHAT_MOTION.copy }}
+              className="self-center text-xs text-ink-faint"
+            >
+              {t('common.copied')}
+            </motion.span>
+          )}
           {last && (
             <IconButton
               size="sm"

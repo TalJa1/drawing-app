@@ -118,10 +118,9 @@ function Content({ message, conversationId, last }: { message: ChatMessage; conv
               <motion.div
                 key={index}
                 className={cn('min-w-0', card.type === 'critique' && 'lg:col-span-2')}
-                variants={variants.card}
+                variants={chatVariants(reduced, index * CHAT_MOTION.cardStagger).card}
                 initial={message.status === 'streaming' ? 'hidden' : false}
                 animate="visible"
-                transition={{ delay: reduced ? 0 : index * CHAT_MOTION.cardStagger }}
               >
                 <ChatCardView card={card} animate={message.status === 'streaming'} conversationId={conversationId} />
               </motion.div>

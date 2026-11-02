@@ -31,6 +31,7 @@ export const CHAT_MOTION = {
 
 export function chatVariants(
   reduced: boolean,
+  delay = 0,
 ): Record<'prompt' | 'bubble' | 'card' | 'swatch' | 'attachment' | 'sheet' | 'threadSwap' | 'scrollButton', Variants> {
   const enter = (duration: number, y = 0, x = 0, scale = 1): Variants =>
     reduced
@@ -41,7 +42,7 @@ export function chatVariants(
         }
       : {
           hidden: { opacity: 0, y, x, scale },
-          visible: { opacity: 1, y: 0, x: 0, scale: 1, transition: { duration } },
+          visible: { opacity: 1, y: 0, x: 0, scale: 1, transition: { duration, delay } },
           exit: { opacity: 0, y, x, scale, transition: { duration: CHAT_MOTION.attachmentExit } },
         }
   return {

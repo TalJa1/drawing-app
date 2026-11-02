@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useReducedMotion } from '@/app/theme'
-import { CHAT_MOTION, chatVariants } from '../motion'
+import { CHAT_MOTION } from '../motion'
 import { Compass } from 'lucide-react'
 import type { ChatMode } from '@/types'
 import { Muse } from '../Muse'
@@ -9,7 +10,7 @@ import { Muse } from '../Muse'
 export function WelcomeState({ mode, name, onPrompt }: { mode: ChatMode; name: string; onPrompt: (text: string) => void }) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
-  const variants = chatVariants(reduced)
+  const [interacted, setInteracted] = useState(false)
   const prompts = t(`chat.modes.${mode}.prompts`, { returnObjects: true }) as string[]
   return (
     <motion.div
@@ -32,12 +33,16 @@ export function WelcomeState({ mode, name, onPrompt }: { mode: ChatMode; name: s
       <div className="mt-3 grid w-full gap-2 lg:mt-6 lg:grid-cols-3 lg:gap-3" role="group" aria-label={t('chat.suggestions')}>
         {prompts.map((prompt, index) => (
           <motion.button
-            variants={variants.prompt}
-            initial="hidden"
-            animate="visible"
-            whileHover={reduced ? undefined : { y: -2 }}
-            whileTap={reduced ? undefined : { scale: 0.99 }}
-            transition={{ duration: reduced ? 0.08 : CHAT_MOTION.prompt, delay: reduced ? 0 : index * CHAT_MOTION.welcomeStagger }}
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: 3 }}
+            animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            whileHover={reduced ? undefined : { y: -2, transition: { duration: CHAT_MOTION.prompt } }}
+            whileTap={reduced ? undefined : { scale: 0.99, transition: { duration: CHAT_MOTION.prompt } }}
+            onHoverStart={() => setInteracted(true)}
+            onTapStart={() => setInteracted(true)}
+            transition={{
+              duration: reduced ? 0.08 : interacted ? CHAT_MOTION.prompt : CHAT_MOTION.welcome,
+              delay: reduced || interacted ? 0 : index * CHAT_MOTION.welcomeStagger,
+            }}
             key={prompt}
             type="button"
             onClick={() => onPrompt(prompt)}
