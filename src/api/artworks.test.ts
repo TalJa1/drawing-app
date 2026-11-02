@@ -8,8 +8,10 @@ import { GUEST, useSession } from '@/store/session'
 import {
   deleteArtwork,
   getArtwork,
+  acquireImage,
   getImageBlob,
-  getImageUrl,
+  setImageCacheLimit,
+  IMAGE_CACHE_LIMIT_BYTES,
   listArtworks,
   saveArtwork,
   submitArtwork,
@@ -76,6 +78,7 @@ beforeEach(() => {
   useSession.setState({ user: { ...GUEST, id: 'u1', isGuest: false }, token: 'tok-1' })
   useCollection.setState({ artworks: [] })
   clearImageCache()
+  setImageCacheLimit(IMAGE_CACHE_LIMIT_BYTES)
   revoke.mockReset()
 })
 afterEach(() => {
@@ -249,8 +252,8 @@ describe('getArtwork / updateArtwork / deleteArtwork', () => {
     fetchMock
       .mockResolvedValueOnce(new Response('PNG', { headers: { 'Content-Type': 'image/png' } }))
       .mockResolvedValueOnce(new Response(null, { status: 204 }))
-    const url = await getImageUrl(`/api/v1/artworks/${ID}/image`)
-    expect(url).toBe('blob:test/1')
+    const lease = await acquireImage(`/api/v1/artworks/${ID}/image`)
+    expect(lease?.url).toBe('blob:test/1')
     await deleteArtwork(ID)
     expect(call().init.method).toBe('DELETE')
     expect(call().url).toBe(`/api/v1/artworks/${ID}`)
@@ -261,7 +264,7 @@ describe('getArtwork / updateArtwork / deleteArtwork', () => {
     fetchMock
       .mockResolvedValueOnce(new Response('PNG', { headers: { 'Content-Type': 'image/png' } }))
       .mockResolvedValueOnce(json(500, { error: { code: 'internal_error', message: 'x' } }))
-    await getImageUrl(`/api/v1/artworks/${ID}/image`)
+    await acquireImage(`/api/v1/artworks/${ID}/image`)
     await deleteArtwork(ID).catch(() => {})
     expect(revoke).not.toHaveBeenCalled()
   })
@@ -273,23 +276,23 @@ describe('pictures (they need the token, so they are fetched and shown from an o
 
   it('fetches with the token and returns a blob: URL', async () => {
     fetchMock.mockResolvedValue(img())
-    const url = await getImageUrl(KEY)
-    expect(url).toMatch(/^blob:/)
+    const lease = await acquireImage(KEY)
+    expect(lease?.url).toMatch(/^blob:/)
     expect(call().url).toBe(KEY)
     expect(call().headers.get('Authorization')).toBe('Bearer tok-1')
   })
 
   it('asks the server once per picture, even when two places want it at the same moment', async () => {
     fetchMock.mockImplementation(async () => img())
-    const [a, b] = await Promise.all([getImageUrl(KEY), getImageUrl(KEY)])
-    const c = await getImageUrl(KEY)
-    expect(new Set([a, b, c]).size).toBe(1)
+    const [a, b] = await Promise.all([acquireImage(KEY), acquireImage(KEY)])
+    const c = await acquireImage(KEY)
+    expect(new Set([a?.url, b?.url, c?.url]).size).toBe(1)
     expect(fetchMock).toHaveBeenCalledTimes(1)
   })
 
   it('gives the bytes for a download, from the same fetch', async () => {
     fetchMock.mockImplementation(async () => img())
-    await getImageUrl(`/api/v1/artworks/${ID}/image`)
+    await acquireImage(`/api/v1/artworks/${ID}/image`)
     const blob = await getImageBlob(`/api/v1/artworks/${ID}/image`)
     expect(await blob?.text()).toBe('PNG')
     expect(fetchMock).toHaveBeenCalledTimes(1)
@@ -303,28 +306,188 @@ describe('pictures (they need the token, so they are fetched and shown from an o
     ['not an artwork id', '/api/v1/artworks/not-an-id/image'],
     ['an empty key', ''],
   ])('never sends the token to %s', async (_n, key) => {
-    expect(await getImageUrl(key)).toBeNull()
+    expect(await acquireImage(key)).toBeNull()
     expect(await getImageBlob(key)).toBeUndefined()
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
   it('does not remember a failure: the next look tries again', async () => {
     fetchMock.mockResolvedValueOnce(json(404, { error: { code: 'not_found', message: 'gone' } })).mockResolvedValueOnce(img())
-    await expect(getImageUrl(KEY)).rejects.toMatchObject({ status: 404 })
-    await expect(getImageUrl(KEY)).resolves.toMatch(/^blob:/)
+    await expect(acquireImage(KEY)).rejects.toMatchObject({ status: 404 })
+    await expect(acquireImage(KEY)).resolves.toMatchObject({ url: expect.stringMatching(/^blob:/) })
     expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
   it('lets go of every picture when the user signs out', async () => {
     fetchMock.mockImplementation(async () => img())
-    await getImageUrl(KEY)
-    await getImageUrl(`/api/v1/artworks/${ID2}/thumb`)
+    await acquireImage(KEY)
+    await acquireImage(`/api/v1/artworks/${ID2}/thumb`)
     useSession.setState({ user: GUEST, token: null })
     expect(revoke).toHaveBeenCalledTimes(2)
     fetchMock.mockClear()
     useSession.setState({ user: { ...GUEST, id: 'u2', isGuest: false }, token: 'tok-2' })
-    await getImageUrl(KEY) // a different person: nothing of the first one is reused
+    await acquireImage(KEY) // a different person: nothing of the first one is reused
     expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not hand a picture to the next person when the first one signed out while it was loading', async () => {
+    let answer!: (r: Response) => void
+    fetchMock.mockReturnValueOnce(new Promise<Response>((r) => (answer = r)))
+    const pending = acquireImage(KEY)
+    useSession.setState({ user: GUEST, token: null })
+    answer(img())
+    expect(await pending).toBeNull()
+  })
+})
+
+describe('the pictures kept in memory have a ceiling', () => {
+  // every picture here weighs 1000 bytes; the ceiling is set in whole pictures to keep the numbers readable
+  const pic = (n: number) => `/api/v1/artworks/0000000${n}-8e1b-4f0e-9a55-0b8d2c1e7a10/thumb`
+  const body = () => new Response('x'.repeat(1000), { status: 200, headers: { 'Content-Type': 'image/jpeg' } })
+  const look = async (n: number) => {
+    const lease = await acquireImage(pic(n))
+    lease?.release()
+    return lease
+  }
+  const fetched = () => fetchMock.mock.calls.map((c) => c[0] as string)
+
+  beforeEach(() => fetchMock.mockImplementation(async () => body()))
+
+  it('has a ceiling that is a real number of bytes, and the app starts with it', () => {
+    expect(IMAGE_CACHE_LIMIT_BYTES).toBeGreaterThan(1024 * 1024)
+    expect(Number.isFinite(IMAGE_CACHE_LIMIT_BYTES)).toBe(true)
+  })
+
+  it('keeps no more than the ceiling of pictures nobody is looking at, and drops the oldest first', async () => {
+    setImageCacheLimit(2500)
+    for (const n of [1, 2, 3, 4]) await look(n)
+    expect(revoke).toHaveBeenCalledTimes(2) // 4 x 1000 bytes against 2500: two must go
+    fetchMock.mockClear()
+    await look(4)
+    await look(3)
+    expect(fetchMock).not.toHaveBeenCalled() // the two newest are still held
+    await look(1)
+    expect(fetched()).toEqual([pic(1)]) // the oldest was let go, so it is fetched again
+  })
+
+  it('keeps pictures that add up to exactly the ceiling', async () => {
+    setImageCacheLimit(2000)
+    await look(1)
+    await look(2)
+    expect(revoke).not.toHaveBeenCalled()
+    await look(3) // one over
+    expect(revoke).toHaveBeenCalledTimes(1)
+  })
+
+  it('lets go at once when the ceiling is lowered below what is held', async () => {
+    await look(1)
+    await look(2)
+    await look(3)
+    expect(revoke).not.toHaveBeenCalled()
+    setImageCacheLimit(1500)
+    expect(revoke).toHaveBeenCalledTimes(2)
+  })
+
+  it('lets go of the one looked at longest ago, not the one loaded first', async () => {
+    setImageCacheLimit(2500)
+    await look(1)
+    await look(2)
+    await look(1) // 1 is looked at again: now 2 is the one nobody has wanted for longest
+    await look(3)
+    fetchMock.mockClear()
+    await look(1)
+    expect(fetchMock).not.toHaveBeenCalled()
+    await look(2)
+    expect(fetched()).toEqual([pic(2)])
+  })
+
+  it('never lets go of a picture that is on screen, even over the ceiling', async () => {
+    setImageCacheLimit(1500)
+    const a = await acquireImage(pic(1))
+    const b = await acquireImage(pic(2))
+    const c = await acquireImage(pic(3))
+    expect(revoke).not.toHaveBeenCalled()
+    expect([a, b, c].every((l) => l?.url.startsWith('blob:'))).toBe(true)
+    a?.release()
+    expect(revoke).toHaveBeenCalledTimes(1) // only once nobody shows it, and only the one released
+    expect(revoke).toHaveBeenCalledWith(a?.url)
+  })
+
+  it('serves a picture bigger than the ceiling while it is shown, and drops it afterwards', async () => {
+    setImageCacheLimit(500)
+    const lease = await acquireImage(pic(1))
+    expect(lease?.url).toMatch(/^blob:/)
+    expect(revoke).not.toHaveBeenCalled()
+    lease?.release()
+    expect(revoke).toHaveBeenCalledWith(lease?.url)
+  })
+
+  it('keeps a picture while any one of the places showing it still holds it', async () => {
+    setImageCacheLimit(500)
+    const first = await acquireImage(pic(1))
+    const second = await acquireImage(pic(1))
+    expect(second?.url).toBe(first?.url)
+    first?.release()
+    first?.release() // letting go twice must not count as the other place letting go
+    await look(2) // pressure on the cache
+    expect(revoke).not.toHaveBeenCalledWith(first?.url)
+    second?.release()
+    expect(revoke).toHaveBeenCalledWith(first?.url)
+  })
+
+  it('does not count a picture that is still loading as something it can drop', async () => {
+    setImageCacheLimit(500)
+    let answer!: (r: Response) => void
+    fetchMock.mockReturnValueOnce(new Promise<Response>((r) => (answer = r)))
+    const pending = acquireImage(pic(1))
+    await look(2) // finishes (and is dropped) while picture 1 is still on its way
+    answer(body())
+    const lease = await pending
+    expect(lease?.url).toMatch(/^blob:/)
+  })
+
+  it('does not drop a picture that nobody shows yet but is still on its way (a download just started)', async () => {
+    setImageCacheLimit(2500)
+    let answer!: (r: Response) => void
+    fetchMock.mockReturnValueOnce(new Promise<Response>((r) => (answer = r)))
+    const download = getImageBlob(pic(1)) // not on screen, so not pinned; its size is not known yet
+    for (const n of [2, 3, 4]) await look(n) // 3000 bytes against 2500: the cache must let one go, but not picture 1
+    answer(new Response('x'.repeat(100), { status: 200, headers: { 'Content-Type': 'image/jpeg' } }))
+    await download
+    fetchMock.mockClear()
+    const lease = await acquireImage(pic(1)) // it was kept, so this is not fetched a second time
+    expect(lease?.url).toMatch(/^blob:/)
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('stops counting a deleted artwork’s pictures', async () => {
+    setImageCacheLimit(2500)
+    const id = '00000001-8e1b-4f0e-9a55-0b8d2c1e7a10'
+    await look(1)
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }))
+    await deleteArtwork(id)
+    fetchMock.mockImplementation(async () => body())
+    for (const n of [2, 3]) await look(n)
+    expect(revoke).toHaveBeenCalledTimes(1) // only the deleted one; 2 + 3 fit in the ceiling
+  })
+
+  it('gives bytes for a download without holding a place on screen', async () => {
+    setImageCacheLimit(500)
+    const blob = await getImageBlob(pic(1))
+    expect(blob?.size).toBe(1000)
+    expect(revoke).not.toHaveBeenCalled() // no object URL was ever made
+  })
+
+  it('counts from zero again after a sign-out', async () => {
+    setImageCacheLimit(2500)
+    await look(1)
+    await look(2)
+    useSession.setState({ user: GUEST, token: null })
+    useSession.setState({ user: { ...GUEST, id: 'u2', isGuest: false }, token: 'tok-2' })
+    revoke.mockClear()
+    await look(3)
+    await look(4)
+    expect(revoke).not.toHaveBeenCalled() // two pictures fit; the first person's two are not in the count
   })
 })
 

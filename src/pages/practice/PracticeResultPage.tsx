@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import type { Artwork, Template } from '@/types'
 import { useArtwork, useTemplateLookup, useTemplates, useUpdateArtwork } from '@/api/queries'
-import { getImageBlob, getImageUrl } from '@/api/artworks'
+import { acquireImage, getImageBlob } from '@/api/artworks'
 import { recordActivity } from '@/api/progress'
 import { useL } from '@/i18n/useL'
 import { cn, copyText, downloadBlob } from '@/lib/utils'
@@ -47,9 +47,20 @@ function useImage(key: string | undefined) {
   useEffect(() => {
     if (!key) return
     let alive = true
-    void getImageUrl(key).then((u) => alive && setUrl(u))
+    let held: { release: () => void } | null = null
+    acquireImage(key)
+      .then((lease) => {
+        if (!alive) lease?.release()
+        else if (lease) {
+          held = lease
+          setUrl(lease.url)
+        }
+      })
+      .catch(() => {}) // the page shows its placeholder when there is no picture
     return () => {
       alive = false
+      held?.release()
+      setUrl(null) // never keep showing an address that may be revoked now
     }
   }, [key])
   return url

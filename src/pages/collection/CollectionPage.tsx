@@ -69,7 +69,7 @@ function GalleryItem({ art, onOpen, index }: { art: Artwork; onOpen: () => void;
         >
           <div className="mat" style={{ '--mat-w': '10px' } as React.CSSProperties}>
             <div className="art relative overflow-hidden">
-              <ArtworkImage imageKey={art.thumbKey} alt={art.title} aspect={art.width / art.height} />
+              <ArtworkImage imageKey={art.thumbKey} alt={art.title} aspect={art.width / art.height} lazy />
               {art.favourite && (
                 <span className="absolute right-2 top-2 rounded-full bg-card/90 p-1.5 text-rose shadow">
                   <Heart size={13} className="fill-current" />

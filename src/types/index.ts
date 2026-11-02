@@ -102,7 +102,7 @@ export interface Artwork {
   timeSpent: number
   width: number
   height: number
-  /** The picture's address on the API (`/api/v1/artworks/:id/image`); `getImageUrl` loads it with the token */
+  /** The picture's address on the API (`/api/v1/artworks/:id/image`); `acquireImage` loads it with the token */
   imageKey: string
   thumbKey: string
   favourite: boolean

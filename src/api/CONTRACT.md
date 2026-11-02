@@ -81,15 +81,15 @@ order is this number, highest first; the server keeps it for minutes, so it can 
 Artworks belong to an account: a guest has none (the app sends them to sign in). Nothing is kept on the
 device any more.
 
-| Function                                 | Method & path                         | Request                                                                       | Response                                           |
-| ---------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------- |
-| `saveArtwork(req)`                       | `POST /artworks`                      | `multipart/form-data`: `image` (PNG), `thumbnail` (JPEG), `meta` (JSON below) | `{ artwork, reward? }` (see below)                 |
-| `submitArtwork(req)`                     | `POST /artworks` (`kind=practice`)    | same                                                                          | `Artwork`                                          |
-| `listArtworks()`                         | `GET /artworks?limit=500&cursor=`     | –                                                                             | `Artwork[]` (newest first; every page is followed) |
-| `getArtwork(id)`                         | `GET /artworks/:id`                   | –                                                                             | `Artwork`                                          |
-| `updateArtwork(id, p)`                   | `PATCH /artworks/:id`                 | `{ favourite?, title? }` (nothing else can change)                            | `Artwork`                                          |
-| `deleteArtwork(id)`                      | `DELETE /artworks/:id`                | –                                                                             | `204`                                              |
-| `getImageUrl(key)` / `getImageBlob(key)` | `GET /artworks/:id/image` or `/thumb` | – (needs the bearer token)                                                    | object URL / `Blob`                                |
+| Function                                  | Method & path                         | Request                                                                       | Response                                           |
+| ----------------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------- |
+| `saveArtwork(req)`                        | `POST /artworks`                      | `multipart/form-data`: `image` (PNG), `thumbnail` (JPEG), `meta` (JSON below) | `{ artwork, reward? }` (see below)                 |
+| `submitArtwork(req)`                      | `POST /artworks` (`kind=practice`)    | same                                                                          | `Artwork`                                          |
+| `listArtworks()`                          | `GET /artworks?limit=500&cursor=`     | –                                                                             | `Artwork[]` (newest first; every page is followed) |
+| `getArtwork(id)`                          | `GET /artworks/:id`                   | –                                                                             | `Artwork`                                          |
+| `updateArtwork(id, p)`                    | `PATCH /artworks/:id`                 | `{ favourite?, title? }` (nothing else can change)                            | `Artwork`                                          |
+| `deleteArtwork(id)`                       | `DELETE /artworks/:id`                | –                                                                             | `204`                                              |
+| `acquireImage(key)` / `getImageBlob(key)` | `GET /artworks/:id/image` or `/thumb` | – (needs the bearer token)                                                    | `{ url, release }` lease / `Blob`                  |
 
 ```json
 // meta
@@ -108,9 +108,18 @@ device any more.
   scored, and the same PNG sent again (`200` instead of `201`) pays nothing, so `reward` is absent then.
   `saveArtwork` hands it back apart from the artwork and refreshes the XP shown (`GET /me/progress`).
 - **Pictures** — `imageKey` / `thumbKey` are API paths, and the server gives a picture only to its owner,
-  so an `<img src>` cannot load it. `getImageUrl` fetches the bytes with the token and returns an object
-  URL; each picture is fetched once and let go of when the user signs out. Only `/api/v1/artworks/<uuid>/image|thumb`
-  keys are ever fetched with the token.
+  so an `<img src>` cannot load it. `acquireImage` fetches the bytes with the token and hands back a lease
+  `{ url, release }`: `url` is an object URL that stays valid until `release()` is called (once is enough,
+  further calls do nothing). Each picture is fetched once and kept in a cache that is emptied when the user
+  signs out. Only `/api/v1/artworks/<uuid>/image|thumb` keys are ever fetched with the token.
+- **Picture memory** — the cache has a soft ceiling, `IMAGE_CACHE_LIMIT_BYTES` (64 MiB, a chosen figure and
+  not a measurement; a thumbnail was about 0.4 MB and a full picture about 1.5 MB when looked at once).
+  Over the ceiling the least recently used pictures are dropped (and their object URLs revoked), but never
+  one that is on screen (leased and not yet released) or still loading, so the ceiling can be exceeded while
+  that many pictures are shown. A dropped picture is simply fetched again when asked for. `getImageBlob`
+  does not pin anything. `ArtworkImage` with `lazy` (the Collection grid) only asks for a picture when its
+  card is within 400px of the screen and releases it again beyond 1600px; without `IntersectionObserver`
+  it loads at once.
 - **Errors** — `template_locked` (403), `not_found` (404), `rate_limited` (429, 60 uploads a day),
   `payload_too_large` (413), `unsupported_media_type` (415). The app shows its own sentence per code
   (`errors.api.*`), not the server's English text.

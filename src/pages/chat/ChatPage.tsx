@@ -32,6 +32,7 @@ import { Avatar } from '@/components/Avatar'
 import { Washes } from '@/components/art/Washes'
 import { useArtworks } from '@/api/queries'
 import { getImageBlob } from '@/api/artworks'
+import { ArtworkImage } from '@/features/collection/ArtworkImage'
 import { Muse } from '@/features/chat/Muse'
 import { ChatCardView } from '@/features/chat/ChatCards'
 import { useMuse } from '@/features/chat/useMuse'
@@ -205,19 +206,7 @@ function AttachPicker({ open, onClose, onPick }: { open: boolean; onClose: () =>
 }
 
 function ThumbImage({ k, alt }: { k: string; alt: string }) {
-  const [src, setSrc] = useState<string | null>(null)
-  useEffect(() => {
-    let alive = true
-    void getImageBlob(k).then((b) => b && alive && setSrc(URL.createObjectURL(b)))
-    return () => {
-      alive = false
-    }
-  }, [k])
-  return src ? (
-    <img src={src} alt={alt} className="aspect-[4/3] w-full rounded-lg object-cover" />
-  ) : (
-    <div className="skeleton aspect-[4/3] w-full rounded-lg" />
-  )
+  return <ArtworkImage imageKey={k} alt={alt} aspect={4 / 3} className="rounded-lg" />
 }
 
 export default function ChatPage() {

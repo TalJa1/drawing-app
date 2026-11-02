@@ -108,42 +108,95 @@ export async function deleteArtwork(id: string): Promise<void> {
 /* ---------- pictures ----------
    The server gives a picture only to its owner, and an <img src> cannot send the token. So the bytes
    are fetched here with the token and shown from an object URL. Each picture is fetched once (the
-   same one is wanted by a card and by the lightbox) and let go of when the user signs out. */
+   same one is wanted by a card and by the lightbox).
+
+   Memory: a picture's bytes stay in memory for as long as its object URL exists. So the pictures
+   nobody is showing are kept only up to a ceiling; beyond it the one looked at longest ago is let go
+   (it is simply fetched again if it is wanted later). A picture that IS being shown is never let go,
+   so the ceiling is for what is not on screen, not a hard limit on the whole page. Everything is let
+   go when the person signs out. */
+
+/**
+ * The most bytes of pictures nobody is showing that are kept in memory. 64 MiB is a choice, not a
+ * measurement: a thumbnail weighed about 0.4 MB and a full picture about 1.5 MB in the one drawing
+ * measured, so this holds on the order of 150 thumbnails. Pictures on screen do not count against it.
+ */
+export const IMAGE_CACHE_LIMIT_BYTES = 64 * 1024 * 1024
 
 /** `imageKey` / `thumbKey` as the server writes them. Only these are ever fetched with the token. */
 const PICTURE_KEY = /^\/api\/v1(\/artworks\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/(?:image|thumb))$/i
 
-const blobs = new Map<string, Promise<Blob>>()
-const urls = new Map<string, string>()
+interface Picture {
+  bytes: Promise<Blob>
+  /** 0 until the bytes have arrived (a picture on its way cannot be let go: its size is not known yet) */
+  size: number
+  /** how many places are showing it right now */
+  shown: number
+  url?: string
+}
+
+/** In the order they were last wanted: the first one is the one wanted longest ago. */
+const pictures = new Map<string, Picture>()
+let limit = IMAGE_CACHE_LIMIT_BYTES
 let generation = 0
 
-function blobOf(key: string): Promise<Blob> | null {
+/** Changes the ceiling (tests, or tuning for a small device). */
+export function setImageCacheLimit(bytes: number): void {
+  limit = bytes
+  trim()
+}
+
+function dropPicture(key: string, p: Picture): void {
+  pictures.delete(key)
+  if (p.url) URL.revokeObjectURL(p.url)
+}
+
+/** Lets go of pictures nobody is showing, the one wanted longest ago first, until the rest fit. */
+function trim(): void {
+  let total = 0
+  for (const p of pictures.values()) total += p.size
+  for (const [key, p] of pictures) {
+    if (total <= limit) return
+    if (p.shown > 0 || p.size === 0) continue
+    total -= p.size
+    dropPicture(key, p)
+  }
+}
+
+function pictureOf(key: string): Picture | null {
   const path = PICTURE_KEY.exec(key)?.[1]
   if (!path) return null
-  let p = blobs.get(key)
-  if (!p) {
-    p = requestBlob(path)
-    blobs.set(key, p)
-    p.catch(() => {
-      if (blobs.get(key) === p) blobs.delete(key) // a failure is not remembered: the next look tries again
-    })
+  const held = pictures.get(key)
+  if (held) {
+    pictures.delete(key) // wanted again: it moves to the end of the line
+    pictures.set(key, held)
+    return held
   }
-  return p
+  const fresh: Picture = { bytes: requestBlob(path), size: 0, shown: 0 }
+  pictures.set(key, fresh)
+  fresh.bytes.then(
+    (blob) => {
+      if (pictures.get(key) !== fresh) return // let go (signed out, deleted) while it was on its way
+      fresh.size = blob.size
+      trim()
+    },
+    () => {
+      if (pictures.get(key) === fresh) pictures.delete(key) // a failure is not remembered: the next look tries again
+    },
+  )
+  return fresh
 }
 
 function forget(key: string): void {
-  blobs.delete(key)
-  const u = urls.get(key)
-  if (u) URL.revokeObjectURL(u)
-  urls.delete(key)
+  const p = pictures.get(key)
+  if (p) dropPicture(key, p)
 }
 
 /** Lets go of every picture held in memory. */
 export function clearImageCache(): void {
   generation++
-  for (const u of urls.values()) URL.revokeObjectURL(u)
-  urls.clear()
-  blobs.clear()
+  for (const p of pictures.values()) if (p.url) URL.revokeObjectURL(p.url)
+  pictures.clear()
 }
 
 // another person (or nobody) is now signed in: nothing of the previous one stays in memory
@@ -151,24 +204,46 @@ useSession.subscribe((s, prev) => {
   if (s.token !== prev.token) clearImageCache()
 })
 
-/** GET /artworks/:id/image | thumb — returns a URL usable in <img src>, or null for a key that is not ours. */
-export async function getImageUrl(key: string): Promise<string | null> {
-  const p = blobOf(key)
-  if (!p) return null
-  const gen = generation
-  const blob = await p
-  if (gen !== generation) return null // the user changed while it loaded
-  let url = urls.get(key)
-  if (!url) {
-    url = URL.createObjectURL(blob)
-    urls.set(key, url)
-  }
-  return url
+/** A picture shown on screen. Call `release` when it is no longer shown (it may then be let go of). */
+export interface ImageLease {
+  url: string
+  release: () => void
 }
 
-/** The picture itself (for a download or the chat), or undefined for a key that is not ours. */
+/**
+ * GET /artworks/:id/image | thumb — a URL usable in <img src>, held for as long as the lease is not
+ * released. Returns null for a key that is not ours, or when the person changed while it loaded.
+ */
+export async function acquireImage(key: string): Promise<ImageLease | null> {
+  const p = pictureOf(key)
+  if (!p) return null
+  p.shown++ // counted before the wait, so it cannot be let go of between arriving and being shown
+  const gen = generation
+  let released = false
+  const release = () => {
+    if (released) return
+    released = true
+    p.shown--
+    if (p.shown === 0) trim()
+  }
+  let blob: Blob
+  try {
+    blob = await p.bytes
+  } catch (e) {
+    release()
+    throw e
+  }
+  if (gen !== generation || pictures.get(key) !== p) {
+    release()
+    return null // the user changed, or the picture was let go of (deleted), while it loaded
+  }
+  p.url ??= URL.createObjectURL(blob)
+  return { url: p.url, release }
+}
+
+/** The picture itself (for a download or the chat), or undefined for a key that is not ours. Holds nothing on screen. */
 export async function getImageBlob(key: string): Promise<Blob | undefined> {
-  return (await blobOf(key)) ?? undefined
+  return (await pictureOf(key)?.bytes) ?? undefined
 }
 
 /* ---------- what to tell the person when it fails ---------- */
