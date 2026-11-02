@@ -6,6 +6,19 @@ interface State {
   error: Error | null
 }
 
+/**
+ * A part of the app could not be fetched (a bad connection, a damaged browser cache, a file that a new release replaced).
+ * The messages are the browsers' own: Chrome and Edge, Firefox, Safari, and Vite's for a stylesheet.
+ */
+function isModuleLoadError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    /Failed to fetch dynamically imported module|error loading dynamically imported module|Importing a module script failed|Unable to preload CSS/i.test(
+      error.message,
+    )
+  )
+}
+
 /** Styled fallback for render errors ("a spilled paint pot"). */
 export class ErrorBoundary extends Component<{ children: ReactNode; compact?: boolean }, State> {
   state: State = { error: null }
@@ -38,7 +51,8 @@ export class ErrorBoundary extends Component<{ children: ReactNode; compact?: bo
           <button
             type="button"
             className="h-11 rounded-full bg-ink px-5 font-medium text-paper"
-            onClick={() => this.setState({ error: null })}
+            // A page that failed to load stays failed inside React (React.lazy keeps its first failure), so load the page again
+            onClick={() => (isModuleLoadError(this.state.error) ? window.location.reload() : this.setState({ error: null }))}
           >
             {t('errors.tryAgain')}
           </button>
