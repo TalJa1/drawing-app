@@ -42,7 +42,8 @@ export default function LessonPage() {
         <EmptyState title={t('learn.notFound')} action={<ButtonLink to="/learn">{t('learn.backToAtlas')}</ButtonLink>} />
       </Page>
     )
-  return <LessonReader lesson={lesson} />
+  // one lesson, one reader: going on to another lesson starts it afresh (what was "just finished" is not carried over)
+  return <LessonReader key={lesson.slug} lesson={lesson} />
 }
 
 /**
