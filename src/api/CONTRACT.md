@@ -217,6 +217,11 @@ rejected. Unknown fields are rejected. Types are strict: booleans are not number
 Integral JSON numbers such as 1 and 1.0 have the same meaning. `learner` is required.
 History `status` is optional but cannot be null; `imageMissing` must be a boolean;
 `cards`, when present, must be an array. All string limits count Unicode code points.
+`learner.completedLessons` accepts at most 200 slugs; the learner snapshot sends the
+first 200 completed slugs. Each `history[].cards` accepts at most 6 entries before
+invalid cards are dropped; the request builder sends at most 6 validated cards per
+item. The backend rejects oversized collections with 422 `validation_error` before
+calling the model or charging either budget.
 Optional card `roles`, `note` and `reason` may be null; producers omit null fields and
 FE normalizes null to omission. Invalid old cards are dropped individually.
 History roles are `user|assistant`. Assistant status is `completed|stopped|interrupted`.

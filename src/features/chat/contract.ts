@@ -16,6 +16,7 @@ export const LIMITS = {
   maxIdChars: 80,
   maxBodyBytes: 6_000_000,
   maxCardsPerTurn: 6,
+  maxCompletedLessons: 200,
 } as const
 export const boundedString = (min: number, max: number) =>
   z.string().refine((value) => {

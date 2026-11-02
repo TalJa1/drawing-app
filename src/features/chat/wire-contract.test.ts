@@ -14,6 +14,21 @@ const request = () => ({
   learner: null,
 })
 
+it.each([200, 201])('matches the backend completed lesson limit for %i slugs', (count) => {
+  const learner = { level: 1, completedLessons: Array.from({ length: count }, (_, i) => `lesson-${i}`) }
+  expect(chatTurnRequestSchema.safeParse({ ...request(), learner }).success).toBe(count <= 200)
+})
+
+it.each([6, 7])('matches the backend history card limit for %i cards', (count) => {
+  const cards = Array.from({ length: count }, () => ({ type: 'lesson', slug: 'rule-of-thirds' }))
+  expect(chatTurnRequestSchema.safeParse({ ...request(), history: [{ role: 'assistant', text: '', cards }] }).success).toBe(count <= 6)
+})
+
+it('applies the history card limit before dropping invalid old cards', () => {
+  const cards = Array.from({ length: 7 }, () => ({ type: 'unknown' }))
+  expect(chatTurnRequestSchema.safeParse({ ...request(), history: [{ role: 'assistant', text: '', cards }] }).success).toBe(false)
+})
+
 it.each([
   { protocolVersion: true },
   { protocolVersion: '1' },

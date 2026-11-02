@@ -41,7 +41,7 @@ export const chatTurnRequestSchema: z.ZodType<ChatTurnRequest> = z
           .strictObject({
             role: z.enum(['user', 'assistant']),
             text: z.string(),
-            cards: z.array(z.unknown()).transform(parseHistoryCards).optional(),
+            cards: z.array(z.unknown()).max(LIMITS.maxCardsPerTurn).transform(parseHistoryCards).optional(),
             images: z.array(imageSchema).max(LIMITS.maxImagesPerRequest).optional(),
             imageMissing: z.boolean().optional(),
             status: z.enum(['completed', 'stopped', 'interrupted']).optional(),
@@ -49,7 +49,9 @@ export const chatTurnRequestSchema: z.ZodType<ChatTurnRequest> = z
           .refine((item) => item.role === 'user' || !item.images?.length, 'Only user turns carry images'),
       )
       .max(LIMITS.maxHistoryItems),
-    learner: z.strictObject({ level: z.number().int().min(1), completedLessons: z.array(shortId) }).nullable(),
+    learner: z
+      .strictObject({ level: z.number().int().min(1), completedLessons: z.array(shortId).max(LIMITS.maxCompletedLessons) })
+      .nullable(),
   })
   .refine((r) => r.history.reduce((n, item) => n + Array.from(item.text).length, 0) <= LIMITS.maxHistoryChars, 'History exceeds text limit')
   .refine(

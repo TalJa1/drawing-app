@@ -205,3 +205,20 @@ it('request: reads the current learner level and completed lesson slugs', () => 
   useLearn.getState().setLessonProgress('unfinished', { completed: false })
   expect(learnerSnapshot()).toEqual({ level: levelFromXp(500), completedLessons: ['rule-of-thirds'] })
 })
+
+it('request: sends at most 200 completed lesson slugs', async () => {
+  const slugs = Array.from({ length: 201 }, (_, i) => `lesson-${i}`)
+  for (const slug of slugs) useLearn.getState().setLessonProgress(slug, { completed: true })
+  const req = await buildTurnRequest(conversation([message('user', 'current')]), 'current', 'send', learnerSnapshot())
+  expect(req.learner?.completedLessons).toEqual(slugs.slice(0, 200))
+  expect(chatTurnRequestSchema.safeParse(req).success).toBe(true)
+})
+
+it('request: sends at most six cards per history item', async () => {
+  const cards = Array.from({ length: 7 }, (_, i) => ({ type: 'lesson' as const, slug: 'rule-of-thirds', reason: `Lesson ${i}` }))
+  const req = await build(
+    conversation([message('user', 'old'), message('assistant', 'old', 'Lessons', { cards }), message('user', 'current')]),
+  )
+  expect(req.history[1].cards).toEqual(cards.slice(0, 6))
+  expect(chatTurnRequestSchema.safeParse(req).success).toBe(true)
+})

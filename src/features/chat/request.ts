@@ -40,7 +40,7 @@ export async function buildTurnRequest(
   const turns: { id: string; items: HistoryItem[] }[] = []
   const userItems = new Map<string, HistoryItem>()
   for (const message of conversation.messages.slice(0, index)) {
-    const cards = parseHistoryCards(message.cards)
+    const cards = parseHistoryCards(message.cards).slice(0, LIMITS.maxCardsPerTurn)
     if (
       message.role === 'assistant' &&
       (message.status === 'failed' || message.status === 'streaming' || (!message.content.trim() && !cards.length))
