@@ -1170,6 +1170,37 @@
       "lesson_other": "Bài học · {{count}} phút"
     }
   },
+  "aiJudge": {
+    "title": "Nhận xét của Muse",
+    "intro": "Muse có thể xem bài vẽ và gợi ý điều bạn nên luyện tiếp.",
+    "ask": "Nhờ Muse nhận xét",
+    "disclosure": "Ảnh bài vẽ được gửi qua máy chủ Art Spark tới OpenAI để viết nhận xét. Điểm số không thay đổi.",
+    "loading": "Muse đang xem bài vẽ của bạn…",
+    "ready": "Nhận xét của Muse đã sẵn sàng.",
+    "strengths": "Điểm mạnh",
+    "tips": "Gợi ý",
+    "tryNow": "Thử ngay",
+    "label": "Muse · AI — điểm do công thức tính",
+    "retry": "Thử lại",
+    "retryIn": "Thử lại sau {{time}}.",
+    "wait": {
+      "seconds": "{{value}} giây",
+      "minutes": "{{value}} phút",
+      "hours": "{{value}} giờ"
+    },
+    "error": {
+      "rate_limited": "Bạn vừa nhờ Muse nhiều lần quá.",
+      "ai_busy": "Muse đang giúp các bạn khác.",
+      "ai_budget_exceeded": "Muse đã dùng hết lượt nhận xét hôm nay.",
+      "unauthorized": "Hãy đăng nhập để nhờ Muse nhận xét.",
+      "ai_not_configured": "Máy chủ này chưa bật tính năng nhận xét của Muse.",
+      "network": "Không kết nối được máy chủ Art Spark. Hãy kiểm tra mạng.",
+      "timeout": "Muse trả lời quá lâu.",
+      "upstream": "Lần này Muse chưa viết được nhận xét.",
+      "image_missing": "Không đọc được ảnh bài vẽ trên thiết bị này.",
+      "generic": "Có lỗi khi nhờ Muse nhận xét."
+    }
+  },
   "home": {
     "eyebrow": "Xưởng vẽ riêng của bạn",
     "h1a": "Vẽ.",

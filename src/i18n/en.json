@@ -1170,6 +1170,37 @@
       "lesson_other": "Lesson · {{count}} min"
     }
   },
+  "aiJudge": {
+    "title": "Muse's feedback",
+    "intro": "Muse can look at your drawing and suggest what to practise next.",
+    "ask": "Ask Muse for feedback",
+    "disclosure": "Your drawing is sent through the Art Spark server to OpenAI to write this feedback. Your score does not change.",
+    "loading": "Muse is looking at your drawing…",
+    "ready": "Muse's feedback is ready.",
+    "strengths": "What works",
+    "tips": "Tips",
+    "tryNow": "Try it now",
+    "label": "Muse · AI — the score comes from the formula",
+    "retry": "Try again",
+    "retryIn": "Try again in {{time}}.",
+    "wait": {
+      "seconds": "{{value}} s",
+      "minutes": "{{value}} min",
+      "hours": "{{value}} h"
+    },
+    "error": {
+      "rate_limited": "You've asked Muse a lot just now.",
+      "ai_busy": "Muse is helping other learners right now.",
+      "ai_budget_exceeded": "Muse has used today's feedback allowance.",
+      "unauthorized": "Please sign in to ask Muse for feedback.",
+      "ai_not_configured": "Muse's feedback isn't set up on this server yet.",
+      "network": "Can't reach the Art Spark server. Check your connection.",
+      "timeout": "Muse took too long to answer.",
+      "upstream": "Muse couldn't write feedback this time.",
+      "image_missing": "Your drawing couldn't be read on this device.",
+      "generic": "Something went wrong while asking Muse."
+    }
+  },
   "home": {
     "eyebrow": "Your personal art studio",
     "h1a": "Draw.",
