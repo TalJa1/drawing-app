@@ -9,7 +9,7 @@ import type { ChatCard } from '@/types'
 import { TEMPLATE_MAP } from '@/mocks/templates'
 import { LESSON_MAP } from '@/mocks/lessons'
 import { useL } from '@/i18n/useL'
-import { copyText, svgToDataUrl } from '@/lib/utils'
+import { cn, copyText, svgToDataUrl } from '@/lib/utils'
 import { contrastRatio, readableOn } from '@/lib/color'
 import { recordActivity } from '@/api/progress'
 import { presentReward, toast } from '@/store/ui'
@@ -18,6 +18,12 @@ import { DifficultyDots } from '@/components/Chip'
 import { DIFF_LEVEL } from '@/features/practice/constants'
 import { useLevel } from '@/features/gamification/hooks'
 import { CritiqueCard } from './cards/CritiqueCard'
+
+/** Column spans on a 12-column grid: up to four swatches share one row, more split into balanced rows of three. */
+function paletteSpans(count: number): number[] {
+  const perRow = count <= 4 ? Math.max(count, 1) : 3
+  return Array.from({ length: count }, (_, index) => 12 / Math.min(perRow, count - (index - (index % perRow))))
+}
 
 export function ChatCardView({ card, animate = false, conversationId }: { card: ChatCard; animate?: boolean; conversationId?: string }) {
   const { t } = useTranslation()
@@ -44,59 +50,59 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
     return () => clearTimeout(timer)
   }, [copied])
 
-  if (card.type === 'palette')
+  if (card.type === 'palette') {
+    const swatchSpans = paletteSpans(card.colors.length)
     return (
       <div className="w-full rounded-2xl border border-line bg-card p-3 shadow-paper">
         <p className="mb-2 text-sm font-semibold">{card.name}</p>
-        <div className="flex flex-wrap overflow-hidden rounded-xl ring-1 ring-line-strong">
-          {card.colors.map((c, index) => (
-            <motion.button
-              variants={chatVariants(reduced, index * 0.03).swatch}
-              initial={animate ? 'hidden' : false}
-              animate="visible"
-              key={c}
-              type="button"
-              className="relative flex min-h-14 min-w-14 flex-1 items-end justify-center pb-1"
-              style={{ background: c, color: readableOn(c) }}
-              aria-label={t('learn.copyColour', { hex: c })}
-              onClick={async () => {
-                const success = await copyText(c)
-                setCopied(success ? { color: c } : null)
-                toast({
-                  title: success ? t('common.copied') : t('learn.lab.copyFailed'),
-                  description: c.toUpperCase(),
-                  tone: success ? 'success' : 'error',
-                })
-              }}
-            >
-              {copied?.color === c && (
-                <motion.span
-                  className="absolute top-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: reduced ? 0.08 : CHAT_MOTION.copy }}
-                >
-                  <Check size={14} />
-                </motion.span>
-              )}
-              <span
-                className="rounded px-0.5 font-mono text-[11px]"
-                style={{ background: contrastRatio(c, readableOn(c)) < 4.5 ? readableOn(readableOn(c)) : undefined }}
+        <div className="grid grid-cols-12 overflow-hidden rounded-xl ring-1 ring-line-strong">
+          {card.colors.map((c, index) => {
+            const role = card.roles?.[index]
+            const labelStyle = { background: contrastRatio(c, readableOn(c)) < 4.5 ? readableOn(readableOn(c)) : undefined }
+            return (
+              <motion.button
+                variants={chatVariants(reduced, index * 0.03).swatch}
+                initial={animate ? 'hidden' : false}
+                animate="visible"
+                key={c}
+                type="button"
+                className={cn('relative flex flex-col items-center justify-end gap-0.5 pb-1.5', role ? 'min-h-16' : 'min-h-14')}
+                style={{ gridColumn: `span ${swatchSpans[index]} / span ${swatchSpans[index]}`, background: c, color: readableOn(c) }}
+                aria-label={
+                  role ? `${t('learn.copyColour', { hex: c })}, ${t(`chat.cards.roles.${role}`)}` : t('learn.copyColour', { hex: c })
+                }
+                onClick={async () => {
+                  const success = await copyText(c)
+                  setCopied(success ? { color: c } : null)
+                  toast({
+                    title: success ? t('common.copied') : t('learn.lab.copyFailed'),
+                    description: c.toUpperCase(),
+                    tone: success ? 'success' : 'error',
+                  })
+                }}
               >
-                {c.toUpperCase()}
-              </span>
-            </motion.button>
-          ))}
+                {copied?.color === c && (
+                  <motion.span
+                    className="absolute top-2"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: reduced ? 0.08 : CHAT_MOTION.copy }}
+                  >
+                    <Check size={14} />
+                  </motion.span>
+                )}
+                <span className="rounded px-0.5 font-mono text-[11px]" style={labelStyle}>
+                  {c.toUpperCase()}
+                </span>
+                {role && (
+                  <span className="rounded px-0.5 text-[10px] font-semibold" style={labelStyle}>
+                    {t(`chat.cards.roles.${role}`)}
+                  </span>
+                )}
+              </motion.button>
+            )
+          })}
         </div>
-        {card.roles && (
-          <div className="mt-1 flex text-center text-[10px] text-ink-soft">
-            {card.roles.map((role, index) => (
-              <span key={index} className="flex-1">
-                {t(`chat.cards.roles.${role}`)}
-              </span>
-            ))}
-          </div>
-        )}
         {card.note && <p className="mt-2 text-xs text-ink-soft">{card.note}</p>}
         <button
           type="button"
@@ -111,6 +117,7 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
         </button>
       </div>
     )
+  }
 
   if (card.type === 'template') {
     const tpl = TEMPLATE_MAP[card.templateId]

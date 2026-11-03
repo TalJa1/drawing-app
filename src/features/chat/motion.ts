@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from 'react'
-import type { Variants } from 'framer-motion'
+import type { Easing, Variants } from 'framer-motion'
+
+const POUR: Easing = [0.22, 1, 0.36, 1]
 
 export const CHAT_MOTION = {
   welcome: 0.425,
@@ -49,7 +51,14 @@ export function chatVariants(
     prompt: enter(CHAT_MOTION.prompt, 3),
     bubble: enter(CHAT_MOTION.bubble, 8),
     card: enter(CHAT_MOTION.card, 10, 0, 0.98),
-    swatch: enter(CHAT_MOTION.swatch, 0, 0, 0.96),
+    // Swatches fill from the top like poured paint; reduced motion keeps a plain fade.
+    swatch: reduced
+      ? enter(CHAT_MOTION.swatch)
+      : {
+          hidden: { clipPath: 'inset(0% 0% 100% 0%)' },
+          visible: { clipPath: 'inset(0% 0% 0% 0%)', transition: { duration: CHAT_MOTION.swatch, delay, ease: POUR } },
+          exit: { opacity: 0, transition: { duration: CHAT_MOTION.attachmentExit } },
+        },
     attachment: enter(CHAT_MOTION.attachment, 0, 0, 0.95),
     sheet: enter(CHAT_MOTION.sheet, 0, -24),
     threadSwap: reduced

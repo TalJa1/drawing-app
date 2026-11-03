@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { useLocation } from 'react-router-dom'
 import { ChatCardView } from './ChatCards'
 import { installDomStubs, renderChat } from './test-utils'
@@ -201,4 +201,26 @@ it('unlocked templates keep their local practice route', async () => {
   const template = Object.values(TEMPLATE_MAP).find((item) => item.unlockLevel === 1)!
   await renderChat(<ChatCardView card={{ type: 'template', templateId: template.id }} />)
   expect(screen.getByRole('link')).toHaveAttribute('href', `/practice/${template.id}`)
+})
+
+it('six-colour palettes keep balanced rows and each swatch carries its own role', async () => {
+  const colors = ['#112233', '#445566', '#778899', '#AA3311', '#EEDD22', '#FFFFFF']
+  const roles = ['dominant', 'support', 'support', 'accent', 'support', 'accent'] as const
+  await renderChat(<ChatCardView card={{ type: 'palette', name: 'Six', colors, roles: [...roles] }} />)
+  const swatches = colors.map((hex) => screen.getByRole('button', { name: new RegExp(hex, 'i') }))
+  expect(swatches.map((swatch) => swatch.style.gridColumn)).toEqual(Array(6).fill('span 4 / span 4'))
+  swatches.forEach((swatch, index) => expect(within(swatch).getByText(new RegExp(`^${roles[index]}$`, 'i'))).toBeInTheDocument())
+  expect(swatches[5]).toHaveAccessibleName('Copy colour #FFFFFF, Accent')
+})
+
+it('five-colour palettes split into rows of three and two without one stretched swatch', async () => {
+  const colors = ['#112233', '#445566', '#778899', '#AA3311', '#EEDD22']
+  await renderChat(<ChatCardView card={{ type: 'palette', name: 'Five', colors }} />)
+  expect(colors.map((hex) => screen.getByRole('button', { name: new RegExp(hex, 'i') }).style.gridColumn)).toEqual([
+    'span 4 / span 4',
+    'span 4 / span 4',
+    'span 4 / span 4',
+    'span 6 / span 6',
+    'span 6 / span 6',
+  ])
 })
