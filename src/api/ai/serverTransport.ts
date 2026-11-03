@@ -24,7 +24,7 @@ const envelopeSchema = z.object({
 })
 const healthSchema = z.object({ configured: z.boolean(), protocolVersion: z.literal(PROTOCOL_VERSION) })
 
-function authHeaders(): Record<string, string> {
+export function authHeaders(): Record<string, string> {
   const token = useSession.getState().token
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
