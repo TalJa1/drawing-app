@@ -224,3 +224,10 @@ it('five-colour palettes split into rows of three and two without one stretched 
     'span 6 / span 6',
   ])
 })
+
+it('copy HEX codes copies every colour of the palette', async () => {
+  vi.mocked(copyText).mockClear()
+  await renderChat(<ChatCardView card={paletteCard} />)
+  await act(async () => fireEvent.click(screen.getByRole('button', { name: /copy hex codes/i })))
+  expect(copyText).toHaveBeenCalledExactlyOnceWith('#112233 #445566 #778899')
+})

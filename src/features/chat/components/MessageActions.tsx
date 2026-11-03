@@ -10,10 +10,14 @@ import { Button } from '@/components/Button'
 import { copyText } from '@/lib/utils'
 import { toast } from '@/store/ui'
 import { useChat } from '@/store/chat'
+import { useL } from '@/i18n/useL'
+import { replyClipboardText } from '../clipboardText'
 import { useMuse } from '../useMuse'
 
 export function MessageActions({ message, conversationId, last }: { message: ChatMessage; conversationId: string; last: boolean }) {
   const { t } = useTranslation()
+  const L = useL()
+  const clipboard = replyClipboardText(message, t, L)
   const { retry, regenerate, phase } = useMuse()
   const reduced = useReducedMotion()
   const [copied, setCopied] = useState(false)
@@ -66,26 +70,28 @@ export function MessageActions({ message, conversationId, last }: { message: Cha
       )}
       {!!(message.content || message.cards.length) && (
         <div className="flex flex-wrap gap-0.5">
-          <IconButton
-            size="sm"
-            className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
-            label={t('common.copy')}
-            icon={
-              <motion.span
-                key={copied ? 'copied' : 'copy'}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: reduced ? 0.08 : CHAT_MOTION.copy }}
-              >
-                {copied ? <Check size={14} /> : <Copy size={14} />}
-              </motion.span>
-            }
-            onClick={async () => {
-              const success = await copyText(message.content)
-              setCopied(success)
-              toast({ title: success ? t('common.copied') : t('learn.lab.copyFailed'), tone: success ? 'success' : 'error' })
-            }}
-          />
+          {!!clipboard && (
+            <IconButton
+              size="sm"
+              className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
+              label={t('common.copy')}
+              icon={
+                <motion.span
+                  key={copied ? 'copied' : 'copy'}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: reduced ? 0.08 : CHAT_MOTION.copy }}
+                >
+                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                </motion.span>
+              }
+              onClick={async () => {
+                const success = await copyText(clipboard)
+                setCopied(success)
+                toast({ title: success ? t('common.copied') : t('learn.lab.copyFailed'), tone: success ? 'success' : 'error' })
+              }}
+            />
+          )}
           <IconButton
             size="sm"
             className="max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"

@@ -1165,6 +1165,7 @@
       "roles": { "dominant": "Chủ đạo", "support": "Hỗ trợ", "accent": "Nhấn" },
       "drawThis": "Vẽ mẫu này",
       "sketchIt": "Phác trong Vẽ tự do",
+      "copyHex": "Chép mã HEX",
       "lesson_one": "Bài học · {{count}} phút",
       "lesson_other": "Bài học · {{count}} phút"
     }

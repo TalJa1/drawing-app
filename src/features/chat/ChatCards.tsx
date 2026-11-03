@@ -4,7 +4,7 @@ import { useReducedMotion } from '@/app/theme'
 import { CHAT_MOTION, chatVariants } from './motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, BookOpen, Brush, Check, Clock, LockKeyhole, Send } from 'lucide-react'
+import { ArrowRight, BookOpen, Brush, Check, Clock, Copy, LockKeyhole, Send } from 'lucide-react'
 import type { ChatCard } from '@/types'
 import { TEMPLATE_MAP } from '@/mocks/templates'
 import { LESSON_MAP } from '@/mocks/lessons'
@@ -104,17 +104,34 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
           })}
         </div>
         {card.note && <p className="mt-2 text-xs text-ink-soft">{card.note}</p>}
-        <button
-          type="button"
-          onClick={async () => {
-            setPalette({ name: card.name, colors: card.colors })
-            presentReward(await recordActivity({ type: 'paletteSent' }))
-            navigate('/free-draw')
-          }}
-          className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-accent-ink hover:underline max-lg:min-h-11 max-lg:px-2"
-        >
-          <Send size={12} /> {t('learn.sendToStudio')}
-        </button>
+        <div className="mt-2 flex flex-wrap items-center gap-x-4">
+          <button
+            type="button"
+            onClick={async () => {
+              setPalette({ name: card.name, colors: card.colors })
+              presentReward(await recordActivity({ type: 'paletteSent' }))
+              navigate('/free-draw')
+            }}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent-ink hover:underline max-lg:min-h-11 max-lg:px-2"
+          >
+            <Send size={12} /> {t('learn.sendToStudio')}
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              const hexes = card.colors.map((hex) => hex.toUpperCase()).join(' ')
+              const success = await copyText(hexes)
+              toast({
+                title: success ? t('common.copied') : t('learn.lab.copyFailed'),
+                description: hexes,
+                tone: success ? 'success' : 'error',
+              })
+            }}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent-ink hover:underline max-lg:min-h-11 max-lg:px-2"
+          >
+            <Copy size={12} /> {t('chat.cards.copyHex')}
+          </button>
+        </div>
       </div>
     )
   }

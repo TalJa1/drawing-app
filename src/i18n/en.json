@@ -1165,6 +1165,7 @@
       "roles": { "dominant": "Dominant", "support": "Support", "accent": "Accent" },
       "drawThis": "Draw this",
       "sketchIt": "Sketch it in Free Draw",
+      "copyHex": "Copy HEX codes",
       "lesson_one": "Lesson · {{count}} min",
       "lesson_other": "Lesson · {{count}} min"
     }
