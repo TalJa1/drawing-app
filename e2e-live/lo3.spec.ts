@@ -249,6 +249,9 @@ test.describe('Lô 3 — tranh & ảnh qua API thật', () => {
     await lightbox.getByRole('button', { name: 'Delete' }).click()
     await page.getByRole('dialog', { name: 'Delete this artwork?' }).getByRole('button', { name: 'Delete' }).click()
     await expect(page.getByText('Artwork deleted')).toBeVisible()
+    // both dialogs are gone and the page scrolls again (the lock must not outlive the dialogs)
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe('')
     await expect.poll(async () => (await api<Art[]>(page, '/artworks?limit=500')).map((a) => a.title)).toEqual(['Alice two'])
 
     // sign out; a different person registers on the same browser: nothing of Alice's is in sight
