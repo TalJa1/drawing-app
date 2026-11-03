@@ -1,7 +1,10 @@
 import { useSyncExternalStore } from 'react'
 import type { Easing, Variants } from 'framer-motion'
 
+const SETTLE: Easing = [0.34, 1.56, 0.64, 1]
 const POUR: Easing = [0.22, 1, 0.36, 1]
+/** Paint dabs on the Muse palette, reused by the thinking indicator. */
+export const MUSE_PAINT = ['#E4572E', '#F2A93B', '#2E8B6F', '#2F80C4', '#C93C6B'] as const
 
 export const CHAT_MOTION = {
   welcome: 0.425,
@@ -14,7 +17,10 @@ export const CHAT_MOTION = {
   attachmentExit: 0.16,
   bubble: 0.21,
   sendStop: 0.15,
-  connecting: 2.4,
+  thinking: 0.9,
+  thinkingStagger: 0.15,
+  dab: 0.45,
+  dabStagger: 0.06,
   preparing: 0,
   tokenFlush: 0.04,
   card: 0.26,
@@ -35,7 +41,7 @@ export function chatVariants(
   reduced: boolean,
   delay = 0,
 ): Record<'prompt' | 'bubble' | 'card' | 'swatch' | 'attachment' | 'sheet' | 'threadSwap' | 'scrollButton', Variants> {
-  const enter = (duration: number, y = 0, x = 0, scale = 1): Variants =>
+  const enter = (duration: number, y = 0, x = 0, scale = 1, ease?: Easing): Variants =>
     reduced
       ? {
           hidden: { opacity: 0 },
@@ -44,13 +50,14 @@ export function chatVariants(
         }
       : {
           hidden: { opacity: 0, y, x, scale },
-          visible: { opacity: 1, y: 0, x: 0, scale: 1, transition: { duration, delay } },
+          visible: { opacity: 1, y: 0, x: 0, scale: 1, transition: { duration, delay, ease } },
           exit: { opacity: 0, y, x, scale, transition: { duration: CHAT_MOTION.attachmentExit } },
         }
   return {
     prompt: enter(CHAT_MOTION.prompt, 3),
     bubble: enter(CHAT_MOTION.bubble, 8),
-    card: enter(CHAT_MOTION.card, 10, 0, 0.98),
+    // A slight overshoot lets cards settle onto the thread like dealt paper.
+    card: enter(CHAT_MOTION.card, 10, 0, 0.98, SETTLE),
     // Swatches fill from the top like poured paint; reduced motion keeps a plain fade.
     swatch: reduced
       ? enter(CHAT_MOTION.swatch)

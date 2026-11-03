@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
+import { Check, Eye, PencilLine, Sparkles, Target } from 'lucide-react'
 import { useReducedMotion } from '@/app/theme'
+import { cn } from '@/lib/utils'
 import { useChat } from '@/store/chat'
 import type { ChatCard } from '@/types'
 import { CHAT_MOTION } from '../motion'
@@ -24,10 +26,10 @@ export function CritiqueCard({
   const image = source?.attachments.find((attachment) => attachment.id === card.imageId)
   const { src, missing } = useChatImage(image?.previewKey, image?.src)
   const groups = [
-    ['observations', card.observations],
-    ['strengths', card.strengths],
-    ['priorities', card.priorities],
-    ['exercise', [card.exercise]],
+    ['observations', card.observations, Eye],
+    ['strengths', card.strengths, Sparkles],
+    ['priorities', card.priorities, Target],
+    ['exercise', [card.exercise], PencilLine],
   ] as const
   return (
     <div className="relative w-full space-y-3 overflow-hidden rounded-2xl border border-line bg-card p-4 pl-5 shadow-paper">
@@ -53,25 +55,41 @@ export function CritiqueCard({
         animate={reduced ? { opacity: 1 } : { scaleY: 1 }}
         transition={{ duration: reduced ? 0.08 : CHAT_MOTION.critique }}
       />
-      {groups.map(
-        ([name, points], index) =>
+      {groups.map(([name, points, Icon], index) => {
+        const List = name === 'priorities' ? 'ol' : 'ul'
+        return (
           points.length > 0 && (
             <motion.section
               key={name}
-              className="max-w-[80ch]"
+              className={cn('max-w-[80ch]', name === 'exercise' && 'rounded-xl bg-paper-3 px-3 py-2.5')}
               initial={animate ? (reduced ? { opacity: 0 } : { opacity: 0, y: 6 }) : false}
               animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0 }}
               transition={{ duration: reduced ? 0.08 : CHAT_MOTION.critique, delay: reduced ? 0 : index * CHAT_MOTION.cardStagger }}
             >
-              <h3 className="mb-1 text-xs font-semibold text-ink">{t(`chat.cards.critique.${name}`)}</h3>
-              <ul className="space-y-1 text-sm text-ink-soft">
+              <h3 className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-ink">
+                <Icon size={13} aria-hidden className="shrink-0 text-cerulean" />
+                {t(`chat.cards.critique.${name}`)}
+              </h3>
+              <List className="space-y-1 text-sm text-ink-soft">
                 {points.map((point, pointIndex) => (
-                  <li key={pointIndex}>{point}</li>
+                  <li key={pointIndex} className="flex gap-2">
+                    {name === 'strengths' && <Check size={14} aria-hidden className="mt-0.5 shrink-0 text-viridian" />}
+                    {name === 'priorities' && (
+                      <span
+                        aria-hidden
+                        className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-ink text-[10px] font-semibold text-paper"
+                      >
+                        {pointIndex + 1}
+                      </span>
+                    )}
+                    <span className="min-w-0">{point}</span>
+                  </li>
                 ))}
-              </ul>
+              </List>
             </motion.section>
-          ),
-      )}
+          )
+        )
+      })}
       <button
         type="button"
         className="min-h-11 text-xs font-semibold text-accent-ink hover:underline disabled:opacity-50"

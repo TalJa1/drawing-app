@@ -75,3 +75,14 @@ it('error mascot returns to idle after 1.2 seconds', async () => {
   })
   expect(view.container.querySelector('svg')).toHaveAttribute('data-state', 'idle')
 })
+it('mascot wears the given palette colours on its dabs', () => {
+  const view = render(createElement(Muse, { still: true, colors: ['#111111', '#222222', '#333333'] }))
+  const fills = Array.from(view.container.querySelectorAll('circle'), (circle) => circle.getAttribute('fill'))
+  expect(fills.slice(0, 5)).toEqual(['#111111', '#222222', '#333333', '#111111', '#222222'])
+})
+it('animated mascot blends dab colours instead of jumping', () => {
+  render(createElement(Muse, { state: 'idle', colors: ['#111111'] }))
+  const dabs = animations.mock.calls.filter(([props]) => props.tag === 'circle')
+  expect(dabs).toHaveLength(5)
+  for (const [props] of dabs) expect(props.animate).toEqual({ fill: '#111111' })
+})

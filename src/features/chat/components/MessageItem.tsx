@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { useReducedMotion } from '@/app/theme'
-import { CHAT_MOTION, chatVariants, useChatVisibility } from '../motion'
+import { CHAT_MOTION, MUSE_PAINT, chatVariants, useChatVisibility } from '../motion'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ChatAttachment, ChatMessage } from '@/types'
@@ -16,6 +16,11 @@ import { splitStable, closeDangling } from '../streamingMarkdown'
 import { MessageActions } from './MessageActions'
 
 const StableMarkdown = memo(Markdown)
+// An ink caret after the last streamed paragraph; it disappears once the reply settles.
+const CARET =
+  "[&>p:last-child]:after:ml-0.5 [&>p:last-child]:after:inline-block [&>p:last-child]:after:h-[1.05em] [&>p:last-child]:after:w-[2px] [&>p:last-child]:after:translate-y-[0.2em] [&>p:last-child]:after:rounded-full [&>p:last-child]:after:bg-accent-ink [&>p:last-child]:after:content-['']"
+const CARET_BLINK = '[&>p:last-child]:after:animate-pulse'
+
 function MessageImage({ attachment }: { attachment: ChatAttachment }) {
   const { t } = useTranslation()
   const { src, missing } = useChatImage(attachment.previewKey, attachment.src)
@@ -28,25 +33,35 @@ function ReplyBody({ content, streaming, hasCards }: { content: string; streamin
   const { t } = useTranslation()
   const reduced = useReducedMotion()
   const visible = useChatVisibility()
+  const live = !reduced && visible
   const parts = streaming ? splitStable(content) : { stable: content, tail: '' }
   return (
     <div className="text-[0.97rem] leading-relaxed text-ink-soft">
       {streaming && !content ? (
         <p className="flex items-center gap-2">
           {t(hasCards ? 'chat.status.preparingText' : 'chat.status.thinking')}
-          <motion.span
-            aria-hidden
-            className="inline-block h-1 w-10 rounded-full bg-saffron"
-            animate={!reduced && visible ? { opacity: [0.3, 1, 0.3] } : { opacity: 1 }}
-            transition={!reduced && visible ? { duration: CHAT_MOTION.connecting, repeat: Infinity } : { duration: 0 }}
-          />
+          <span aria-hidden className="inline-flex items-end gap-1">
+            {MUSE_PAINT.slice(0, 3).map((color, index) => (
+              <motion.span
+                key={color}
+                className="block h-2 w-2 rounded-full"
+                style={{ background: color }}
+                animate={live ? { y: [0, -4, 0], opacity: [0.5, 1, 0.5] } : { opacity: 0.85 }}
+                transition={
+                  live
+                    ? { duration: CHAT_MOTION.thinking, repeat: Infinity, ease: 'easeInOut', delay: index * CHAT_MOTION.thinkingStagger }
+                    : { duration: 0 }
+                }
+              />
+            ))}
+          </span>
         </p>
       ) : (
         <>
           {parts.stable && <StableMarkdown text={parts.stable} />}
           {parts.tail && (
             <motion.div initial={{ opacity: 0.9 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : CHAT_MOTION.tokenFlush }}>
-              <Markdown text={closeDangling(parts.tail)} className="mt-2.5" />
+              <Markdown text={closeDangling(parts.tail)} className={cn('mt-2.5', CARET, live && CARET_BLINK)} />
             </motion.div>
           )}
         </>

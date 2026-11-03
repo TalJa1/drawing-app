@@ -29,6 +29,7 @@ export function ChatHeader({
   phase = null,
   replyStatus,
   hasMessages = false,
+  palette,
 }: {
   title?: string
   mode: ChatMode
@@ -39,6 +40,8 @@ export function ChatHeader({
   phase?: StreamPhase | null
   replyStatus?: ReplyStatus
   hasMessages?: boolean
+  /** Colours of the latest palette card; the header Muse wears them. */
+  palette?: readonly string[]
 }) {
   const { t } = useTranslation()
   const reduced = useReducedMotion()
@@ -64,7 +67,7 @@ export function ChatHeader({
             className="!h-11 !w-11 max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
           />
         )}
-        {hasMessages && <Muse size={42} state={state} />}
+        {hasMessages && <Muse size={42} state={state} colors={palette} />}
         <div className="min-w-0 flex-1">
           <h1 className="truncate font-display text-xl leading-tight sm:whitespace-normal sm:break-words">{title || t('chat.title')}</h1>
           <p className="mt-1 hidden text-xs text-ink-faint sm:block">{t('chat.subtitle')}</p>

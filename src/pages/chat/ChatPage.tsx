@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { ChatMode } from '@/types'
+import type { ChatCard, ChatMode } from '@/types'
 import { Page } from '@/components/Layout'
 import { Washes } from '@/components/art/Washes'
 import { useMuse } from '@/features/chat/useMuse'
@@ -18,9 +18,12 @@ import { HistorySheet } from '@/features/chat/components/HistorySheet'
 import { AnimatePresence, MotionConfig } from 'framer-motion'
 import { useReducedMotion } from '@/app/theme'
 import { useChatVisibility } from '@/features/chat/motion'
+import { useChatStream } from '@/features/chat/streamStore'
 import { cn } from '@/lib/utils'
 import { useMediaQuery } from '@/lib/hooks'
 import { checkAiHealth } from '@/api/ai/transport'
+
+const isPaletteCard = (card: ChatCard): card is Extract<ChatCard, { type: 'palette' }> => card.type === 'palette'
 
 export default function ChatPage() {
   const { t } = useTranslation()
@@ -37,6 +40,10 @@ export default function ChatPage() {
   const setActive = useChat((s) => s.setActive)
   const resetVersion = useChat((s) => s.resetVersion)
   const active = conversations.find((c) => c.id === activeId) ?? null
+  const livePalette = useChatStream((s) =>
+    s.active && s.active.conversationId === active?.id ? s.active.cards.findLast(isPaletteCard) : undefined,
+  )
+  const palette = livePalette ?? active?.messages.flatMap((m) => m.cards).findLast(isPaletteCard)
   const [mode, setLocalMode] = useState<ChatMode>(active?.mode ?? 'ideas')
   const currentMode = active?.mode ?? mode
   const [sidebar, setSidebar] = useState(false)
@@ -130,6 +137,7 @@ export default function ChatPage() {
                   phase={phase}
                   replyStatus={active?.messages.at(-1)?.status}
                   hasMessages={!!active?.messages.length}
+                  palette={palette?.colors}
                 />
 
                 {notConfigured && (

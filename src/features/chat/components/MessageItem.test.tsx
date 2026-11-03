@@ -56,3 +56,30 @@ it('cards stay mounted when the stream settles', async () => {
   })
   expect(view.container.querySelector('[data-card-type="idea"]')).toBe(before)
 })
+
+it('the streaming tail carries the ink caret, the settled reply does not', async () => {
+  useChatStream.setState({
+    active: {
+      requestId: 'r_1',
+      conversationId: 'c_1',
+      turnId: 't_1',
+      messageId: 'm_2',
+      phase: 'streaming',
+      content: 'One.\n\nTwo',
+      cards: [],
+    },
+  })
+  const view = await renderChat(
+    <ol>
+      <MessageItem message={streaming} conversationId="c_1" last />
+    </ol>,
+  )
+  expect(view.container.querySelectorAll('[class*="last-child]:after:bg-accent-ink"]')).toHaveLength(1)
+  act(() => useChatStream.setState({ active: null }))
+  view.rerender(
+    <ol>
+      <MessageItem message={{ ...streaming, status: 'completed', content: 'One.\n\nTwo' }} conversationId="c_1" last />
+    </ol>,
+  )
+  expect(view.container.querySelectorAll('[class*="last-child]:after:bg-accent-ink"]')).toHaveLength(0)
+})

@@ -1,19 +1,34 @@
 import { useEffect, useState } from 'react'
 import { useReducedMotion } from '@/app/theme'
-import { CHAT_MOTION, useChatVisibility } from './motion'
+import { CHAT_MOTION, MUSE_PAINT, useChatVisibility } from './motion'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 /** The Art Spark muse: a friendly painter's palette with a brush tucked behind its ear. Original character. */
 type MuseState = 'idle' | 'thinking' | 'speaking' | 'error'
-type MuseProps = { size?: number; className?: string; thinking?: boolean; state?: MuseState; still?: boolean }
+type MuseProps = {
+  size?: number
+  className?: string
+  thinking?: boolean
+  state?: MuseState
+  still?: boolean
+  /** Repaints the dabs with these colours, e.g. the palette Muse just suggested. */
+  colors?: readonly string[]
+}
+const DABS = [
+  { cx: 132, cy: 48, r: 11 },
+  { cx: 160, cy: 80, r: 10 },
+  { cx: 160, cy: 116, r: 10 },
+  { cx: 130, cy: 142, r: 10 },
+  { cx: 94, cy: 142, r: 9 },
+] as const
 
 export function Muse({ state, thinking, ...props }: MuseProps) {
   const resolved = state ?? (thinking ? 'thinking' : 'idle')
   return <AnimatedMuse key={resolved} {...props} state={resolved} />
 }
 
-function AnimatedMuse({ size = 160, className, state, still = false }: MuseProps & { state: MuseState }) {
+function AnimatedMuse({ size = 160, className, state, still = false, colors }: MuseProps & { state: MuseState }) {
   const reduced = useReducedMotion()
   const visible = useChatVisibility()
   const [settled, setSettled] = useState(false)
@@ -70,11 +85,20 @@ function AnimatedMuse({ size = 160, className, state, still = false }: MuseProps
         strokeLinejoin="round"
       />
       {/* paint dabs */}
-      <circle cx="132" cy="48" r="11" fill="#E4572E" />
-      <circle cx="160" cy="80" r="10" fill="#F2A93B" />
-      <circle cx="160" cy="116" r="10" fill="#2E8B6F" />
-      <circle cx="130" cy="142" r="10" fill="#2F80C4" />
-      <circle cx="94" cy="142" r="9" fill="#C93C6B" />
+      {DABS.map((dab, index) => {
+        const fill = colors?.length ? colors[index % colors.length] : MUSE_PAINT[index]
+        return animate ? (
+          <motion.circle
+            key={index}
+            {...dab}
+            initial={false}
+            animate={{ fill }}
+            transition={{ duration: CHAT_MOTION.dab, delay: index * CHAT_MOTION.dabStagger }}
+          />
+        ) : (
+          <circle key={index} {...dab} fill={fill} />
+        )
+      })}
       {/* face */}
       <motion.g
         animate={repeating ? { scaleY: [1, 1, 0.1, 1] } : {}}

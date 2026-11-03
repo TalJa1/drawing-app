@@ -428,7 +428,7 @@ for (const reduced of [false, true]) {
       expect(
         effective.some((item) => item.stage === 'send' && item.action === 'Stop' && item.duration >= 120 && item.duration <= 180),
       ).toBe(true)
-      expect(effective.some((item) => item.stage === 'send' && item.duration === 2400 && item.iterations === -1)).toBe(true)
+      expect(effective.some((item) => item.stage === 'send' && item.duration === 900 && item.iterations === -1)).toBe(true)
       expect(effective.some((item) => item.stage === 'send' && item.duration >= 30 && item.duration <= 50)).toBe(true)
       expect(
         effective.some(
