@@ -1,0 +1,16 @@
+{
+  "GET /templates": "templates.json",
+  "GET /templates/fox": "template-fox.json",
+  "GET /lessons": "lessons.json",
+  "GET /art-forms": "art-forms.json",
+  "GET /glossary": "glossary.json",
+  "GET /template-popularity": "template-popularity.json",
+  "GET /challenges/daily-template": "daily-template.json",
+  "GET /me": "me.json",
+  "GET /me/learning": "me-learning.json",
+  "GET /me/progress": "me-progress.json",
+  "GET /artworks": "artworks.json",
+  "GET /challenges": "challenges.json",
+  "GET /achievements": "achievements.json",
+  "GET /leaderboard": "leaderboard.json"
+}

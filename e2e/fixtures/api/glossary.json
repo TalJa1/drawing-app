@@ -1,0 +1,854 @@
+[
+  {
+    "id": "analogous-colours",
+    "term": {
+      "en": "Analogous colours",
+      "vi": "Màu tương đồng"
+    },
+    "definition": {
+      "en": "Colours next to each other on the colour wheel, creating calm harmony.",
+      "vi": "Các màu nằm cạnh nhau trên vòng màu, tạo sự hài hòa êm dịu."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "airbrush",
+    "term": {
+      "en": "Airbrush",
+      "vi": "Cọ phun"
+    },
+    "definition": {
+      "en": "A tool that sprays a fine mist of paint for smooth gradients.",
+      "vi": "Dụng cụ phun lớp sương màu mịn để tạo chuyển sắc mượt."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "asymmetry",
+    "term": {
+      "en": "Asymmetry",
+      "vi": "Bất đối xứng"
+    },
+    "definition": {
+      "en": "A balance achieved with unequal elements, often more dynamic than symmetry.",
+      "vi": "Sự cân bằng đạt được bằng các yếu tố không đều, thường sinh động hơn đối xứng."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "atmospheric-perspective",
+    "term": {
+      "en": "Atmospheric perspective",
+      "vi": "Phối cảnh khí quyển"
+    },
+    "definition": {
+      "en": "Showing distance by making far objects paler, bluer and softer.",
+      "vi": "Thể hiện khoảng cách bằng cách làm vật ở xa nhạt hơn, xanh hơn và mềm hơn."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "blending",
+    "term": {
+      "en": "Blending",
+      "vi": "Hòa trộn"
+    },
+    "definition": {
+      "en": "Merging colours or tones smoothly into each other.",
+      "vi": "Làm các màu hoặc tông hòa vào nhau một cách mượt mà."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "blind-contour",
+    "term": {
+      "en": "Blind contour",
+      "vi": "Vẽ đường viền mù"
+    },
+    "definition": {
+      "en": "Drawing an object’s edges without looking at the paper.",
+      "vi": "Vẽ đường viền của vật mà không nhìn xuống giấy."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "bristle-brush",
+    "term": {
+      "en": "Bristle brush",
+      "vi": "Cọ lông heo"
+    },
+    "definition": {
+      "en": "A stiff brush, often hog hair, used for thick oil and acrylic paint.",
+      "vi": "Cọ cứng, thường bằng lông heo, dùng cho sơn dầu và acrylic đặc."
+    },
+    "category": "material"
+  },
+  {
+    "id": "canvas",
+    "term": {
+      "en": "Canvas",
+      "vi": "Toan"
+    },
+    "definition": {
+      "en": "Woven fabric stretched over a frame and primed for painting.",
+      "vi": "Vải dệt căng trên khung và được lót để vẽ."
+    },
+    "category": "material"
+  },
+  {
+    "id": "cast-shadow",
+    "term": {
+      "en": "Cast shadow",
+      "vi": "Bóng đổ"
+    },
+    "definition": {
+      "en": "The shadow an object throws onto another surface.",
+      "vi": "Bóng mà một vật đổ lên bề mặt khác."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "charcoal",
+    "term": {
+      "en": "Charcoal",
+      "vi": "Than vẽ"
+    },
+    "definition": {
+      "en": "Burnt wood used for rich, smudgy black marks.",
+      "vi": "Gỗ đốt dùng tạo nét đen đậm, dễ nhòe."
+    },
+    "category": "material"
+  },
+  {
+    "id": "chiaroscuro",
+    "term": {
+      "en": "Chiaroscuro",
+      "vi": "Sáng tối (chiaroscuro)"
+    },
+    "definition": {
+      "en": "Strong contrast between light and dark to model form and add drama.",
+      "vi": "Tương phản mạnh giữa sáng và tối để tạo khối và kịch tính."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "chroma",
+    "term": {
+      "en": "Chroma",
+      "vi": "Độ thuần sắc"
+    },
+    "definition": {
+      "en": "The purity or intensity of a colour; similar to saturation.",
+      "vi": "Độ tinh khiết hoặc cường độ của màu; gần giống độ bão hòa."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "collage",
+    "term": {
+      "en": "Collage",
+      "vi": "Cắt dán"
+    },
+    "definition": {
+      "en": "Artwork made by gluing pieces of paper, photos or fabric onto a surface.",
+      "vi": "Tác phẩm làm bằng cách dán giấy, ảnh hoặc vải lên một bề mặt."
+    },
+    "category": "form"
+  },
+  {
+    "id": "colour-wheel",
+    "term": {
+      "en": "Colour wheel",
+      "vi": "Vòng màu"
+    },
+    "definition": {
+      "en": "A circle arranging hues to show their relationships.",
+      "vi": "Vòng tròn sắp xếp các sắc màu để thể hiện mối quan hệ giữa chúng."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "complementary-colours",
+    "term": {
+      "en": "Complementary colours",
+      "vi": "Màu bổ túc"
+    },
+    "definition": {
+      "en": "Colours opposite each other on the wheel, such as blue and orange.",
+      "vi": "Các màu đối diện nhau trên vòng màu, như xanh lam và cam."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "composition",
+    "term": {
+      "en": "Composition",
+      "vi": "Bố cục"
+    },
+    "definition": {
+      "en": "The arrangement of elements within an artwork.",
+      "vi": "Cách sắp xếp các yếu tố trong một tác phẩm."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "contour",
+    "term": {
+      "en": "Contour",
+      "vi": "Đường viền"
+    },
+    "definition": {
+      "en": "A line that defines the edge of a form.",
+      "vi": "Đường nét xác định mép của một khối."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "contrapposto",
+    "term": {
+      "en": "Contrapposto",
+      "vi": "Contrapposto"
+    },
+    "definition": {
+      "en": "A relaxed standing pose with weight on one leg, hips and shoulders tilting opposite ways.",
+      "vi": "Tư thế đứng thả lỏng dồn trọng lượng lên một chân, hông và vai nghiêng ngược chiều."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "core-shadow",
+    "term": {
+      "en": "Core shadow",
+      "vi": "Bóng lõi"
+    },
+    "definition": {
+      "en": "The darkest band of shadow on an object, just past the turning edge.",
+      "vi": "Dải bóng tối nhất trên vật, ngay sau đường chuyển sáng."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "cross-hatching",
+    "term": {
+      "en": "Cross-hatching",
+      "vi": "Đánh nét chéo"
+    },
+    "definition": {
+      "en": "Layers of crossing parallel lines that build darker tones.",
+      "vi": "Các lớp nét song song đan chéo nhau tạo tông đậm hơn."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "cubism",
+    "term": {
+      "en": "Cubism",
+      "vi": "Lập thể"
+    },
+    "definition": {
+      "en": "An early 20th-century style showing objects from multiple viewpoints at once.",
+      "vi": "Phong cách đầu thế kỷ 20 thể hiện vật từ nhiều góc nhìn cùng lúc."
+    },
+    "category": "history"
+  },
+  {
+    "id": "do-paper",
+    "term": {
+      "en": "Dó paper",
+      "vi": "Giấy dó"
+    },
+    "definition": {
+      "en": "Handmade Vietnamese paper from the bark of the dó tree, used for Đông Hồ prints.",
+      "vi": "Giấy thủ công Việt Nam làm từ vỏ cây dó, dùng in tranh Đông Hồ."
+    },
+    "category": "material"
+  },
+  {
+    "id": "diep",
+    "term": {
+      "en": "Điệp",
+      "vi": "Điệp"
+    },
+    "definition": {
+      "en": "Crushed scallop-shell powder brushed on Đông Hồ paper for a shimmering surface.",
+      "vi": "Bột vỏ sò nghiền quét lên giấy Đông Hồ tạo bề mặt lấp lánh."
+    },
+    "category": "material"
+  },
+  {
+    "id": "dry-brush",
+    "term": {
+      "en": "Dry brush",
+      "vi": "Cọ khô"
+    },
+    "definition": {
+      "en": "Painting with little liquid so the brush skips over texture.",
+      "vi": "Vẽ với rất ít nước để cọ lướt qua bề mặt tạo vệt."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "engraving",
+    "term": {
+      "en": "Engraving",
+      "vi": "Khắc đồng"
+    },
+    "definition": {
+      "en": "A print made by cutting lines into a metal plate.",
+      "vi": "Tranh in làm bằng cách khắc nét lên bản kim loại."
+    },
+    "category": "form"
+  },
+  {
+    "id": "etching",
+    "term": {
+      "en": "Etching",
+      "vi": "Khắc axit"
+    },
+    "definition": {
+      "en": "A print where acid bites lines into a metal plate.",
+      "vi": "Tranh in mà axit ăn mòn nét trên bản kim loại."
+    },
+    "category": "form"
+  },
+  {
+    "id": "focal-point",
+    "term": {
+      "en": "Focal point",
+      "vi": "Tiêu điểm"
+    },
+    "definition": {
+      "en": "The area of an artwork that attracts the most attention.",
+      "vi": "Vùng của tác phẩm thu hút sự chú ý nhiều nhất."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "foreshortening",
+    "term": {
+      "en": "Foreshortening",
+      "vi": "Phối cảnh rút ngắn"
+    },
+    "definition": {
+      "en": "Drawing an object as shorter to show it pointing towards the viewer.",
+      "vi": "Vẽ vật ngắn lại để thể hiện nó hướng về phía người xem."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "fresco",
+    "term": {
+      "en": "Fresco",
+      "vi": "Bích họa"
+    },
+    "definition": {
+      "en": "Painting on wet plaster so the pigment becomes part of the wall.",
+      "vi": "Vẽ trên vữa ướt để màu thấm vào tường."
+    },
+    "category": "form"
+  },
+  {
+    "id": "gesture",
+    "term": {
+      "en": "Gesture",
+      "vi": "Dáng"
+    },
+    "definition": {
+      "en": "A quick drawing capturing the movement and energy of a pose.",
+      "vi": "Bản vẽ nhanh nắm bắt chuyển động và năng lượng của tư thế."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "glazing",
+    "term": {
+      "en": "Glazing",
+      "vi": "Láng màu"
+    },
+    "definition": {
+      "en": "Applying a thin transparent layer of colour over a dry layer.",
+      "vi": "Phủ một lớp màu mỏng trong suốt lên lớp đã khô."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "golden-ratio",
+    "term": {
+      "en": "Golden ratio",
+      "vi": "Tỷ lệ vàng"
+    },
+    "definition": {
+      "en": "A proportion of about 1:1.618 associated with harmony.",
+      "vi": "Tỷ lệ khoảng 1:1,618 gắn với sự hài hòa."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "gouache",
+    "term": {
+      "en": "Gouache",
+      "vi": "Màu bột gouache"
+    },
+    "definition": {
+      "en": "Opaque watercolour with a matte finish.",
+      "vi": "Màu nước đục với bề mặt mờ."
+    },
+    "category": "material"
+  },
+  {
+    "id": "graphite",
+    "term": {
+      "en": "Graphite",
+      "vi": "Than chì"
+    },
+    "definition": {
+      "en": "The grey mineral inside pencils; graded from hard (H) to soft (B).",
+      "vi": "Khoáng chất xám trong bút chì; phân cấp từ cứng (H) đến mềm (B)."
+    },
+    "category": "material"
+  },
+  {
+    "id": "hatching",
+    "term": {
+      "en": "Hatching",
+      "vi": "Đánh nét"
+    },
+    "definition": {
+      "en": "Parallel lines used to create tone.",
+      "vi": "Các nét song song dùng để tạo tông."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "highlight",
+    "term": {
+      "en": "Highlight",
+      "vi": "Điểm sáng"
+    },
+    "definition": {
+      "en": "The brightest spot where light hits an object most directly.",
+      "vi": "Điểm sáng nhất nơi ánh sáng chiếu trực tiếp nhất lên vật."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "horizon-line",
+    "term": {
+      "en": "Horizon line",
+      "vi": "Đường chân trời"
+    },
+    "definition": {
+      "en": "A horizontal line at the viewer’s eye level in a perspective drawing.",
+      "vi": "Đường nằm ngang ở tầm mắt người xem trong bản vẽ phối cảnh."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "hue",
+    "term": {
+      "en": "Hue",
+      "vi": "Sắc tướng"
+    },
+    "definition": {
+      "en": "The name of a colour family — red, blue, yellow and so on.",
+      "vi": "Tên một họ màu — đỏ, lam, vàng…"
+    },
+    "category": "colour"
+  },
+  {
+    "id": "impasto",
+    "term": {
+      "en": "Impasto",
+      "vi": "Đắp dày (impasto)"
+    },
+    "definition": {
+      "en": "Paint applied thickly so brush or knife marks stand out.",
+      "vi": "Màu được đắp dày để vết cọ hoặc dao nổi lên."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "impressionism",
+    "term": {
+      "en": "Impressionism",
+      "vi": "Trường phái Ấn tượng"
+    },
+    "definition": {
+      "en": "A 19th-century movement capturing fleeting light with visible brushstrokes.",
+      "vi": "Trào lưu thế kỷ 19 ghi lại ánh sáng thoáng qua bằng nét cọ lộ rõ."
+    },
+    "category": "history"
+  },
+  {
+    "id": "installation",
+    "term": {
+      "en": "Installation",
+      "vi": "Sắp đặt"
+    },
+    "definition": {
+      "en": "An artwork that transforms a whole space.",
+      "vi": "Tác phẩm biến đổi cả một không gian."
+    },
+    "category": "form"
+  },
+  {
+    "id": "leading-lines",
+    "term": {
+      "en": "Leading lines",
+      "vi": "Đường dẫn"
+    },
+    "definition": {
+      "en": "Lines within an image that guide the eye to the subject.",
+      "vi": "Các đường trong hình dẫn mắt tới chủ thể."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "linocut",
+    "term": {
+      "en": "Linocut",
+      "vi": "Tranh khắc linoleum"
+    },
+    "definition": {
+      "en": "A relief print carved into linoleum.",
+      "vi": "Tranh in nổi khắc trên tấm linoleum."
+    },
+    "category": "form"
+  },
+  {
+    "id": "line-weight",
+    "term": {
+      "en": "Line weight",
+      "vi": "Độ nặng nét"
+    },
+    "definition": {
+      "en": "The thickness and darkness of a line, varied for depth and emphasis.",
+      "vi": "Độ dày và đậm của nét, thay đổi để tạo chiều sâu và nhấn mạnh."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "monochromatic",
+    "term": {
+      "en": "Monochromatic",
+      "vi": "Đơn sắc"
+    },
+    "definition": {
+      "en": "Using a single hue in different values and saturations.",
+      "vi": "Dùng một sắc màu với nhiều sắc độ và độ bão hòa khác nhau."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "mosaic",
+    "term": {
+      "en": "Mosaic",
+      "vi": "Tranh khảm"
+    },
+    "definition": {
+      "en": "An image made from small pieces of stone, glass or tile.",
+      "vi": "Hình ảnh làm từ các mảnh đá, thủy tinh hoặc gạch nhỏ."
+    },
+    "category": "form"
+  },
+  {
+    "id": "negative-space",
+    "term": {
+      "en": "Negative space",
+      "vi": "Không gian âm"
+    },
+    "definition": {
+      "en": "The empty space around and between subjects.",
+      "vi": "Khoảng trống quanh và giữa các chủ thể."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "palette",
+    "term": {
+      "en": "Palette",
+      "vi": "Bảng màu"
+    },
+    "definition": {
+      "en": "The set of colours an artist uses — or the surface for mixing them.",
+      "vi": "Tập hợp màu một họa sĩ dùng — hoặc bề mặt để pha màu."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "palette-knife",
+    "term": {
+      "en": "Palette knife",
+      "vi": "Dao vẽ"
+    },
+    "definition": {
+      "en": "A flexible blade for mixing or applying paint.",
+      "vi": "Lưỡi dao mềm để trộn hoặc đắp màu."
+    },
+    "category": "material"
+  },
+  {
+    "id": "pastel",
+    "term": {
+      "en": "Pastel",
+      "vi": "Phấn màu"
+    },
+    "definition": {
+      "en": "Sticks of pure pigment bound lightly, producing soft, vivid marks.",
+      "vi": "Thỏi bột màu nguyên chất kết dính nhẹ, tạo nét mềm và rực."
+    },
+    "category": "material"
+  },
+  {
+    "id": "perspective",
+    "term": {
+      "en": "Perspective",
+      "vi": "Phối cảnh"
+    },
+    "definition": {
+      "en": "Techniques for showing depth on a flat surface.",
+      "vi": "Kỹ thuật thể hiện chiều sâu trên mặt phẳng."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "plein-air",
+    "term": {
+      "en": "Plein air",
+      "vi": "Vẽ ngoài trời"
+    },
+    "definition": {
+      "en": "Painting outdoors directly from nature.",
+      "vi": "Vẽ ngoài trời trực tiếp từ thiên nhiên."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "pointillism",
+    "term": {
+      "en": "Pointillism",
+      "vi": "Chấm điểm"
+    },
+    "definition": {
+      "en": "Painting with small dots of pure colour that mix in the eye.",
+      "vi": "Vẽ bằng những chấm màu thuần nhỏ hòa trộn trong mắt người xem."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "primary-colours",
+    "term": {
+      "en": "Primary colours",
+      "vi": "Màu cơ bản"
+    },
+    "definition": {
+      "en": "Colours that cannot be mixed from others; traditionally red, yellow and blue.",
+      "vi": "Các màu không pha được từ màu khác; truyền thống là đỏ, vàng và lam."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "proportion",
+    "term": {
+      "en": "Proportion",
+      "vi": "Tỷ lệ"
+    },
+    "definition": {
+      "en": "The size relationship between parts of a whole.",
+      "vi": "Quan hệ kích thước giữa các phần của tổng thể."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "reflected-light",
+    "term": {
+      "en": "Reflected light",
+      "vi": "Ánh phản quang"
+    },
+    "definition": {
+      "en": "Light bouncing back into the shadow side of an object from nearby surfaces.",
+      "vi": "Ánh sáng dội lại vào phía bóng của vật từ các bề mặt gần đó."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "rule-of-thirds",
+    "term": {
+      "en": "Rule of thirds",
+      "vi": "Quy tắc một phần ba"
+    },
+    "definition": {
+      "en": "Placing key elements along a 3×3 grid rather than in the centre.",
+      "vi": "Đặt yếu tố chính theo lưới 3×3 thay vì chính giữa."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "saturation",
+    "term": {
+      "en": "Saturation",
+      "vi": "Độ bão hòa"
+    },
+    "definition": {
+      "en": "How vivid or dull a colour is.",
+      "vi": "Màu rực rỡ hay xỉn đến đâu."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "son-mai",
+    "term": {
+      "en": "Sơn mài",
+      "vi": "Sơn mài"
+    },
+    "definition": {
+      "en": "Vietnamese lacquer painting built from layers of natural resin, sanded to reveal depth.",
+      "vi": "Tranh sơn mài Việt Nam đắp nhiều lớp nhựa sơn tự nhiên, mài để lộ chiều sâu."
+    },
+    "category": "material"
+  },
+  {
+    "id": "secondary-colours",
+    "term": {
+      "en": "Secondary colours",
+      "vi": "Màu cấp hai"
+    },
+    "definition": {
+      "en": "Colours mixed from two primaries: orange, green and violet.",
+      "vi": "Màu pha từ hai màu cơ bản: cam, lục và tím."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "sfumato",
+    "term": {
+      "en": "Sfumato",
+      "vi": "Sfumato"
+    },
+    "definition": {
+      "en": "Soft, smoky transitions between tones with no hard lines, perfected by Leonardo.",
+      "vi": "Chuyển tông mềm mại như khói, không có nét cứng, được Leonardo hoàn thiện."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "stippling",
+    "term": {
+      "en": "Stippling",
+      "vi": "Chấm tông"
+    },
+    "definition": {
+      "en": "Building tone with many small dots.",
+      "vi": "Tạo tông bằng nhiều chấm nhỏ."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "still-life",
+    "term": {
+      "en": "Still life",
+      "vi": "Tĩnh vật"
+    },
+    "definition": {
+      "en": "An artwork depicting inanimate objects such as fruit, flowers and vessels.",
+      "vi": "Tác phẩm vẽ đồ vật vô tri như trái cây, hoa và bình lọ."
+    },
+    "category": "form"
+  },
+  {
+    "id": "tertiary-colours",
+    "term": {
+      "en": "Tertiary colours",
+      "vi": "Màu cấp ba"
+    },
+    "definition": {
+      "en": "Colours mixed from a primary and a neighbouring secondary, e.g. blue-green.",
+      "vi": "Màu pha từ một màu cơ bản và màu cấp hai bên cạnh, ví dụ xanh lam lục."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "tint-tone-and-shade",
+    "term": {
+      "en": "Tint, tone and shade",
+      "vi": "Màu nhạt, màu trầm, màu sẫm"
+    },
+    "definition": {
+      "en": "A hue mixed with white (tint), grey (tone) or black (shade).",
+      "vi": "Một màu pha với trắng (nhạt), xám (trầm) hoặc đen (sẫm)."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "ukiyo-e",
+    "term": {
+      "en": "Ukiyo-e",
+      "vi": "Ukiyo-e"
+    },
+    "definition": {
+      "en": "Japanese woodblock prints of the “floating world” (1603–1868).",
+      "vi": "Tranh khắc gỗ Nhật Bản về “thế giới phù du” (1603–1868)."
+    },
+    "category": "history"
+  },
+  {
+    "id": "value",
+    "term": {
+      "en": "Value",
+      "vi": "Sắc độ"
+    },
+    "definition": {
+      "en": "How light or dark a colour is.",
+      "vi": "Màu sáng hay tối đến đâu."
+    },
+    "category": "colour"
+  },
+  {
+    "id": "vanishing-point",
+    "term": {
+      "en": "Vanishing point",
+      "vi": "Điểm tụ"
+    },
+    "definition": {
+      "en": "The point on the horizon where parallel lines appear to meet.",
+      "vi": "Điểm trên đường chân trời nơi các đường song song dường như gặp nhau."
+    },
+    "category": "composition"
+  },
+  {
+    "id": "wash",
+    "term": {
+      "en": "Wash",
+      "vi": "Lớp loang"
+    },
+    "definition": {
+      "en": "A thin, even layer of diluted paint over an area.",
+      "vi": "Lớp màu loãng, đều phủ trên một vùng."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "wet-on-wet",
+    "term": {
+      "en": "Wet-on-wet",
+      "vi": "Ướt chồng ướt"
+    },
+    "definition": {
+      "en": "Applying paint onto wet paper or wet paint for soft blending.",
+      "vi": "Đặt màu lên giấy ướt hoặc màu còn ướt để hòa trộn mềm mại."
+    },
+    "category": "technique"
+  },
+  {
+    "id": "woodcut",
+    "term": {
+      "en": "Woodcut",
+      "vi": "Tranh khắc gỗ"
+    },
+    "definition": {
+      "en": "A relief print carved into a block of wood.",
+      "vi": "Tranh in nổi khắc trên khối gỗ."
+    },
+    "category": "form"
+  }
+]

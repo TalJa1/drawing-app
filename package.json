@@ -12,6 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:e2e:layout": "playwright test --project=chromium --project=webkit --project=firefox",
+    "e2e:fixtures": "node scripts/record-api-fixtures.mjs",
     "gen:api": "node scripts/gen-api.mjs"
   },
   "dependencies": {

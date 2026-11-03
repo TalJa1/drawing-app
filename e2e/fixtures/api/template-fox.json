@@ -1,0 +1,26 @@
+{
+  "id": "fox",
+  "title": {
+    "en": "Sitting Fox",
+    "vi": "Cáo ngồi"
+  },
+  "category": "animals",
+  "difficulty": "beginner",
+  "minutes": 10,
+  "unlockLevel": 1,
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1200 900\" width=\"1200\" height=\"900\"><g fill=\"#fff\" stroke=\"#1b1a17\" stroke-width=\"7\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n<path d=\"M690 770 C 850 790 960 700 950 560 C 942 470 870 450 845 505 C 870 600 820 690 700 690 Z\"/>\n<path d=\"M950 560 C 942 470 870 450 845 505 C 862 545 905 562 950 560 Z\"/>\n<path d=\"M600 830 C 440 830 410 650 475 550 C 520 480 680 480 725 550 C 790 650 760 830 600 830 Z\"/>\n<path d=\"M520 545 C 535 660 665 660 680 545 C 640 575 560 575 520 545 Z\"/>\n<path d=\"M585 640 C 590 700 610 700 615 640\" fill=\"none\"/>\n<ellipse cx=\"540\" cy=\"822\" rx=\"48\" ry=\"24\"/>\n<ellipse cx=\"660\" cy=\"822\" rx=\"48\" ry=\"24\"/>\n<path d=\"M600 545 C 515 545 440 475 420 385 L 432 185 L 538 290 C 578 280 622 280 662 290 L 768 185 L 780 385 C 760 475 685 545 600 545 Z\"/>\n<path d=\"M452 240 L 458 335 L 515 298 Z\"/>\n<path d=\"M748 240 L 742 335 L 685 298 Z\"/>\n<path d=\"M424 395 C 485 405 545 425 600 478 C 655 425 715 405 776 395 C 755 475 685 540 600 543 C 515 540 445 475 424 395 Z\"/>\n<ellipse cx=\"530\" cy=\"385\" rx=\"17\" ry=\"24\" fill=\"#1b1a17\"/>\n<ellipse cx=\"670\" cy=\"385\" rx=\"17\" ry=\"24\" fill=\"#1b1a17\"/>\n<circle cx=\"536\" cy=\"376\" r=\"5\" fill=\"#fff\" stroke=\"none\"/><circle cx=\"676\" cy=\"376\" r=\"5\" fill=\"#fff\" stroke=\"none\"/>\n<path d=\"M578 478 Q 600 500 622 478 Q 600 462 578 478 Z\" fill=\"#1b1a17\"/>\n<path d=\"M600 495 Q 600 515 582 520 M600 495 Q 600 515 618 520\" fill=\"none\"/>\n<path d=\"M200 840 C 300 800 400 820 470 838 M760 838 C 850 815 980 800 1060 835\" fill=\"none\"/>\n</g></svg>",
+  "imageUrl": "/api/v1/templates/fox/image",
+  "suggestedPalette": [
+    "#E4572E",
+    "#F6F1E7",
+    "#4A3426",
+    "#2E8B6F",
+    "#F2A93B"
+  ],
+  "popularity": 96,
+  "createdAt": "2026-01-01T00:00:00Z",
+  "tags": [
+    "fox",
+    "cute"
+  ]
+}

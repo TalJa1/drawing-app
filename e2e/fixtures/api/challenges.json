@@ -1,0 +1,116 @@
+[
+  {
+    "challenge": {
+      "id": "d-lesson",
+      "kind": "daily",
+      "title": {
+        "en": "Daily Lesson",
+        "vi": "Bài học mỗi ngày"
+      },
+      "description": {
+        "en": "Complete one lesson.",
+        "vi": "Hoàn thành một bài học."
+      },
+      "metric": "lessons",
+      "target": 1,
+      "xp": 40,
+      "icon": "book"
+    },
+    "periodKey": "2026-11-03",
+    "progress": 0,
+    "claimed": false
+  },
+  {
+    "challenge": {
+      "id": "w-quiz",
+      "kind": "weekly",
+      "title": {
+        "en": "Quiz Week",
+        "vi": "Tuần trắc nghiệm"
+      },
+      "description": {
+        "en": "Pass three lesson quizzes.",
+        "vi": "Vượt qua ba bài trắc nghiệm."
+      },
+      "metric": "quizzes",
+      "target": 3,
+      "xp": 120,
+      "icon": "graduation"
+    },
+    "periodKey": "2026-W45",
+    "progress": 0,
+    "claimed": false
+  },
+  {
+    "challenge": {
+      "id": "w-animals",
+      "kind": "weekly",
+      "title": {
+        "en": "Wild Week",
+        "vi": "Tuần hoang dã"
+      },
+      "description": {
+        "en": "Colour two animal templates.",
+        "vi": "Tô màu hai mẫu động vật."
+      },
+      "metric": "templateCategory",
+      "target": 2,
+      "xp": 120,
+      "param": "animals",
+      "icon": "paw"
+    },
+    "periodKey": "2026-W45",
+    "progress": 0,
+    "claimed": false
+  },
+  {
+    "challenge": {
+      "id": "w-chat",
+      "kind": "weekly",
+      "title": {
+        "en": "Talk to the Muse",
+        "vi": "Trò chuyện cùng nàng thơ"
+      },
+      "description": {
+        "en": "Exchange five messages with the AI muse.",
+        "vi": "Trao đổi năm tin nhắn với nàng thơ AI."
+      },
+      "metric": "chat",
+      "target": 5,
+      "xp": 80,
+      "icon": "message"
+    },
+    "periodKey": "2026-W45",
+    "progress": 0,
+    "claimed": false
+  },
+  {
+    "challenge": {
+      "id": "s-autumn",
+      "kind": "special",
+      "title": {
+        "en": "Autumn Colours Week",
+        "vi": "Tuần lễ sắc thu"
+      },
+      "description": {
+        "en": "Paint five artworks with a colour score of 70+ while the leaves turn.",
+        "vi": "Vẽ năm tác phẩm đạt điểm màu 70+ khi lá chuyển mùa."
+      },
+      "metric": "colourScore",
+      "target": 5,
+      "xp": 400,
+      "param": "70",
+      "icon": "leaf"
+    },
+    "periodKey": "2026-s-autumn",
+    "progress": 0,
+    "claimed": false,
+    "theme": [
+      "#C98B2B",
+      "#E4572E",
+      "#8C3B1F",
+      "#F2A93B",
+      "#4A3426"
+    ]
+  }
+]
