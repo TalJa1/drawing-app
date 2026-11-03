@@ -3,7 +3,7 @@ import type { Conversation } from '@/types'
 import { useChat } from '@/store/chat'
 import { STORE_KEYS } from '@/store/storage'
 import { deleteFile, getFile, listKeys, putFile } from '@/api/imageStore'
-import { cleanupOrphanChatImages, collectOrphanChatImages, loadChatImage, saveChatImages, useChatImageUrl } from './chatImages'
+import { cleanupOrphanChatImages, collectOrphanChatImages, loadChatImage, saveChatImages, useChatImage } from './chatImages'
 
 vi.mock('@/api/imageStore', () => ({ putFile: vi.fn(), getFile: vi.fn(), deleteFile: vi.fn(), listKeys: vi.fn().mockResolvedValue([]) }))
 const previewBlob = new Blob(['preview image bytes'], { type: 'image/jpeg' })
@@ -87,8 +87,8 @@ it('collectOrphanChatImages keeps referenced keys and returns the rest', async (
 
 it('revokes the object URL on unmount', async () => {
   vi.mocked(getFile).mockResolvedValue(previewBlob)
-  const { result, rerender, unmount } = renderHook(({ key }) => useChatImageUrl(key), { initialProps: { key: 'chat:a_1:preview' } })
-  await waitFor(() => expect(result.current).toBe('blob:preview'))
+  const { result, rerender, unmount } = renderHook(({ key }) => useChatImage(key), { initialProps: { key: 'chat:a_1:preview' } })
+  await waitFor(() => expect(result.current).toEqual({ src: 'blob:preview', missing: false }))
   rerender({ key: 'chat:a_2:preview' })
   await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalledTimes(2))
   expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1)
@@ -100,7 +100,7 @@ it('revokes the object URL on unmount', async () => {
       resolveBlob = resolve
     }),
   )
-  const late = renderHook(() => useChatImageUrl('chat:late:preview'))
+  const late = renderHook(() => useChatImage('chat:late:preview'))
   late.unmount()
   await act(async () => resolveBlob(previewBlob))
   expect(URL.createObjectURL).toHaveBeenCalledTimes(2)
@@ -108,8 +108,22 @@ it('revokes the object URL on unmount', async () => {
 
 it('legacy data-URL attachments render from src', () => {
   const src = 'data:image/png;base64,legacy'
-  const { result } = renderHook(() => useChatImageUrl(undefined, src))
-  expect(result.current).toBe(src)
+  const { result } = renderHook(() => useChatImage(undefined, src))
+  expect(result.current).toEqual({ src, missing: false })
   expect(getFile).not.toHaveBeenCalled()
   expect(URL.createObjectURL).not.toHaveBeenCalled()
+})
+
+it('separates an image that is still loading from one that is gone', async () => {
+  let resolveBlob!: (blob: Blob | undefined) => void
+  vi.mocked(getFile).mockReturnValueOnce(
+    new Promise((resolve) => {
+      resolveBlob = resolve
+    }),
+  )
+  const { result } = renderHook(() => useChatImage('chat:gone:preview'))
+  expect(result.current).toEqual({ src: null, missing: false })
+  await act(async () => resolveBlob(undefined))
+  expect(result.current).toEqual({ src: null, missing: true })
+  expect(renderHook(() => useChatImage(undefined)).result.current).toEqual({ src: null, missing: true })
 })

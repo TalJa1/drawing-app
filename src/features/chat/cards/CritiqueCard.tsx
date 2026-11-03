@@ -4,7 +4,7 @@ import { useReducedMotion } from '@/app/theme'
 import { useChat } from '@/store/chat'
 import type { ChatCard } from '@/types'
 import { CHAT_MOTION } from '../motion'
-import { useChatImageUrl } from '../chatImages'
+import { useChatImage } from '../chatImages'
 
 export function CritiqueCard({
   card,
@@ -22,7 +22,7 @@ export function CritiqueCard({
     (message) => message.role === 'user' && message.attachments.some((image) => image.id === card.imageId),
   )
   const image = source?.attachments.find((attachment) => attachment.id === card.imageId)
-  const src = useChatImageUrl(image?.previewKey, image?.src)
+  const { src, missing } = useChatImage(image?.previewKey, image?.src)
   const groups = [
     ['observations', card.observations],
     ['strengths', card.strengths],
@@ -34,10 +34,12 @@ export function CritiqueCard({
       <div className="flex items-start gap-3 border-b border-line pb-3">
         {src ? (
           <img src={src} alt={image?.name} className="h-16 w-[72px] shrink-0 rounded-lg border border-line object-contain" />
-        ) : (
+        ) : missing ? (
           <p className="flex min-h-16 w-[72px] shrink-0 items-center rounded-lg border border-line bg-paper-3 p-2 text-[11px] text-ink-soft">
             {t('chat.attach.errors.missing')}
           </p>
+        ) : (
+          <div aria-hidden className="skeleton h-16 w-[72px] shrink-0 rounded-lg" />
         )}
         <div className="min-w-0">
           {image && <p className="break-words text-xs font-semibold text-ink">{image.name}</p>}

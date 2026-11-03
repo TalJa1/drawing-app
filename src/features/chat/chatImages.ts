@@ -34,21 +34,26 @@ export async function cleanupOrphanChatImages(conversations: Conversation[]): Pr
   await Promise.all(collectOrphanChatImages(conversations, await listKeys('chat:')).map((key) => deleteFile(key)))
 }
 
-export function useChatImageUrl(key?: string, legacySrc?: string): string | null {
-  const [image, setImage] = useState<{ key: string; url: string } | null>(null)
+/** `src` stays null while the blob loads; `missing` is true only once the image is known to be gone. */
+export function useChatImage(key?: string, legacySrc?: string): { src: string | null; missing: boolean } {
+  const [image, setImage] = useState<{ key: string; url: string | null } | null>(null)
   useEffect(() => {
     if (legacySrc || !key) return
     let cancelled = false
     let url: string | undefined
-    void loadChatImage(key).then((blob) => {
-      if (!blob || cancelled) return
-      url = URL.createObjectURL(blob)
-      setImage({ key, url })
-    })
+    void loadChatImage(key)
+      .catch(() => undefined)
+      .then((blob) => {
+        if (cancelled) return
+        if (blob) url = URL.createObjectURL(blob)
+        setImage({ key, url: url ?? null })
+      })
     return () => {
       cancelled = true
       if (url) URL.revokeObjectURL(url)
     }
   }, [key, legacySrc])
-  return legacySrc ?? (image && image.key === key ? image.url : null)
+  if (legacySrc) return { src: legacySrc, missing: false }
+  const loaded = key && image?.key === key ? image : null
+  return { src: loaded?.url ?? null, missing: !key || (loaded !== null && loaded.url === null) }
 }

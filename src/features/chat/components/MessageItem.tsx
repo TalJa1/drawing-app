@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import { useSession } from '@/store/session'
 import { Muse } from '../Muse'
 import { ChatCardView } from '../ChatCards'
-import { useChatImageUrl } from '../chatImages'
+import { useChatImage } from '../chatImages'
 import { useChatStream } from '../streamStore'
 import { splitStable, closeDangling } from '../streamingMarkdown'
 import { MessageActions } from './MessageActions'
@@ -18,12 +18,10 @@ import { MessageActions } from './MessageActions'
 const StableMarkdown = memo(Markdown)
 function MessageImage({ attachment }: { attachment: ChatAttachment }) {
   const { t } = useTranslation()
-  const src = useChatImageUrl(attachment.previewKey, attachment.src)
-  return src ? (
-    <img src={src} alt={attachment.name} className="max-h-48 rounded-2xl border border-line object-contain shadow-paper" />
-  ) : (
-    <p className="text-sm text-ink-faint">{t('chat.attach.errors.missing')}</p>
-  )
+  const { src, missing } = useChatImage(attachment.previewKey, attachment.src)
+  if (src) return <img src={src} alt={attachment.name} className="max-h-48 rounded-2xl border border-line object-contain shadow-paper" />
+  if (missing) return <p className="text-sm text-ink-faint">{t('chat.attach.errors.missing')}</p>
+  return <div aria-hidden className="skeleton h-32 w-44 rounded-2xl" />
 }
 
 function ReplyBody({ content, streaming, hasCards }: { content: string; streaming: boolean; hasCards: boolean }) {
@@ -137,17 +135,6 @@ function Content({ message, conversationId, last }: { message: ChatMessage; conv
   )
 }
 
-function StreamingMessage({ message, conversationId, last }: { message: ChatMessage; conversationId: string; last: boolean }) {
-  const active = useChatStream((s) => (s.active?.conversationId === conversationId && s.active.messageId === message.id ? s.active : null))
-  return (
-    <Content
-      message={active ? { ...message, content: active.content, cards: active.cards } : message}
-      conversationId={conversationId}
-      last={last}
-    />
-  )
-}
-
 export const MessageItem = memo(function MessageItem(props: {
   message: ChatMessage
   conversationId: string
@@ -155,9 +142,16 @@ export const MessageItem = memo(function MessageItem(props: {
   animateNew?: boolean
 }) {
   const reduced = useReducedMotion()
+  // One render path for streaming and settled replies, so cards and images are not remounted when the stream ends.
+  const live = useChatStream((s) =>
+    props.message.status === 'streaming' && s.active?.conversationId === props.conversationId && s.active.messageId === props.message.id
+      ? s.active
+      : null,
+  )
+  const message = live ? { ...props.message, content: live.content, cards: live.cards } : props.message
   return (
     <motion.li variants={chatVariants(reduced).bubble} initial={props.animateNew ? 'hidden' : false} animate="visible">
-      {props.message.status === 'streaming' ? <StreamingMessage {...props} /> : <Content {...props} />}
+      <Content message={message} conversationId={props.conversationId} last={props.last} />
     </motion.li>
   )
 })
