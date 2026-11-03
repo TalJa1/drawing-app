@@ -65,6 +65,8 @@ it('sends nothing until the learner asks, and says where the drawing goes', asyn
   await panel()
   expect(screen.getByRole('heading', { name: "Muse's feedback" })).toBeVisible()
   expect(screen.getByText(/sent through the Art Spark server to OpenAI/)).toBeVisible()
+  expect(screen.getByText(/not used to train models/)).toBeVisible()
+  expect(screen.getByText(/abuse-monitoring logs .* up to 30 days/)).toBeVisible()
   expect(screen.getByText(/score does not change/)).toBeVisible()
   expect(mocks.buildJudgeRequest).not.toHaveBeenCalled()
   expect(mocks.requestFeedback).not.toHaveBeenCalled()

@@ -1174,7 +1174,7 @@
     "title": "Nhận xét của Muse",
     "intro": "Muse có thể xem bài vẽ và gợi ý điều bạn nên luyện tiếp.",
     "ask": "Nhờ Muse nhận xét",
-    "disclosure": "Ảnh bài vẽ được gửi qua máy chủ Art Spark tới OpenAI để viết nhận xét. Điểm số không thay đổi.",
+    "disclosure": "Ảnh bài vẽ được gửi qua máy chủ Art Spark tới OpenAI để viết nhận xét. Theo mặc định, dữ liệu gửi tới API OpenAI không được dùng để huấn luyện mô hình, nhưng OpenAI có thể giữ log giám sát lạm dụng tối đa 30 ngày. Điểm số không thay đổi.",
     "loading": "Muse đang xem bài vẽ của bạn…",
     "ready": "Nhận xét của Muse đã sẵn sàng.",
     "strengths": "Điểm mạnh",

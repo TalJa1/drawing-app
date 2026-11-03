@@ -1174,7 +1174,7 @@
     "title": "Muse's feedback",
     "intro": "Muse can look at your drawing and suggest what to practise next.",
     "ask": "Ask Muse for feedback",
-    "disclosure": "Your drawing is sent through the Art Spark server to OpenAI to write this feedback. Your score does not change.",
+    "disclosure": "Your drawing is sent through the Art Spark server to OpenAI to write this feedback. By default, data sent to the OpenAI API is not used to train models, but OpenAI may keep abuse-monitoring logs for up to 30 days. Your score does not change.",
     "loading": "Muse is looking at your drawing…",
     "ready": "Muse's feedback is ready.",
     "strengths": "What works",
