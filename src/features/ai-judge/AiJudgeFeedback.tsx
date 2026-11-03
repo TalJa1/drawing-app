@@ -33,13 +33,13 @@ function waitText(ms: number, t: TFunction): string {
 }
 
 function StatusText({ state, t }: { state: JudgeState; t: TFunction }) {
-  if (state.status === 'loading') return <p className="text-ink-soft">{t('aiJudge.loading')}</p>
+  if (state.status === 'loading') return <p className="mt-4 text-ink-soft">{t('aiJudge.loading')}</p>
   if (state.status === 'done') return <p className="sr-only">{t('aiJudge.ready')}</p>
   if (state.status !== 'error') return null
   const wait = SHOWS_WAIT.has(state.code) && state.retryAfterMs !== undefined ? waitText(state.retryAfterMs, t) : null
   return (
     <>
-      <p className="text-ink">{t(`aiJudge.error.${OWN_MESSAGE.has(state.code) ? state.code : 'generic'}`)}</p>
+      <p className="mt-4 text-ink">{t(`aiJudge.error.${OWN_MESSAGE.has(state.code) ? state.code : 'generic'}`)}</p>
       {wait && <p className="mt-1 text-sm text-ink-soft">{t('aiJudge.retryIn', { time: wait })}</p>}
     </>
   )
@@ -73,7 +73,8 @@ export function AiJudgeFeedback({ artwork, template, score }: { artwork: Artwork
         </h2>
       </div>
 
-      <div role="status" className="mt-4 empty:hidden">
+      {/* Always mounted, so screen readers announce the first change; empty, it takes no space. */}
+      <div role="status">
         <StatusText state={state} t={t} />
       </div>
 
