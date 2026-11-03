@@ -39,15 +39,23 @@ export function ArtWheel({ forms }: { forms: ArtForm[] }) {
               animate={reduced ? undefined : { rotate: -360 }}
               transition={{ duration: 180, repeat: Infinity, ease: 'linear' }}
             >
-              <Link
-                to={`/learn/art-forms/${f.slug}`}
-                onMouseEnter={() => setActive(i)}
-                onFocus={() => setActive(i)}
-                aria-label={L(f.name)}
-                className={`block overflow-hidden rounded-full border-[3px] shadow-paper transition-all duration-300 ${on ? 'h-16 w-16 border-saffron sm:h-20 sm:w-20' : 'h-11 w-11 border-card sm:h-14 sm:w-14'}`}
+              {/* The picture sits beside the link, not inside it: a few covers draw a word ("WHOOSH", "ART!") that a
+                  checker reads as the link's visible text, and the link is named by the art form, not by that word. */}
+              <div
+                className={`relative rounded-full border-[3px] shadow-paper transition-all duration-300 ${on ? 'h-16 w-16 border-saffron sm:h-20 sm:w-20' : 'h-11 w-11 border-card sm:h-14 sm:w-14'}`}
               >
-                <ArtFormCover style={f.coverStyle} palette={f.palette} seed={f.slug} />
-              </Link>
+                {/* the clipping is on this inner box, so the link's focus ring (outside its edge) is not cut off */}
+                <div className="h-full w-full overflow-hidden rounded-full">
+                  <ArtFormCover style={f.coverStyle} palette={f.palette} seed={f.slug} />
+                </div>
+                <Link
+                  to={`/learn/art-forms/${f.slug}`}
+                  onMouseEnter={() => setActive(i)}
+                  onFocus={() => setActive(i)}
+                  aria-label={L(f.name)}
+                  className="absolute inset-0 rounded-full"
+                />
+              </div>
             </motion.div>
           )
         })}

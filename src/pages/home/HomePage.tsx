@@ -234,7 +234,7 @@ function FeatureMock({ k }: { k: (typeof FEATURES)[number]['key'] }) {
         {SHOWCASE_IDS.flatMap((id) => templateOf(id) ?? []).map((tpl, i) => (
           <div key={tpl.id} className="overflow-hidden rounded-xl border-[5px] border-[var(--mat)] bg-white shadow-paper">
             <div className="aspect-[4/3] p-1">
-              <TemplateImage template={tpl} />
+              <TemplateImage template={tpl} sizes="160px" />
             </div>
             <p className="truncate px-1.5 pb-1 font-display text-[11px] text-inkwell">{L(tpl.title)}</p>
             {i === 0 && <span className="sr-only">{t('practice.daily.badge')}</span>}
@@ -593,7 +593,7 @@ function GalleryWall() {
                 matWidth={8}
                 tone={it.slot % 5 === 0 ? 'gold' : it.slot % 3 === 0 ? 'light' : 'wood'}
                 tilt={((it.slot * 17) % 5) - 2}
-                label={<WallLabel title={t(`home.wallLabels.${it.slot % 6}`)} lines={[t('home.sampleArtwork')]} />}
+                label={<WallLabel title={t(`home.wallLabels.${it.slot}`)} lines={[t('home.sampleArtwork')]} />}
               >
                 <div className={it.slot % 3 === 1 ? 'aspect-[3/4]' : 'aspect-[4/3]'}>
                   {it.kind === 'tpl' ? (
@@ -708,9 +708,9 @@ function FinalCta() {
             placeholder={t('home.newsletterPlaceholder')}
             aria-invalid={!!err}
             aria-describedby={err ? 'newsletter-err' : undefined}
-            className="h-12 flex-1 rounded-full border border-white/20 bg-white/10 px-5 text-[#f6f1e7] placeholder:text-[#f6f1e7]/50 focus:border-[#F2A93B]"
+            className="h-12 min-w-0 flex-1 rounded-full border border-white/20 bg-white/10 px-5 text-[#f6f1e7] placeholder:text-[#f6f1e7]/50 focus:border-[#F2A93B]"
           />
-          <Button type="submit" variant="paper" size="md" className="!h-12" icon={<Send size={16} />}>
+          <Button type="submit" variant="paper" size="md" className="!h-12 shrink-0 whitespace-nowrap" icon={<Send size={16} />}>
             {t('home.newsletterButton')}
           </Button>
         </form>

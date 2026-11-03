@@ -104,7 +104,7 @@ export default function ColorLabPage() {
           lede={t('learn.lab.lede')}
         />
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[auto_1fr]">
+        <div className="mt-10 grid grid-cols-1 gap-6 lg:grid-cols-[auto_1fr] [&>*]:min-w-0">
           <Card className="flex flex-col items-center gap-5 p-6">
             <ColourWheel value={base} onChange={setBase} size={260} />
             <label className="flex w-full flex-col gap-1 text-xs font-semibold uppercase tracking-wider text-ink-faint">
@@ -178,7 +178,7 @@ export default function ColorLabPage() {
           </Card>
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 [&>*]:min-w-0">
           <Card className="p-6">
             <h2 className="font-display text-2xl">{t('learn.lab.contrast')}</h2>
             <p className="mt-1 text-sm text-ink-soft">{t('learn.lab.contrastLede')}</p>

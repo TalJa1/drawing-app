@@ -91,7 +91,8 @@ export function RankStamp({ rank, label, ringText, big }: { rank: RankLabel; lab
         <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth="4" strokeDasharray="2 3" filter="url(#rough)" />
         <circle cx="60" cy="60" r="47" fill="none" stroke="currentColor" strokeWidth="2.5" filter="url(#rough)" />
         <path id={arc} d="M22 60 a38 38 0 0 1 76 0" fill="none" />
-        <text className="fill-current text-[9px] font-bold uppercase tracking-[0.3em]">
+        {/* The ring text must be shorter than this half circle (about 119 units); it was 192 and got cut off. */}
+        <text className="fill-current text-[9px] font-bold uppercase tracking-[0.2em]">
           <textPath href={`#${arc}`} startOffset="50%" textAnchor="middle">
             {ringText}
           </textPath>

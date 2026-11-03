@@ -51,7 +51,7 @@
     "practice": "Practice",
     "freeDraw": "Free Draw",
     "learn": "Learn",
-    "chat": "AI Chat",
+    "chat": "AI Muse",
     "collection": "Collection",
     "achievements": "Achievements",
     "profile": "Profile",
@@ -62,6 +62,7 @@
     "signOut": "Sign out",
     "guestMode": "Guest mode — saved on this device",
     "accountMenu": "Account menu",
+    "accountMenuLevel": "Account menu, level {{level}}",
     "openMenu": "Open menu",
     "menu": "Menu",
     "primary": "Primary",
@@ -75,7 +76,7 @@
       "practice": "Practice",
       "freeDraw": "Draw",
       "learn": "Learn",
-      "chat": "Muse",
+      "chat": "AI Muse",
       "collection": "Gallery"
     }
   },
@@ -252,7 +253,7 @@
     "redo": "Redo",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
-    "zoomReset": "Reset zoom to 100%",
+    "zoomReset": "{{zoom}}% — reset zoom to 100%",
     "fit": "Fit to screen",
     "clear": "Clear layer",
     "clearTitle": "Clear this layer?",
@@ -329,7 +330,8 @@
       "start": "Start creating",
       "tools": {
         "title": "Your brushes live here",
-        "body": "Pencil, pen, marker, watercolour, airbrush, chalk, bucket and more. Each has its own size and feel — hover for shortcuts."
+        "body": "Pencil, pen, marker, watercolour, airbrush, chalk, bucket and more. Each has its own size and feel — hover for shortcuts.",
+        "bodyTouch": "Pencil, pen, marker, watercolour, airbrush, chalk, bucket and more. Each has its own size and feel."
       },
       "options": {
         "title": "Fine-tune each tool",
@@ -499,7 +501,7 @@
     "breadcrumb": "Breadcrumb",
     "eyebrow": "The judge's verdict",
     "overallAria": "Overall score {{score}} out of 100",
-    "stampRing": "Art Spark ✦ AI Judge",
+    "stampRing": "Art Spark ✦ AI",
     "similarity": "Similarity",
     "colour": "Colour",
     "radarTitle": "Score breakdown across six criteria",
@@ -1201,7 +1203,20 @@
     "wallTitleA": "Made with",
     "wallTitleB": "Art Spark",
     "wallLede": "A wall of sample pieces — coloured templates and paintings in the spirit of the great movements.",
-    "wallLabels": ["Morning Harbour", "Koi at Dusk", "The Quiet Wave", "Lotus Mandala", "Golden Garden", "Still Life, Fractured"],
+    "wallLabels": [
+      "Morning Harbour",
+      "Koi at Dusk",
+      "The Quiet Wave",
+      "Lotus Mandala",
+      "Golden Garden",
+      "Still Life, Fractured",
+      "Lighthouse at First Light",
+      "Folk Blossoms",
+      "Park in Points of Colour",
+      "The Morning Teapot",
+      "Dot Rhythm",
+      "Untitled Composition"
+    ],
     "sampleArtwork": "Sample artwork",
     "voicesEyebrow": "Voices",
     "voicesTitleA": "Little habits,",

@@ -65,6 +65,7 @@ function DownloadMenu({ ctx }: { ctx: StudioContext }) {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={t('common.download')}
       >
         <span className="hidden sm:inline">{t('common.download')}</span>
       </Button>
@@ -275,6 +276,7 @@ export default function FreeDrawPage() {
               icon={<Save size={16} />}
               onClick={() => void askToSave(ctx)}
               disabled={ctx.engine.isEmpty()}
+              aria-label={t('freeDraw.saveToCollection')}
             >
               <span className="hidden sm:inline">{t('freeDraw.saveToCollection')}</span>
             </Button>

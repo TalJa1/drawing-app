@@ -181,7 +181,7 @@ export default function CollectionPage() {
               hint={t('collection.statDays')}
             />
           </div>
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr] [&>*]:min-w-0">
             <Card className="p-5 sm:p-6">
               <div className="mb-2 flex items-center justify-between gap-3">
                 <h3 className="font-display text-xl">{t('collection.chartTitle')}</h3>

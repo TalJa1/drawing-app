@@ -41,9 +41,7 @@ export function BadgeMedal({
         style={{ width: size * 0.68, height: size * 0.68 }}
       >
         {hidden ? (
-          <span className="font-display text-xl" style={{ fontSize: size * 0.24 }}>
-            ???
-          </span>
+          <span className="font-display text-xl before:content-[attr(data-mask)]" style={{ fontSize: size * 0.24 }} data-mask="???" />
         ) : unlocked ? (
           <BadgeIcon name={badge.icon} size={size * 0.32} />
         ) : (

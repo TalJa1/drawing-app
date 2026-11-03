@@ -202,7 +202,7 @@ export function Studio(props: StudioProps) {
             type="button"
             onClick={() => engine.setZoom(1)}
             className="h-8 w-14 rounded-full text-center text-xs font-semibold tabular-nums text-ink-soft hover:bg-ink/5"
-            aria-label={t('studio.zoomReset')}
+            aria-label={t('studio.zoomReset', { zoom: Math.round(engine.view.zoom * 100) })}
           >
             {Math.round(engine.view.zoom * 100)}%
           </button>
@@ -389,7 +389,7 @@ export function Studio(props: StudioProps) {
           void clearDraft()
         }}
       />
-      {!draft && <OnboardingTour mode={mode} />}
+      {!draft && <OnboardingTour mode={mode} suspended={shortcuts || confirmClear || sheet !== null} />}
       <div className={cn('sr-only')} aria-live="polite">
         {engine.activeLayer?.name}
       </div>

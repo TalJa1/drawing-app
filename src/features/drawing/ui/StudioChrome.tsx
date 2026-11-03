@@ -1,28 +1,31 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Modal } from '@/components/Modal'
 import { Button } from '@/components/Button'
+import { cn } from '@/lib/utils'
+import { useMediaQuery } from '@/lib/hooks'
 import { useSettings } from '@/store/settings'
 
-const SHORTCUTS: [string, string][] = [
-  ['B / P / M', 'studio.sc.brushes'],
-  ['W / A / C', 'studio.sc.paints'],
-  ['E', 'studio.sc.eraser'],
-  ['G', 'studio.sc.bucket'],
-  ['I · Alt+click', 'studio.sc.eyedropper'],
-  ['L / R / O', 'studio.sc.shapes'],
-  ['[  ]', 'studio.sc.size'],
-  ['Ctrl/⌘ + Z', 'studio.sc.undo'],
-  ['Shift + Ctrl/⌘ + Z · Ctrl + Y', 'studio.sc.redo'],
-  ['Space + drag', 'studio.sc.pan'],
-  ['Wheel · pinch', 'studio.sc.zoom'],
-  ['0', 'studio.sc.fit'],
-  ['H', 'studio.sc.lineart'],
-  ['X', 'studio.sc.swap'],
-  ['Shift (shapes)', 'studio.sc.constrain'],
-  ['Ctrl/⌘ + S', 'studio.sc.save'],
-  ['?', 'studio.sc.help'],
+/** Each entry has one chip per alternative way to do it; a long combination no longer has to fit in one chip. */
+const SHORTCUTS: [string[], string][] = [
+  [['B / P / M'], 'studio.sc.brushes'],
+  [['W / A / C'], 'studio.sc.paints'],
+  [['E'], 'studio.sc.eraser'],
+  [['G'], 'studio.sc.bucket'],
+  [['I', 'Alt + click'], 'studio.sc.eyedropper'],
+  [['L / R / O'], 'studio.sc.shapes'],
+  [['[  ]'], 'studio.sc.size'],
+  [['Ctrl/⌘ + Z'], 'studio.sc.undo'],
+  [['Shift + Ctrl/⌘ + Z', 'Ctrl + Y'], 'studio.sc.redo'],
+  [['Space + drag'], 'studio.sc.pan'],
+  [['Wheel · pinch'], 'studio.sc.zoom'],
+  [['0'], 'studio.sc.fit'],
+  [['H'], 'studio.sc.lineart'],
+  [['X'], 'studio.sc.swap'],
+  [['Shift (shapes)'], 'studio.sc.constrain'],
+  [['Ctrl/⌘ + S'], 'studio.sc.save'],
+  [['?'], 'studio.sc.help'],
 ]
 
 export function ShortcutsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -30,11 +33,15 @@ export function ShortcutsModal({ open, onClose }: { open: boolean; onClose: () =
   return (
     <Modal open={open} onClose={onClose} title={t('studio.shortcuts')} size="md">
       <dl className="grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
-        {SHORTCUTS.map(([k, label]) => (
+        {SHORTCUTS.map(([keys, label]) => (
           <div key={label} className="flex items-center justify-between gap-3 border-b border-line pb-2">
-            <dt className="text-sm text-ink-soft">{t(label)}</dt>
-            <dd>
-              <kbd className="whitespace-nowrap rounded-md border border-line-strong bg-paper-2 px-2 py-0.5 font-mono text-xs">{k}</kbd>
+            <dt className="min-w-0 text-sm text-ink-soft">{t(label)}</dt>
+            <dd className="flex shrink-0 flex-wrap justify-end gap-1">
+              {keys.map((k) => (
+                <kbd key={k} className="whitespace-nowrap rounded-md border border-line-strong bg-paper-2 px-2 py-0.5 font-mono text-xs">
+                  {k}
+                </kbd>
+              ))}
             </dd>
           </div>
         ))}
@@ -45,17 +52,26 @@ export function ShortcutsModal({ open, onClose }: { open: boolean; onClose: () =
 
 const TOUR_STEPS = ['tools', 'options', 'colour', 'primary'] as const
 
-/** Short, skippable first-visit tour that spotlights studio regions. */
-export function OnboardingTour({ mode }: { mode: 'template' | 'free' }) {
+const TOUR_FOCUSABLE = 'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])'
+
+/**
+ * Short, skippable first-visit tour that spotlights studio regions.
+ * `suspended` hides it while another dialog (shortcuts, confirm, a panel sheet) is open, so the two never
+ * stack; the step is kept and the tour comes back on it. While visible it keeps Tab inside its card.
+ */
+export function OnboardingTour({ mode, suspended = false }: { mode: 'template' | 'free'; suspended?: boolean }) {
   const { t } = useTranslation()
   const done = useSettings((s) => s.onboardingDone)
   const setDone = useSettings((s) => s.setOnboardingDone)
   const [step, setStep] = useState(0)
   const [rect, setRect] = useState<DOMRect | null>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const touch = useMediaQuery('(hover: none)') // no pointer to hover with: leave out "hover for shortcuts"
   const key = TOUR_STEPS[step]
+  const active = !done && !suspended
 
   useLayoutEffect(() => {
-    if (done) return
+    if (!active) return
     const find = () => {
       const els = Array.from(document.querySelectorAll<HTMLElement>(`[data-tour="${key}"]`)).filter((el) => el.offsetParent !== null)
       setRect(els[0]?.getBoundingClientRect() ?? null)
@@ -66,18 +82,51 @@ export function OnboardingTour({ mode }: { mode: 'template' | 'free' }) {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', find)
     }
-  }, [key, done])
+  }, [key, active])
 
+  // Escape skips the tour; Tab / Shift+Tab stay inside the card (aria-modal is a promise, this keeps it).
   useEffect(() => {
-    if (done) return
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setDone(true)
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [done, setDone])
+    if (!active) return
+    const prev = document.activeElement as HTMLElement | null
+    const focusTimer = window.setTimeout(() => {
+      const card = cardRef.current
+      ;(card?.querySelector<HTMLElement>('[data-autofocus]') ?? card)?.focus()
+    }, 30)
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        setDone(true)
+        return
+      }
+      const card = cardRef.current
+      if (e.key !== 'Tab' || !card) return
+      const els = Array.from(card.querySelectorAll<HTMLElement>(TOUR_FOCUSABLE)).filter((el) => el.offsetParent !== null)
+      if (!els.length) return
+      const first = els[0]
+      const last = els[els.length - 1]
+      const inside = card.contains(document.activeElement)
+      if (e.shiftKey && (document.activeElement === first || !inside)) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && (document.activeElement === last || !inside)) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+    document.addEventListener('keydown', onKey, true)
+    return () => {
+      window.clearTimeout(focusTimer)
+      document.removeEventListener('keydown', onKey, true)
+      if (document.body.contains(prev)) prev?.focus?.()
+    }
+  }, [active, setDone])
 
-  if (done) return null
+  if (!active) return null
   const last = step === TOUR_STEPS.length - 1
   const pad = 8
+  // The card goes to the top when the spotlighted region is in the lower part of the screen (the mobile dock,
+  // the tool-options bar), so the card never covers the thing it is describing.
+  const atTop = !!rect && rect.top + rect.height / 2 > window.innerHeight * 0.45
   return (
     <div className="fixed inset-0 z-[110]" role="dialog" aria-modal="true" aria-label={t('studio.tour.label')}>
       <svg className="absolute inset-0 h-full w-full" aria-hidden>
@@ -112,14 +161,21 @@ export function OnboardingTour({ mode }: { mode: 'template' | 'free' }) {
         )}
       </svg>
       <motion.div
+        ref={cardRef}
         key={step}
-        initial={{ opacity: 0, y: 16 }}
+        tabIndex={-1}
+        initial={{ opacity: 0, y: atTop ? -16 : 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="paper absolute bottom-6 left-1/2 w-[min(420px,calc(100vw-32px))] -translate-x-1/2 rounded-[26px] border border-line p-6 shadow-lift"
+        className={cn(
+          'paper absolute left-1/2 max-h-[calc(100dvh-32px)] w-[min(420px,calc(100vw-32px))] -translate-x-1/2 overflow-y-auto rounded-[26px] border border-line p-5 shadow-lift outline-none sm:p-6',
+          atTop ? 'top-4' : 'bottom-6',
+        )}
       >
         <p className="eyebrow">{t('studio.tour.step', { n: step + 1, total: TOUR_STEPS.length })}</p>
         <h2 className="mt-2 font-display text-2xl">{t(`studio.tour.${key}.title`)}</h2>
-        <p className="mt-2 text-ink-soft">{t(`studio.tour.${key}.${key === 'primary' ? mode : 'body'}`)}</p>
+        <p className="mt-2 text-ink-soft">
+          {t(`studio.tour.${key}.${key === 'primary' ? mode : key === 'tools' && touch ? 'bodyTouch' : 'body'}`)}
+        </p>
         <div className="mt-5 flex items-center justify-between">
           <button type="button" onClick={() => setDone(true)} className="text-sm font-medium text-ink-faint hover:text-ink">
             {t('common.skip')}

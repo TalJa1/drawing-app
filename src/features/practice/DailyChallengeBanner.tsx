@@ -54,7 +54,7 @@ export function DailyChallengeBanner({ template, done }: { template: Template; d
         <div className="mx-auto w-full max-w-sm rotate-[1.5deg]">
           <Frame tone="gold" frameWidth={10} matWidth={12}>
             <div className="aspect-[4/3] p-2">
-              <TemplateImage template={template} alt={L(template.title)} />
+              <TemplateImage template={template} alt={L(template.title)} sizes="(min-width:640px) 384px, 88vw" priority />
             </div>
           </Frame>
           <p className="hand mt-3 -rotate-2 text-center text-xl text-[#F2A93B]">{t('practice.daily.note')}</p>

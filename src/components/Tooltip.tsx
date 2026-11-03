@@ -40,18 +40,21 @@ export function Tooltip({
       aria-describedby={open ? id : undefined}
     >
       {children}
-      <span
-        role="tooltip"
-        id={id}
-        className={cn(
-          'pointer-events-none absolute z-50 flex items-center gap-2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1.5 text-xs font-medium text-paper shadow-lift transition-[opacity,transform] duration-150',
-          pos[side],
-          open ? 'opacity-100' : 'invisible opacity-0',
-        )}
-      >
-        {label}
-        {shortcut && <kbd className="rounded border border-paper/30 px-1 font-mono text-[10px] text-paper/80">{shortcut}</kbd>}
-      </span>
+      {/* Mounted only while open. A bubble kept in the DOM with opacity-0 still counts towards the page's
+          scrollable width: on /learn at 375px it made the page 34px wider than the screen. */}
+      {open && (
+        <span
+          role="tooltip"
+          id={id}
+          className={cn(
+            'tooltip-in pointer-events-none absolute z-50 flex items-center gap-2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1.5 text-xs font-medium text-paper shadow-lift',
+            pos[side],
+          )}
+        >
+          {label}
+          {shortcut && <kbd className="rounded border border-paper/30 px-1 font-mono text-[10px] text-paper/80">{shortcut}</kbd>}
+        </span>
+      )}
     </span>
   )
 }

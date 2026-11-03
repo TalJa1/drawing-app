@@ -173,6 +173,9 @@ export interface paths {
     /**
      * Get Template Image
      * @description The template's PNG from Object Storage (the JSON advertises it as `imageUrl`).
+     *
+     *     The file is kept in memory between requests (services/image_cache.py), so a request that ends
+     *     in a 304 no longer costs a trip to the bucket. `?w=` answers a smaller WebP copy.
      */
     get: operations['get_template_image_api_v1_templates__template_id__image_get']
     put?: never
@@ -1411,6 +1414,14 @@ export interface components {
         [key: string]: number
       }
     }
+    /**
+     * ThumbWidth
+     * @description The widths `?w=` accepts. An enum, not a `Literal[...]` of ints: pydantic does not turn the
+     *     query-string text "480" into an int literal, but it does turn it into an int enum member.
+     *     tests/unit/test_image_cache.py checks this stays equal to image_cache.THUMB_WIDTHS.
+     * @enum {integer}
+     */
+    ThumbWidth: 320 | 480 | 640 | 960
     /** TryIt */
     TryIt: {
       /** Tool */
@@ -1705,7 +1716,10 @@ export interface operations {
   }
   get_template_image_api_v1_templates__template_id__image_get: {
     parameters: {
-      query?: never
+      query?: {
+        /** @description Width in px of a smaller WebP copy (the cards use this); omit for the PNG. */
+        w?: components['schemas']['ThumbWidth'] | null
+      }
       header?: never
       path: {
         template_id: string

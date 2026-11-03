@@ -321,9 +321,7 @@ function BadgeWall() {
                     'group flex h-full w-full flex-col items-center rounded-[22px] border p-4 text-center transition-shadow',
                     got ? 'paper border-line shadow-paper hover:shadow-lift' : 'border-dashed border-line-strong',
                   )}
-                  aria-label={
-                    hidden ? t('achievements.secretBadge') : `${L(b.name)} — ${got ? t('achievements.unlocked') : t('achievements.locked')}`
-                  }
+                  aria-label={`${hidden ? t('achievements.secretBadge') : L(b.name)} ${t(`rarity.${b.rarity}`)} — ${got ? t('achievements.unlocked') : t('achievements.locked')}`}
                 >
                   <BadgeMedal
                     badge={b}
@@ -331,7 +329,10 @@ function BadgeWall() {
                     size={76}
                     className="transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3"
                   />
-                  <p className={cn('mt-3 font-display text-base leading-tight', !got && 'text-ink-faint')}>{hidden ? '???' : L(b.name)}</p>
+                  <p className={cn('mt-3 font-display text-base leading-tight', !got && 'text-ink-faint')}>
+                    {hidden ? <span aria-hidden data-mask="???" className="before:content-[attr(data-mask)]" /> : L(b.name)}
+                  </p>
+                  {/* a space between the two lines: the visible text is "<name> <rarity>", which the button's name has to contain */}{' '}
                   <p
                     className={cn(
                       'mt-1 text-[10.5px] font-semibold uppercase tracking-wider',

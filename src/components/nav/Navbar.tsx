@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { preloadRoute } from '@/app/routes'
 import { useSession } from '@/store/session'
-import { useLiveStreak } from '@/features/gamification/hooks'
+import { useLevel, useLiveStreak } from '@/features/gamification/hooks'
 import { toast } from '@/store/ui'
 import { logout } from '@/api/auth'
 import { NAV_ITEMS } from './navItems'
@@ -18,6 +18,7 @@ import { MobileMenu } from './MobileMenu'
 function UserMenu() {
   const { t } = useTranslation()
   const user = useSession((s) => s.user)
+  const { level } = useLevel()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
@@ -44,7 +45,8 @@ function UserMenu() {
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={t('nav.accountMenu')}
+        // The badge on the button shows the level number, so the name includes it (WCAG 2.5.3 Label in Name).
+        aria-label={t('nav.accountMenuLevel', { level })}
         onClick={() => setOpen((o) => !o)}
         className="rounded-full"
       >

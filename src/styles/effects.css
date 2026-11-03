@@ -134,6 +134,16 @@
   );
   animation: shimmer 1.6s ease-in-out infinite;
 }
+/* Tooltip bubble: fades in when it is mounted (it is not mounted while closed, so there is no fade-out). */
+.tooltip-in {
+  animation: tooltip-in 0.15s ease-out both;
+}
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+  }
+}
+
 @keyframes shimmer {
   to {
     transform: translateX(100%);

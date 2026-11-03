@@ -46,36 +46,42 @@ export function ColourPanel({ suggested }: { suggested?: string[] }) {
       <div className="flex items-center justify-center pt-1">
         <ColourWheel value={color} onChange={setColor} onCommit={commit} size={220} />
       </div>
-      <div className="flex items-center gap-3">
-        <span className="h-11 w-11 shrink-0 rounded-2xl border border-black/10 shadow-inner" style={{ background: color }} aria-hidden />
-        <label className="flex flex-1 flex-col gap-1 text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
-          {t('colour.hex')}
-          <input
-            value={hexDraft ?? color.toUpperCase()}
-            onChange={(e) => setHexDraft(e.target.value)}
-            onBlur={() => {
-              const n = hexDraft && normalizeHex(hexDraft)
-              if (n) commit(n)
-              setHexDraft(null)
-            }}
-            onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
-            className="h-9 rounded-xl border border-line-strong bg-card px-3 font-mono text-sm normal-case tracking-normal text-ink"
-            spellCheck={false}
-          />
-        </label>
-        {(['r', 'g', 'b'] as const).map((ch) => (
-          <label key={ch} className="flex w-14 flex-col gap-1 text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
-            {ch}
+      {/* Hex on its own row, R/G/B in three equal columns under it: one row of swatch + hex + three number
+          boxes did not fit the 340 px panel and the boxes were cut off. */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-3">
+          <span className="h-11 w-11 shrink-0 rounded-2xl border border-black/10 shadow-inner" style={{ background: color }} aria-hidden />
+          <label className="flex min-w-0 flex-1 flex-col gap-1 text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+            {t('colour.hex')}
             <input
-              type="number"
-              min={0}
-              max={255}
-              value={rgb[ch]}
-              onChange={(e) => setChannel(ch, Number(e.target.value))}
-              className="h-9 rounded-xl border border-line-strong bg-card px-2 text-sm tabular-nums text-ink"
+              value={hexDraft ?? color.toUpperCase()}
+              onChange={(e) => setHexDraft(e.target.value)}
+              onBlur={() => {
+                const n = hexDraft && normalizeHex(hexDraft)
+                if (n) commit(n)
+                setHexDraft(null)
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+              className="h-9 w-full min-w-0 rounded-xl border border-line-strong bg-card px-3 font-mono text-sm normal-case tracking-normal text-ink"
+              spellCheck={false}
             />
           </label>
-        ))}
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {(['r', 'g', 'b'] as const).map((ch) => (
+            <label key={ch} className="flex min-w-0 flex-col gap-1 text-[11px] font-semibold uppercase tracking-wider text-ink-faint">
+              {ch}
+              <input
+                type="number"
+                min={0}
+                max={255}
+                value={rgb[ch]}
+                onChange={(e) => setChannel(ch, Number(e.target.value))}
+                className="h-9 w-full min-w-0 rounded-xl border border-line-strong bg-card px-2 text-sm tabular-nums text-ink"
+              />
+            </label>
+          ))}
+        </div>
       </div>
 
       {pending && (

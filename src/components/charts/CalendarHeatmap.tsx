@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { addDays, dayKey, parseDayKey } from '@/lib/date'
 import { cn } from '@/lib/utils'
 
+const cell = 14
+const gap = 3
 const STEPS = ['var(--seq-0)', 'var(--seq-1)', 'var(--seq-2)', 'var(--seq-3)', 'var(--seq-4)']
 
 /**
@@ -40,24 +42,47 @@ export function CalendarHeatmap({
       for (let d = 0; d < 7; d++) col.push(addDays(start, w * 7 + d))
       cols.push(col)
     }
-    const monthLabels = cols.map((col, i) => {
+    const raw = cols.map((col, i) => {
       const first = parseDayKey(col[0])
       const prev = i > 0 ? parseDayKey(cols[i - 1][0]) : null
       return !prev || prev.getMonth() !== first.getMonth() ? first.toLocaleDateString(locale, { month: 'short' }) : ''
+    })
+    // A label is about 5.8 px per character at 10 px; two labels closer than that would print on top of each
+    // other (the first column often starts a month that is only a few days long). Keep the later one then.
+    const colsNeeded = (m: string) => Math.ceil((m.length * 5.8 + 6) / (cell + gap))
+    const monthLabels = [...raw]
+    let last = -1
+    raw.forEach((m, i) => {
+      if (!m) return
+      if (last >= 0 && i - last < colsNeeded(raw[last])) {
+        if (last === 0)
+          monthLabels[last] = '' // the partial first month gives way
+        else {
+          monthLabels[i] = ''
+          return
+        }
+      }
+      last = i
     })
     return { cols, monthLabels }
   }, [weeks, locale])
 
   const today = dayKey()
+  // Monday, Wednesday and Friday in the page's language ("T2", "T4", "T6" in Vietnamese; "M", "W", "F" in English).
+  const weekdayLabels = useMemo(
+    () =>
+      [0, 1, 2, 3, 4, 5, 6].map((i) =>
+        i % 2 === 0 && i < 5 ? new Date(2024, 0, 1 + i).toLocaleDateString(locale, { weekday: 'narrow' }) : '',
+      ),
+    [locale],
+  )
   const level = (n: number) => (n <= 0 ? 0 : n === 1 ? 1 : n === 2 ? 2 : n <= 4 ? 3 : 4)
-  const cell = 14
-  const gap = 3
   const W = cols.length * (cell + gap) + 24
   const H = 7 * (cell + gap) + 18
 
   return (
     <figure className={cn('relative', className)}>
-      <div className="no-scrollbar overflow-x-auto">
+      <div className="no-scrollbar overflow-x-auto" role="region" aria-label={title} tabIndex={0}>
         <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} aria-hidden className="block">
           {monthLabels.map((m, i) =>
             m ? (
@@ -66,7 +91,7 @@ export function CalendarHeatmap({
               </text>
             ) : null,
           )}
-          {['M', '', 'W', '', 'F', '', ''].map((d, i) => (
+          {weekdayLabels.map((d, i) => (
             <text key={i} x={0} y={18 + i * (cell + gap) + cell - 3} className="fill-ink-faint text-[9px]">
               {d}
             </text>
