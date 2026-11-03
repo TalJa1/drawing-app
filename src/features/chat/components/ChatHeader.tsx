@@ -63,7 +63,10 @@ export function ChatHeader({
           <IconButton
             label={t('chat.history')}
             icon={<PanelLeft size={18} />}
-            onClick={onHistory}
+            onClick={(event) => {
+              event.currentTarget.focus()
+              onHistory()
+            }}
             className="!h-11 !w-11 max-lg:[&>button]:!h-11 max-lg:[&>button]:!w-11"
           />
         )}

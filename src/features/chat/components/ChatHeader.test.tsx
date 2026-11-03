@@ -49,6 +49,19 @@ it('small screens hide the subtitle and show all four modes', async () => {
   expect(screen.getAllByRole('radio')).toHaveLength(4)
 })
 
+it('focuses the history trigger before opening when pointer clicks do not focus buttons', async () => {
+  let focusedWhenOpened: Element | null = null
+  const onHistory = vi.fn(() => {
+    focusedWhenOpened = document.activeElement
+  })
+  await renderChat(<ChatHeader mode="ideas" onModeChange={vi.fn()} desktop={false} onHistory={onHistory} />)
+  const history = screen.getByRole('button', { name: 'Conversations' })
+  expect(history).not.toHaveFocus()
+  fireEvent.click(history)
+  expect(onHistory).toHaveBeenCalledOnce()
+  expect(focusedWhenOpened).toBe(history)
+})
+
 it('desktop mode row hides its scrollbar while keeping the mobile grid', async () => {
   await renderChat(<ChatHeader mode="ideas" onModeChange={vi.fn()} desktop onHistory={vi.fn()} />)
   expect(screen.getByRole('radiogroup')).toHaveClass('no-scrollbar', 'lg:overflow-x-auto', 'grid-cols-2', 'lg:flex')
