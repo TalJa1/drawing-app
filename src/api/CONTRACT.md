@@ -235,8 +235,8 @@ user's local timezone (send `X-Timezone`).
 | Function                               | Method & path                                      | Response                                                               |
 | -------------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
 | `getLessons()` / `getLesson(slug)`     | `GET /lessons`, `GET /lessons/:slug`               | `Lesson[]` / `Lesson`                                                  |
-| `getMovements()` / `getMovement(slug)` | `GET /movements[/:slug]`                           | `ArtMovement[]` / `ArtMovement`                                        |
-| `getArtists()` / `getArtist(slug)`     | `GET /artists[/:slug]`                             | `Artist[]` / `Artist`                                                  |
+| `getMovements()` / `getMovement(slug)` | _none: static content in `src/mocks`_              | `ArtMovement[]` / `ArtMovement`                                        |
+| `getArtists()` / `getArtist(slug)`     | _none: static content in `src/mocks`_              | `Artist[]` / `Artist`                                                  |
 | `getArtForms()` / `getArtForm(slug)`   | `GET /art-forms[/:slug]`                           | `ArtForm[]` / `ArtForm`                                                |
 | `getGlossary()`                        | `GET /glossary`                                    | `GlossaryTerm[]`                                                       |
 | `saveLessonProgress(slug, progress)`   | `PUT /lessons/:slug/progress` `{ progress: 0–1 }`  | `204` (the server keeps the largest)                                   |
@@ -273,6 +273,8 @@ as generative SVG placeholders; a CMS can supply licensed/public-domain images.
 | Function                       | Method & path                            | Request                                        | Response                    |
 | ------------------------------ | ---------------------------------------- | ---------------------------------------------- | --------------------------- |
 | `streamChatReply(req, signal)` | `POST /chat/stream` (Server-Sent Events) | `{ message, mode, lang, attachments?, seed? }` | stream of `ChatStreamEvent` |
+
+**Not built yet.** The back-end has no chat endpoint, so `streamChatReply` answers on the device. The row above is the proposed shape for when one exists.
 
 ```text
 event: token   data: {"type":"token","text":" Hello"}

@@ -2,7 +2,7 @@
 
 A web app for learning to draw and colour. You colour line-art templates and an "AI judge" scores them, you draw freely on a layered canvas, you chat with an art tutor ("the Muse"), you explore an art-history atlas, and you earn XP, streaks, badges and ranks along the way.
 
-This repository contains **only the front-end**. Every back-end behaviour (auth, storage, AI scoring, AI chat, leaderboards) is simulated behind `src/api/*`, which has the same signatures a real service would expose. See [How to connect the real back-end](#how-to-connect-the-real-back-end).
+This repository contains the **front-end**. The back-end is a separate FastAPI service (accounts, templates, artworks and their images, the AI judge, progress, challenges, the leaderboard, lessons and the data export). Two things are still local: the art tutor ("the Muse") and the movement and artist pages. See [What is on the server, and what is still local](#what-is-on-the-server-and-what-is-still-local).
 
 ---
 
@@ -10,20 +10,21 @@ This repository contains **only the front-end**. Every back-end behaviour (auth,
 
 ```bash
 npm install
-npm run dev          # http://localhost:5173
+npm run dev          # http://localhost:5173 (needs the back-end running: Vite forwards /api to http://127.0.0.1:8000)
 ```
 
-| Script             | What it does                                                                                                                                  |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`      | Vite dev server with HMR                                                                                                                      |
-| `npm run build`    | Type-check (`tsc -b`), then production build to `dist/`                                                                                       |
-| `npm run preview`  | Serve the production build                                                                                                                    |
-| `npm run lint`     | ESLint (typescript-eslint, React hooks incl. React Compiler rules, react-refresh)                                                             |
-| `npm run format`   | Prettier                                                                                                                                      |
-| `npm test`         | Vitest unit tests (scoring, gamification rules, flood fill, image analysis, colour maths, chat intents, i18n key parity)                      |
-| `npm run test:e2e` | Playwright smoke tests (desktop Chrome and Pixel 7). Starts its own dev server on port 5199. Run `npx playwright install chromium` once first |
+| Script             | What it does                                                                                                                                                                 |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`      | Vite dev server with HMR                                                                                                                                                     |
+| `npm run build`    | Type-check (`tsc -b`), then production build to `dist/`                                                                                                                      |
+| `npm run preview`  | Serve the production build                                                                                                                                                   |
+| `npm run lint`     | ESLint (typescript-eslint, React hooks incl. React Compiler rules, react-refresh)                                                                                            |
+| `npm run format`   | Prettier                                                                                                                                                                     |
+| `npm run gen:api`  | Regenerates `src/api/schema.d.ts` (the back-end's types) from its OpenAPI document at `http://127.0.0.1:8000/openapi.json`                                                   |
+| `npm test`         | Vitest unit tests (scoring, gamification rules, flood fill, image analysis, colour maths, chat intents, i18n key parity)                                                     |
+| `npm run test:e2e` | Playwright smoke tests (desktop Chrome and Pixel 7). Starts its own dev server on port 5199 and needs the back-end running. Run `npx playwright install chromium` once first |
 
-Optional environment variable: `VITE_API_BASE` (default `/api`). Only the future real client reads it.
+Environment (see `.env.example`): `VITE_API_BASE` (default `/api/v1`, same origin; set it when the API is on another origin, and the back-end must then list this site in `CORS_ORIGINS`) and, for development only, `VITE_PROXY_TARGET` (default `http://127.0.0.1:8000`). The live browser specs in `e2e-live/` run against a real back-end; see `e2e-live/README.md`.
 
 ### Trying it quickly
 
@@ -33,17 +34,17 @@ Optional environment variable: `VITE_API_BASE` (default `/api`). Only the future
 
 ## Tech stack
 
-| Area         | Choice                                                                                                                  |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| Build        | Vite 8 (Rolldown), TypeScript strict, path alias `@/` → `src/`                                                          |
-| UI           | React 19, Tailwind CSS v4 (CSS-first `@theme`), framer-motion, lucide-react                                             |
-| Routing      | react-router-dom 6 data router, lazy route chunks, prefetch on hover/focus                                              |
-| Server state | TanStack Query 5 on top of `src/api/*` (`src/api/queries.ts`)                                                           |
-| Client state | Zustand 5 with `persist` (localStorage). Images and drafts go to IndexedDB via `idb-keyval`, with an in-memory fallback |
-| Forms        | react-hook-form + zod                                                                                                   |
-| i18n         | i18next / react-i18next, English + Vietnamese. English is bundled, Vietnamese loads lazily                              |
-| Drawing      | A hand-written Canvas 2D engine (`src/features/drawing/engine`), no canvas library                                      |
-| Tests        | Vitest + Testing Library (jsdom), Playwright + axe-core                                                                 |
+| Area         | Choice                                                                                                                                                         |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Build        | Vite 8 (Rolldown), TypeScript strict, path alias `@/` → `src/`                                                                                                 |
+| UI           | React 19, Tailwind CSS v4 (CSS-first `@theme`), framer-motion, lucide-react                                                                                    |
+| Routing      | react-router-dom 6 data router, lazy route chunks, prefetch on hover/focus                                                                                     |
+| Server state | TanStack Query 5 on top of `src/api/*` (`src/api/queries.ts`)                                                                                                  |
+| Client state | Zustand 5 with `persist` (localStorage) for preferences and a guest's own progress. Studio drafts go to IndexedDB via `idb-keyval`, with an in-memory fallback |
+| Forms        | react-hook-form + zod                                                                                                                                          |
+| i18n         | i18next / react-i18next, English + Vietnamese. English is bundled, Vietnamese loads lazily                                                                     |
+| Drawing      | A hand-written Canvas 2D engine (`src/features/drawing/engine`), no canvas library                                                                             |
+| Tests        | Vitest + Testing Library (jsdom), Playwright (smoke specs in `e2e/`, live specs against a real back-end in `e2e-live/`)                                        |
 
 ---
 
@@ -51,7 +52,7 @@ Optional environment variable: `VITE_API_BASE` (default `/api`). Only the future
 
 ```
 src/
-  api/            Mock "server": one file per domain, plus queries.ts (TanStack hooks) and CONTRACT.md
+  api/            The client for the back-end: one file per domain, plus queries.ts (TanStack hooks) and CONTRACT.md
   app/            Router, route map and lazy loading, app shell, layouts, i18n bootstrap, theme hooks
   components/     Design system: Button, Card, Frame, Modal/Sheet, Tabs, Form, Toaster, charts/, art/, nav/
   features/
@@ -62,14 +63,14 @@ src/
     chat/         The Muse, chat cards
     collection/   Artwork image, lightbox
   pages/          One folder per route; pages compose features
-  mocks/          Seed content: 27 SVG templates, 46 badges, challenges, 31 movements, 33 artists,
-                  20 art forms, 26 lessons, ~72 glossary terms, palettes, chat and judge copy
-  store/          Zustand stores (settings, session, progress, collection, learn, chat, studio, ui)
+  mocks/          Static content that has no endpoint (movements, artists, chat and judge copy) and the local rules a guest uses
+  store/          Zustand stores (settings, session, progress, learn, chat, studio, ui)
   i18n/           en.json, vi.json (~1,000 keys each), useL helpers for bilingual content fields
   lib/            Colour maths, seeded random, dates, hooks, raster helpers, confetti, sound
   styles/         tokens.css (pigment palette), textures.css, effects.css
   types/          Shared domain types; these are the API contract types
-e2e/              Playwright smoke tests
+e2e/              Playwright smoke tests (need the back-end)
+e2e-live/         Playwright specs that run against a real back-end (see its README)
 ```
 
 ---
@@ -84,17 +85,22 @@ e2e/              Playwright smoke tests
 
 ---
 
-## What is simulated, and how
+## What is on the server, and what is still local
 
-| Feature         | Simulation                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Network         | `request()` in `src/api/client.ts` talks to the back-end (Bearer token, timeout, `ApiError`); there is no simulated latency or failure any more                                                                                                                                                                                                                                                                                                                               |
-| Auth            | Any email and password of 6+ characters works. The user is stored in localStorage. Guests can use everything                                                                                                                                                                                                                                                                                                                                                                  |
-| Artwork storage | Metadata in a Zustand store, image blobs in IndexedDB                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| **AI judge**    | Heuristic, not random. `features/drawing/analysis.ts` measures the colouring: coverage of each region, spill outside the lines, hue variety, colour harmony, match with the suggested palette, value range, and evenness across a grid. `api/scoring.ts` turns those measurements into sub-scores, an overall score, a rank, strengths and tips, plus a small seeded jitter. An empty canvas scores low, careful colouring scores high, and 85+ triggers the gold celebration |
-| AI chat         | Intent detection (EN and VI, accent-insensitive whole-word matching) feeds templated replies with rich cards (palettes, templates, lessons, artworks). Replies stream token by token through an async generator and can be stopped                                                                                                                                                                                                                                            |
-| Leaderboard     | 20 sample artists, with you merged in at your real XP                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| Daily challenge | A deterministic template per calendar day                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Area                                                                                                | Where it lives                                                                                                                                                                                                                                    |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accounts: register, sign in and out, profile (`GET`/`PATCH /me`)                                    | Server (`src/api/auth.ts`)                                                                                                                                                                                                                        |
+| Templates, the daily template, how popular each template is                                         | Server (`src/api/templates.ts`)                                                                                                                                                                                                                   |
+| Artworks: save, list, edit, delete, image and thumbnail                                             | Server (`src/api/artworks.ts`)                                                                                                                                                                                                                    |
+| **AI judge**                                                                                        | Server (`POST /artworks/{id}/score`, `src/api/scoring.ts`). `features/drawing/analysis.ts` still measures the colouring in the browser, and the old local judge (`buildScore`) is kept only as the reference the server's judge is tested against |
+| Progress, challenges, achievements, leaderboard                                                     | Server (`src/api/progress.ts`). A guest's activity runs the same rules on the device                                                                                                                                                              |
+| Lessons, quizzes, art forms, glossary, bookmarks, flashcards                                        | Server (`src/api/learn.ts`). A guest's learning state stays on the device                                                                                                                                                                         |
+| Data export                                                                                         | Server (`GET /me/export`, signed-in users only)                                                                                                                                                                                                   |
+| Movements and artists                                                                               | Static content in `src/mocks` (there is no endpoint for them)                                                                                                                                                                                     |
+| AI chat (the Muse)                                                                                  | Still local: intent detection (EN and VI, accent-insensitive whole-word matching) feeds templated replies with rich cards. Replies stream token by token through an async generator and can be stopped                                            |
+| Drawing engine, studio drafts (IndexedDB), theme, language, sound, reduced motion, onboarding flags | The device                                                                                                                                                                                                                                        |
+
+`src/api/CONTRACT.md` is the reference for every function, its method and path, and its response.
 
 ---
 
@@ -111,57 +117,31 @@ The brief asked me to decide things myself and record them here.
 7. **lucide-react v1 renamed some icons** (`AlertCircle` → `CircleAlert`, `Wand2` → `WandSparkles`, and others). The current names are used.
 8. **`@hookform/resolvers` is pinned to v5.** v6 has a peer-dependency conflict with the current react-hook-form.
 9. **react-router stays on v6** with the v7 future flags on, so upgrading later is a drop-in change.
-10. **Guest-first.** Login is optional and progress is kept locally. A real back-end would merge guest progress into the account at sign-up (see the checklist).
+10. **Guest-first.** Drawing, learning and the chat work without signing in, and a guest's progress stays on this device. Saving to a collection and being judged need an account: a guest who asks for them is sent to sign in and brought back.
 
 ---
 
-## Quality results (measured locally on the production build)
+## Quality results
 
-| Check                                         | Result                                                                          |
-| --------------------------------------------- | ------------------------------------------------------------------------------- |
-| Unit tests                                    | 50 passing                                                                      |
-| Playwright smoke tests                        | 6 passing (2 desktop-only flows skipped on mobile)                              |
-| axe-core (11 key pages, both themes)          | 0 serious or moderate violations                                                |
-| Lighthouse desktop                            | Home **94**, Practice **97**. Accessibility 100, Best Practices 100, CLS ≤ 0.09 |
-| Lighthouse mobile (simulated slow 4G, 4× CPU) | Home **about 62**, Practice **about 66**. LCP is about 6 s                      |
+| Check                                         | Result                                                                                                                       |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Unit tests                                    | 475 passing in 34 files (measured 3 Nov 2026)                                                                                |
+| Playwright smoke tests (`e2e/`)               | 14 passing, 10 skipped (desktop Chrome and Pixel 7; needs the back-end running; measured 3 Nov 2026)                         |
+| axe-core (11 key pages, both themes)          | 0 serious or moderate violations when it was last run. No spec in this repository repeats it now, so treat it as out of date |
+| Lighthouse desktop                            | Home **94**, Practice **97**. Accessibility 100, Best Practices 100, CLS ≤ 0.09                                              |
+| Lighthouse mobile (simulated slow 4G, 4× CPU) | Home **about 62**, Practice **about 66**. LCP is about 6 s                                                                   |
+
+The Lighthouse rows and the axe row were measured on the production build before the back-end was connected and have not been repeated since.
 
 **Mobile performance does not meet the 90+ target.** The client-rendered SPA has to download and parse React, the router and the motion runtime before it can paint real content. A static splash screen paints immediately, but Lighthouse doesn't count it as LCP. Reaching 90+ on throttled mobile would realistically need pre-rendering or SSR of the landing page (for example Vite SSG or moving to a framework), plus lighter hero art. I did not do that because the brief asked for an SPA.
 
 ---
 
-## How to connect the real back-end
+## Talking to the back-end
 
-Pages never call `fetch` directly. They go through **TanStack Query hooks in `src/api/queries.ts`**, which call the functions below. To go live:
+Pages never call `fetch` directly. They go through **TanStack Query hooks in `src/api/queries.ts`**, which call the functions in `src/api/*`. Every request goes through `request()` in `src/api/client.ts` (Bearer token, 15 s timeout, non-2xx answers become `ApiError(message, status, code)`). The back-end's types come from its OpenAPI document (`npm run gen:api`), and `src/api/contract.ts` checks at compile time that the app's types still fit them.
 
-1. Create a real HTTP client in `src/api/client.ts` (base URL `API_BASE`, auth header, JSON parsing, mapping non-2xx responses to `ApiError(message, status, code)`).
-2. Replace each function body below with a request. **Keep the signatures and return types** (they are defined in `src/types` and documented in `src/api/CONTRACT.md`). The UI, caching and invalidation then keep working unchanged.
-3. Move anything persisted in Zustand stores that is really server state (artworks, progress, learn progress, chat history) to query data. Keep only UI preferences (`settings`, `studio`, `ui`) local.
-4. Tick each row as you go:
-
-| ☐   | Function (`src/api/…`)                                                                                                                        | Used by                                     | Real service                                                                                                                                                                                                                                                     |
-| --- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ☐   | `auth.login` / `auth.register`                                                                                                                | `/login`, `/register`                       | `POST /auth/login`, `POST /auth/register` → `{ user, token }`. Store the token (httpOnly cookie preferred). On register, **merge guest progress**                                                                                                                |
-| ☐   | `auth.logout`                                                                                                                                 | Navbar, Profile                             | `POST /auth/logout`                                                                                                                                                                                                                                              |
-| ☐   | `auth.updateProfile`                                                                                                                          | Profile                                     | `PATCH /me`                                                                                                                                                                                                                                                      |
-| ☐   | `templates.getTemplates` / `getTemplate`                                                                                                      | `/practice`, studio, home                   | `GET /templates`, `GET /templates/:id` (SVG line art + regions + palette)                                                                                                                                                                                        |
-| ☐   | `templates.dailyTemplateId`                                                                                                                   | Daily challenge banner                      | `GET /challenges/daily` (server decides, so it is the same for every user)                                                                                                                                                                                       |
-| ☐   | `artworks.saveArtwork` / `submitArtwork`                                                                                                      | Free Draw save, practice submit             | `POST /artworks` (multipart: PNG + metadata) → `Artwork`                                                                                                                                                                                                         |
-| ☐   | `artworks.listArtworks` / `getArtwork`                                                                                                        | `/collection`, result page, profile         | `GET /artworks`, `GET /artworks/:id`                                                                                                                                                                                                                             |
-| ☐   | `artworks.updateArtwork` / `deleteArtwork`                                                                                                    | Collection, lightbox                        | `PATCH /artworks/:id`, `DELETE /artworks/:id`                                                                                                                                                                                                                    |
-| ☐   | `artworks.getImageUrl` / `getImageBlob` (+ `imageStore.*`)                                                                                    | Every artwork thumbnail                     | Signed CDN URLs returned with each `Artwork`. `imageStore` stays only for **local drafts**                                                                                                                                                                       |
-| ☐   | `scoring.scoreArtwork`                                                                                                                        | Scoring ceremony → `/practice/result/:id`   | `POST /artworks/:id/score` → `ScoreResult` (vision model). Today it calls the local `analyse()` + `buildScore()`. The server can reuse the same sub-score names so the radar chart and tips still render. Consider a job/poll or SSE endpoint if scoring is slow |
-| ☐   | `progress.recordActivity`                                                                                                                     | After submit, lesson, quiz, chat, free draw | Server-side event: `POST /progress/events` → `RewardSummary` (XP, level-up, new badges). **Gamification must be authoritative on the server**. Port `features/gamification/rules.ts`, which is pure and tested                                                   |
-| ☐   | `progress.getChallenges` / `claimChallenge`                                                                                                   | Achievements, home                          | `GET /challenges`, `POST /challenges/:id/claim`                                                                                                                                                                                                                  |
-| ☐   | `progress.getAchievements`                                                                                                                    | `/achievements`, profile                    | `GET /me/achievements` (XP, level, streak, badges, history)                                                                                                                                                                                                      |
-| ☐   | `progress.getLeaderboard`                                                                                                                     | Achievements → leaderboard                  | `GET /leaderboard?scope=weekly\|all`                                                                                                                                                                                                                             |
-| ☐   | `learn.getLessons` / `getLesson` / `getMovements` / `getMovement` / `getArtists` / `getArtist` / `getArtForms` / `getArtForm` / `getGlossary` | All `/learn/*` pages                        | CMS endpoints (or keep them static. The content is already bilingual in `src/mocks`)                                                                                                                                                                             |
-| ☐   | `learn.saveLessonProgress` / `completeLesson`                                                                                                 | Lesson page                                 | `PUT /me/lessons/:slug`                                                                                                                                                                                                                                          |
-| ☐   | `learn.submitQuiz`                                                                                                                            | Lesson quiz                                 | `POST /lessons/:slug/quiz` → `QuizResult` (grade on the server)                                                                                                                                                                                                  |
-| ☐   | `chat.streamChatReply`                                                                                                                        | `/chat`, Free Draw Muse drawer              | `POST /chat` with SSE or fetch streaming. Map chunks to `ChatStreamEvent` (`token`, `card`, `done`). Pass the `AbortSignal` through. `detectIntent` / `buildReply` can then be deleted                                                                           |
-| ☐   | `chat.titleFor`                                                                                                                               | Chat sidebar                                | Server-generated conversation title (optional)                                                                                                                                                                                                                   |
-| ☑   | `account.exportData`                                                                                                                          | Profile → Data                              | `GET /me/export` (signed-in users only). There is no `DELETE /me`                                                                                                                                                                                                |
-
-The **local-only** parts that stay in the browser are the drawing engine, studio autosave drafts (IndexedDB), theme, language, sound, reduced motion and the onboarding flags.
+Besides the static movement and artist pages, the one function that is still local is `chat.streamChatReply`. Connecting it means a `POST /chat` endpoint with streaming, mapping the chunks to `ChatStreamEvent` (`token`, `card`, `done`) and passing the `AbortSignal` through; `detectIntent` and `buildReply` could then be deleted.
 
 ---
 
