@@ -1,5 +1,4 @@
 import type { ArtworkAnalysis } from '@/types'
-import { useCollection } from '@/store/collection'
 import { useProgress } from '@/store/progress'
 import en from '@/i18n/en.json'
 import vi_ from '@/i18n/vi.json'
@@ -76,7 +75,7 @@ beforeEach(() => {
   vi.stubGlobal('fetch', fetchMock)
   vi.stubGlobal('URL', Object.assign(URL, { createObjectURL: () => `blob:test/${++urlSeq}`, revokeObjectURL: revoke }))
   useSession.setState({ user: { ...GUEST, id: 'u1', isGuest: false }, token: 'tok-1' })
-  useCollection.setState({ artworks: [] })
+  localStorage.removeItem('artspark:collection')
   clearImageCache()
   setImageCacheLimit(IMAGE_CACHE_LIMIT_BYTES)
   revoke.mockReset()
@@ -178,7 +177,7 @@ describe('saveArtwork', () => {
   it('keeps nothing on this device: the account is the only place the picture lives', async () => {
     fetchMock.mockResolvedValue(json(201, wire({ reward: REWARD })))
     await saveArtwork({ ...base, kind: 'free' })
-    expect(useCollection.getState().artworks).toEqual([])
+    expect(localStorage.getItem('artspark:collection')).toBeNull() // the old local copy of the collection is never written again
   })
 })
 

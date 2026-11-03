@@ -1,5 +1,4 @@
 import type { ArtworkAnalysis } from '@/types'
-import { useCollection } from '@/store/collection'
 import { useProgress } from '@/store/progress'
 import { GUEST, useSession } from '@/store/session'
 import { buildScore, computeSubScores, rankForScore, scoreArtwork } from './scoring'
@@ -143,7 +142,7 @@ describe('scoreArtwork (POST /artworks/:id/score)', () => {
     fetchMock.mockReset()
     vi.stubGlobal('fetch', fetchMock)
     useProgress.getState().reset()
-    useCollection.setState({ artworks: [] })
+    localStorage.removeItem('artspark:collection')
     useSession.setState({ user: { ...GUEST, id: 'u1', isGuest: false }, token: 'tok-1' })
   })
   afterEach(() => {
@@ -193,7 +192,7 @@ describe('scoreArtwork (POST /artworks/:id/score)', () => {
   it('keeps nothing on this device and never judges here', async () => {
     route()
     await scoreArtwork(ID)
-    expect(useCollection.getState().artworks).toEqual([])
+    expect(localStorage.getItem('artspark:collection')).toBeNull() // the old local copy of the collection is never written again
   })
 
   it.each([

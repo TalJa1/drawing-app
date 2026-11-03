@@ -35,7 +35,6 @@ export const persistStorage = createJSONStorage(() => safeLocalStorage)
 export const STORE_KEYS = {
   settings: 'artspark:settings',
   session: 'artspark:session',
-  collection: 'artspark:collection',
   progress: 'artspark:progress',
   learn: 'artspark:learn',
   chat: 'artspark:chat',
