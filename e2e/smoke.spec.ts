@@ -27,7 +27,14 @@ test('landing page loads with hero and CTAs', async ({ page }) => {
 test('practice: open a template, draw, submit and see the result', async ({ page }, info) => {
   test.skip(info.project.name === 'mobile', 'covered on desktop; mobile layout checked separately')
   const errors = await freshApp(page)
-  await page.goto('/practice')
+  // being judged needs an account (a guest is sent to sign in), so make one first; this test needs the back-end running
+  await page.goto('/register')
+  await page.getByLabel('Artist name').fill('Smoke Tester')
+  await page.getByLabel('Email').fill(`smoke-${Date.now()}@example.com`)
+  await page.getByLabel('Password', { exact: true }).fill('long-enough-1')
+  await page.getByLabel('Confirm password').fill('long-enough-1')
+  await page.getByRole('button', { name: /create account/i }).click()
+  await expect(page).toHaveURL(/\/practice$/)
   await page.getByRole('link', { name: /Sitting Fox/ }).click()
   await expect(page).toHaveURL(/\/practice\/fox/)
   const canvas = page.getByRole('img', { name: 'Drawing canvas' })

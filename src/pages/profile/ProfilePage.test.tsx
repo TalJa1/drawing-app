@@ -100,6 +100,24 @@ describe('ProfilePage — the data card', () => {
     expect(lastToast()?.title).toBe(en.profile.exported)
   })
 
+  it('names the file with the UTC date, the same day the server puts in its own file name', async () => {
+    // 23:30 on 3 November in New York is already 4 November in UTC
+    vi.stubEnv('TZ', 'America/New_York')
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-11-03T23:30:00-05:00'))
+    try {
+      signIn()
+      serve({ 'GET /lessons': () => json(200, []), 'GET /me/export': () => json(200, { app: 'Art Spark' }) })
+      mount()
+      fireEvent.click(screen.getByRole('button', { name: en.profile.export }))
+      await waitFor(() => expect(downloadBlob).toHaveBeenCalledTimes(1))
+      expect(downloadBlob.mock.calls[0][1]).toBe('art-spark-data-2026-11-04.json')
+    } finally {
+      vi.useRealTimers()
+      vi.unstubAllEnvs()
+    }
+  })
+
   it('says so, and saves nothing, when the server refuses (too many exports)', async () => {
     signIn()
     serve({

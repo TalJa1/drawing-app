@@ -71,6 +71,7 @@ export default function ProfilePage() {
     try {
       const blob = await exportData()
       if (useSession.getState().token !== asked) return
+      // the UTC date (toISOString is UTC), like the file name the server suggests in `Content-Disposition`
       downloadBlob(blob, `art-spark-data-${new Date().toISOString().slice(0, 10)}.json`)
       toast({ title: t('profile.exported'), tone: 'success' })
     } catch (e) {
