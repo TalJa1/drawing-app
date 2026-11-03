@@ -326,6 +326,74 @@ own catalog; locked historical/mock templates show a lock without a link. Palett
 copy HEX or send the palette to Studio; ideas open Free Draw; critiques select their own
 image context for a follow-up. These actions do not award XP or complete lessons.
 
+### Practice feedback — `POST /api/v1/ai/judge/feedback`
+
+Muse writes short feedback on a scored practice drawing (`src/api/ai/judgeContract.ts`,
+`src/features/ai-judge/`). The formula in `src/api/scoring.ts` stays the only score: the
+request carries the score as read-only data, and the response never returns or changes a
+score, rank, XP, badge or progress. The panel sends nothing until the learner presses
+"Ask Muse for feedback". `VITE_CHAT_TRANSPORT` selects the transport exactly as for chat;
+the mock answers from canned copy aimed at the weakest sub-score after about 800 ms.
+
+```json
+{
+  "protocolVersion": 1,
+  "requestId": "j_1",
+  "lang": "vi",
+  "templateId": "fox",
+  "image": {
+    "id": "a_1",
+    "name": "fox.jpg",
+    "mime": "image/jpeg",
+    "dataUrl": "data:image/jpeg;base64,…",
+    "width": 1200,
+    "height": 900,
+    "hash": "…"
+  },
+  "score": {
+    "overall": 71,
+    "similarity": 78,
+    "colour": 63,
+    "rank": "steady",
+    "sub": { "lineAccuracy": 80, "composition": 84, "proportion": 70, "harmony": 52, "suitability": 66, "aesthetics": 71 }
+  }
+}
+```
+
+The chat rules for camelCase, unknown fields, strict types, headers and `Content-Encoding`
+apply. Scores are integers 0–100, `rank` is `starter|rising|steady|gallery|masterpiece`,
+and `templateId` must exist in the backend catalog. The image follows the chat image
+limits (the browser sends the drawing's `analysisBlob` from `prepareImage`); the whole
+body is at most 2,000,000 bytes.
+
+```json
+{ "protocolVersion": 1, "feedback": { "summary": "…", "strengths": ["…"], "tips": ["…", "…"], "exercise": "…" } }
+```
+
+The `200 application/json` response has `summary` 1–240, `strengths` 1–2 × 1–160, `tips`
+1–3 × 1–180 and `exercise` 1–200 Unicode characters of plain text in `lang`. FE validates
+it with zod; anything else is `protocol`.
+
+| HTTP | Codes                                                                              |
+| ---- | ---------------------------------------------------------------------------------- |
+| 401  | `unauthorized`                                                                     |
+| 503  | `ai_not_configured`, `service_unavailable`, `model_unavailable`                    |
+| 429  | `rate_limited`, `ai_busy`, `ai_budget_exceeded`; `Retry-After` in seconds          |
+| 413  | `payload_too_large`                                                                |
+| 415  | `unsupported_media_type`                                                           |
+| 400  | `bad_request`                                                                      |
+| 422  | `validation_error` (schema, image, unknown template)                               |
+| 502  | `upstream` (model error, refusal, unfinished answer, or output outside the schema) |
+| 504  | `timeout` (30-second model deadline)                                               |
+
+Errors use the backend envelope; unknown codes become `upstream`, a failed fetch is
+`network`, and a drawing that cannot be loaded is `image_missing`. The endpoint allows 10
+requests per 600 seconds per identity on its own key, shares the daily budgets and the
+stream slots with chat (one active AI request per identity, three overall), and never
+retries. The panel keeps answers in memory for the session, keyed by artwork id,
+`scoredAt` and language; nothing is stored in localStorage or IndexedDB. Unmounting the
+panel aborts the request.
+
 ## Account & dev — `src/api/account.ts`, `src/api/demo.ts`
 
 | Function                             | Method & path                           | Response                                                                |
