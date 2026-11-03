@@ -101,7 +101,7 @@
     "goHome": "Back home",
     "api": {
       "template_locked": "That template isn’t unlocked yet. Keep drawing to reach its level.",
-      "rate_limited": "You’ve reached today’s limit. Please try again later.",
+      "rate_limited": "You’re doing that too often. Please wait a little, then try again.",
       "payload_too_large": "That picture is too large to save.",
       "unsupported_media_type": "That picture format isn’t supported.",
       "not_found": "We couldn’t find that artwork. It may have been deleted.",

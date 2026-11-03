@@ -108,7 +108,7 @@ describe('Quiz (signed in)', () => {
     fetchMock.mockResolvedValueOnce(failure(429, 'rate_limited')).mockResolvedValueOnce(json(200, RESULT))
     render(<Quiz quiz={QUIZ} />)
     await answerAll()
-    expect(await screen.findByRole('alert')).toHaveTextContent('limit')
+    expect(await screen.findByRole('alert')).toHaveTextContent(en.errors.api.rate_limited)
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }))
     await waitFor(() => expect(screen.queryByRole('alert')).not.toBeInTheDocument())
   })

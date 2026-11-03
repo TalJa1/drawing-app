@@ -101,7 +101,7 @@
     "goHome": "Về trang chủ",
     "api": {
       "template_locked": "Mẫu này chưa mở khóa. Hãy vẽ thêm để đạt cấp cần thiết.",
-      "rate_limited": "Bạn đã đạt giới hạn hôm nay. Vui lòng thử lại sau.",
+      "rate_limited": "Bạn thao tác quá nhanh. Vui lòng đợi một lát rồi thử lại.",
       "payload_too_large": "Bức tranh này quá lớn để lưu.",
       "unsupported_media_type": "Định dạng ảnh này chưa được hỗ trợ.",
       "not_found": "Không tìm thấy bức tranh này. Có thể nó đã bị xóa.",
