@@ -116,4 +116,35 @@ test.describe('studio panels', () => {
       expect(b.x + b.width, `chip ${i} right edge`).toBeLessThanOrEqual(d.x + d.width)
     }
   })
+
+  // The "Redo" row has two long chips; in the two-column list they used to run over the label ("Re..." under them).
+  for (const language of ['en', 'vi'] as const) {
+    for (const width of [360, 640, 768, 1024, 1440]) {
+      test(`shortcut rows: no chip covers its label (${language}, ${width}px)`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 900 })
+        await open(page, '/free-draw', { language })
+        await page.keyboard.press('?')
+        const dialog = page.locator('[role="dialog"][aria-modal="true"]:visible').first()
+        await expect(dialog).toBeVisible()
+        const rows = await dialog.locator('dl > div').evaluateAll((els) =>
+          els.map((row) => {
+            const dt = row.querySelector('dt')!.getBoundingClientRect()
+            const dd = row.querySelector('dd')!.getBoundingClientRect()
+            const r = row.getBoundingClientRect()
+            const text = row.querySelector('dt')!.textContent
+            const hit =
+              Math.min(dt.right, dd.right) - Math.max(dt.left, dd.left) > 0.5 &&
+              Math.min(dt.bottom, dd.bottom) - Math.max(dt.top, dd.top) > 0.5
+            return { text, hit, ddRight: dd.right, rowRight: r.right, dtLeft: dt.left, rowLeft: r.left }
+          }),
+        )
+        expect(rows.length).toBeGreaterThan(15)
+        for (const r of rows) {
+          expect(r.hit, `"${r.text}": the chips sit over the label`).toBe(false)
+          expect(r.ddRight, `"${r.text}": chips run past the row`).toBeLessThanOrEqual(r.rowRight + 0.5)
+          expect(r.dtLeft, `"${r.text}": label starts before the row`).toBeGreaterThanOrEqual(r.rowLeft - 0.5)
+        }
+      })
+    }
+  }
 })

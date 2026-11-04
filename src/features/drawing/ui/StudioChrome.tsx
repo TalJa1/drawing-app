@@ -7,7 +7,8 @@ import { cn } from '@/lib/utils'
 import { useMediaQuery } from '@/lib/hooks'
 import { useSettings } from '@/store/settings'
 
-/** Each entry has one chip per alternative way to do it; a long combination no longer has to fit in one chip. */
+/** Each entry has one chip per alternative way to do it; a long combination no longer has to fit in one chip.
+ *  A row whose chips do not fit beside the label drops them under it (right-aligned) instead of running over it. */
 const SHORTCUTS: [string[], string][] = [
   [['B / P / M'], 'studio.sc.brushes'],
   [['W / A / C'], 'studio.sc.paints'],
@@ -34,9 +35,9 @@ export function ShortcutsModal({ open, onClose }: { open: boolean; onClose: () =
     <Modal open={open} onClose={onClose} title={t('studio.shortcuts')} size="md">
       <dl className="grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2">
         {SHORTCUTS.map(([keys, label]) => (
-          <div key={label} className="flex items-center justify-between gap-3 border-b border-line pb-2">
-            <dt className="min-w-0 text-sm text-ink-soft">{t(label)}</dt>
-            <dd className="flex shrink-0 flex-wrap justify-end gap-1">
+          <div key={label} className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-line pb-2">
+            <dt className="min-w-[4.5rem] flex-1 basis-0 text-sm text-ink-soft">{t(label)}</dt>
+            <dd className="ml-auto flex max-w-full flex-wrap justify-end gap-1">
               {keys.map((k) => (
                 <kbd key={k} className="whitespace-nowrap rounded-md border border-line-strong bg-paper-2 px-2 py-0.5 font-mono text-xs">
                   {k}
