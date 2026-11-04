@@ -373,7 +373,16 @@
     "untitled": "Untitled study",
     "medium": "Digital · free draw",
     "saved": "Saved to your collection",
-    "savedXp": "+{{xp}} XP for finishing a piece"
+    "savedXp": "+{{xp}} XP for finishing a piece",
+    "guide": {
+      "toggle": "Trace guide",
+      "title": "Guide: {{name}}",
+      "strength": "Guide strength",
+      "light": "Light",
+      "medium": "Medium",
+      "strong": "Strong",
+      "note": "The guide is only for tracing; it is never saved or downloaded with your artwork."
+    }
   },
   "practice": {
     "eyebrow": "Practice",

@@ -373,7 +373,16 @@
     "untitled": "Bản nghiên cứu chưa đặt tên",
     "medium": "Kỹ thuật số · vẽ tự do",
     "saved": "Đã lưu vào bộ sưu tập",
-    "savedXp": "+{{xp}} XP vì hoàn thành một tác phẩm"
+    "savedXp": "+{{xp}} XP vì hoàn thành một tác phẩm",
+    "guide": {
+      "toggle": "Hình mờ để vẽ theo",
+      "title": "Hình mờ: {{name}}",
+      "strength": "Độ đậm hình mờ",
+      "light": "Nhạt",
+      "medium": "Vừa",
+      "strong": "Đậm",
+      "note": "Hình mờ chỉ để vẽ theo, không được lưu hay tải xuống cùng tác phẩm."
+    }
   },
   "practice": {
     "eyebrow": "Luyện tập",

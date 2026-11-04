@@ -20,6 +20,8 @@ import { useChat } from '@/store/chat'
 import { useStudio } from '@/store/studio'
 import { queryClient } from '@/app/queryClient'
 import { qk } from '@/api/queries'
+import { TraceGuidePanel, TraceGuideToggle } from '@/features/trace-guide/TraceGuideControl'
+import { useTraceGuide, useTraceGuideState } from '@/features/trace-guide/useTraceGuide'
 
 const PRESETS = {
   classic: [1200, 900],
@@ -102,6 +104,8 @@ export default function FreeDrawPage() {
   const [w, h] = PRESETS[preset]
   const setDraftChat = useChat((s) => s.setDraft)
   const pending = useStudio((s) => s.pendingPalette)
+  const guide = useTraceGuide()
+  const guideState = useTraceGuideState(guide)
 
   const inspire = useCallback(() => {
     const p = INSPIRATION_PROMPTS[Math.floor(Math.random() * INSPIRATION_PROMPTS.length)]
@@ -149,6 +153,7 @@ export default function FreeDrawPage() {
 
   const info = (ctx: StudioContext) => (
     <div className="flex flex-col gap-6">
+      {guide && <TraceGuidePanel template={guide} state={guideState} />}
       <section className="rounded-2xl border border-line bg-paper-2/50 p-4">
         <p className="eyebrow">{t('freeDraw.inspiration')}</p>
         <p className="mt-2 font-display text-xl leading-snug">{prompt ? `“${L(prompt)}”` : t('freeDraw.inspirationEmpty')}</p>
@@ -256,7 +261,9 @@ export default function FreeDrawPage() {
         width={w}
         height={h}
         background={bg}
-        draftKey={`free:${w}x${h}`}
+        draftKey={guide ? `free:${w}x${h}:guide:${guide.id}` : `free:${w}x${h}`}
+        onEngine={guide ? guideState.onEngine : undefined}
+        topExtra={guide ? <TraceGuideToggle state={guideState} /> : undefined}
         backTo="/"
         infoLabel={t('freeDraw.canvasTab')}
         info={info}
