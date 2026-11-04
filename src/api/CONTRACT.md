@@ -315,7 +315,7 @@ All cards have a `type` discriminator. No model-provided HTML, SVG or route is a
 | Type       | Fields and rules                                                                                                                                                                    |
 | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `palette`  | `name` 1–40; 3–6 distinct `colors` matching `^#[0-9a-f]{6}$` case-insensitively; optional `roles` (`dominant`, `support`, `accent`) matches colors in length; optional `note` ≤ 160 |
-| `idea`     | `title` 1–60; `description` 1–220; `difficulty` is `beginner`, `intermediate`, `advanced` or `master`; integer `minutes` 5–120                                                      |
+| `idea`     | `title` 1–60; `description` 1–220; `difficulty` is `beginner`, `intermediate`, `advanced` or `master`; integer `minutes` 5–120; optional `templateId` (see below)                   |
 | `critique` | `imageId` belongs to this request; `observations` 1–3; `strengths` ≤ 2; `priorities` ≤ 2; each item and required `exercise` 1–240 characters                                        |
 | `lesson`   | Real catalog `slug`; optional `reason` ≤ 160                                                                                                                                        |
 | `template` | Real catalog `templateId`, unlocked at `learner.level` (or level 1); optional `reason` ≤ 160                                                                                        |
@@ -325,6 +325,20 @@ can choose another. FE builds lesson/template routes from the validated slug/ID 
 own catalog; locked historical/mock templates show a lock without a link. Palette actions
 copy HEX or send the palette to Studio; ideas open Free Draw; critiques select their own
 image context for a follow-up. These actions do not award XP or complete lessons.
+
+Trace guides (batch 17). An `idea` may carry `templateId`: a catalog template with the
+same main subject. BE drops an unknown or level-locked id at tool time and omits the
+field when absent; FE keeps the idea and drops only an unusable id (not in its catalog).
+An unlocked template card offers two links: `/practice/{id}` (colour and get scored) and
+`/free-draw?guide={id}&prompt={title}`. An idea with an unlocked `templateId` links to
+`/free-draw?prompt={title}&guide={id}`, otherwise `/free-draw?prompt={title}`. Free Draw
+shows `?guide=` only when the id is in the catalog and unlocked at the learner's level; the
+guide is view-only (never in downloads, saved artworks, drafts, scoring or fill), and a
+guided page keeps its own draft key `free:{w}x{h}:guide:{id}`.
+
+Scope guard (batch 17). BE may answer a turn with fixed copy instead of the model: one
+`token` event with the reviewed text, then `done: completed`, no `status` and no cards.
+The client treats it like any reply.
 
 ### Practice feedback — `POST /api/v1/ai/judge/feedback`
 
