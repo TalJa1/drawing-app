@@ -54,6 +54,11 @@ export const chatCardSchema: z.ZodType<ChatCard> = z.discriminatedUnion('type', 
     description: boundedString(1, 220),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced', 'master']),
     minutes: z.number().int().min(5).max(120),
+    // An unknown guide drops only the guide, never the idea itself.
+    templateId: shortId
+      .refine((id) => Object.hasOwn(TEMPLATE_MAP, id))
+      .optional()
+      .catch(undefined),
   }),
   z.strictObject({
     type: z.literal('critique'),

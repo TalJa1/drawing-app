@@ -420,6 +420,8 @@ export type ChatCard =
       description: string
       difficulty: Difficulty
       minutes: number
+      /** A catalog template with the same subject, offered as a Free Draw trace guide. */
+      templateId?: string
     }
   | { type: 'lesson'; slug: string; reason?: string }
   | { type: 'critique'; imageId: string; observations: string[]; strengths: string[]; priorities: string[]; exercise: string }

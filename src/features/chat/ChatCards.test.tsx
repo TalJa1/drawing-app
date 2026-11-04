@@ -197,10 +197,46 @@ it('lesson shows difficulty, minutes and reason with a catalog route', async () 
   expect(screen.getByText(new RegExp(`${lesson.minutes} min`))).toBeInTheDocument()
 })
 
-it('unlocked templates keep their local practice route', async () => {
-  const template = Object.values(TEMPLATE_MAP).find((item) => item.unlockLevel === 1)!
+it('unlocked templates offer practice scoring and a Free Draw trace guide', async () => {
+  const template = TEMPLATE_MAP.cat
   await renderChat(<ChatCardView card={{ type: 'template', templateId: template.id }} />)
-  expect(screen.getByRole('link')).toHaveAttribute('href', `/practice/${template.id}`)
+  const links = screen.getAllByRole('link')
+  expect(links).toHaveLength(2)
+  expect(screen.getByRole('link', { name: 'Colour & get scored' })).toHaveAttribute('href', `/practice/${template.id}`)
+  expect(screen.getByRole('link', { name: 'Trace it yourself' })).toHaveAttribute(
+    'href',
+    `/free-draw?guide=cat&prompt=${encodeURIComponent(template.title.en)}`,
+  )
+  for (const link of links) expect(link.className).toContain('min-h-11')
+  expect(screen.getByText(template.title.en).closest('a')).toBeNull()
+})
+
+it('locked templates offer neither the practice nor the trace route', async () => {
+  const template = Object.values(TEMPLATE_MAP).find((item) => item.unlockLevel > 1)!
+  await renderChat(<ChatCardView card={{ type: 'template', templateId: template.id }} />)
+  expect(screen.queryByRole('link')).not.toBeInTheDocument()
+  expect(screen.queryByText('Trace it yourself')).not.toBeInTheDocument()
+})
+
+const idea = { type: 'idea' as const, title: 'Sleepy fox', description: 'Draw a curled fox', difficulty: 'beginner' as const, minutes: 10 }
+
+it('an idea with an unlocked template opens Free Draw with its guide', async () => {
+  await renderChat(<ChatCardView card={{ ...idea, templateId: 'fox' }} />)
+  expect(screen.getByRole('link', { name: 'Trace a faint guide in Free Draw' })).toHaveAttribute(
+    'href',
+    `/free-draw?prompt=${encodeURIComponent('Sleepy fox')}&guide=fox`,
+  )
+})
+
+it.each([
+  ['without a template', undefined],
+  ['with a locked template', Object.values(TEMPLATE_MAP).find((item) => item.unlockLevel > 1)!.id],
+])('an idea %s opens a plain Free Draw page', async (_, templateId) => {
+  await renderChat(<ChatCardView card={{ ...idea, templateId }} />)
+  expect(screen.getByRole('link', { name: 'Sketch it in Free Draw' })).toHaveAttribute(
+    'href',
+    `/free-draw?prompt=${encodeURIComponent('Sleepy fox')}`,
+  )
 })
 
 it('six-colour palettes keep balanced rows and each swatch carries its own role', async () => {

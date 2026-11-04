@@ -112,3 +112,27 @@ it('parses every stream event shape', () => {
   expect(chatStreamEventSchema.safeParse({ type: 'done' }).success).toBe(false)
   expect(chatStreamEventSchema.safeParse({ type: 'error', code: 'invented' }).success).toBe(false)
 })
+
+const idea = { type: 'idea', title: 'Fox', description: 'Draw a fox', difficulty: 'beginner', minutes: 10 }
+
+it('idea cards accept an optional catalog templateId', () => {
+  expect(chatCardSchema.parse({ ...idea, templateId: 'fox' })).toEqual({ ...idea, templateId: 'fox' })
+  const plain = chatCardSchema.parse(idea)
+  expect(plain).toEqual(idea)
+  expect(Object.hasOwn(plain, 'templateId')).toBe(false)
+})
+
+it.each(['invented', '', null, 7])('an idea with an unusable templateId %j keeps the idea without a guide', (templateId) => {
+  const result = chatCardSchema.safeParse({ ...idea, templateId })
+  expect(result.success).toBe(true)
+  expect(result.success && result.data.type === 'idea' && result.data.templateId).toBeUndefined()
+})
+
+it('history and stream events round-trip an idea templateId', () => {
+  expect(parseHistoryCards([{ ...idea, templateId: 'cat' }])).toEqual([{ ...idea, templateId: 'cat' }])
+  expect(chatStreamEventSchema.parse({ type: 'card', card: { ...idea, templateId: 'cat' } })).toEqual({
+    type: 'card',
+    card: { ...idea, templateId: 'cat' },
+  })
+  expect(chatCardSchema.safeParse({ ...idea, templateId: 'fox', extra: 1 }).success).toBe(false)
+})

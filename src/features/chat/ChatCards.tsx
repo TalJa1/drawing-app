@@ -4,7 +4,7 @@ import { useReducedMotion } from '@/app/theme'
 import { CHAT_MOTION, chatVariants } from './motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, BookOpen, Brush, Check, Clock, Copy, LockKeyhole, Send } from 'lucide-react'
+import { ArrowRight, BookOpen, Brush, Check, Clock, Copy, LockKeyhole, PenLine, Send } from 'lucide-react'
 import type { ChatCard } from '@/types'
 import { TEMPLATE_MAP } from '@/mocks/templates'
 import { LESSON_MAP } from '@/mocks/lessons'
@@ -140,10 +140,9 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
     const tpl = TEMPLATE_MAP[card.templateId]
     if (!tpl) return null
     const locked = tpl.unlockLevel > level
-    const className =
-      'group grid w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-3 rounded-2xl border border-line bg-card p-3 shadow-paper'
-    const contents = (
-      <>
+    const action = 'inline-flex min-h-11 items-center justify-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold'
+    return (
+      <div className="grid w-full grid-cols-[auto_minmax(0,1fr)] items-start gap-3 rounded-2xl border border-line bg-card p-3 shadow-paper">
         <img src={svgToDataUrl(tpl.svg)} alt="" className="h-16 w-20 shrink-0 rounded-lg border border-line bg-white object-contain" />
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">{t('chat.cards.template')}</p>
@@ -154,22 +153,30 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
           </p>
           {card.reason && <p className="mt-1 text-xs text-ink-soft">{card.reason}</p>}
         </div>
-        <span className="col-span-2 inline-flex min-h-11 items-center justify-center gap-1 justify-self-start rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-paper">
-          {locked ? <LockKeyhole size={12} /> : <Brush size={12} />}
-          {locked ? t('chat.cards.unlockLevel', { level: tpl.unlockLevel }) : t('chat.cards.drawThis')}
-        </span>
-      </>
-    )
-    return locked ? (
-      <div className={className}>{contents}</div>
-    ) : (
-      <Link to={`/practice/${tpl.id}`} className={`${className} hover:shadow-lift`}>
-        {contents}
-      </Link>
+        {locked ? (
+          <span className={`${action} col-span-2 justify-self-start bg-ink text-paper`}>
+            <LockKeyhole size={12} /> {t('chat.cards.unlockLevel', { level: tpl.unlockLevel })}
+          </span>
+        ) : (
+          <div className="col-span-2 flex flex-wrap gap-2">
+            <Link to={`/practice/${tpl.id}`} className={`${action} bg-ink text-paper hover:shadow-lift`}>
+              <Brush size={12} /> {t('chat.cards.drawThis')}
+            </Link>
+            <Link
+              to={`/free-draw?guide=${encodeURIComponent(tpl.id)}&prompt=${encodeURIComponent(L(tpl.title))}`}
+              className={`${action} border border-line-strong text-ink hover:bg-ink/5`}
+            >
+              <PenLine size={12} /> {t('chat.cards.traceIt')}
+            </Link>
+          </div>
+        )}
+      </div>
     )
   }
 
-  if (card.type === 'idea')
+  if (card.type === 'idea') {
+    const guide = card.templateId ? TEMPLATE_MAP[card.templateId] : undefined
+    const traceable = guide !== undefined && guide.unlockLevel <= level
     return (
       <div className="w-full rounded-2xl border border-line bg-card p-4 shadow-paper">
         <p className="font-display text-lg leading-tight">{card.title}</p>
@@ -184,13 +191,14 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
           </span>
         </div>
         <Link
-          to={`/free-draw?prompt=${encodeURIComponent(card.title)}`}
+          to={`/free-draw?prompt=${encodeURIComponent(card.title)}${traceable ? `&guide=${encodeURIComponent(guide.id)}` : ''}`}
           className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-accent-ink hover:underline max-lg:min-h-11 max-lg:px-2"
         >
-          {t('chat.cards.sketchIt')} <ArrowRight size={12} />
+          {t(traceable ? 'chat.cards.sketchWithGuide' : 'chat.cards.sketchIt')} <ArrowRight size={12} />
         </Link>
       </div>
     )
+  }
 
   if (card.type === 'critique') return <CritiqueCard card={card} animate={animate} conversationId={conversationId} />
 
