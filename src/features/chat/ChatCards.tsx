@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useReducedMotion } from '@/app/theme'
 import { CHAT_MOTION, chatVariants } from './motion'
@@ -43,6 +43,7 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
   const navigate = useNavigate()
   const setPalette = useStudio((s) => s.setPendingPalette)
   const { level } = useLevel()
+  const titleId = useId()
   const [copied, setCopied] = useState<{ color: string } | null>(null)
   useEffect(() => {
     if (!copied) return
@@ -146,7 +147,9 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
         <img src={svgToDataUrl(tpl.svg)} alt="" className="h-16 w-20 shrink-0 rounded-lg border border-line bg-white object-contain" />
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-faint">{t('chat.cards.template')}</p>
-          <p className="font-display text-lg leading-tight">{L(tpl.title)}</p>
+          <p id={titleId} className="font-display text-lg leading-tight">
+            {L(tpl.title)}
+          </p>
           <p className="inline-flex items-center gap-1.5 text-xs text-ink-faint">
             <DifficultyDots level={DIFF_LEVEL[tpl.difficulty]} label={t(`difficulty.${tpl.difficulty}`)} />{' '}
             {t('common.minutes', { count: tpl.minutes })}
@@ -159,11 +162,12 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
           </span>
         ) : (
           <div className="col-span-2 flex flex-wrap gap-2">
-            <Link to={`/practice/${tpl.id}`} className={`${action} bg-ink text-paper hover:shadow-lift`}>
+            <Link to={`/practice/${tpl.id}`} aria-describedby={titleId} className={`${action} bg-ink text-paper hover:shadow-lift`}>
               <Brush size={12} /> {t('chat.cards.drawThis')}
             </Link>
             <Link
               to={`/free-draw?guide=${encodeURIComponent(tpl.id)}&prompt=${encodeURIComponent(L(tpl.title))}`}
+              aria-describedby={titleId}
               className={`${action} border border-line-strong text-ink hover:bg-ink/5`}
             >
               <PenLine size={12} /> {t('chat.cards.traceIt')}

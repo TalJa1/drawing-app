@@ -256,3 +256,23 @@ it('setDraft and reset keep working for other pages', () => {
   store.reset()
   expect(useChat.getState()).toMatchObject({ conversations: [], activeId: null, draft: null })
 })
+
+it('keeps an idea trace template through reload, including regenerated variants', () => {
+  const idea = { type: 'idea', title: 'Fox', description: 'Draw a fox', difficulty: 'beginner', minutes: 10, templateId: 'fox' }
+  const variant = { content: 'older answer', cards: [idea], status: 'completed', createdAt: date }
+  const stored = JSON.parse(
+    JSON.stringify({
+      conversations: [conversation([{ ...reply('m_1'), cards: [idea], variants: [variant] } as unknown as ChatMessage])],
+      activeId: 'c_1',
+    }),
+  )
+  const message = migrateChatState(stored, 2).conversations[0].messages[0]
+  expect(message.cards).toEqual([idea])
+  expect(message.variants?.[0].cards).toEqual([idea])
+  const plain = { ...idea, templateId: undefined }
+  const broken = migrateChatState(
+    { ...stored, conversations: [conversation([{ ...reply('m_2'), cards: [{ ...idea, templateId: 7 }] } as unknown as ChatMessage])] },
+    2,
+  )
+  expect(broken.conversations[0].messages[0].cards).toEqual([plain])
+})

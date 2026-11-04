@@ -207,7 +207,10 @@ it('unlocked templates offer practice scoring and a Free Draw trace guide', asyn
     'href',
     `/free-draw?guide=cat&prompt=${encodeURIComponent(template.title.en)}`,
   )
-  for (const link of links) expect(link.className).toContain('min-h-11')
+  for (const link of links) {
+    expect(link.className).toContain('min-h-11')
+    expect(link).toHaveAccessibleDescription(template.title.en)
+  }
   expect(screen.getByText(template.title.en).closest('a')).toBeNull()
 })
 

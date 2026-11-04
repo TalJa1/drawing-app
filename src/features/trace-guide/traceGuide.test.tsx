@@ -56,6 +56,23 @@ it('the guide state draws the template on the engine at medium strength', async 
   expect(engine.setGuideProps).toHaveBeenLastCalledWith({ visible: false, opacity: 0.45 })
 })
 
+it('a guide that finishes loading after the engine changed is not drawn on the old engine', async () => {
+  let finish: (image: HTMLImageElement) => void = () => {}
+  vi.mocked(loadSvgImage).mockImplementationOnce(() => new Promise((resolve) => (finish = resolve)))
+  const { result } = renderHook(() => useTraceGuideState(TEMPLATE_MAP.cat))
+  const first = fakeEngine()
+  const second = fakeEngine()
+  let pending!: Promise<void>
+  act(() => {
+    pending = result.current.onEngine(first)
+  })
+  await act(() => result.current.onEngine(second))
+  finish(document.createElement('img'))
+  await act(() => pending)
+  expect(first.setGuide).not.toHaveBeenCalled()
+  expect(second.setGuide).toHaveBeenCalledTimes(1)
+})
+
 it('a guide that fails to load leaves a plain page instead of blocking the studio', async () => {
   vi.mocked(loadSvgImage).mockRejectedValueOnce(new Error('broken svg'))
   const { result } = renderHook(() => useTraceGuideState(TEMPLATE_MAP.cat))

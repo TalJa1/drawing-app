@@ -27,6 +27,7 @@ const storedCard: z.ZodType<ChatCard> = z.discriminatedUnion('type', [
     description: z.string(),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced', 'master']),
     minutes: z.number(),
+    templateId: z.string().optional().catch(undefined),
   }),
   z.object({
     type: z.literal('critique'),
