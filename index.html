@@ -38,7 +38,10 @@
           text-align: center;
           background: var(--sp-bg);
           color: var(--sp-ink);
-          font-family: Georgia, 'Times New Roman', serif;
+          /* No Georgia: on Windows it has no glyph for the letter ề, so its accent was drawn apart from the letter
+             until the real font arrived (measured on Chromium 152). Times New Roman draws it correctly. Only system fonts
+             here on purpose: naming Fraunces first delayed the first paint by ~130 ms (measured, 4x slower CPU). */
+          font-family: 'Times New Roman', 'Liberation Serif', serif;
         "
       >
         <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">

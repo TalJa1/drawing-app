@@ -7,7 +7,7 @@ import { defineConfig, devices } from '@playwright/test'
    WebKit and Firefox are in the list on purpose: the hero headline defect (UX-01) only showed in WebKit, so a
    Chromium-only run would have hidden it. (Playwright's WebKit is not Safari itself, but it is the closest thing a
    Linux CI machine has.) */
-const LAYOUT_SPECS = /(layout|studio)\.spec\.ts$/
+const LAYOUT_SPECS = /(layout|studio|motion|dialogs)\.spec\.ts$/
 
 export default defineConfig({
   testDir: './e2e',

@@ -1,4 +1,4 @@
-import { useId, useState, type ReactElement, type ReactNode } from 'react'
+import { useEffect, useId, useState, type ReactElement, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 type Side = 'top' | 'bottom' | 'left' | 'right'
@@ -28,6 +28,14 @@ export function Tooltip({
   className?: string
 }) {
   const [open, setOpen] = useState(false)
+  // The bubble is mounted while it is open and for the length of its fade-out, then removed (see below).
+  const [mounted, setMounted] = useState(false)
+  if (open && !mounted) setMounted(true)
+  useEffect(() => {
+    if (open || !mounted) return
+    const timer = window.setTimeout(() => setMounted(false), 170)
+    return () => window.clearTimeout(timer)
+  }, [open, mounted])
   const id = useId()
   return (
     <span
@@ -40,14 +48,17 @@ export function Tooltip({
       aria-describedby={open ? id : undefined}
     >
       {children}
-      {/* Mounted only while open. A bubble kept in the DOM with opacity-0 still counts towards the page's
-          scrollable width: on /learn at 375px it made the page 34px wider than the screen. */}
-      {open && (
+      {/* Fades in and out like before, but is taken out of the page once the fade-out is done: a bubble kept in the
+          DOM with opacity-0 still counts towards the page's scrollable width (on /learn at 375px it made the page 34px
+          wider than the screen). */}
+      {mounted && (
         <span
           role="tooltip"
           id={id}
+          aria-hidden={open ? undefined : true}
           className={cn(
-            'tooltip-in pointer-events-none absolute z-50 flex items-center gap-2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1.5 text-xs font-medium text-paper shadow-lift',
+            open ? 'tooltip-in' : 'tooltip-out',
+            'pointer-events-none absolute z-50 flex items-center gap-2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1.5 text-xs font-medium text-paper shadow-lift',
             pos[side],
           )}
         >

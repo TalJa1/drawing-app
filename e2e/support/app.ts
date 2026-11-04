@@ -30,16 +30,20 @@ export interface OpenOptions {
   language?: 'vi' | 'en'
   /** true (default) hides the first-visit studio tour; false shows it */
   onboardingDone?: boolean
+  /** 'reduce' (default) = animations end at once, so a measurement never catches an element mid-slide; 'full' = they play */
+  motion?: 'reduce' | 'full'
 }
 
 /** Replays the recorded API and puts the settings / session into storage before the page's own scripts run. */
-export async function prepare(page: Page, { signedIn = false, language = 'vi', onboardingDone = true }: OpenOptions = {}) {
+export async function prepare(
+  page: Page,
+  { signedIn = false, language = 'vi', onboardingDone = true, motion = 'reduce' }: OpenOptions = {},
+) {
   const settings = {
     state: {
       theme: 'light',
       language,
-      // 'reduce' = animations end at once, so a measurement never catches an element mid-slide
-      motion: 'reduce',
+      motion,
       sound: false,
       customCursor: false,
       drawing: { defaultTool: 'pencil', pressure: true, smoothing: 0 },

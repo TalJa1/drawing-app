@@ -37,6 +37,13 @@ export default function PracticeLibraryPage() {
   const [notDone, setNotDone] = useState(false)
   const wide = useMediaQuery('(min-width: 768px)')
   const [filtersOpen, setFiltersOpen] = useState(false)
+  // The sheet only exists on a phone. When the window becomes wide (a phone turned to landscape, a window resized) it
+  // goes away with the lock it holds; forget that it was open, or it would pop up by itself when the window is narrow again.
+  const [wasWide, setWasWide] = useState(wide)
+  if (wide !== wasWide) {
+    setWasWide(wide)
+    if (wide) setFiltersOpen(false)
+  }
   const dailyQuery = useDailyTemplateQuery()
   const popularityCounts = useTemplatePopularityQuery().data?.counts
   const dailyId = dailyQuery.data
