@@ -119,6 +119,10 @@ export class DrawingEngine {
   // ghost hint overlay
   private ghost: { canvas: HTMLCanvasElement; until: number } | null = null
 
+  // view-only trace guide (Free Draw): drawn by renderView only, never part of the doc,
+  // exports, analysis, drafts, the fill barrier or history
+  private guide: { canvas: HTMLCanvasElement; visible: boolean; opacity: number } | null = null
+
   constructor(opts: EngineOptions) {
     this.opts = opts
     this.width = opts.width
@@ -289,6 +293,40 @@ export class DrawingEngine {
   setBackground(bg: BackgroundKind) {
     this.background = bg
     this.markDirty()
+  }
+
+  /** Faint guide to trace in Free Draw: contain-fit and centred on the page, shown on screen only. */
+  setGuide(source: HTMLImageElement | HTMLCanvasElement | null) {
+    if (!source) {
+      this.guide = null
+    } else {
+      const sw = source instanceof HTMLImageElement ? source.naturalWidth || source.width : source.width
+      const sh = source instanceof HTMLImageElement ? source.naturalHeight || source.height : source.height
+      const canvas = this.guide?.canvas ?? makeCanvas(this.width, this.height)
+      const c = ctx2d(canvas)
+      c.clearRect(0, 0, this.width, this.height)
+      if (sw > 0 && sh > 0) {
+        const scale = Math.min(this.width / sw, this.height / sh)
+        const dw = sw * scale
+        const dh = sh * scale
+        c.drawImage(source, (this.width - dw) / 2, (this.height - dh) / 2, dw, dh)
+      }
+      this.guide = { canvas, visible: this.guide?.visible ?? true, opacity: this.guide?.opacity ?? 0.3 }
+    }
+    this.requestRender()
+    this.emit()
+  }
+
+  setGuideProps(p: { visible?: boolean; opacity?: number }) {
+    if (!this.guide) return
+    if (p.visible !== undefined) this.guide.visible = p.visible
+    if (p.opacity !== undefined) this.guide.opacity = Math.min(1, Math.max(0, p.opacity))
+    this.requestRender()
+    this.emit()
+  }
+
+  get guideState(): { visible: boolean; opacity: number } | null {
+    return this.guide && { visible: this.guide.visible, opacity: this.guide.opacity }
   }
 
   /* ================= history ================= */
@@ -494,6 +532,13 @@ export class DrawingEngine {
     v.imageSmoothingEnabled = zoom < 3
     v.imageSmoothingQuality = 'high'
     v.drawImage(this.doc, 0, 0, w, h)
+    if (this.guide?.visible && this.guide.opacity > 0) {
+      v.globalAlpha = this.guide.opacity
+      v.globalCompositeOperation = 'multiply'
+      v.drawImage(this.guide.canvas, 0, 0, w, h)
+      v.globalAlpha = 1
+      v.globalCompositeOperation = 'source-over'
+    }
     // symmetry guides
     const b = this.opts.getBrush()
     if (b.symmetry !== 'none' && (BRUSH_TOOLS.includes(b.tool) || SHAPE_TOOLS.includes(b.tool))) {
