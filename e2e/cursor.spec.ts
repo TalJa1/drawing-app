@@ -18,12 +18,18 @@ async function freshApp(page: Page, customCursor = true) {
 
 type Bounds = { n: number; minX: number; maxX: number; minY: number; maxY: number }
 
-/** Bounding box (CSS px) of the non-transparent pixels of one of the cursor's canvases. */
+/** Bounding box (page CSS px) of the non-transparent pixels of one of the cursor's canvases. */
 const bounds = (page: Page, selector: '.art-brush-ink' | '.art-brush-cursor') =>
   page.evaluate((sel): Bounds => {
     const c = document.querySelector<HTMLCanvasElement>(`canvas${sel}`)!
     const d = c.getContext('2d')!.getImageData(0, 0, c.width, c.height).data
-    const k = c.width / window.innerWidth
+    // the sprite's canvas is a small box that moves with the pointer; the ink layer covers the window (and is
+    // display:none while there is no ink, which has no box, so it is measured as the whole window)
+    const r = c.getBoundingClientRect()
+    const shown = r.width > 0
+    const k = c.width / (shown ? r.width : window.innerWidth)
+    const ox = shown ? r.left : 0
+    const oy = shown ? r.top : 0
     let n = 0
     let minX = Infinity
     let minY = Infinity
@@ -38,7 +44,7 @@ const bounds = (page: Page, selector: '.art-brush-ink' | '.art-brush-cursor') =>
           minY = Math.min(minY, y)
           maxY = Math.max(maxY, y)
         }
-    return { n, minX: minX / k, maxX: maxX / k, minY: minY / k, maxY: maxY / k }
+    return { n, minX: ox + minX / k, maxX: ox + maxX / k, minY: oy + minY / k, maxY: oy + maxY / k }
   }, selector)
 
 const inkDisplay = (page: Page) => page.evaluate(() => getComputedStyle(document.querySelector('canvas.art-brush-ink')!).display)

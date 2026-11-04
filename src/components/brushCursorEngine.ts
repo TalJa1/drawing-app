@@ -13,8 +13,15 @@
  *  - pointer events (mouse + pen), touch is ignored; releases outside the window and
  *    window blur never leave the brush "stuck down";
  *  - stamps are capped, polygon shapes are pooled, spawn rates are frame-rate independent;
- *  - the native cursor is hidden only once the sprite is visible, and restored on destroy.
+ *  - the native cursor is hidden only once the sprite is visible, and restored on destroy;
+ *  - the sprite lives in a small canvas (SPRITE_BOX) that is moved with a CSS transform, and it is repainted only when
+ *    its look changes (tool, colour, press, hover): moving the pointer costs a style change, not a 5-megapixel repaint;
+ *  - the ink layer is allocated on first use, cleared and redrawn only inside the area its marks cover;
+ *  - the sprite follows the tool: an element can ask for another sprite with `data-cursor-kind` and for a pigment with
+ *    `data-cursor-color` (the drawing canvas names its tool, the home page's doodle pad names the colour its next stroke gets).
  */
+
+import { drawToolSprite, isCursorKind, type CursorKind } from './toolCursors'
 
 interface Rgb {
   r: number
@@ -82,6 +89,8 @@ export interface BrushCursorOptions {
 
 export interface BrushCursorHandle {
   setColor: (hex: string) => void
+  /** Hands the engine a pointer event it missed (the one that made the caller start it): shows the sprite at once. */
+  feed: (e: PointerEvent) => void
   destroy: () => void
 }
 
@@ -99,12 +108,17 @@ const MAX_BEND_LAG = 6.5
 const MAX_DABS = 120
 const MAX_BLOOMS = 80
 const MAX_STAMPS = 40
-/** Half-size of the square cleared around the sprite each frame (sprite reaches ~60px). */
-const SPRITE_CLEAR = 110
+/** Side of the sprite's own canvas in CSS px; the longest sprite (the brush at 1.5x, with its ripple) reaches ~60px. */
+const SPRITE_BOX = 128
+/** Where the hotspot sits inside that box: most sprites extend up and to the right of it. */
+const TIP = { x: 40, y: 88 }
+/** The watercolour marks are soft and short-lived, so they do not need the full density of a retina screen. */
+const INK_MAX_DPR = 1.5
+const HINT_SELECTOR = '[data-cursor-kind],[data-cursor-color]'
 const Z_INK = 9998
 const Z_CURSOR = 9999
 const INTERACTIVE =
-  'a[href],button,[role="button"],[role="tab"],[role="menuitem"],[role="switch"],[role="checkbox"],summary,label,select,input,textarea,[data-cursor-interactive]'
+  'a[href],button,[role="button"],[role="tab"],[role="menuitem"],[role="switch"],[role="checkbox"],[role="option"],[role="combobox"],summary,label,select,input,textarea,[data-cursor-interactive]'
 
 // ---------- pure helpers (exported for tests) ----------
 
@@ -165,7 +179,7 @@ const pick = <T>(list: T[]): T => list[Math.floor(Math.random() * list.length)]
 // ---------- engine ----------
 
 export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
-  const noop: BrushCursorHandle = { setColor: () => {}, destroy: () => {} }
+  const noop: BrushCursorHandle = { setColor: () => {}, feed: () => {}, destroy: () => {} }
   if (typeof document === 'undefined') return noop
 
   const inkCanvas = document.createElement('canvas')
@@ -185,14 +199,19 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     c.setAttribute('aria-hidden', 'true')
     Object.assign(c.style, {
       position: 'fixed',
-      inset: '0',
-      width: '100vw',
-      height: '100vh',
       pointerEvents: 'none',
       zIndex: String(z),
     })
   }
-  inkCanvas.style.display = 'none'
+  Object.assign(inkCanvas.style, { inset: '0', width: '100vw', height: '100vh', display: 'none' })
+  Object.assign(cursorCanvas.style, {
+    left: '0',
+    top: '0',
+    width: `${SPRITE_BOX}px`,
+    height: `${SPRITE_BOX}px`,
+    willChange: 'transform',
+    visibility: 'hidden',
+  })
   document.body.append(inkCanvas, cursorCanvas)
 
   const dabShapes = pool(24, 14, 0.18)
@@ -201,17 +220,26 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
 
   let width = window.innerWidth
   let height = window.innerHeight
-  function resize() {
-    width = window.innerWidth
-    height = window.innerHeight
-    const dprInk = Math.min(window.devicePixelRatio || 1, 2)
-    const dprCur = Math.min(window.devicePixelRatio || 1, 2.5)
+  let dprCur = 1
+  /** The ink layer is only allocated (and later only resized) once there is ink to draw. */
+  let inkAllocated = false
+  function sizeInk() {
+    const dprInk = Math.min(window.devicePixelRatio || 1, INK_MAX_DPR)
     inkCanvas.width = Math.round(width * dprInk)
     inkCanvas.height = Math.round(height * dprInk)
     ink!.setTransform(dprInk, 0, 0, dprInk, 0, 0)
-    cursorCanvas.width = Math.round(width * dprCur)
-    cursorCanvas.height = Math.round(height * dprCur)
+    inkBox = null
+  }
+  function resize() {
+    width = window.innerWidth
+    height = window.innerHeight
+    dprCur = Math.min(window.devicePixelRatio || 1, 2.5)
+    cursorCanvas.width = Math.round(SPRITE_BOX * dprCur)
+    cursorCanvas.height = Math.round(SPRITE_BOX * dprCur)
     cur!.setTransform(dprCur, 0, 0, dprCur, 0, 0)
+    lastKey = ''
+    placedAt = { x: NaN, y: NaN }
+    if (inkAllocated) sizeInk()
     dirty = true
     schedule()
   }
@@ -233,7 +261,10 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     splayPop: 0,
     strokeAngle: FIXED_HANDLE_ANGLE,
     bendDist: 0,
+    /** the pigment of the page's colour picker; `rgb` is the one in use (a `data-cursor-color` hint can override it) */
+    baseRgb: parsePigment(opts.color),
     rgb: parsePigment(opts.color),
+    kind: 'brush' as CursorKind,
     dipRipple: 0,
   }
   const dabs: Dab[] = []
@@ -246,7 +277,13 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
   let destroyed = false
   let raf = 0
   let lastFrame = 0
-  let drawnAt: { x: number; y: number } | null = null
+  let spriteShown = false
+  /** true while the element under the pointer asks for its own pigment (`data-cursor-color`) */
+  let hinted = false
+  let lastKey = ''
+  let placedAt = { x: NaN, y: NaN }
+  /** the area the ink marks covered at the last frame (CSS px), so only that is cleared */
+  let inkBox: { x0: number; y0: number; x1: number; y1: number } | null = null
   /** false while the pointer is over a `noInkSelector` area (e.g. the drawing canvas) */
   let inkOk = true
 
@@ -332,6 +369,29 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     return !noInk || !(target instanceof Element) || target.closest(noInk) === null
   }
 
+  const hex2 = (n: number) => n.toString(16).padStart(2, '0')
+  /** Takes the sprite and pigment that the element under the pointer asks for (default: the brush, the picker's colour). */
+  function readHints(t: EventTarget | null) {
+    let kind: CursorKind = 'brush'
+    let colour: string | null = null
+    const el = t instanceof Element ? t.closest(HINT_SELECTOR) : null
+    if (el) {
+      const k = el.getAttribute('data-cursor-kind')
+      if (isCursorKind(k)) kind = k
+      colour = el.getAttribute('data-cursor-color')
+    }
+    if (kind !== b.kind) {
+      b.kind = kind
+      cursorCanvas.dataset.kind = kind
+    }
+    hinted = colour !== null
+    const next = colour ? parsePigment(colour) : b.baseRgb
+    if (next.r !== b.rgb.r || next.g !== b.rgb.g || next.b !== b.rgb.b) {
+      b.rgb = next
+      cursorCanvas.dataset.color = `#${hex2(next.r)}${hex2(next.g)}${hex2(next.b)}`
+    }
+  }
+
   function show(x: number, y: number) {
     visible = true
     b.mouseX = b.tipX = b.lastHoverDabX = x
@@ -350,6 +410,7 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     if (b.isDown && e.buttons === 0) release() // button released outside the window
     const t = e.target
     inkOk = inkAllowed(t)
+    readHints(t)
     b.isHoveringUI = t instanceof Element && t.closest(INTERACTIVE) !== null
     if (effects && !b.isDown && !b.isHoveringUI && wasVisible && inkOk) {
       const speed = Math.hypot(b.mouseX - px, b.mouseY - py)
@@ -383,6 +444,7 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
       b.pressure = 0.9
     }
     inkOk = inkAllowed(e.target)
+    readHints(e.target)
     if (effects && inkOk) {
       spawnBloom(b.tipX, b.tipY, 10 + Math.random() * 3.5, true)
       spawnStamp(b.tipX, b.tipY, b.strokeAngle, 0.88)
@@ -476,6 +538,29 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
   }
 
   // ----- rendering: ink layer -----
+  /** A box (CSS px, 2px margin) that holds every mark: the largest a dab, bloom (with its droplets) or stamp can reach. */
+  function inkExtent() {
+    let x0 = Infinity
+    let y0 = Infinity
+    let x1 = -Infinity
+    let y1 = -Infinity
+    const grow = (x: number, y: number, r: number) => {
+      x0 = Math.min(x0, x - r)
+      y0 = Math.min(y0, y - r)
+      x1 = Math.max(x1, x + r)
+      y1 = Math.max(y1, y + r)
+    }
+    for (const d of dabs) grow(d.x, d.y, d.rx * 1.6 + 2)
+    for (const m of blooms) grow(m.x, m.y, m.maxRadius * 1.9 + 6)
+    for (const st of stamps) grow(st.x, st.y, st.brushLength + st.brushWidth + 4)
+    return {
+      x0: Math.max(0, Math.floor(x0) - 2),
+      y0: Math.max(0, Math.floor(y0) - 2),
+      x1: Math.min(width, Math.ceil(x1) + 2),
+      y1: Math.min(height, Math.ceil(y1) + 2),
+    }
+  }
+
   function renderInk(now: number) {
     pruneExpired(dabs, now, HOVER_DAB_MS)
     pruneExpired(blooms, now, CLICK_BLOOM_MS)
@@ -483,17 +568,33 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     const any = dabs.length + blooms.length + stamps.length > 0
     if (!any) {
       if (inkVisible) {
-        ink!.clearRect(0, 0, width, height)
+        if (inkBox) ink!.clearRect(inkBox.x0, inkBox.y0, inkBox.x1 - inkBox.x0, inkBox.y1 - inkBox.y0)
+        inkBox = null
         inkCanvas.style.display = 'none'
         inkVisible = false
       }
       return
     }
+    if (!inkAllocated) {
+      sizeInk()
+      inkAllocated = true
+    }
     if (!inkVisible) {
       inkCanvas.style.display = 'block'
       inkVisible = true
     }
-    ink!.clearRect(0, 0, width, height)
+    // clear only where marks were and where they are now: the layer is a whole screen, the marks are a few dozen px
+    const box = inkExtent()
+    const wipe = inkBox
+      ? {
+          x0: Math.min(inkBox.x0, box.x0),
+          y0: Math.min(inkBox.y0, box.y0),
+          x1: Math.max(inkBox.x1, box.x1),
+          y1: Math.max(inkBox.y1, box.y1),
+        }
+      : box
+    ink!.clearRect(wipe.x0, wipe.y0, wipe.x1 - wipe.x0, wipe.y1 - wipe.y0)
+    inkBox = box
 
     for (const dab of dabs) {
       const p = Math.min(1, (now - dab.bornAt) / HOVER_DAB_MS)
@@ -578,24 +679,80 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     }
   }
 
-  // ----- rendering: brush sprite (hotspot = bristle tip) -----
-  function renderSprite() {
-    if (drawnAt) {
-      cur!.clearRect(drawnAt.x - SPRITE_CLEAR, drawnAt.y - SPRITE_CLEAR, SPRITE_CLEAR * 2, SPRITE_CLEAR * 2)
-      drawnAt = null
-    }
-    if (!visible) return
+  // ----- rendering: sprite (hotspot = bristle tip) -----
+  /** The sprite's look as one string: it is repainted only when this changes, not on every pointer move. */
+  function spriteKey() {
+    return [
+      b.kind,
+      b.rgb.r,
+      b.rgb.g,
+      b.rgb.b,
+      b.isDown ? 1 : 0,
+      b.isHoveringUI ? 1 : 0,
+      b.elevation.toFixed(3),
+      b.pressure.toFixed(3),
+      b.splayPop.toFixed(3),
+      b.dipRipple.toFixed(3),
+      b.bendDist.toFixed(2),
+      b.strokeAngle.toFixed(3),
+    ].join('|')
+  }
 
-    const tipX = b.tipX
-    const tipY = b.tipY
+  function renderSprite() {
+    if (!visible) {
+      if (spriteShown) {
+        cursorCanvas.style.visibility = 'hidden'
+        spriteShown = false
+      }
+      return
+    }
+    // the whole canvas moves, rounded to a device pixel so the sprite stays sharp
+    const px = Math.round((b.tipX - TIP.x) * dprCur) / dprCur
+    const py = Math.round((b.tipY - TIP.y) * dprCur) / dprCur
+    if (px !== placedAt.x || py !== placedAt.y) {
+      cursorCanvas.style.transform = `translate3d(${px}px, ${py}px, 0)`
+      placedAt = { x: px, y: py }
+    }
+    if (!spriteShown) {
+      cursorCanvas.style.visibility = 'visible'
+      spriteShown = true
+    }
+    const key = spriteKey()
+    if (key === lastKey) return
+    lastKey = key
+    cur!.clearRect(0, 0, SPRITE_BOX, SPRITE_BOX)
+    paintSprite()
+  }
+
+  function paintSprite() {
+    const tipX = TIP.x
+    const tipY = TIP.y
+    // the pointer is where the tip is, except while DRAG_TIP_LAG pulls the tip behind it
+    const mouseX = tipX + (b.mouseX - b.tipX)
+    const mouseY = tipY + (b.mouseY - b.tipY)
     const elev = b.elevation
+
+    if (b.dipRipple > 0.02) {
+      cur!.save()
+      cur!.translate(tipX, tipY)
+      cur!.scale(CURSOR_SCALE, CURSOR_SCALE)
+      cur!.beginPath()
+      cur!.arc(0, 0, (1 - b.dipRipple) * 14 + 2, 0, Math.PI * 2)
+      cur!.strokeStyle = rgba(b.rgb, b.dipRipple * 0.85)
+      cur!.lineWidth = 1.5
+      cur!.stroke()
+      cur!.restore()
+    }
+
+    if (b.kind !== 'brush') {
+      drawToolSprite(cur!, b.kind, tipX, tipY, b.rgb, CURSOR_SCALE, b.isDown)
+      return
+    }
+
     const handleAngle = FIXED_HANDLE_ANGLE + (1 - elev) * 0.09
     const bristleLen = 9.5 - (1 - elev) * 1.4
-    const fx = b.mouseX + Math.cos(handleAngle) * bristleLen
-    const fy = b.mouseY + Math.sin(handleAngle) * bristleLen
-
-    cur!.clearRect(tipX - SPRITE_CLEAR, tipY - SPRITE_CLEAR, SPRITE_CLEAR * 2, SPRITE_CLEAR * 2)
-    drawnAt = { x: tipX, y: tipY }
+    const fx = mouseX + Math.cos(handleAngle) * bristleLen
+    const fy = mouseY + Math.sin(handleAngle) * bristleLen
 
     cur!.save()
     // scale the whole sprite about the hotspot so the tip stays exactly under the pointer
@@ -608,14 +765,6 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
       cur!.arc(tipX, tipY, 6.5, 0, Math.PI * 2)
       cur!.strokeStyle = rgba(b.rgb, 0.6)
       cur!.lineWidth = 1.1
-      cur!.stroke()
-    }
-
-    if (b.dipRipple > 0.02) {
-      cur!.beginPath()
-      cur!.arc(tipX, tipY, (1 - b.dipRipple) * 14 + 2, 0, Math.PI * 2)
-      cur!.strokeStyle = rgba(b.rgb, b.dipRipple * 0.85)
-      cur!.lineWidth = 1.5
       cur!.stroke()
     }
 
@@ -650,8 +799,8 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     const ferruleR = 2.35
     const belly = 2.6 + (b.isDown ? b.pressure * 2.4 + b.splayPop * 1.4 : 0)
     const tipSplay = b.isDown ? b.pressure * 1.45 + b.splayPop * 0.9 : 0.25
-    const midX = (fx + tipX) * 0.5 + (b.mouseX - tipX) * 0.28
-    const midY = (fy + tipY) * 0.5 + (b.mouseY - tipY) * 0.28
+    const midX = (fx + tipX) * 0.5 + (mouseX - tipX) * 0.28
+    const midY = (fy + tipY) * 0.5 + (mouseY - tipY) * 0.28
 
     cur!.beginPath()
     cur!.moveTo(fx + perpX * ferruleR, fy + perpY * ferruleR)
@@ -662,8 +811,8 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     const bg = cur!.createLinearGradient(fx, fy, tipX, tipY)
     bg.addColorStop(0, '#E5DAC6')
     bg.addColorStop(0.38, '#EFE6D5')
-    bg.addColorStop(0.68, rgba(lighten(b.rgb, 0.15), 0.98))
-    bg.addColorStop(1, rgba(darken(b.rgb, 0.68), 1))
+    bg.addColorStop(0.68, rgba(lighten(b.rgb, 0.1), 0.98))
+    bg.addColorStop(1, rgba(b.rgb, 1))
     cur!.fillStyle = bg
     cur!.fill()
     cur!.strokeStyle = 'rgba(28, 22, 17, 0.55)'
@@ -781,16 +930,27 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     if (!raf && !destroyed) raf = requestAnimationFrame(frame)
   }
 
+  cursorCanvas.dataset.kind = b.kind
+  cursorCanvas.dataset.color = `#${hex2(b.rgb.r)}${hex2(b.rgb.g)}${hex2(b.rgb.b)}`
   resize()
 
   return {
     setColor(hex: string) {
       const next = parsePigment(hex)
-      if (next.r === b.rgb.r && next.g === b.rgb.g && next.b === b.rgb.b) return
-      b.rgb = next
-      if (effects) b.dipRipple = 1
+      const base = b.baseRgb
+      if (next.r === base.r && next.g === base.g && next.b === base.b) return
+      const following = !hinted // no `data-cursor-color` hint is overriding the picker's colour right now
+      b.baseRgb = next
+      if (following) {
+        b.rgb = next
+        cursorCanvas.dataset.color = `#${hex2(next.r)}${hex2(next.g)}${hex2(next.b)}`
+        if (effects) b.dipRipple = 1
+      }
       dirty = true
       schedule()
+    },
+    feed(e: PointerEvent) {
+      if (!destroyed) onMove(e)
     },
     destroy() {
       destroyed = true

@@ -247,17 +247,17 @@ export default function CollectionPage() {
               />
             </div>
             <div className="grid grid-cols-3 gap-2 lg:w-[520px]">
-              <Select label={t('common.sortBy')} value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+              <Select label={t('common.sortBy')} value={sort} onValueChange={(v) => setSort(v as Sort)}>
                 <option value="new">{t('practice.sort.new')}</option>
                 <option value="old">{t('collection.sortOld')}</option>
                 <option value="score">{t('collection.sortScore')}</option>
               </Select>
-              <Select label={t('collection.date')} value={range} onChange={(e) => setRange(e.target.value as Range)}>
+              <Select label={t('collection.date')} value={range} onValueChange={(v) => setRange(v as Range)}>
                 <option value="all">{t('collection.anyTime')}</option>
                 <option value="7">{t('collection.last7')}</option>
                 <option value="30">{t('collection.last30')}</option>
               </Select>
-              <Select label={t('collection.template')} value={templateFilter} onChange={(e) => setTemplateFilter(e.target.value)}>
+              <Select label={t('collection.template')} value={templateFilter} onValueChange={(v) => setTemplateFilter(v)}>
                 <option value="all">{t('common.all')}</option>
                 {templatesUsed.map((id) => (
                   <option key={id} value={id}>

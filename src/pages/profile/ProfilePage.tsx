@@ -213,21 +213,17 @@ export default function ProfilePage() {
                 <Select
                   label={t('profile.language')}
                   value={settings.language}
-                  onChange={(e) => settings.setLanguage(e.target.value as 'en' | 'vi')}
+                  onValueChange={(v) => settings.setLanguage(v as 'en' | 'vi')}
                 >
                   <option value="en">English</option>
                   <option value="vi">Tiếng Việt</option>
                 </Select>
-                <Select label={t('profile.theme')} value={settings.theme} onChange={(e) => settings.setTheme(e.target.value as ThemePref)}>
+                <Select label={t('profile.theme')} value={settings.theme} onValueChange={(v) => settings.setTheme(v as ThemePref)}>
                   <option value="system">{t('profile.themes.system')}</option>
                   <option value="light">{t('profile.themes.light')}</option>
                   <option value="dark">{t('profile.themes.dark')}</option>
                 </Select>
-                <Select
-                  label={t('profile.motion')}
-                  value={settings.motion}
-                  onChange={(e) => settings.setMotion(e.target.value as MotionPref)}
-                >
+                <Select label={t('profile.motion')} value={settings.motion} onValueChange={(v) => settings.setMotion(v as MotionPref)}>
                   <option value="system">{t('profile.motions.system')}</option>
                   <option value="reduce">{t('profile.motions.reduce')}</option>
                   <option value="full">{t('profile.motions.full')}</option>
@@ -252,7 +248,7 @@ export default function ProfilePage() {
               <Select
                 label={t('profile.defaultBrush')}
                 value={settings.drawing.defaultTool}
-                onChange={(e) => setDrawing({ defaultTool: e.target.value as DrawingPrefs['defaultTool'] })}
+                onValueChange={(v) => setDrawing({ defaultTool: v as DrawingPrefs['defaultTool'] })}
               >
                 {(['pencil', 'pen', 'marker', 'watercolour'] as const).map((tool) => (
                   <option key={tool} value={tool}>

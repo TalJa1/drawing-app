@@ -23,6 +23,12 @@ export function HeroDoodle({ className }: { className?: string }) {
     let raf = 0
     let colour = 0
     const dpr = Math.min(2, window.devicePixelRatio || 1)
+    // the brush cursor reads this: over the pad it carries the colour the next stroke will have (and keeps the colour of
+    // the stroke being drawn until the pointer is released), so what the cursor shows is what comes out
+    const showNextInk = () => {
+      canvas.dataset.cursorColor = INKS[colour % INKS.length]
+    }
+    showNextInk()
 
     const size = () => {
       const r = canvas.getBoundingClientRect()
@@ -84,6 +90,7 @@ export function HeroDoodle({ className }: { className?: string }) {
     }
     const up = () => {
       drawing = null
+      showNextInk()
     }
     canvas.addEventListener('pointerdown', down)
     canvas.addEventListener('pointermove', move)

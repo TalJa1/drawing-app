@@ -32,12 +32,14 @@ export interface OpenOptions {
   onboardingDone?: boolean
   /** 'reduce' (default) = animations end at once, so a measurement never catches an element mid-slide; 'full' = they play */
   motion?: 'reduce' | 'full'
+  /** false (default) keeps the native pointer, so a measurement never sees the brush sprite; true turns the brush cursor on */
+  customCursor?: boolean
 }
 
 /** Replays the recorded API and puts the settings / session into storage before the page's own scripts run. */
 export async function prepare(
   page: Page,
-  { signedIn = false, language = 'vi', onboardingDone = true, motion = 'reduce' }: OpenOptions = {},
+  { signedIn = false, language = 'vi', onboardingDone = true, motion = 'reduce', customCursor = false }: OpenOptions = {},
 ) {
   const settings = {
     state: {
@@ -45,7 +47,7 @@ export async function prepare(
       language,
       motion,
       sound: false,
-      customCursor: false,
+      customCursor,
       drawing: { defaultTool: 'pencil', pressure: true, smoothing: 0 },
       onboardingDone,
     },

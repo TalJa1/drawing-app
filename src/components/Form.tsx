@@ -1,7 +1,8 @@
-import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react'
-import { ChevronDown, Search, X } from 'lucide-react'
+import { Children, forwardRef, isValidElement, useId, useState, type InputHTMLAttributes, type ReactNode } from 'react'
+import { Search, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
+import { SelectControl, type SelectOption } from './Select'
 
 /* ---------- Slider ---------- */
 
@@ -99,32 +100,72 @@ export function Switch({
 
 /* ---------- Select ---------- */
 
-export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement> & { label?: string; hideLabel?: boolean }>(
-  function Select({ label, hideLabel, className, children, id, ...rest }, ref) {
-    const autoId = useId()
-    const sid = id ?? autoId
-    return (
-      <div className={cn('flex flex-col gap-1.5', className)}>
-        {label && (
-          <label htmlFor={sid} className={cn('text-xs font-medium text-ink-soft', hideLabel && 'sr-only')}>
-            {label}
-          </label>
-        )}
-        <div className="relative">
-          <select
-            ref={ref}
-            id={sid}
-            className="h-10 w-full appearance-none rounded-full border border-line-strong bg-card pl-4 pr-9 text-sm text-ink hover:border-ink/50"
-            {...rest}
-          >
-            {children}
-          </select>
-          <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint" />
-        </div>
-      </div>
-    )
-  },
-)
+/** The <option> children as plain data: a value and the text it shows. */
+function optionsOf(children: ReactNode): SelectOption[] {
+  const text = (n: ReactNode): string =>
+    Array.isArray(n) ? n.map(text).join('') : typeof n === 'string' || typeof n === 'number' ? String(n) : ''
+  const out: SelectOption[] = []
+  Children.forEach(children, (c) => {
+    if (!isValidElement<{ value?: string | number; disabled?: boolean; children?: ReactNode }>(c) || c.type !== 'option') return
+    const label = text(c.props.children)
+    out.push({ value: String(c.props.value ?? label), label, disabled: c.props.disabled })
+  })
+  return out
+}
+
+/**
+ * A labelled drop-down. Write it like a <select> (with <option> children), but listen with `onValueChange(value)`.
+ * See components/Select for how the list is drawn.
+ */
+export function Select({
+  label,
+  hideLabel,
+  className,
+  children,
+  id,
+  value,
+  defaultValue,
+  onValueChange,
+  disabled,
+  name,
+}: {
+  label?: string
+  hideLabel?: boolean
+  className?: string
+  children?: ReactNode
+  id?: string
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+  disabled?: boolean
+  name?: string
+}) {
+  const autoId = useId()
+  const sid = id ?? autoId
+  const options = optionsOf(children)
+  const [own, setOwn] = useState(defaultValue ?? options[0]?.value ?? '')
+  const shown = value ?? own
+  return (
+    <div className={cn('flex flex-col gap-1.5', className)}>
+      {label && (
+        <label htmlFor={sid} className={cn('text-xs font-medium text-ink-soft', hideLabel && 'sr-only')}>
+          {label}
+        </label>
+      )}
+      <SelectControl
+        id={sid}
+        name={name}
+        value={shown}
+        disabled={disabled}
+        options={options}
+        onValueChange={(v) => {
+          if (value === undefined) setOwn(v)
+          onValueChange?.(v)
+        }}
+      />
+    </div>
+  )
+}
 
 /* ---------- Text input ---------- */
 

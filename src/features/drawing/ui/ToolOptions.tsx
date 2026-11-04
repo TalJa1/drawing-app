@@ -1,5 +1,7 @@
+import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
+import { SelectControl } from '@/components/Select'
 import { useStudio } from '@/store/studio'
 import type { Symmetry } from '../engine/types'
 import { toolOptions } from '../tools'
@@ -44,6 +46,7 @@ const SYMS: Symmetry[] = ['none', 'vertical', 'horizontal', 'quad', 'radial6', '
 
 /** Context bar with options for the active tool. */
 export function ToolOptions({ className }: { className?: string }) {
+  const symmetryId = useId()
   const { t } = useTranslation()
   const s = useStudio()
   const opts = toolOptions(s.tool)
@@ -114,20 +117,16 @@ export function ToolOptions({ className }: { className?: string }) {
         />
       )}
       {opts.symmetry && (
-        <label className="flex shrink-0 items-center gap-2 text-xs font-medium text-ink-soft">
-          {t('studio.symmetry')}
-          <select
+        <div className="flex shrink-0 items-center gap-2 text-xs font-medium text-ink-soft">
+          <span id={symmetryId}>{t('studio.symmetry')}</span>
+          <SelectControl
+            size="sm"
+            aria-labelledby={symmetryId}
             value={s.symmetry}
-            onChange={(e) => s.set({ symmetry: e.target.value as Symmetry })}
-            className="h-8 rounded-full border border-line-strong bg-card px-3 text-xs text-ink"
-          >
-            {SYMS.map((m) => (
-              <option key={m} value={m}>
-                {t(`studio.symmetryModes.${m}`)}
-              </option>
-            ))}
-          </select>
-        </label>
+            onValueChange={(v) => s.set({ symmetry: v as Symmetry })}
+            options={SYMS.map((m) => ({ value: m, label: t(`studio.symmetryModes.${m}`) }))}
+          />
+        </div>
       )}
       {opts.symmetry && (
         <label className="flex shrink-0 cursor-pointer items-center gap-2 text-xs font-medium text-ink-soft">

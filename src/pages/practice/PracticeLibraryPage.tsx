@@ -100,7 +100,7 @@ export default function PracticeLibraryPage() {
           ))}
         </div>
       </LayoutGroup>
-      <Select label={t('common.sortBy')} hideLabel value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="md:w-40">
+      <Select label={t('common.sortBy')} hideLabel value={sort} onValueChange={(v) => setSort(v as Sort)} className="md:w-40">
         <option value="popular">{t('practice.sort.popular')}</option>
         <option value="new">{t('practice.sort.new')}</option>
         <option value="easiest">{t('practice.sort.easiest')}</option>
