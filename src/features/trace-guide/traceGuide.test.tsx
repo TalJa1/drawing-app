@@ -1,4 +1,5 @@
-import { act, cleanup, fireEvent, render, renderHook, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
@@ -6,18 +7,31 @@ import { createInstance } from 'i18next'
 import en from '@/i18n/en.json'
 import type { DrawingEngine } from '@/features/drawing/engine/Engine'
 import { loadSvgImage } from '@/lib/raster'
+import { getTemplates } from '@/api/templates'
 import { TEMPLATE_MAP } from '@/mocks/templates'
 import { TraceGuidePanel, TraceGuideToggle } from './TraceGuideControl'
 import { GUIDE_STRENGTHS, useTraceGuide, useTraceGuideState } from './useTraceGuide'
 
 vi.mock('@/features/gamification/hooks', () => ({ useLevel: () => ({ level: 2 }) }))
 vi.mock('@/lib/raster', () => ({ loadSvgImage: vi.fn(async () => document.createElement('img')) }))
+vi.mock('@/api/templates', () => ({ getTemplates: vi.fn() }))
 
 const locked = Object.values(TEMPLATE_MAP).find((template) => template.unlockLevel > 2)!
 
+// The guide comes from the list the server sent; the app's own copy of the catalog is only the fixture standing in for that list.
 function routerAt(url: string) {
-  return ({ children }: { children: ReactNode }) => <MemoryRouter initialEntries={[url]}>{children}</MemoryRouter>
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  return ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={client}>
+      <MemoryRouter initialEntries={[url]}>{children}</MemoryRouter>
+    </QueryClientProvider>
+  )
 }
+
+beforeEach(() => {
+  vi.mocked(getTemplates).mockReset()
+  vi.mocked(getTemplates).mockResolvedValue(Object.values(TEMPLATE_MAP))
+})
 
 function fakeEngine() {
   return { setGuide: vi.fn(), setGuideProps: vi.fn() } as unknown as DrawingEngine & {
@@ -38,9 +52,37 @@ it.each([
   ['/free-draw?guide=__proto__', null],
   [`/free-draw?guide=${locked.id}`, null],
   ['/free-draw?prompt=Cat', null],
-])('%s resolves to the guide %s', (url, id) => {
+])('%s resolves to the guide %s once the list has loaded', async (url, id) => {
   const { result } = renderHook(() => useTraceGuide(), { wrapper: routerAt(url) })
-  expect(result.current?.id ?? null).toBe(id)
+  await waitFor(() => expect(result.current.loading).toBe(false))
+  expect(result.current.guide?.id ?? null).toBe(id)
+})
+
+it('says it is loading while a guide is asked for and the list has not arrived', async () => {
+  const { result } = renderHook(() => useTraceGuide(), { wrapper: routerAt('/free-draw?guide=cat') })
+  expect(result.current).toEqual({ guide: null, loading: true })
+  await waitFor(() => expect(result.current.guide?.id).toBe('cat'))
+  expect(result.current.loading).toBe(false)
+})
+
+it('does not ask the server for templates when no guide is asked for', async () => {
+  const { result } = renderHook(() => useTraceGuide(), { wrapper: routerAt('/free-draw?prompt=Cat') })
+  expect(result.current).toEqual({ guide: null, loading: false })
+  await new Promise((resolve) => setTimeout(resolve, 20))
+  expect(getTemplates).not.toHaveBeenCalled()
+})
+
+it('a list that cannot be loaded leaves a plain page instead of waiting for ever', async () => {
+  vi.mocked(getTemplates).mockRejectedValue(new Error('offline'))
+  const { result } = renderHook(() => useTraceGuide(), { wrapper: routerAt('/free-draw?guide=cat') })
+  await waitFor(() => expect(result.current.loading).toBe(false))
+  expect(result.current.guide).toBeNull()
+})
+
+it('uses the template the server sent, not a copy kept in the app', async () => {
+  vi.mocked(getTemplates).mockResolvedValue([{ ...TEMPLATE_MAP.cat, unlockLevel: 1, title: { en: 'Served cat', vi: 'Mèo từ server' } }])
+  const { result } = renderHook(() => useTraceGuide(), { wrapper: routerAt('/free-draw?guide=cat') })
+  await waitFor(() => expect(result.current.guide?.title.en).toBe('Served cat'))
 })
 
 it('the guide state draws the template on the engine at medium strength', async () => {

@@ -559,8 +559,8 @@ export const COMPOSITION_COLOUR = [
         'Picasso’s Blue Period paintings feel sorrowful because of their palette, not just their subjects. Try painting the same scene twice: once in warm, saturated colours and once in cool, muted ones. The story changes even though nothing else does.',
         'Tranh thời kỳ Xanh của Picasso buồn bã vì bảng màu, không chỉ vì đề tài. Thử vẽ cùng một cảnh hai lần: một lần với màu nóng bão hòa và một lần với màu lạnh trầm. Câu chuyện thay đổi dù không có gì khác thay đổi.',
         undefined,
-        'Use the AI Muse’s Colour Advisor mode and ask for “a palette that feels nostalgic” to see this in action.',
-        'Dùng chế độ Cố vấn màu của Nàng thơ AI và hỏi “một bảng màu gợi hoài niệm” để thấy điều này.',
+        'Use the AI Chat’s Colour Advisor mode and ask for “a palette that feels nostalgic” to see this in action.',
+        'Dùng chế độ Cố vấn màu của AI Chat và hỏi “một bảng màu gợi hoài niệm” để thấy điều này.',
       ],
     ],
     {

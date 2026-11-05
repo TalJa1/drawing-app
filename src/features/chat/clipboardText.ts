@@ -1,11 +1,15 @@
 import type { TFunction } from 'i18next'
-import type { ChatCard, ChatMessage, Localized } from '@/types'
-import { LESSON_MAP } from '@/mocks/lessons'
-import { TEMPLATE_MAP } from '@/mocks/templates'
+import type { ChatCard, ChatMessage, Lesson, Localized, Template } from '@/types'
 
 type Localize = (value: Localized) => string
 
-function cardText(card: ChatCard, t: TFunction, L: Localize): string {
+/** Finds a template or lesson in the lists the server sent (`useTemplateLookup` / `useLessonLookup`); `undefined` when absent. */
+export interface CatalogLookup {
+  templateOf: (id: string | undefined) => Template | undefined
+  lessonOf: (slug: string | undefined) => Lesson | undefined
+}
+
+function cardText(card: ChatCard, t: TFunction, L: Localize, catalog: CatalogLookup): string {
   switch (card.type) {
     case 'palette':
       return [
@@ -19,13 +23,13 @@ function cardText(card: ChatCard, t: TFunction, L: Localize): string {
         .filter(Boolean)
         .join('\n')
     case 'lesson': {
-      const lesson = LESSON_MAP[card.slug]
+      const lesson = catalog.lessonOf(card.slug)
       return lesson
         ? [`${t('chat.cards.lesson', { count: lesson.minutes })}: ${L(lesson.title)}`, card.reason].filter(Boolean).join('\n')
         : ''
     }
     case 'template': {
-      const template = TEMPLATE_MAP[card.templateId]
+      const template = catalog.templateOf(card.templateId)
       return template ? [`${t('chat.cards.template')}: ${L(template.title)}`, card.reason].filter(Boolean).join('\n') : ''
     }
     case 'idea':
@@ -48,6 +52,11 @@ function cardText(card: ChatCard, t: TFunction, L: Localize): string {
 }
 
 /** What Copy puts on the clipboard: the written reply, then each card's details in the interface language. */
-export function replyClipboardText(message: Pick<ChatMessage, 'content' | 'cards'>, t: TFunction, L: Localize): string {
-  return [message.content.trim(), ...message.cards.map((card) => cardText(card, t, L))].filter(Boolean).join('\n\n')
+export function replyClipboardText(
+  message: Pick<ChatMessage, 'content' | 'cards'>,
+  t: TFunction,
+  L: Localize,
+  catalog: CatalogLookup,
+): string {
+  return [message.content.trim(), ...message.cards.map((card) => cardText(card, t, L, catalog))].filter(Boolean).join('\n\n')
 }

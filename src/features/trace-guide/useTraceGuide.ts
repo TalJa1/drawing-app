@@ -3,19 +3,31 @@ import { useSearchParams } from 'react-router-dom'
 import type { DrawingEngine } from '@/features/drawing/engine/Engine'
 import { useLevel } from '@/features/gamification/hooks'
 import { loadSvgImage } from '@/lib/raster'
-import { TEMPLATE_MAP } from '@/mocks/templates'
+import { useTemplates } from '@/api/queries'
 import type { Template } from '@/types'
 
 export const GUIDE_STRENGTHS = { light: 0.18, medium: 0.3, strong: 0.45 } as const
 export type GuideStrength = keyof typeof GUIDE_STRENGTHS
 
-/** The unlocked catalog template named by `?guide=`; null when it is absent, unknown or locked. */
-export function useTraceGuide(): Template | null {
+export interface TraceGuideLookup {
+  /** The unlocked template named by `?guide=`; null while it is loading and when it is absent, unknown, locked or the list failed. */
+  guide: Template | null
+  /** A guide is asked for and the server's list has not answered yet: the page waits rather than opening plain and then again. */
+  loading: boolean
+}
+
+/**
+ * The guide named by `?guide=`, taken from the template list the server sent (the same one the library shows).
+ * The list is only asked for when a guide is named, so an ordinary Free Draw page costs no extra request.
+ */
+export function useTraceGuide(): TraceGuideLookup {
   const [params] = useSearchParams()
   const { level } = useLevel()
   const id = params.get('guide')
-  const template = id && Object.hasOwn(TEMPLATE_MAP, id) ? TEMPLATE_MAP[id] : undefined
-  return template && template.unlockLevel <= level ? template : null
+  const { data, isPending } = useTemplates({ enabled: !!id })
+  if (!id) return { guide: null, loading: false }
+  const template = data?.find((candidate) => candidate.id === id)
+  return { guide: template && template.unlockLevel <= level ? template : null, loading: isPending }
 }
 
 export interface TraceGuideState {

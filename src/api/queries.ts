@@ -53,7 +53,9 @@ export function watchAccountChange(client: QueryClient): () => void {
 }
 watchAccountChange(queryClient)
 
-export const useTemplates = () => useQuery({ queryKey: qk.templates, queryFn: getTemplates, ...forever })
+/** The server's template list. `enabled: false` keeps a screen that may not need it from asking. */
+export const useTemplates = (options?: { enabled?: boolean }) =>
+  useQuery({ queryKey: qk.templates, queryFn: getTemplates, ...forever, enabled: options?.enabled ?? true })
 export const useTemplate = (id: string) => useQuery({ queryKey: qk.template(id), queryFn: () => getTemplate(id), ...forever })
 
 /**

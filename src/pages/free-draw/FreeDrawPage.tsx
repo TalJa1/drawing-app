@@ -7,6 +7,7 @@ import { Studio, type StudioContext } from '@/features/drawing/ui/Studio'
 import type { BackgroundKind } from '@/features/drawing/engine/types'
 import { BACKGROUNDS } from '@/features/drawing/engine/types'
 import { Button } from '@/components/Button'
+import { PageLoader } from '@/components/PageLoader'
 import { Modal } from '@/components/Modal'
 import { TextField } from '@/components/Form'
 import { canvasToBlob, makeThumbnail } from '@/lib/raster'
@@ -108,7 +109,7 @@ export default function FreeDrawPage() {
   const [w, h] = PRESETS[preset]
   const setDraftChat = useChat((s) => s.setDraft)
   const pending = useStudio((s) => s.pendingPalette)
-  const guide = useTraceGuide()
+  const { guide, loading: guideLoading } = useTraceGuide()
   const guideState = useTraceGuideState(guide)
 
   const inspire = useCallback(() => {
@@ -260,37 +261,42 @@ export default function FreeDrawPage() {
 
   return (
     <>
-      <Studio
-        key={`${preset}:${guide?.id ?? 'plain'}`}
-        mode="free"
-        title={t('freeDraw.title')}
-        subtitle={pending ? t('freeDraw.withPalette', { name: pending.name }) : prompt ? L(prompt) : t('freeDraw.subtitle')}
-        width={w}
-        height={h}
-        background={bg}
-        draftKey={guide ? `free:${w}x${h}:guide:${guide.id}` : `free:${w}x${h}`}
-        onEngine={guide ? guideState.onEngine : undefined}
-        topExtra={guide ? <TraceGuideToggle state={guideState} /> : undefined}
-        backTo="/"
-        infoLabel={t('freeDraw.canvasTab')}
-        info={info}
-        description={t('freeDraw.description')}
-        primary={(ctx) => (
-          <>
-            <Button
-              size="sm"
-              variant="outline"
-              icon={<Save size={16} />}
-              onClick={() => void askToSave(ctx)}
-              disabled={ctx.engine.isEmpty()}
-              aria-label={t('freeDraw.saveToCollection')}
-            >
-              <span className="hidden sm:inline">{t('freeDraw.saveToCollection')}</span>
-            </Button>
-            <DownloadMenu ctx={ctx} />
-          </>
-        )}
-      />
+      {guideLoading ? (
+        // A named guide comes from the server's list: open the canvas once, with or without the guide, not plain and then again.
+        <PageLoader />
+      ) : (
+        <Studio
+          key={`${preset}:${guide?.id ?? 'plain'}`}
+          mode="free"
+          title={t('freeDraw.title')}
+          subtitle={pending ? t('freeDraw.withPalette', { name: pending.name }) : prompt ? L(prompt) : t('freeDraw.subtitle')}
+          width={w}
+          height={h}
+          background={bg}
+          draftKey={guide ? `free:${w}x${h}:guide:${guide.id}` : `free:${w}x${h}`}
+          onEngine={guide ? guideState.onEngine : undefined}
+          topExtra={guide ? <TraceGuideToggle state={guideState} /> : undefined}
+          backTo="/"
+          infoLabel={t('freeDraw.canvasTab')}
+          info={info}
+          description={t('freeDraw.description')}
+          primary={(ctx) => (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                icon={<Save size={16} />}
+                onClick={() => void askToSave(ctx)}
+                disabled={ctx.engine.isEmpty()}
+                aria-label={t('freeDraw.saveToCollection')}
+              >
+                <span className="hidden sm:inline">{t('freeDraw.saveToCollection')}</span>
+              </Button>
+              <DownloadMenu ctx={ctx} />
+            </>
+          )}
+        />
+      )}
       <Modal open={!!saving} onClose={() => setSaving(null)} title={t('freeDraw.saveTitle')} size="sm">
         <form
           onSubmit={(e) => {
