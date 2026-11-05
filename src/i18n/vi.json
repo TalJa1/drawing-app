@@ -373,7 +373,16 @@
     "untitled": "Bản nghiên cứu chưa đặt tên",
     "medium": "Kỹ thuật số · vẽ tự do",
     "saved": "Đã lưu vào bộ sưu tập",
-    "savedXp": "+{{xp}} XP vì hoàn thành một tác phẩm"
+    "savedXp": "+{{xp}} XP vì hoàn thành một tác phẩm",
+    "guide": {
+      "toggle": "Hình mờ để vẽ theo",
+      "title": "Hình mờ: {{name}}",
+      "strength": "Độ đậm hình mờ",
+      "light": "Nhạt",
+      "medium": "Vừa",
+      "strong": "Đậm",
+      "note": "Hình mờ chỉ để vẽ theo, không được lưu hay tải xuống cùng tác phẩm."
+    }
   },
   "practice": {
     "eyebrow": "Luyện tập",
@@ -1027,7 +1036,8 @@
   },
   "chat": {
     "title": "Nàng thơ sáng tạo của bạn",
-    "subtitle": "Ý tưởng, lời khuyên về màu, hướng dẫn bố cục và lịch sử nghệ thuật — người bạn AI thân thiện (bản xem trước).",
+    "subtitle": "Tìm ý tưởng, phối màu, góp ý bố cục và khám phá mỹ thuật cùng trợ lý vẽ.",
+    "notConfigured": "Trợ lý vẽ chưa sẵn sàng. Bạn hãy thử lại sau.",
     "newChat": "Cuộc trò chuyện mới",
     "history": "Cuộc trò chuyện",
     "noHistory": "Các cuộc trò chuyện sẽ xuất hiện ở đây.",
@@ -1036,36 +1046,82 @@
     "delete": "Xóa cuộc trò chuyện",
     "deleteTitle": "Xóa cuộc trò chuyện này?",
     "modeLabel": "Chế độ nàng thơ",
+    "nextMode": "Chế độ áp dụng cho câu hỏi tiếp theo.",
+    "messages": "Tin nhắn",
+    "scrollToLatest": "Xuống tin mới",
+    "previousVersion": "Phiên bản trước",
+    "nextVersion": "Phiên bản sau",
+    "status": {
+      "preparingText": "Gợi ý đã có. Muse đang viết hướng dẫn…",
+      "preparing": "Đang chuẩn bị ảnh…",
+      "connecting": "Đang kết nối…",
+      "thinking": "Nàng thơ đang suy nghĩ…",
+      "streaming": "Đang viết câu trả lời…",
+      "completed": "Đã trả lời xong.",
+      "stopped": "Đã dừng trả lời. Nội dung đã nhận vẫn được giữ lại.",
+      "interrupted": "Câu trả lời bị gián đoạn. Bạn có thể thử lại.",
+      "failed": "Chưa thể hoàn tất câu trả lời.",
+      "retryIn_one": "Thử lại sau {{count}} giây.",
+      "retryIn_other": "Thử lại sau {{count}} giây."
+    },
+    "incomplete": {
+      "max_output_tokens": "Câu trả lời đã đạt giới hạn độ dài. Hãy thử yêu cầu câu trả lời ngắn hơn.",
+      "content_filter": "Bộ lọc an toàn đã dừng câu trả lời. Hãy thử diễn đạt câu hỏi khác đi.",
+      "max_messages": "Câu trả lời đã đạt giới hạn số tin. Hãy thử lại.",
+      "steered": "Câu trả lời kết thúc sớm. Hãy thử lại.",
+      "budget": "Câu trả lời đã đạt ngân sách hiện có.",
+      "other": "Câu trả lời kết thúc khi chưa hoàn tất. Hãy thử lại."
+    },
+    "errors": {
+      "unauthorized": "Hãy đăng nhập để dùng trợ lý vẽ.",
+      "ai_not_configured": "Trợ lý vẽ chưa được cấu hình.",
+      "service_unavailable": "Trợ lý vẽ tạm thời chưa sẵn sàng.",
+      "rate_limited": "Bạn đã gửi quá nhiều yêu cầu. Hãy chờ trước khi thử lại.",
+      "ai_busy": "Trợ lý vẽ đang bận. Hãy chờ trước khi thử lại.",
+      "ai_budget_exceeded": "Trợ lý vẽ đã đạt ngân sách hôm nay.",
+      "payload_too_large": "Tin nhắn này quá lớn. Hãy bỏ bớt ảnh rồi thử lại.",
+      "unsupported_media_type": "Định dạng ảnh này chưa được hỗ trợ.",
+      "bad_request": "Không thể đọc yêu cầu này. Hãy thử lại.",
+      "validation_error": "Hãy kiểm tra tin nhắn và ảnh rồi thử lại.",
+      "upstream": "Trợ lý vẽ chưa thể hoàn tất câu trả lời. Hãy thử lại.",
+      "timeout": "Chờ câu trả lời quá lâu. Hãy thử lại.",
+      "model_unavailable": "Mô hình vẽ tạm thời chưa sẵn sàng.",
+      "network": "Kết nối bị mất. Hãy thử lại.",
+      "protocol": "Không thể đọc câu trả lời. Hãy thử lại.",
+      "client": "Có lỗi khi chuẩn bị câu trả lời. Hãy thử lại.",
+      "image_missing": "Ảnh này không còn trên thiết bị. Hãy đính kèm lại."
+    },
+    "groups": { "today": "Hôm nay", "yesterday": "Hôm qua", "week": "Tuần này", "older": "Cũ hơn" },
+    "activeImage": { "label": "Đang hỏi về: {{name}}", "clear": "Bỏ ngữ cảnh ảnh" },
     "modes": {
       "ideas": {
-        "name": "Tạo ý tưởng",
+        "name": "Tìm ý tưởng",
         "short": "Ý tưởng",
         "intro": "Bí ý tưởng vẽ? Hỏi mình để có đề bài, thử thách và những tia lửa sáng tạo nhỏ.",
         "prompts": ["Cho mình 5 ý tưởng vẽ cho người mới bắt đầu", "Tạo cho mình thử thách vẽ 7 ngày", "Hôm nay mình nên vẽ gì?"]
       },
       "colour": {
-        "name": "Cố vấn màu sắc",
+        "name": "Phối màu",
         "short": "Màu sắc",
         "intro": "Cho mình một màu hoặc một tâm trạng, mình sẽ pha bảng màu cho bạn — rồi gửi thẳng tới xưởng vẽ.",
         "prompts": ["Màu nào hợp với xanh mòng két?", "Cho mình một bảng màu gợi hoài niệm", "Những màu hợp với hồng"]
       },
       "composition": {
-        "name": "Huấn luyện bố cục",
+        "name": "Góp ý bố cục",
         "short": "Bố cục",
         "intro": "Cùng làm bức tranh của bạn cân bằng và sống động hơn — quy tắc một phần ba, đường dẫn, tiêu điểm.",
         "prompts": ["Làm sao để cải thiện bố cục?", "Nên đặt đường chân trời ở đâu?", "Làm sao tạo tiêu điểm?"]
       },
       "history": {
-        "name": "Sử gia nghệ thuật",
+        "name": "Khám phá mỹ thuật",
         "short": "Lịch sử",
         "intro": "Hỏi mình về bất kỳ trào lưu hay nghệ sĩ nào — từ tranh hang động đến tranh Đông Hồ đến Pop Art.",
         "prompts": ["Giải thích trường phái Ấn tượng cho trẻ 12 tuổi", "Tranh dân gian Đông Hồ là gì?", "Kể mình nghe về Lập thể"]
       }
     },
     "emptyTitle": "Xin chào, {{name}}! Mình là nàng thơ của bạn.",
-    "emptyNote": "chọn một gợi ý bên dưới, hoặc hỏi mình bất cứ điều gì",
-    "thinking": "Nàng thơ đang suy nghĩ…",
-    "error": "Nàng thơ vừa quên mất mạch suy nghĩ.",
+    "welcomeTitle": "Cùng vẽ nhé, {{name}}.",
+    "emptyNote": "chọn một gợi ý bên dưới, hoặc hỏi mình về vẽ, màu sắc và nghệ thuật",
     "helpful": "Hữu ích",
     "notHelpful": "Chưa hữu ích",
     "regenerate": "Tạo lại câu trả lời",
@@ -1074,21 +1130,86 @@
     "send": "Gửi",
     "stop": "Dừng",
     "removeAttachment": "Bỏ hình",
-    "disclaimer": "Nàng thơ là bản xem trước với câu trả lời soạn sẵn — AI thật sẽ có khi kết nối máy chủ.",
+    "disclaimer": "Câu hỏi và ảnh của bạn được gửi qua máy chủ Art Spark tới OpenAI.",
+    "data": {
+      "learnMore": "Tìm hiểu thêm",
+      "training": "Theo mặc định, dữ liệu gửi tới API OpenAI không được dùng để huấn luyện mô hình.",
+      "monitoring": "OpenAI có thể giữ log giám sát lạm dụng chứa nội dung tối đa 30 ngày, hoặc lâu hơn khi pháp luật yêu cầu hay cần bảo vệ con người và dịch vụ.",
+      "server": "Máy chủ Art Spark không lưu nội dung chat. Lịch sử trò chuyện được giữ trên thiết bị này.",
+      "source": "Kiểm soát dữ liệu của OpenAI"
+    },
     "attach": {
       "button": "Đính kèm hình",
       "title": "Chia sẻ hình với nàng thơ",
       "upload": "Tải lên từ thiết bị",
       "fromCollection": "Từ bộ sưu tập của bạn",
       "empty": "Bộ sưu tập còn trống — hoàn thành một tác phẩm để chia sẻ ở đây.",
-      "tooBig": "Hình quá lớn (tối đa 12 MB)."
+      "preparing": "Đang chuẩn bị ảnh",
+      "errors": {
+        "too_big": "Hình quá lớn (tối đa 12 MB).",
+        "unsupported": "Hãy chọn ảnh PNG, JPEG, WebP hoặc GIF.",
+        "decode": "Không thể mở ảnh này. Hãy thử một ảnh khác.",
+        "too_many_pixels": "Ảnh này vượt giới hạn 40 megapixel.",
+        "missing": "Ảnh này không còn trên thiết bị. Hãy đính kèm lại."
+      }
     },
     "cards": {
       "template": "Mẫu vẽ",
-      "drawThis": "Vẽ mẫu này",
+      "source": {
+        "palette": "Bảng màu · Muse đề xuất",
+        "idea": "Ý tưởng · Muse đề xuất",
+        "critique": "Nhận xét ảnh · Muse đề xuất",
+        "lesson": "Bài học · Thư viện Art Spark",
+        "template": "Mẫu vẽ · Thư viện Art Spark"
+      },
+      "critique": {
+        "imageCaution": "Gợi ý dựa trên ảnh; hãy đối chiếu với bài vẽ thật.",
+        "observations": "Quan sát",
+        "strengths": "Điểm hiệu quả",
+        "priorities": "Ưu tiên cải thiện",
+        "exercise": "Thử bài tập này",
+        "followUp": "Hỏi tiếp về ảnh này"
+      },
+      "unlockLevel": "Mở ở cấp {{level}}",
+      "roles": { "dominant": "Chủ đạo", "support": "Hỗ trợ", "accent": "Nhấn" },
+      "drawThis": "Tô màu & chấm điểm",
       "sketchIt": "Phác trong Vẽ tự do",
+      "sketchWithGuide": "Vẽ theo hình mờ trong Vẽ tự do",
+      "traceIt": "Tự vẽ theo hình mờ",
+      "copyHex": "Chép mã HEX",
       "lesson_one": "Bài học · {{count}} phút",
       "lesson_other": "Bài học · {{count}} phút"
+    }
+  },
+  "aiJudge": {
+    "title": "Nhận xét của Muse",
+    "intro": "Muse có thể xem bài vẽ và gợi ý điều bạn nên luyện tiếp.",
+    "ask": "Nhờ Muse nhận xét",
+    "disclosure": "Ảnh bài vẽ được gửi qua máy chủ Art Spark tới OpenAI để viết nhận xét. Theo mặc định, dữ liệu gửi tới API OpenAI không được dùng để huấn luyện mô hình, nhưng OpenAI có thể giữ log giám sát lạm dụng tối đa 30 ngày. Điểm số không thay đổi.",
+    "loading": "Muse đang xem bài vẽ của bạn…",
+    "ready": "Nhận xét của Muse đã sẵn sàng.",
+    "strengths": "Điểm mạnh",
+    "tips": "Gợi ý",
+    "tryNow": "Thử ngay",
+    "label": "Muse · AI — điểm do công thức tính",
+    "retry": "Thử lại",
+    "retryIn": "Thử lại sau {{time}}.",
+    "wait": {
+      "seconds": "{{value}} giây",
+      "minutes": "{{value}} phút",
+      "hours": "{{value}} giờ"
+    },
+    "error": {
+      "rate_limited": "Bạn vừa nhờ Muse nhiều lần quá.",
+      "ai_busy": "Muse đang giúp các bạn khác.",
+      "ai_budget_exceeded": "Muse đã dùng hết lượt nhận xét hôm nay.",
+      "unauthorized": "Hãy đăng nhập để nhờ Muse nhận xét.",
+      "ai_not_configured": "Máy chủ này chưa bật tính năng nhận xét của Muse.",
+      "network": "Không kết nối được máy chủ Art Spark. Hãy kiểm tra mạng.",
+      "timeout": "Muse trả lời quá lâu.",
+      "upstream": "Lần này Muse chưa viết được nhận xét.",
+      "image_missing": "Không đọc được ảnh bài vẽ trên thiết bị này.",
+      "generic": "Có lỗi khi nhờ Muse nhận xét."
     }
   },
   "home": {
