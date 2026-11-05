@@ -8,7 +8,7 @@ artists and the chat) is marked in the sections below. Signatures and the TypeSc
 
 Conventions
 
-- Base URL: `VITE_API_BASE` (default `/api`). JSON in/out, `Authorization: Bearer <token>`.
+- Base URL: `VITE_API_BASE` (default `/api/v1`; it already includes the version). JSON in/out, `Authorization: Bearer <token>`.
 - Timestamps are ISO-8601 strings (`ISODate`), local calendar days are `YYYY-MM-DD` (`DayKey`).
 - Bilingual content uses `Localized = { "en": string, "vi": string }`.
 - Errors: HTTP status + `{ "error": { "code": string, "message": string } }`.
@@ -271,7 +271,8 @@ as generative SVG placeholders; a CMS can supply licensed/public-domain images.
 ## AI chat — protocol v1, `src/api/ai/`
 
 The paths below include the backend's `/api/v1` prefix. `VITE_API_BASE` is the origin plus
-`/api`, for example `http://127.0.0.1:8000/api`. `VITE_CHAT_TRANSPORT=mock|server` selects
+`/api/v1`, for example `http://127.0.0.1:8000/api/v1`, the same base as every other request
+(the AI calls add only `/ai/...`). `VITE_CHAT_TRANSPORT=mock|server` selects
 the transport; the default is mock in development and server in production.
 
 | Method & path                 | Request                            | Response                                      |

@@ -63,12 +63,20 @@ it('sends no Authorization header without a session token', async () => {
   expect(new Headers(fetchMock.mock.calls[0][1]?.headers).has('Authorization')).toBe(false)
 })
 
+// VITE_API_BASE already ends with the version (`/api/v1`, like the rest of the client), so the AI path adds only `/ai/...`.
 it('builds the URL from VITE_API_BASE', async () => {
   vi.resetModules()
-  vi.stubEnv('VITE_API_BASE', 'http://x/api')
+  vi.stubEnv('VITE_API_BASE', 'http://x/api/v1')
   const { serverJudgeTransport: configured } = await import('./judgeServerTransport')
   await configured.requestFeedback(request, new AbortController().signal)
   expect(fetchMock.mock.calls[0][0]).toBe('http://x/api/v1/ai/judge/feedback')
+})
+
+it('with the default base the feedback URL carries one /v1, the same prefix as every other request', async () => {
+  vi.resetModules()
+  const { serverJudgeTransport: configured } = await import('./judgeServerTransport')
+  await configured.requestFeedback(request, new AbortController().signal)
+  expect(fetchMock.mock.calls[0][0]).toBe('/api/v1/ai/judge/feedback')
 })
 
 it.each([

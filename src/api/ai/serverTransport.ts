@@ -40,7 +40,7 @@ async function httpError(response: Response): Promise<AiTransportError> {
 
 export const serverTransport: ChatTransport = {
   async *streamTurn(req, signal) {
-    const response = await fetch(`${API_BASE}/v1/ai/chat/stream`, {
+    const response = await fetch(`${API_BASE}/ai/chat/stream`, {
       method: 'POST',
       signal,
       headers: { ...authHeaders(), 'Content-Type': 'application/json', 'X-Request-ID': req.requestId },
@@ -57,7 +57,7 @@ export const serverTransport: ChatTransport = {
 
 export async function checkServerHealth(): Promise<{ configured: boolean } | null> {
   try {
-    const response = await fetch(`${API_BASE}/v1/ai/health`, { method: 'GET', headers: authHeaders() })
+    const response = await fetch(`${API_BASE}/ai/health`, { method: 'GET', headers: authHeaders() })
     if (!response.ok) return null
     const health = healthSchema.safeParse(await response.json())
     return health.success ? { configured: health.data.configured } : null

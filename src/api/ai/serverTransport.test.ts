@@ -66,12 +66,24 @@ it('sends the Bearer token when the session has one', async () => {
   expect(headers.get('Content-Type')).toBe('application/json')
   expect(headers.get('X-Request-ID')).toBe('r_1')
 })
+// VITE_API_BASE already ends with the version (`/api/v1`, like the rest of the client), so the AI paths add only `/ai/...`.
 it('builds the URL from VITE_API_BASE', async () => {
   vi.resetModules()
-  vi.stubEnv('VITE_API_BASE', 'http://x/api')
+  vi.stubEnv('VITE_API_BASE', 'http://x/api/v1')
   const { serverTransport: configured } = await import('./serverTransport')
   await consume(configured)
   expect(fetchMock.mock.calls[0][0]).toBe('http://x/api/v1/ai/chat/stream')
+})
+it('with the default base the chat and health URLs carry one /v1, the same prefix as every other request', async () => {
+  vi.resetModules()
+  const { serverTransport: configured, checkServerHealth } = await import('./serverTransport')
+  const { API_BASE } = await import('@/api/client')
+  expect(API_BASE).toBe('/api/v1')
+  await consume(configured)
+  expect(fetchMock.mock.calls[0][0]).toBe('/api/v1/ai/chat/stream')
+  fetchMock.mockResolvedValue(new Response(JSON.stringify({ configured: true, protocolVersion: 1 })))
+  await checkServerHealth()
+  expect(fetchMock.mock.calls.at(-1)?.[0]).toBe('/api/v1/ai/health')
 })
 it('defaults to mock in dev and server in production builds', () => {
   vi.stubEnv('PROD', false)
