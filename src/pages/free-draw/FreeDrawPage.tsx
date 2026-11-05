@@ -254,7 +254,7 @@ export default function FreeDrawPage() {
   return (
     <>
       <Studio
-        key={preset}
+        key={`${preset}:${guide?.id ?? 'plain'}`}
         mode="free"
         title={t('freeDraw.title')}
         subtitle={pending ? t('freeDraw.withPalette', { name: pending.name }) : prompt ? L(prompt) : t('freeDraw.subtitle')}

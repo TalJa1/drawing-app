@@ -115,6 +115,45 @@ test('unknown or locked guides show a plain Free Draw page', async ({ page }) =>
   }
 })
 
+test('changing the guide in the same route isolates the canvas and drafts', async ({ page }) => {
+  await freshApp(page)
+  await page.goto('/free-draw?guide=cat')
+  const canvas = page.getByRole('img', { name: 'Drawing canvas' })
+  await expect.poll(() => guideInkOnScreen(page)).toBeGreaterThan(500)
+  const area = (await canvas.boundingBox())!
+  await page.mouse.move(area.x + area.width * 0.42, area.y + area.height * 0.4)
+  await page.mouse.down()
+  await page.mouse.move(area.x + area.width * 0.58, area.y + area.height * 0.6, { steps: 10 })
+  await page.mouse.up()
+  await canvas.evaluate((element) => (element.dataset.reviewGuide = 'cat'))
+
+  await page.evaluate(() => {
+    history.pushState(null, '', '/free-draw?guide=invented')
+    dispatchEvent(new PopStateEvent('popstate'))
+  })
+  await expect(canvas).not.toHaveAttribute('data-review-guide', 'cat')
+  await expect(page.getByRole('button', { name: 'Trace guide' })).toHaveCount(0)
+  await expect.poll(() => guideInkOnScreen(page)).toBeLessThan(50)
+  // Allow autosave to run: strokes from the guided page must not enter the plain draft.
+  await page.waitForTimeout(5500)
+  const plainDraft = await page.evaluate(
+    () =>
+      new Promise((resolve, reject) => {
+        const open = indexedDB.open('artspark')
+        open.onerror = () => reject(open.error)
+        open.onsuccess = () => {
+          const get = open.result.transaction('files').objectStore('files').get('draft:free:1200x900')
+          get.onsuccess = () => {
+            resolve(get.result ?? null)
+            open.result.close()
+          }
+          get.onerror = () => reject(get.error)
+        }
+      }),
+  )
+  expect(plainDraft).toBeNull()
+})
+
 test('downloads and saved artworks never contain the guide', async ({ page }, info) => {
   test.skip(info.project.name === 'mobile', 'download menu is desktop-first')
   await freshApp(page)
