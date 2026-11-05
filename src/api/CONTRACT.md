@@ -185,8 +185,12 @@ the transport; the default is mock in development and server in production.
 | `GET /api/v1/ai/health`       | Optional `Authorization: Bearer …` | `{ configured: boolean, protocolVersion: 1 }` |
 | `POST /api/v1/ai/chat/stream` | JSON below                         | `text/event-stream`                           |
 
-Both routes resolve identity. A valid JWT identifies the user. Guests (including mock
-tokens) are accepted only when `AI_REQUIRE_AUTH=false` and the client IP is loopback.
+Both routes resolve identity. A valid JWT always identifies the user before guest rules.
+Guests (including `mock.*` tokens, which count as absent) need `AI_REQUIRE_AUTH=false`.
+They must use a loopback IP unless BE explicitly sets `AI_ALLOW_REMOTE_GUESTS=true`
+(default false). Remote guests use the client IP as their identity and share the same
+per-identity daily budget (USD 0.5), chat limit (20/600 s), judge limit (10/600 s) and
+global daily budget (USD 2). BE must trust only the actual proxy IP for forwarded headers.
 Send `Content-Type: application/json` and `X-Request-ID: <requestId>`; compressed bodies
 are unsupported. Any `Content-Encoding` header is rejected with 415, including
 `identity` and an empty value; JSON media-type parameters such as charset are allowed.
@@ -336,9 +340,11 @@ shows `?guide=` only when the id is in the catalog and unlocked at the learner's
 guide is view-only (never in downloads, saved artworks, drafts, scoring or fill), and a
 guided page keeps its own draft key `free:{w}x{h}:guide:{id}`.
 
-Scope guard (batch 17). BE may answer a turn with fixed copy instead of the model: one
+Scope guard (batches 17–18). BE may answer a turn with fixed copy instead of the model: one
 `token` event with the reviewed text, then `done: completed`, no `status` and no cards.
 The client treats it like any reply.
+Guard v2 remains enabled; its default deadline is 5 seconds and it reads the complete
+newest message up to the request's 4000-character limit. The stream wire format is unchanged.
 
 ### Practice feedback — `POST /api/v1/ai/judge/feedback`
 
