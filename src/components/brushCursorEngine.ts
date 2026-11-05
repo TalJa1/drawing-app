@@ -21,7 +21,9 @@
  *    `data-cursor-color` (the drawing canvas names its tool, the home page's doodle pad names the colour its next stroke gets).
  */
 
+import { createSpriteStore, rasterizeSprite, type SpriteStoreOptions } from './spriteStore'
 import { drawToolSprite, isCursorKind, type CursorKind } from './toolCursors'
+import { SPRITE_HOTSPOT, SPRITE_SCALE, SPRITE_VIEW, isSpriteKind, type SpriteState } from './toolSprites'
 
 interface Rgb {
   r: number
@@ -85,6 +87,8 @@ export interface BrushCursorOptions {
   effects: boolean
   /** CSS selector; ink effects are not spawned when the pointer is over a match. Default: none. */
   noInkSelector?: string
+  /** Renders a tool picture (SVG) into a canvas. Default: the browser's own; tests hand in a stand-in. */
+  loadSprite?: SpriteStoreOptions['load']
 }
 
 export interface BrushCursorHandle {
@@ -121,6 +125,12 @@ const INTERACTIVE =
   'a[href],button,[role="button"],[role="tab"],[role="menuitem"],[role="switch"],[role="checkbox"],[role="option"],[role="combobox"],summary,label,select,input,textarea,[data-cursor-interactive]'
 
 // ---------- pure helpers (exported for tests) ----------
+
+/** Which picture of a tool to show: pressed, lifting on the rebound after the release, or floating over the paper. */
+export function spriteStateOf(s: { isDown: boolean; elevation: number }): SpriteState {
+  if (s.isDown) return 'down'
+  return s.elevation < 0.98 ? 'up' : 'idle'
+}
 
 /** Parses `#rgb`, `#rrggbb` or `#rrggbbaa`; anything else yields the fallback pigment. */
 export function parsePigment(hex: string): Rgb {
@@ -213,6 +223,17 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     visibility: 'hidden',
   })
   document.body.append(inkCanvas, cursorCanvas)
+
+  // the tool pictures: rendered one at a time, off to the side, then only blitted (nothing is created before a tool asks)
+  const sprites = createSpriteStore({
+    load: opts.loadSprite ?? rasterizeSprite,
+    onReady: () => {
+      if (destroyed) return
+      lastKey = '' // a stand-in was on screen: paint the real picture
+      dirty = true
+      schedule()
+    },
+  })
 
   const dabShapes = pool(24, 14, 0.18)
   const bloomShapes = pool(12, 28, 0.16)
@@ -724,6 +745,11 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     paintSprite()
   }
 
+  /** `data-look` says what the sprite shows: the engine's brush, a tool's picture, or the icon standing in for it. */
+  function setLook(look: 'brush' | 'picture' | 'icon') {
+    if (cursorCanvas.dataset.look !== look) cursorCanvas.dataset.look = look
+  }
+
   function paintSprite() {
     const tipX = TIP.x
     const tipY = TIP.y
@@ -745,10 +771,24 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
     }
 
     if (b.kind !== 'brush') {
-      drawToolSprite(cur!, b.kind, tipX, tipY, b.rgb, CURSOR_SCALE, b.isDown)
+      const kind = b.kind
+      const picture = isSpriteKind(kind) ? sprites.get(kind, spriteStateOf(b), b.rgb, dprCur) : null
+      setLook(picture ? 'picture' : 'icon')
+      if (picture && isSpriteKind(kind)) {
+        // the picture's tip goes on the hotspot; snapped to a device pixel so the blit stays sharp
+        const [hx, hy] = SPRITE_HOTSPOT[kind]
+        const x = Math.round((tipX - (hx - SPRITE_VIEW[0]) * SPRITE_SCALE) * dprCur) / dprCur
+        const y = Math.round((tipY - (hy - SPRITE_VIEW[1]) * SPRITE_SCALE) * dprCur) / dprCur
+        // 1:1 with the device pixels it was rendered in, so the blit does not resample
+        cur!.drawImage(picture, x, y, picture.width / dprCur, picture.height / dprCur)
+      } else {
+        // until the picture is ready (or when it cannot be rendered) the icon stands in
+        drawToolSprite(cur!, kind, tipX, tipY, b.rgb, CURSOR_SCALE, b.isDown)
+      }
       return
     }
 
+    setLook('brush')
     const handleAngle = FIXED_HANDLE_ANGLE + (1 - elev) * 0.09
     const bristleLen = 9.5 - (1 - elev) * 1.4
     const fx = mouseX + Math.cos(handleAngle) * bristleLen
@@ -963,6 +1003,7 @@ export function startBrushCursor(opts: BrushCursorOptions): BrushCursorHandle {
       window.removeEventListener('blur', onBlur)
       window.removeEventListener('resize', resize)
       document.removeEventListener('visibilitychange', onVisibility)
+      sprites.dispose()
       inkCanvas.remove()
       cursorCanvas.remove()
       root.classList.remove('art-cursor')

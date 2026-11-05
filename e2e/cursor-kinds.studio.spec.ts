@@ -1,7 +1,8 @@
 /* The brush cursor says what the pointer is about to do.
 
-   - In the drawing studio the sprite is the glyph of the chosen tool (a pencil for the pencil, an eraser for the eraser, ...) and
-     follows a tool change from the keyboard, Space included (the hand).
+   - In the drawing studio the sprite is the picture of the chosen tool (a pencil for the pencil, an eraser for the eraser, the
+     ruler, the square and the compass for the shape tools, ...) and follows a tool change from the keyboard, Space included (the
+     hand). Everywhere else the cursor is the brush.
    - The sprite's pigment is the colour that the stroke will really get: the studio's colour in the studio, the
      doodle pad's next ink on the home page.
    - A custom list replaces the browser's own drop-down (which is drawn outside the page, so the cursor could not reach it):
@@ -23,6 +24,33 @@ async function hover(page: Page, selector: string, dx = 0.5, dy = 0.5) {
   await page.mouse.move(b.x + b.width * dx + 6, b.y + b.height * dy + 4, { steps: 2 })
 }
 
+/** Bounds of what is painted in the sprite canvas (CSS px, relative to the hotspot at (40, 88)), a hash of the pixels, and whether
+    some painted pixel lies within `reach` px of the hotspot. */
+const paint = (page: Page, reach = 3) =>
+  page.evaluate((reachPx) => {
+    const c = document.querySelector<HTMLCanvasElement>('canvas.art-brush-cursor')!
+    const k = c.width / 128
+    const { data } = c.getContext('2d')!.getImageData(0, 0, c.width, c.height)
+    let x0 = Infinity
+    let y0 = Infinity
+    let x1 = -1
+    let y1 = -1
+    let hash = 0
+    let nearTip = false
+    for (let y = 0; y < c.height; y++)
+      for (let x = 0; x < c.width; x++) {
+        const i = (y * c.width + x) * 4
+        hash = (hash * 31 + data[i] + data[i + 1] * 3 + data[i + 2] * 7 + data[i + 3] * 13) | 0
+        if (data[i + 3] <= 40) continue
+        x0 = Math.min(x0, x)
+        x1 = Math.max(x1, x)
+        y0 = Math.min(y0, y)
+        y1 = Math.max(y1, y)
+        if (Math.hypot(x / k - 40, y / k - 88) <= reachPx) nearTip = true
+      }
+    return { look: c.dataset.look, w: (x1 + 1 - x0) / k, h: (y1 + 1 - y0) / k, left: x0 / k - 40, top: y0 / k - 88, hash, nearTip }
+  }, reach)
+
 test.describe('studio: the cursor follows the tool', () => {
   const CASES: [key: string, kind: string][] = [
     ['b', 'pencil'],
@@ -35,9 +63,9 @@ test.describe('studio: the cursor follows the tool', () => {
     ['e', 'eraser'],
     ['s', 'smudge'],
     ['i', 'eyedropper'],
-    ['l', 'crosshair'],
-    ['r', 'crosshair'],
-    ['o', 'crosshair'],
+    ['l', 'ruler'],
+    ['r', 'square'],
+    ['o', 'compass'],
     ['z', 'zoom'],
   ]
 
@@ -67,6 +95,80 @@ test.describe('studio: the cursor follows the tool', () => {
     await page.keyboard.up('Space')
     await hover(page, stage, 0.55)
     await expect.poll(() => kindOf(page), { message: 'Space released' }).toBe('pencil')
+  })
+
+  // The size of the old glyph cursors was 34-51px long (icon plus swatch); the pictures keep to it: ~35px of tool plus its shadow.
+  const PICTURE_KEYS: [string, string][] = CASES.filter(([, kind]) => kind !== 'brush')
+
+  test('every tool is a picture of about the size of the old cursors, with its tip on the pointer', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await open(page, '/free-draw', { customCursor: true })
+    const stage = '[data-cursor-kind] canvas'
+    await hover(page, stage)
+    for (const [key, kind] of PICTURE_KEYS) {
+      await page.keyboard.press(key)
+      await hover(page, stage, 0.45)
+      await expect.poll(async () => (await paint(page)).look, { message: `${kind} becomes a picture`, timeout: 10_000 }).toBe('picture')
+      // the studio floats the ruler above the paper: its corner is ~4px from the pointer until it is pressed (see the test below)
+      const p = await paint(page, kind === 'ruler' ? 5 : 3)
+      expect(await kindOf(page)).toBe(kind)
+      const long = Math.max(p.w, p.h)
+      expect(long, `${kind}: long side ${long}px`).toBeGreaterThanOrEqual(30)
+      expect(long, `${kind}: long side ${long}px`).toBeLessThanOrEqual(52)
+      expect(p.w, `${kind} width`).toBeLessThanOrEqual(66)
+      expect(p.h, `${kind} height`).toBeLessThanOrEqual(66)
+      expect(p.nearTip, `${kind}: something is painted at the hotspot`).toBe(true)
+    }
+  })
+
+  test('pressing changes the picture and releasing gives the floating one back', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await open(page, '/free-draw', { customCursor: true })
+    const stage = '[data-cursor-kind] canvas'
+    for (const key of ['b', 'e', 'z']) {
+      await page.keyboard.press(key)
+      await hover(page, stage, 0.4)
+      await expect.poll(async () => (await paint(page)).look, { timeout: 10_000 }).toBe('picture')
+      // let the other states render too (they are rendered one by one right after the first)
+      await page.waitForTimeout(600)
+      const idle = (await paint(page)).hash
+      await page.mouse.down()
+      await expect.poll(async () => (await paint(page)).hash, { message: `${key}: pressed picture` }).not.toBe(idle)
+      await page.mouse.up()
+      await expect.poll(async () => (await paint(page)).hash, { message: `${key}: floating again` }).toBe(idle)
+    }
+  })
+
+  test('the hand is a picture too while Space is held, and the shape tools are not the crosshair any more', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await open(page, '/free-draw', { customCursor: true })
+    const stage = '[data-cursor-kind] canvas'
+    await page.keyboard.press('l')
+    await hover(page, stage)
+    await expect.poll(async () => (await paint(page)).look, { timeout: 10_000 }).toBe('picture')
+    expect(await kindOf(page)).toBe('ruler')
+    // pressed, the ruler lands: the start dot of its line sits on the pointer
+    await page.mouse.down()
+    await expect.poll(async () => (await paint(page)).nearTip, { message: 'the pressed ruler marks the pointer' }).toBe(true)
+    await page.mouse.up()
+    await page.keyboard.down('Space')
+    await hover(page, stage, 0.45)
+    await expect.poll(() => kindOf(page)).toBe('hand')
+    await expect.poll(async () => (await paint(page)).look, { timeout: 10_000 }).toBe('picture')
+    await page.keyboard.up('Space')
+  })
+
+  test('outside the drawing area the cursor is the brush, whatever the tool', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await open(page, '/free-draw', { customCursor: true })
+    const stage = '[data-cursor-kind] canvas'
+    await page.keyboard.press('b')
+    await hover(page, stage)
+    await expect.poll(() => kindOf(page)).toBe('pencil')
+    // the page behind the studio's panels (the top bar)
+    await hover(page, 'header', 0.5, 0.5)
+    await expect.poll(() => kindOf(page)).toBe('brush')
+    await expect.poll(async () => (await paint(page)).look).toBe('brush')
   })
 
   test('the sprite carries the studio colour', async ({ page }) => {

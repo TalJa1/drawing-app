@@ -7,13 +7,26 @@ describe('cursor kinds', () => {
     for (const bad of ['', 'Brush', 'rocket', 7, null, undefined]) expect(isCursorKind(bad)).toBe(false)
   })
 
-  it('has a distinct name for every tool of the tool rail (brush covers watercolour; crosshair covers the shapes)', () => {
+  it('has a distinct name for every tool of the tool rail (brush covers watercolour), plus the crosshair fallback', () => {
     expect(new Set(CURSOR_KINDS).size).toBe(CURSOR_KINDS.length)
-    expect(CURSOR_KINDS.length).toBeGreaterThanOrEqual(13)
+    for (const k of ['ruler', 'square', 'compass', 'crosshair'] as CursorKind[]) expect(CURSOR_KINDS, k).toContain(k)
+    expect(CURSOR_KINDS.length).toBe(16)
   })
 
   it('shows the colour swatch only for the kinds that put ink on the page', () => {
-    for (const k of ['pencil', 'pen', 'marker', 'airbrush', 'chalk', 'bucket', 'eyedropper', 'crosshair'] as CursorKind[])
+    for (const k of [
+      'pencil',
+      'pen',
+      'marker',
+      'airbrush',
+      'chalk',
+      'bucket',
+      'eyedropper',
+      'crosshair',
+      'ruler',
+      'square',
+      'compass',
+    ] as CursorKind[])
       expect(hasSwatch(k), k).toBe(true)
     for (const k of ['eraser', 'smudge', 'hand', 'zoom', 'brush'] as CursorKind[]) expect(hasSwatch(k), k).toBe(false)
   })

@@ -44,10 +44,12 @@ export const TOOLS: ToolDef[] = [
   { id: 'zoom', icon: ZoomIn, shortcut: 'Z', group: 'nav' },
 ]
 
-/** The cursor sprite of a tool: its own glyph, the calligraphic brush for watercolour, a crosshair for the shape tools. */
+/** The cursor sprite of a tool: its own picture, the calligraphic brush (the default cursor) for watercolour, an instrument for each shape tool. */
 export function cursorKindOf(tool: ToolId): CursorKind {
   if (tool === 'watercolour') return 'brush'
-  if (tool === 'line' || tool === 'rect' || tool === 'ellipse') return 'crosshair'
+  if (tool === 'line') return 'ruler'
+  if (tool === 'rect') return 'square'
+  if (tool === 'ellipse') return 'compass'
   return tool
 }
 

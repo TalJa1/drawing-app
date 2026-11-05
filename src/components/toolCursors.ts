@@ -4,7 +4,8 @@
    engine can paint them into its canvas with Path2D without importing React components. Each icon is a list of separate
    paths: lucide's relative `m` commands are relative to the origin of their own path, so they must not be joined. */
 
-/** What the sprite looks like. `brush` is the calligraphic brush that is drawn by the engine itself. */
+/** What the sprite looks like. `brush` is the calligraphic brush that is drawn by the engine itself. `ruler`, `square` and
+    `compass` (the shape tools) have no glyph: until their picture is ready (see toolSprites) they show the crosshair. */
 export type CursorKind =
   | 'brush'
   | 'pencil'
@@ -17,6 +18,9 @@ export type CursorKind =
   | 'bucket'
   | 'eyedropper'
   | 'crosshair'
+  | 'ruler'
+  | 'square'
+  | 'compass'
   | 'hand'
   | 'zoom'
 
@@ -32,6 +36,9 @@ export const CURSOR_KINDS: readonly CursorKind[] = [
   'bucket',
   'eyedropper',
   'crosshair',
+  'ruler',
+  'square',
+  'compass',
   'hand',
   'zoom',
 ]
@@ -40,7 +47,7 @@ export function isCursorKind(v: unknown): v is CursorKind {
   return typeof v === 'string' && (CURSOR_KINDS as readonly string[]).includes(v)
 }
 
-type GlyphKind = Exclude<CursorKind, 'brush' | 'crosshair'>
+type GlyphKind = Exclude<CursorKind, 'brush' | 'crosshair' | 'ruler' | 'square' | 'compass'>
 
 const GLYPH_PATHS: Record<GlyphKind, string[]> = {
   pencil: [
@@ -131,6 +138,9 @@ const SWATCH_KINDS: ReadonlySet<CursorKind> = new Set<CursorKind>([
   'bucket',
   'eyedropper',
   'crosshair',
+  'ruler',
+  'square',
+  'compass',
 ])
 export const hasSwatch = (k: CursorKind) => SWATCH_KINDS.has(k)
 
@@ -189,7 +199,7 @@ export function drawToolSprite(
   ctx.save()
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
-  if (kind === 'crosshair') {
+  if (kind === 'crosshair' || kind === 'ruler' || kind === 'square' || kind === 'compass') {
     const arm = 11
     const gap = 4
     ctx.beginPath()

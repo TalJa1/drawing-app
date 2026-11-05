@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { CURSOR_SCALE, FALLBACK_PIGMENT, capOldest, parsePigment, pruneExpired, startBrushCursor } from './brushCursorEngine'
+import { CURSOR_SCALE, FALLBACK_PIGMENT, capOldest, parsePigment, pruneExpired, spriteStateOf, startBrushCursor } from './brushCursorEngine'
 
 describe('parsePigment', () => {
   it('parses #rrggbb, #rgb and #rrggbbaa (alpha ignored)', () => {
@@ -210,5 +210,141 @@ describe('sprite and pigment hints', () => {
     const h = startBrushCursor({ color: '#ff0000', effects: true })
     expect(canvases().sprite.style.visibility).toBe('hidden')
     h.destroy()
+  })
+})
+
+/*
+ * The tool sprites in the engine: a picture per tool and state, rendered once off to the side and then only blitted;
+ * the old icon stands in until the picture is ready (or for good, if it cannot be rendered).
+ */
+describe('tool sprites', () => {
+  function recordingContext() {
+    const fns = new Map<string, ReturnType<typeof vi.fn>>()
+    const gradient = { addColorStop: vi.fn() }
+    const store: Record<string, unknown> = {}
+    const ctx = new Proxy(store, {
+      get: (t, k: string) => {
+        if (k === 'createRadialGradient' || k === 'createLinearGradient') return () => gradient
+        if (k in t) return t[k]
+        if (!fns.has(k)) fns.set(k, vi.fn())
+        return fns.get(k)
+      },
+      set: (t, k: string, v) => ((t[k] = v), true),
+    }) as unknown as CanvasRenderingContext2D
+    return { ctx, calls: (name: string) => (fns.get(name)?.mock.calls ?? []) as unknown[][] }
+  }
+  let spriteCtx: ReturnType<typeof recordingContext>
+  /** A loader that answers at once with a tagged fake canvas, named after the shadow offset of the SVG it was given. */
+  const tagged = () =>
+    vi.fn(async (svg: string, w: number, h: number) => ({ tag: /dx="([\d.]+)"/.exec(svg)![1], width: w, height: h }) as never)
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    vi.stubGlobal('Path2D', class {})
+    spriteCtx = recordingContext()
+    // the engine asks for the ink layer's context first and the sprite's second
+    let asked = 0
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(() => (++asked === 2 ? spriteCtx.ctx : fakeContext()) as never)
+    document.body.innerHTML = '<div id="pad" data-cursor-kind="pencil"></div><p id="plain">x</p>'
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
+    document.body.innerHTML = ''
+    document.documentElement.className = ''
+  })
+  const pad = () => document.getElementById('pad')!
+  const settle = () => vi.advanceTimersByTimeAsync(60)
+  const lastImage = () => {
+    const c = spriteCtx.calls('drawImage')
+    return c[c.length - 1]
+  }
+
+  it('paints the old icon until the picture is ready, then blits the picture with its tip on the hotspot', async () => {
+    const loadSprite = tagged()
+    const h = startBrushCursor({ color: '#E03131', effects: false, loadSprite })
+    move(pad())
+    await vi.advanceTimersByTimeAsync(20)
+    expect(spriteCtx.calls('drawImage'), 'nothing to blit yet').toHaveLength(0)
+    expect(spriteCtx.calls('stroke').length, 'the icon stands in').toBeGreaterThan(0)
+    const canvas = document.querySelector<HTMLCanvasElement>('canvas.art-brush-cursor')!
+    expect(canvas.dataset.look, 'it says what it shows').toBe('icon')
+    await vi.dynamicImportSettled() // the art is its own chunk, fetched when the first picture is wanted
+    await vi.advanceTimersByTimeAsync(20)
+    expect(loadSprite).toHaveBeenCalled()
+    expect(loadSprite.mock.calls[0][0]).toContain('#E03030') // the pigment, in steps of 4
+
+    await settle()
+    expect(canvas.dataset.look).toBe('picture')
+    const [img, x, y, w, hh] = lastImage()
+    expect((img as { tag: string }).tag).toBe('8') // idle: the floating shadow
+    // the pencil's tip (20, 88 in the picture) lands on the engine's hotspot (40, 88): the picture's origin is 40 and 108 units
+    // away from it, at 0.44px a unit, snapped to a device pixel (here 1 per CSS px)
+    expect(x).toBe(22)
+    expect(y).toBe(40)
+    expect([w, hh]).toEqual([66, 66])
+    h.destroy()
+  })
+
+  it('shows the pressed picture while the button is down, the floating one again after', async () => {
+    const h = startBrushCursor({ color: '#E03131', effects: false, loadSprite: tagged() })
+    move(pad())
+    await settle()
+    await settle()
+    pad().dispatchEvent(new MouseEvent('pointerdown', { clientX: 50, clientY: 60, button: 0, bubbles: true }))
+    await settle()
+    expect((lastImage()[0] as { tag: string }).tag, 'pressed: the shadow is short').toBe('2')
+    document.body.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
+    await settle()
+    expect((lastImage()[0] as { tag: string }).tag, 'released').toBe('8')
+    h.destroy()
+  })
+
+  it('never renders a picture for the brush, the default cursor', async () => {
+    const loadSprite = tagged()
+    const h = startBrushCursor({ color: '#E03131', effects: false, loadSprite })
+    move(document.getElementById('plain')!)
+    await settle()
+    expect(document.querySelector<HTMLCanvasElement>('canvas.art-brush-cursor')!.dataset.look).toBe('brush')
+    expect(loadSprite).not.toHaveBeenCalled()
+    expect(spriteCtx.calls('drawImage')).toHaveLength(0)
+    h.destroy()
+  })
+
+  it('keeps the icon when the picture cannot be rendered, and does not try again for ever', async () => {
+    const loadSprite = vi.fn(async () => {
+      throw new Error('no svg for you')
+    })
+    const h = startBrushCursor({ color: '#E03131', effects: false, loadSprite })
+    for (let i = 0; i < 10; i++) {
+      move(pad(), 50 + i, 60)
+      await settle()
+    }
+    expect(spriteCtx.calls('drawImage')).toHaveLength(0)
+    expect(spriteCtx.calls('stroke').length).toBeGreaterThan(0)
+    expect(loadSprite.mock.calls.length, 'one try per picture, no retries').toBeLessThanOrEqual(3)
+    h.destroy()
+  })
+
+  it('stays quiet when a picture arrives after the cursor was destroyed', async () => {
+    let finish: (v: never) => void = () => {}
+    const loadSprite = vi.fn(() => new Promise<never>((ok) => (finish = ok)))
+    const h = startBrushCursor({ color: '#E03131', effects: false, loadSprite })
+    move(pad())
+    await vi.advanceTimersByTimeAsync(20)
+    h.destroy()
+    finish({ tag: 'late', width: 66, height: 66 } as never)
+    await expect(settle()).resolves.not.toThrow()
+    expect(spriteCtx.calls('drawImage')).toHaveLength(0)
+  })
+})
+
+describe('spriteStateOf', () => {
+  it('is pressed while the button is down, lifting while the tool rebounds, floating otherwise', () => {
+    expect(spriteStateOf({ isDown: true, elevation: 0 })).toBe('down')
+    expect(spriteStateOf({ isDown: false, elevation: 0.4 })).toBe('up')
+    expect(spriteStateOf({ isDown: false, elevation: 1 })).toBe('idle')
+    expect(spriteStateOf({ isDown: false, elevation: 0.99 }), 'a rebound that has all but settled is floating').toBe('idle')
   })
 })
