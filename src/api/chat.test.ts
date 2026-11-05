@@ -1,4 +1,5 @@
 import type { Template } from '@/types'
+import * as chat from './chat'
 import { buildReply, detectIntent } from './chat'
 
 const SERVER_TEMPLATES: Template[] = [
@@ -71,4 +72,9 @@ describe('mock AI muse', () => {
     const b = buildReply({ message: 'drawing ideas please', mode: 'ideas', lang: 'en', seed: '2' })
     expect(a.text === b.text && JSON.stringify(a.cards) === JSON.stringify(b.cards)).toBe(false)
   })
+})
+
+test('the development mock reply builder exposes no obsolete stream generator', () => {
+  expect(chat.buildReply).toBeTypeOf('function')
+  expect(chat).not.toHaveProperty('streamChatReply')
 })

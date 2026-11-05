@@ -27,6 +27,7 @@ import { presentReward, toast, useLastResult } from '@/store/ui'
 import { useChat } from '@/store/chat'
 import { useLevel } from '@/features/gamification/hooks'
 import { BeforeAfter, HeatmapOverlay, JudgeNote, RankStamp } from '@/features/practice/ResultParts'
+import { AiJudgeFeedback } from '@/features/ai-judge/AiJudgeFeedback'
 import { Page, Reveal, EmptyState } from '@/components/Layout'
 import { Frame, WallLabel } from '@/components/Frame'
 import { CountUp, Meter, Skeleton } from '@/components/Progress'
@@ -352,6 +353,7 @@ function Result({ artwork, template }: { artwork: Artwork; template: Template })
             </ol>
           </section>
         </Reveal>
+        <AiJudgeFeedback artwork={artwork} template={template} score={score} />
 
         {/* ---------- rewards ---------- */}
         {reward && (

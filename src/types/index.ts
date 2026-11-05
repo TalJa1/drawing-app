@@ -397,25 +397,60 @@ export interface LessonProgress {
 
 export type ChatMode = 'ideas' | 'colour' | 'composition' | 'history'
 export type ChatRole = 'user' | 'assistant'
+export type ReplyStatus = 'streaming' | 'completed' | 'stopped' | 'interrupted' | 'failed'
+export type AiErrorCode =
+  | 'unauthorized'
+  | 'ai_not_configured'
+  | 'service_unavailable'
+  | 'rate_limited'
+  | 'ai_busy'
+  | 'ai_budget_exceeded'
+  | 'payload_too_large'
+  | 'unsupported_media_type'
+  | 'bad_request'
+  | 'validation_error'
+  | 'upstream'
+  | 'timeout'
+  | 'model_unavailable'
+  | 'network'
+  | 'protocol'
+  | 'client'
+  | 'image_missing'
+export type PaletteRole = 'dominant' | 'support' | 'accent'
 
 export type ChatCard =
-  | { type: 'palette'; name: string; colors: string[] }
-  | { type: 'template'; templateId: string }
+  | { type: 'palette'; name: string; colors: string[]; roles?: PaletteRole[]; note?: string }
+  | { type: 'template'; templateId: string; reason?: string }
   | {
       type: 'idea'
       title: string
       description: string
       difficulty: Difficulty
       minutes: number
+      /** A catalog template with the same subject, offered as a Free Draw trace guide. */
+      templateId?: string
     }
-  | { type: 'lesson'; slug: string }
+  | { type: 'lesson'; slug: string; reason?: string }
+  | { type: 'critique'; imageId: string; observations: string[]; strengths: string[]; priorities: string[]; exercise: string }
 
 export interface ChatAttachment {
   kind: 'image'
-  /** data URL (small thumbnail) */
-  src: string
+  id: string
+  src?: string
+  previewKey?: string
+  blobKey?: string
+  hash?: string
+  width?: number
+  height?: number
   artworkId?: string
   name: string
+}
+
+export interface ReplyVariant {
+  content: string
+  cards: ChatCard[]
+  status: ReplyStatus
+  createdAt: ISODate
 }
 
 export interface ChatMessage {
@@ -426,10 +461,13 @@ export interface ChatMessage {
   attachments: ChatAttachment[]
   createdAt: ISODate
   rating?: 'up' | 'down'
-  /** true while the reply is still streaming */
-  pending?: boolean
-  /** the reply failed (shown with a retry button) */
-  error?: boolean
+  turnId: string
+  mode?: ChatMode
+  status?: ReplyStatus
+  errorCode?: AiErrorCode
+  incompleteReason?: string
+  retryAt?: ISODate
+  variants?: ReplyVariant[]
 }
 
 export interface Conversation {
@@ -439,9 +477,15 @@ export interface Conversation {
   messages: ChatMessage[]
   createdAt: ISODate
   updatedAt: ISODate
+  imageContextTurnId?: string | null
 }
 
-export type ChatStreamEvent = { type: 'token'; text: string } | { type: 'card'; card: ChatCard } | { type: 'done' }
+export type ChatStreamEvent =
+  | { type: 'status'; phase: 'thinking' }
+  | { type: 'token'; text: string }
+  | { type: 'card'; card: ChatCard }
+  | { type: 'done'; finish: 'completed' | 'incomplete'; reason?: string }
+  | { type: 'error'; code: AiErrorCode; retryAfterMs?: number }
 
 /* ---------- Misc ---------- */
 

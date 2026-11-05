@@ -1,7 +1,7 @@
 /* Image & draft storage in IndexedDB (idb-keyval), with an in-memory
    fallback when IndexedDB is unavailable (private mode, tests…).
    A real back-end would upload to object storage and return URLs. */
-import { del, get, set, createStore, type UseStore } from 'idb-keyval'
+import { del, get, keys, set, createStore, type UseStore } from 'idb-keyval'
 
 let store: UseStore | null = null
 let broken = false
@@ -58,4 +58,17 @@ export async function deleteFile(key: string): Promise<void> {
       /* ignore */
     }
   }
+}
+
+export async function listKeys(prefix = ''): Promise<string[]> {
+  const s = db()
+  let all: string[] = [...memory.keys()]
+  if (s) {
+    try {
+      all = [...all, ...((await keys(s)) as string[])]
+    } catch {
+      /* ignore */
+    }
+  }
+  return [...new Set(all)].filter((k) => k.startsWith(prefix))
 }

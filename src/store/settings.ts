@@ -20,6 +20,8 @@ interface SettingsState {
   customCursor: boolean
   drawing: DrawingPrefs
   onboardingDone: boolean
+  /** Developer switch, read only by the fake AI transports (mock chat, mock judge): make them fail with `upstream`. Never saved. */
+  simulateErrors: boolean
   setTheme: (t: ThemePref) => void
   setLanguage: (l: Lang) => void
   setMotion: (m: MotionPref) => void
@@ -47,6 +49,7 @@ export const useSettings = create<SettingsState>()(
       customCursor: true,
       drawing: { defaultTool: 'pencil', pressure: true, smoothing: 0 },
       onboardingDone: false,
+      simulateErrors: false,
       setTheme: (theme) => set({ theme }),
       setLanguage: (language) => set({ language }),
       setMotion: (motion) => set({ motion }),
@@ -59,6 +62,8 @@ export const useSettings = create<SettingsState>()(
       name: STORE_KEYS.settings,
       storage: persistStorage,
       version: 3,
+      // `simulateErrors` lives in memory only: a switch left on must not outlive the page.
+      partialize: ({ simulateErrors: _memoryOnly, ...saved }) => (void _memoryOnly, saved),
       // v2: stroke smoothing defaults to 0 (no lag behind the pointer). Only the old default is reset; custom values survive.
       // v3: the developer flag "simulate server hiccups" is gone; a copy an older version saved is dropped.
       migrate: (persisted, version) => {

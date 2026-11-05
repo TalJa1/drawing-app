@@ -23,8 +23,11 @@ describe('stored settings', () => {
     expect(migrated.drawing).toMatchObject({ smoothing: 0 })
   })
 
-  it('has no such flag in a fresh state', () => {
-    expect(useSettings.getState()).not.toHaveProperty('simulateErrors')
+  it('keeps the developer error switch in memory only: off at start, no setter, never saved', () => {
+    expect(useSettings.getState().simulateErrors).toBe(false)
     expect(useSettings.getState()).not.toHaveProperty('setSimulateErrors')
+    const saved = opts().partialize?.({ ...useSettings.getState(), simulateErrors: true }) as Record<string, unknown>
+    expect(saved).not.toHaveProperty('simulateErrors')
+    expect(saved).toHaveProperty('theme')
   })
 })

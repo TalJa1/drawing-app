@@ -391,7 +391,16 @@
     "untitled": "Untitled study",
     "medium": "Digital · free draw",
     "saved": "Saved to your collection",
-    "savedXp": "+{{xp}} XP for finishing a piece"
+    "savedXp": "+{{xp}} XP for finishing a piece",
+    "guide": {
+      "toggle": "Trace guide",
+      "title": "Guide: {{name}}",
+      "strength": "Guide strength",
+      "light": "Light",
+      "medium": "Medium",
+      "strong": "Strong",
+      "note": "The guide is only for tracing; it is never saved or downloaded with your artwork."
+    }
   },
   "practice": {
     "eyebrow": "Practice",
@@ -1043,7 +1052,8 @@
   },
   "chat": {
     "title": "Your creative muse",
-    "subtitle": "Ideas, colour advice, composition coaching and art history — a friendly AI companion (preview).",
+    "subtitle": "Ideas, colour advice, composition coaching and art history with your drawing assistant.",
+    "notConfigured": "The drawing assistant is not available yet. Please try again later.",
     "newChat": "New conversation",
     "history": "Conversations",
     "noHistory": "Your conversations will appear here.",
@@ -1052,36 +1062,82 @@
     "delete": "Delete conversation",
     "deleteTitle": "Delete this conversation?",
     "modeLabel": "Muse mode",
+    "nextMode": "This mode applies to your next question.",
+    "messages": "Messages",
+    "scrollToLatest": "Jump to latest",
+    "previousVersion": "Previous version",
+    "nextVersion": "Next version",
+    "status": {
+      "preparingText": "Your results are ready. Muse is writing the guidance…",
+      "preparing": "Preparing images…",
+      "connecting": "Connecting…",
+      "thinking": "Muse is thinking…",
+      "streaming": "Writing a reply…",
+      "completed": "Reply complete.",
+      "stopped": "Reply stopped. Your received text has been kept.",
+      "interrupted": "The reply was interrupted. You can try again.",
+      "failed": "The reply could not be completed.",
+      "retryIn_one": "Try again in {{count}} second.",
+      "retryIn_other": "Try again in {{count}} seconds."
+    },
+    "incomplete": {
+      "max_output_tokens": "The reply reached its length limit. Try again for a shorter answer.",
+      "content_filter": "This reply was stopped by a safety filter. Try rephrasing your question.",
+      "max_messages": "The reply reached its message limit. Try again.",
+      "steered": "The reply ended early. Try again.",
+      "budget": "The reply reached the available budget.",
+      "other": "The reply ended before it was complete. Try again."
+    },
+    "errors": {
+      "unauthorized": "Sign in to use the drawing assistant.",
+      "ai_not_configured": "The drawing assistant is not configured yet.",
+      "service_unavailable": "The drawing assistant is temporarily unavailable.",
+      "rate_limited": "You have sent too many requests. Please wait before trying again.",
+      "ai_busy": "The drawing assistant is busy. Please wait before trying again.",
+      "ai_budget_exceeded": "The drawing assistant has reached its daily budget.",
+      "payload_too_large": "This message is too large. Remove an image and try again.",
+      "unsupported_media_type": "This image format is not supported.",
+      "bad_request": "This request could not be read. Try again.",
+      "validation_error": "Check your message and images, then try again.",
+      "upstream": "The drawing assistant could not finish this reply. Try again.",
+      "timeout": "The reply took too long. Try again.",
+      "model_unavailable": "The drawing model is temporarily unavailable.",
+      "network": "The connection was lost. Try again.",
+      "protocol": "The reply could not be read. Try again.",
+      "client": "Something went wrong while preparing the reply. Try again.",
+      "image_missing": "This image is no longer on this device. Please attach it again."
+    },
+    "groups": { "today": "Today", "yesterday": "Yesterday", "week": "This week", "older": "Older" },
+    "activeImage": { "label": "Asking about: {{name}}", "clear": "Clear image context" },
     "modes": {
       "ideas": {
-        "name": "Idea Generator",
+        "name": "Find ideas",
         "short": "Ideas",
         "intro": "Stuck on what to draw? Ask me for prompts, challenges and little creative sparks.",
         "prompts": ["Give me 5 drawing ideas for beginners", "Create a 7-day drawing challenge for me", "What should I draw today?"]
       },
       "colour": {
-        "name": "Colour Advisor",
+        "name": "Mix colours",
         "short": "Colour",
         "intro": "Tell me a colour or a mood and I'll mix a palette for you — then send it straight to the studio.",
         "prompts": ["Which colours go well with teal?", "Give me a palette that feels nostalgic", "Colours that go with rose pink"]
       },
       "composition": {
-        "name": "Composition Coach",
+        "name": "Improve composition",
         "short": "Composition",
         "intro": "Let's make your pictures feel balanced and alive — rule of thirds, leading lines, focal points.",
         "prompts": ["How can I improve my composition?", "Where should I put the horizon?", "How do I make a focal point?"]
       },
       "history": {
-        "name": "Art Historian",
+        "name": "Explore art",
         "short": "History",
         "intro": "Ask me about any movement or artist — from cave paintings to Đông Hồ prints to Pop Art.",
         "prompts": ["Explain Impressionism like I'm 12", "What is Đông Hồ folk printing?", "Tell me about Cubism"]
       }
     },
     "emptyTitle": "Hello, {{name}}! I'm your muse.",
-    "emptyNote": "pick a suggestion below, or ask me anything",
-    "thinking": "The muse is thinking…",
-    "error": "The muse lost her train of thought.",
+    "welcomeTitle": "Let's draw, {{name}}.",
+    "emptyNote": "pick a suggestion below, or ask me about drawing, colour and art",
     "helpful": "Helpful",
     "notHelpful": "Not helpful",
     "regenerate": "Regenerate answer",
@@ -1090,21 +1146,86 @@
     "send": "Send",
     "stop": "Stop",
     "removeAttachment": "Remove image",
-    "disclaimer": "The muse is a front-end preview with scripted answers — a real AI joins with the back-end.",
+    "disclaimer": "Your questions and images are sent through the Art Spark server to OpenAI.",
+    "data": {
+      "learnMore": "Learn more",
+      "training": "By default, data sent to the OpenAI API is not used to train models.",
+      "monitoring": "OpenAI may retain abuse monitoring logs containing content for up to 30 days, or longer when required by law or needed to protect people and services.",
+      "server": "The Art Spark server does not store chat content. Your chat history stays on this device.",
+      "source": "OpenAI data controls"
+    },
     "attach": {
       "button": "Attach an image",
       "title": "Share an image with the muse",
       "upload": "Upload from your device",
       "fromCollection": "From your collection",
       "empty": "Your collection is empty — finish an artwork to share it here.",
-      "tooBig": "That image is too large (12 MB max)."
+      "preparing": "Preparing image",
+      "errors": {
+        "too_big": "That image is too large (12 MB max).",
+        "unsupported": "Choose a PNG, JPEG, WebP or GIF image.",
+        "decode": "This image could not be opened. Try another image.",
+        "too_many_pixels": "This image exceeds the 40-megapixel limit.",
+        "missing": "This image is no longer available. Attach it again."
+      }
     },
     "cards": {
       "template": "Template",
-      "drawThis": "Draw this",
+      "source": {
+        "palette": "Palette · Suggested by Muse",
+        "idea": "Idea · Suggested by Muse",
+        "critique": "Image feedback · Suggested by Muse",
+        "lesson": "Lesson · Art Spark library",
+        "template": "Template · Art Spark library"
+      },
+      "critique": {
+        "imageCaution": "Suggestions based on this image. Check against your drawing.",
+        "observations": "Observations",
+        "strengths": "What works",
+        "priorities": "What to improve",
+        "exercise": "Try this",
+        "followUp": "Ask about this image"
+      },
+      "unlockLevel": "Unlocks at level {{level}}",
+      "roles": { "dominant": "Dominant", "support": "Support", "accent": "Accent" },
+      "drawThis": "Colour & get scored",
       "sketchIt": "Sketch it in Free Draw",
+      "sketchWithGuide": "Trace a faint guide in Free Draw",
+      "traceIt": "Trace it yourself",
+      "copyHex": "Copy HEX codes",
       "lesson_one": "Lesson · {{count}} min",
       "lesson_other": "Lesson · {{count}} min"
+    }
+  },
+  "aiJudge": {
+    "title": "Muse's feedback",
+    "intro": "Muse can look at your drawing and suggest what to practise next.",
+    "ask": "Ask Muse for feedback",
+    "disclosure": "Your drawing is sent through the Art Spark server to OpenAI to write this feedback. By default, data sent to the OpenAI API is not used to train models, but OpenAI may keep abuse-monitoring logs for up to 30 days. Your score does not change.",
+    "loading": "Muse is looking at your drawing…",
+    "ready": "Muse's feedback is ready.",
+    "strengths": "What works",
+    "tips": "Tips",
+    "tryNow": "Try it now",
+    "label": "Muse · AI — the score comes from the formula",
+    "retry": "Try again",
+    "retryIn": "Try again in {{time}}.",
+    "wait": {
+      "seconds": "{{value}} s",
+      "minutes": "{{value}} min",
+      "hours": "{{value}} h"
+    },
+    "error": {
+      "rate_limited": "You've asked Muse a lot just now.",
+      "ai_busy": "Muse is helping other learners right now.",
+      "ai_budget_exceeded": "Muse has used today's feedback allowance.",
+      "unauthorized": "Please sign in to ask Muse for feedback.",
+      "ai_not_configured": "Muse's feedback isn't set up on this server yet.",
+      "network": "Can't reach the Art Spark server. Check your connection.",
+      "timeout": "Muse took too long to answer.",
+      "upstream": "Muse couldn't write feedback this time.",
+      "image_missing": "Your drawing couldn't be read on this device.",
+      "generic": "Something went wrong while asking Muse."
     }
   },
   "home": {
