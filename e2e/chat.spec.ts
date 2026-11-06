@@ -811,6 +811,13 @@ async function seedChatCards(page: Page, failed = false) {
 }
 
 async function smallChatTargets(scope: Locator) {
+  // Measure after finite transitions settle; decorative loops never finish.
+  await scope.evaluate(async () => {
+    const animations = document
+      .getAnimations()
+      .filter((animation) => animation.playState === 'running' && Number.isFinite(animation.effect?.getComputedTiming().endTime))
+    await Promise.all(animations.map((animation) => animation.finished.catch(() => undefined)))
+  })
   return scope.locator('button, a[href], input:not([type="file"]), textarea, select, summary').evaluateAll((nodes) =>
     nodes
       .filter((node) => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden')
