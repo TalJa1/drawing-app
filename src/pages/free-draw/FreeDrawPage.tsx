@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown, Dices, Download, ImageDown, MessageCircle, Save } from 'lucide-react'
@@ -12,7 +13,7 @@ import { Modal } from '@/components/Modal'
 import { TextField } from '@/components/Form'
 import { canvasToBlob, makeThumbnail } from '@/lib/raster'
 import { downloadBlob } from '@/lib/utils'
-import { apiErrorKey, saveArtwork } from '@/api/artworks'
+import { apiErrorKey, getArtwork, getImageBlob, saveArtwork } from '@/api/artworks'
 import { recordActivity } from '@/api/progress'
 import { loginState } from '@/features/auth/loginRedirect'
 import { useSession } from '@/store/session'
@@ -25,6 +26,9 @@ import { queryClient } from '@/app/queryClient'
 import { qk } from '@/api/queries'
 import { TraceGuidePanel, TraceGuideToggle } from '@/features/trace-guide/TraceGuideControl'
 import { useTraceGuide, useTraceGuideState } from '@/features/trace-guide/useTraceGuide'
+import { draftFromImage } from '@/features/drawing/engine/draftFromImage'
+import type { DrawingEngine } from '@/features/drawing/engine/Engine'
+import type { Artwork } from '@/types'
 
 const PRESETS = {
   classic: [1200, 900],
@@ -34,6 +38,10 @@ const PRESETS = {
   story: [1080, 1920],
 } as const
 type Preset = keyof typeof PRESETS
+
+/** The canvas size that is exactly the size of a saved picture, if there is one. */
+const presetFor = (a: Pick<Artwork, 'width' | 'height'>): Preset | undefined =>
+  (Object.keys(PRESETS) as Preset[]).find((p) => PRESETS[p][0] === a.width && PRESETS[p][1] === a.height)
 
 function DownloadMenu({ ctx }: { ctx: StudioContext }) {
   const { t } = useTranslation()
@@ -91,13 +99,15 @@ function DownloadMenu({ ctx }: { ctx: StudioContext }) {
   )
 }
 
-export default function FreeDrawPage() {
+function FreeDraw({ source, notice }: { source?: Artwork; notice?: 'failed' | 'size' }) {
   const { t } = useTranslation()
   const L = useL()
   const navigate = useNavigate()
   const { pathname, search } = useLocation()
   const [params] = useSearchParams()
-  const [preset, setPreset] = useState<Preset>((params.get('size') as Preset) in PRESETS ? (params.get('size') as Preset) : 'classic')
+  const [preset, setPreset] = useState<Preset>(
+    (source && presetFor(source)) || ((params.get('size') as Preset) in PRESETS ? (params.get('size') as Preset) : 'classic'),
+  )
   const [bg, setBg] = useState<BackgroundKind>('white')
   const [prompt, setPrompt] = useState(() => {
     const p = params.get('prompt')
@@ -107,6 +117,29 @@ export default function FreeDrawPage() {
   const [title, setTitle] = useState('')
   const [busy, setBusy] = useState(false)
   const [w, h] = PRESETS[preset]
+  // carrying on from a saved picture only makes sense at the size it was saved at
+  const here = source && source.width === w && source.height === h ? source : undefined
+  const [restoreFailed, setRestoreFailed] = useState(false)
+  const problem = restoreFailed ? 'failed' : notice
+  useEffect(() => {
+    if (problem) toast({ title: t(problem === 'size' ? 'freeDraw.fromSizeUnsupported' : 'freeDraw.fromFailed'), tone: 'error' })
+  }, [problem, t])
+
+  /** Put the saved picture on the canvas as its one layer. Keep it stable: the studio runs its setup again when it changes. */
+  const restoreSource = useCallback(
+    async (engine: DrawingEngine) => {
+      if (!here) return
+      try {
+        const image = await getImageBlob(here.imageKey)
+        if (!image) throw new Error('the picture is not available')
+        await engine.load(draftFromImage(image, here.width, here.height))
+        engine.markSaved() // loading it is not a change to autosave
+      } catch {
+        setRestoreFailed(true)
+      }
+    },
+    [here],
+  )
   const setDraftChat = useChat((s) => s.setDraft)
   const pending = useStudio((s) => s.pendingPalette)
   const { guide, loading: guideLoading } = useTraceGuide()
@@ -266,15 +299,15 @@ export default function FreeDrawPage() {
         <PageLoader />
       ) : (
         <Studio
-          key={`${preset}:${guide?.id ?? 'plain'}`}
+          key={`${preset}:${here?.id ?? guide?.id ?? 'plain'}`}
           mode="free"
           title={t('freeDraw.title')}
           subtitle={pending ? t('freeDraw.withPalette', { name: pending.name }) : prompt ? L(prompt) : t('freeDraw.subtitle')}
           width={w}
           height={h}
           background={bg}
-          draftKey={guide ? `free:${w}x${h}:guide:${guide.id}` : `free:${w}x${h}`}
-          onEngine={guide ? guideState.onEngine : undefined}
+          draftKey={here ? `free:${w}x${h}:from:${here.id}` : guide ? `free:${w}x${h}:guide:${guide.id}` : `free:${w}x${h}`}
+          onEngine={here ? restoreSource : guide ? guideState.onEngine : undefined}
           topExtra={guide ? <TraceGuideToggle state={guideState} /> : undefined}
           backTo="/"
           infoLabel={t('freeDraw.canvasTab')}
@@ -320,4 +353,24 @@ export default function FreeDrawPage() {
       </Modal>
     </>
   )
+}
+
+/** `/free-draw?from=<id>` carries on from a saved free drawing; anything else opens a blank canvas. */
+export default function FreeDrawPage() {
+  const [params] = useSearchParams()
+  const fromId = params.get('from') ?? ''
+  const signedIn = useSession((s) => !!s.token)
+  const wanted = !!fromId && signedIn
+  const { data, isLoading, isError } = useQuery({
+    queryKey: qk.artwork(fromId),
+    queryFn: () => getArtwork(fromId),
+    enabled: wanted,
+    retry: 0,
+    staleTime: 0,
+  })
+  if (wanted && isLoading) return <PageLoader />
+  // only a free drawing, at one of the canvas sizes, can be carried on from
+  const usable = data && data.kind === 'free' && presetFor(data) ? data : undefined
+  const notice = !wanted ? undefined : isError || (data && data.kind !== 'free') ? 'failed' : data && !usable ? 'size' : undefined
+  return <FreeDraw key={usable?.id ?? 'plain'} source={usable} notice={notice} />
 }

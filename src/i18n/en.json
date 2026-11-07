@@ -392,6 +392,8 @@
     "medium": "Digital · free draw",
     "saved": "Saved to your collection",
     "savedXp": "+{{xp}} XP for finishing a piece",
+    "fromFailed": "We couldn't open that drawing. Please try again.",
+    "fromSizeUnsupported": "That drawing's canvas size is no longer on the list, so here is a blank canvas instead.",
     "guide": {
       "toggle": "Trace guide",
       "title": "Guide: {{name}}",
@@ -623,6 +625,8 @@
     "fromTemplate": "Template: {{title}}",
     "judgeScore": "Judge's score",
     "viewResult": "View the full result",
+    "reopen": "Open in studio",
+    "redraw": "Redraw",
     "notJudged": "Free-draw pieces aren't judged — they're just for joy.",
     "deleteTitle": "Delete this artwork?",
     "deleteBody": "It will be removed from your gallery. Your XP and badges stay.",
