@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ChevronLeft, ChevronRight, Download, ExternalLink, Heart, Paintbrush, Trash2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, ExternalLink, Heart, Trash2 } from 'lucide-react'
 import type { Artwork } from '@/types'
 import { Modal } from '@/components/Modal'
 import { Button } from '@/components/Button'
@@ -31,7 +31,6 @@ export function Lightbox({
 }) {
   const { t, i18n } = useTranslation()
   const L = useL()
-  const navigate = useNavigate()
   const update = useUpdateArtwork()
   const remove = useDeleteArtwork()
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -116,17 +115,6 @@ export function Lightbox({
               </Button>
               <Button size="sm" variant="outline" icon={<Download size={15} />} onClick={() => void download()}>
                 {t('common.download')}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                icon={<Paintbrush size={15} />}
-                onClick={() => {
-                  onClose()
-                  navigate(art.kind === 'practice' && art.templateId ? `/practice/${art.templateId}` : '/free-draw')
-                }}
-              >
-                {t('collection.reopen')}
               </Button>
               <Button size="sm" variant="ghost" icon={<Trash2 size={15} />} onClick={() => setConfirmDelete(true)}>
                 {t('common.delete')}
