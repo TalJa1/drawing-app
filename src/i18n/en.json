@@ -51,7 +51,7 @@
     "practice": "Practice",
     "freeDraw": "Free Draw",
     "learn": "Learn",
-    "chat": "AI Chat",
+    "chat": "AI Muse",
     "collection": "Collection",
     "achievements": "Achievements",
     "profile": "Profile",
@@ -62,6 +62,7 @@
     "signOut": "Sign out",
     "guestMode": "Guest mode — saved on this device",
     "accountMenu": "Account menu",
+    "accountMenuLevel": "Account menu, level {{level}}",
     "openMenu": "Open menu",
     "menu": "Menu",
     "primary": "Primary",
@@ -75,7 +76,7 @@
       "practice": "Practice",
       "freeDraw": "Draw",
       "learn": "Learn",
-      "chat": "Muse",
+      "chat": "AI Muse",
       "collection": "Gallery"
     }
   },
@@ -98,7 +99,21 @@
     "boundaryTitle": "Oops — a paint pot tipped over.",
     "boundaryBody": "Something on this page didn’t render. Your saved work is safe. Try again, or head back to the studio.",
     "tryAgain": "Try again",
-    "goHome": "Back home"
+    "goHome": "Back home",
+    "api": {
+      "template_locked": "That template isn’t unlocked yet. Keep drawing to reach its level.",
+      "rate_limited": "You’re doing that too often. Please wait a little, then try again.",
+      "payload_too_large": "That picture is too large to save.",
+      "unsupported_media_type": "That picture format isn’t supported.",
+      "not_found": "We couldn’t find that artwork. It may have been deleted.",
+      "missing_analysis": "This drawing has nothing to score yet.",
+      "not_scorable": "Only practice drawings can be scored.",
+      "scoring_not_configured": "Scoring isn’t available right now. Your drawing is saved.",
+      "unauthorized": "Please sign in again to continue.",
+      "network_error": "Can’t reach the server. Check your connection and try again.",
+      "timeout": "The server took too long to answer. Try again in a moment.",
+      "service_unavailable": "The studio is busy right now. Please try again in a moment."
+    }
   },
   "gamification": {
     "streakDays_one": "{{count}}-day streak",
@@ -124,13 +139,13 @@
     "legendary": "Legendary"
   },
   "auth": {
-    "signedOut": "Signed out. Your gallery stays on this device.",
-    "mockNote": "Front-end preview: any email and password will work, and nothing leaves this device.",
+    "signedOut": "Signed out. Your gallery is kept in your account.",
     "artAlt": "A generative impressionist painting",
     "artNote": "welcome to the atelier",
     "loginTitleA": "Welcome",
     "loginTitleB": "back",
     "loginLede": "Pick up your brushes right where you left them.",
+    "needAccount": "Your artworks are kept in your account. Sign in and we’ll take you right back.",
     "registerTitleA": "Join the",
     "registerTitleB": "atelier",
     "registerLede": "Create an account to keep your gallery, streaks and badges in one place.",
@@ -149,12 +164,14 @@
     "errors": {
       "emailRequired": "Please enter your email.",
       "emailInvalid": "That email doesn't look quite right.",
-      "passwordShort": "Passwords need at least 6 characters.",
       "passwordShort8": "Passwords need at least 8 characters.",
       "nameShort": "Your artist name needs at least 2 characters.",
       "nameLong": "Keep your artist name under 40 characters.",
       "mismatch": "The passwords don't match.",
-      "invalid": "That email and password don't match. (Tip: in this preview, any password except “wrongpass” works.)"
+      "invalid": "That email and password don't match.",
+      "emailTaken": "That email is already registered. Sign in or use another one.",
+      "rateLimited": "Too many tries. Please wait a little and try again.",
+      "offline": "Can't reach the server. Check your connection and try again."
     }
   },
   "styleguide": {
@@ -165,7 +182,7 @@
     "note": "hidden route — for makers only",
     "pigments": "Pigments",
     "type": "Typography",
-    "body": "Body copy is set in Inter with generous leading. Headings use Fraunces, a soft high-contrast serif whose italics feel hand-lettered. Handwritten notes use Caveat.",
+    "body": "Body copy is set in Inter with generous leading. Headings use Fraunces, a soft high-contrast serif whose italics feel hand-lettered. Handwritten notes use Dancing Script.",
     "hand": "an artist's note in the margin",
     "buttons": "Buttons & icon buttons",
     "tooltip": "Tooltips appear on hover and focus",
@@ -236,7 +253,7 @@
     "redo": "Redo",
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
-    "zoomReset": "Reset zoom to 100%",
+    "zoomReset": "{{zoom}}% — reset zoom to 100%",
     "fit": "Fit to screen",
     "clear": "Clear layer",
     "clearTitle": "Clear this layer?",
@@ -313,7 +330,8 @@
       "start": "Start creating",
       "tools": {
         "title": "Your brushes live here",
-        "body": "Pencil, pen, marker, watercolour, airbrush, chalk, bucket and more. Each has its own size and feel — hover for shortcuts."
+        "body": "Pencil, pen, marker, watercolour, airbrush, chalk, bucket and more. Each has its own size and feel — hover for shortcuts.",
+        "bodyTouch": "Pencil, pen, marker, watercolour, airbrush, chalk, bucket and more. Each has its own size and feel."
       },
       "options": {
         "title": "Fine-tune each tool",
@@ -374,6 +392,8 @@
     "medium": "Digital · free draw",
     "saved": "Saved to your collection",
     "savedXp": "+{{xp}} XP for finishing a piece",
+    "fromFailed": "We couldn't open that drawing. Please try again.",
+    "fromSizeUnsupported": "That drawing's canvas size is no longer on the list, so here is a blank canvas instead.",
     "guide": {
       "toggle": "Trace guide",
       "title": "Guide: {{name}}",
@@ -492,7 +512,7 @@
     "breadcrumb": "Breadcrumb",
     "eyebrow": "The judge's verdict",
     "overallAria": "Overall score {{score}} out of 100",
-    "stampRing": "Art Spark ✦ AI Judge",
+    "stampRing": "Art Spark ✦ AI",
     "similarity": "Similarity",
     "colour": "Colour",
     "radarTitle": "Score breakdown across six criteria",
@@ -605,18 +625,18 @@
     "fromTemplate": "Template: {{title}}",
     "judgeScore": "Judge's score",
     "viewResult": "View the full result",
-    "notJudged": "Free-draw pieces aren't judged — they're just for joy.",
     "reopen": "Open in studio",
+    "redraw": "Redraw",
+    "notJudged": "Free-draw pieces aren't judged — they're just for joy.",
     "deleteTitle": "Delete this artwork?",
-    "deleteBody": "It will be removed from your gallery on this device. Your XP and badges stay.",
+    "deleteBody": "It will be removed from your gallery. Your XP and badges stay.",
     "deleted": "Artwork deleted",
     "achievementsLink": "Hungry for badges? Visit",
     "empty": {
       "title": "Every masterpiece begins with one brave line.",
       "body": "Your gallery is waiting for its first piece. Colour a template or let loose in Free Draw.",
       "note": "the frames are polished and ready…",
-      "cta": "Colour your first template",
-      "demo": "Preview with demo artworks"
+      "cta": "Colour your first template"
     }
   },
   "achievements": {
@@ -662,20 +682,23 @@
     "unlockedOn": "Unlocked {{date}}",
     "notYet": "Not unlocked yet",
     "leaderboard": "Leaderboard",
-    "audience": "Audience",
     "weekly": "This week",
     "allTime": "All time",
-    "global": "Global",
-    "friends": "Friends",
     "you": "you",
-    "sampleNote": "Other artists on this leaderboard are fictional sample users — a real leaderboard arrives with accounts."
+    "leaderboardAlone": "You're the only one on the board so far. Others will show up here as they join and earn XP.",
+    "leaderboardEmpty": "Nobody has earned XP in this view yet.",
+    "claimError": {
+      "already_claimed": "You've already claimed this reward.",
+      "incomplete": "This challenge isn't finished yet. Keep going!",
+      "not_found": "That challenge is no longer available."
+    }
   },
   "profile": {
     "eyebrow": "Profile",
     "titleA": "The artist's",
     "titleB": "corner",
     "lede": "Choose your look, tune the studio to your hand, and keep your data in your own hands.",
-    "guestNudge": "You're drawing as a guest — everything is saved on this device. Sign in to sync your gallery across devices (coming with the real back-end).",
+    "guestNudge": "You're drawing as a guest — your progress is kept on this device. Sign in to keep your artworks in your account and see them on every device.",
     "avatar": "Your avatar",
     "chooseAvatar": "Choose an avatar",
     "avatarOption": "Avatar {{name}}",
@@ -711,19 +734,8 @@
     "tour": "Show the studio tour again",
     "tourHint": "Replays the quick walkthrough next time you open the studio.",
     "data": "Your data",
-    "demo": "Demo data",
-    "demoHint": "Fill your gallery with sample artworks, scores and a streak to preview a lived-in app.",
-    "demoLoaded": "Demo gallery loaded",
-    "demoCleared": "Demo data removed",
-    "simulateErrors": "Simulate server hiccups (developer)",
-    "simulateErrorsHint": "Makes the mock API fail now and then so you can see the error states.",
     "export": "Export my data (JSON)",
-    "exported": "Your data has been downloaded",
-    "deleteAll": "Delete all local data",
-    "deleteTitle": "Delete everything?",
-    "deleteBody": "This removes your artworks, drafts, XP, badges, lessons and chats from this device. It cannot be undone.",
-    "deleteConfirm": "Delete everything",
-    "deleted": "All local data deleted. A fresh page awaits."
+    "exported": "Your data has been downloaded"
   },
   "learn": {
     "tracks": {
@@ -810,6 +822,7 @@
     "done": "Done",
     "bookmark": "Save lesson",
     "unbookmark": "Remove from saved",
+    "bookmarkFailed": "We couldn’t update your saved lessons. Please try again.",
     "noSaved": "No lessons here yet — tap the bookmark on any lesson to save it.",
     "toolsTitleA": "Play with",
     "toolsTitleB": "what you learn",
@@ -884,6 +897,7 @@
     "readTime_one": "{{count}} min read",
     "readTime_other": "{{count}} min read",
     "lessonComplete": "Lesson complete!",
+    "completeFailed": "We couldn’t record that you finished this lesson. Open it again to retry.",
     "lessonXp": "+{{xp}} XP — now try the quiz for more",
     "tryItNow": "Try it now",
     "openStudio": "Open the studio with {{tool}}",
@@ -898,7 +912,11 @@
       "progress": "{{n}} of {{total}}",
       "correct": "Correct!",
       "notQuite": "Not quite.",
-      "finish": "See my score"
+      "finish": "See my score",
+      "review": "Review your answers",
+      "yourAnswer": "Your answer",
+      "rightAnswer": "Right answer",
+      "notSent": "Your answers weren’t sent."
     },
     "diagram": {
       "hue": "Hue",
@@ -1015,7 +1033,8 @@
       "tapToFlip": "tap to flip",
       "again2": "Review again",
       "knew": "I knew it",
-      "sessionDone": "Study session complete"
+      "sessionDone": "Study session complete",
+      "answerFailed": "We couldn’t save that answer. Please try again."
     },
     "spot": {
       "eyebrow": "Spot the Style",
@@ -1308,7 +1327,20 @@
     "wallTitleA": "Made with",
     "wallTitleB": "Art Spark",
     "wallLede": "A wall of sample pieces — coloured templates and paintings in the spirit of the great movements.",
-    "wallLabels": ["Morning Harbour", "Koi at Dusk", "The Quiet Wave", "Lotus Mandala", "Golden Garden", "Still Life, Fractured"],
+    "wallLabels": [
+      "Morning Harbour",
+      "Koi at Dusk",
+      "The Quiet Wave",
+      "Lotus Mandala",
+      "Golden Garden",
+      "Still Life, Fractured",
+      "Lighthouse at First Light",
+      "Folk Blossoms",
+      "Park in Points of Colour",
+      "The Morning Teapot",
+      "Dot Rhythm",
+      "Untitled Composition"
+    ],
     "sampleArtwork": "Sample artwork",
     "voicesEyebrow": "Voices",
     "voicesTitleA": "Little habits,",

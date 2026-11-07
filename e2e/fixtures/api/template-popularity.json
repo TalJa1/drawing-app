@@ -1,0 +1,33 @@
+{
+  "windowDays": 30,
+  "asOf": "2026-11-03T11:58:36Z",
+  "counts": {
+    "fox": 0,
+    "cat": 0,
+    "butterfly": 0,
+    "sunflower": 0,
+    "tulips": 0,
+    "teapot": 0,
+    "vase": 0,
+    "fruit-bowl": 0,
+    "cupcake": 0,
+    "countryside": 0,
+    "lighthouse": 0,
+    "owl": 0,
+    "koi": 0,
+    "elephant": 0,
+    "mountain-lake": 0,
+    "city-skyline": 0,
+    "rose": 0,
+    "guitar": 0,
+    "mushroom-house": 0,
+    "pho": 0,
+    "lanterns": 0,
+    "mandala-lotus": 0,
+    "portrait": 0,
+    "mandala-star": 0,
+    "hands": 0,
+    "dragon": 0,
+    "mandala-sun": 0
+  }
+}

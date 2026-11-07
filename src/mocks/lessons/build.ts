@@ -1,7 +1,13 @@
-import type { DiagramKind, Difficulty, Lesson, LessonSection, LessonTopic, LessonTrack, QuizQuestion } from '@/types'
+import type { DiagramKind, Difficulty, Lesson, LessonSection, LessonTopic, LessonTrack, QuizKey, QuizQuestion } from '@/types'
 
 export type S = [string, string, string, string, DiagramKind?, string?, string?]
 export type Q = [string, string, [string, string][], number, string, string]
+
+/**
+ * The right answers, by lesson. This is what the server keeps: the lessons below never carry them, so no
+ * screen can read an answer before a quiz is submitted (see `submitQuiz` in api/learn.ts).
+ */
+export const QUIZ_KEYS: Record<string, QuizKey[]> = {}
 
 const words = (s: string) => s.split(/\s+/).filter(Boolean).length
 
@@ -23,10 +29,13 @@ export function lesson(
     diagram,
     callout: ce ? { en: ce, vi: cv ?? ce } : undefined,
   }))
-  const questions: QuizQuestion[] = quiz.map(([pe, pv, opts, answer, ee, ev], i) => ({
+  const questions: QuizQuestion[] = quiz.map(([pe, pv, opts], i) => ({
     id: `${slug}-q${i + 1}`,
     prompt: { en: pe, vi: pv },
     options: opts.map(([en, vi]) => ({ en, vi })),
+  }))
+  QUIZ_KEYS[slug] = quiz.map(([, , , answer, ee, ev], i) => ({
+    id: `${slug}-q${i + 1}`,
     answer,
     explain: { en: ee, vi: ev },
   }))

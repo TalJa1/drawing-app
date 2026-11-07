@@ -3,6 +3,8 @@ import { COMPOSITION_COLOUR } from './compositionColour'
 import { DRAWING } from './drawing'
 import { SUBJECTS } from './subjects'
 
+export { QUIZ_KEYS } from './build'
+
 export const LESSONS: Lesson[] = [...COMPOSITION_COLOUR, ...DRAWING, ...SUBJECTS]
 export const LESSON_MAP: Record<string, Lesson> = Object.fromEntries(LESSONS.map((l) => [l.slug, l]))
 

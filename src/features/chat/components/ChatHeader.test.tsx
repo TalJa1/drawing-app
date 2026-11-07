@@ -15,7 +15,11 @@ vi.mock('@/api/ai/transport', () => ({
     },
   }),
 }))
-vi.mock('@/api/queries', () => ({ useArtworks: () => ({ data: [] }) }))
+vi.mock('@/api/queries', () => ({
+  useArtworks: () => ({ data: [] }),
+  useTemplateLookup: () => () => undefined,
+  useLessonLookup: () => () => undefined,
+}))
 
 beforeEach(() => {
   installDomStubs()

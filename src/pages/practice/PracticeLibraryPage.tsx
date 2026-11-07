@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
+import { SlidersHorizontal } from 'lucide-react'
 import type { Difficulty, TemplateCategory } from '@/types'
 import { Page, SectionHeading, EmptyState } from '@/components/Layout'
 import { Chip } from '@/components/Chip'
@@ -9,14 +10,16 @@ import { Skeleton } from '@/components/Progress'
 import { Highlight } from '@/components/art/Brush'
 import { Washes } from '@/components/art/Washes'
 import { Button } from '@/components/Button'
-import { useArtworks, useTemplates } from '@/api/queries'
-import { dailyTemplateId } from '@/api/templates'
+import { Sheet } from '@/components/Modal'
+import { useMediaQuery } from '@/lib/hooks'
+import { useArtworks, useDailyTemplateQuery, useTemplatePopularityQuery, useTemplates } from '@/api/queries'
 import { TEMPLATE_CATEGORIES } from '@/mocks/templates'
 import { fuzzyIncludes } from '@/lib/utils'
 import { useLevel } from '@/features/gamification/hooks'
 import { TemplateCard } from '@/features/practice/TemplateCard'
 import { DailyChallengeBanner } from '@/features/practice/DailyChallengeBanner'
 import { useBestScores } from '@/features/practice/useBestScores'
+import { byPopularity } from '@/features/practice/popularity'
 import { DIFF_LEVEL, DIFF_ORDER } from '@/features/practice/constants'
 import { dayKey } from '@/lib/date'
 
@@ -32,8 +35,19 @@ export default function PracticeLibraryPage() {
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState<Sort>('popular')
   const [notDone, setNotDone] = useState(false)
-  const dailyId = dailyTemplateId()
-  const daily = templates?.find((x) => x.id === dailyId)
+  const wide = useMediaQuery('(min-width: 768px)')
+  const [filtersOpen, setFiltersOpen] = useState(false)
+  // The sheet only exists on a phone. When the window becomes wide (a phone turned to landscape, a window resized) it
+  // goes away with the lock it holds; forget that it was open, or it would pop up by itself when the window is narrow again.
+  const [wasWide, setWasWide] = useState(wide)
+  if (wide !== wasWide) {
+    setWasWide(wide)
+    if (wide) setFiltersOpen(false)
+  }
+  const dailyQuery = useDailyTemplateQuery()
+  const popularityCounts = useTemplatePopularityQuery().data?.counts
+  const dailyId = dailyQuery.data
+  const daily = dailyId ? templates?.find((x) => x.id === dailyId) : undefined
   const { data: artworks } = useArtworks()
   const today = dayKey()
   const dailyDone = (artworks ?? []).some((a) => a.templateId === dailyId && !!a.score && dayKey(new Date(a.score.scoredAt)) === today)
@@ -52,11 +66,14 @@ export default function PracticeLibraryPage() {
           fuzzyIncludes(t(`practice.categories.${x.category}`), query),
       )
     const sorted = [...l]
-    if (sort === 'new') sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-    if (sort === 'popular') sorted.sort((a, b) => b.popularity - a.popularity)
+    if (sort === 'new') sorted.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+    if (sort === 'popular') sorted.sort(byPopularity(popularityCounts))
     if (sort === 'easiest') sorted.sort((a, b) => DIFF_LEVEL[a.difficulty] - DIFF_LEVEL[b.difficulty] || a.minutes - b.minutes)
     return sorted
-  }, [templates, category, difficulty, notDone, query, sort, best, t])
+  }, [templates, category, difficulty, notDone, query, sort, best, popularityCounts, t])
+
+  // How many of the filters inside the phone's sheet are on (shown on its button).
+  const activeInSheet = (query.trim() ? 1 : 0) + (difficulty !== 'all' ? 1 : 0) + (sort !== 'popular' ? 1 : 0) + (notDone ? 1 : 0)
 
   const reset = () => {
     setCategory('all')
@@ -64,6 +81,38 @@ export default function PracticeLibraryPage() {
     setQuery('')
     setNotDone(false)
   }
+
+  // Search, level, sort and "not done": inline under the chips on desktop, inside the sheet on a phone.
+  const moreFilters = (
+    <div className="grid gap-3 md:grid-cols-[1fr_auto_auto_auto] md:items-center">
+      <SearchBar
+        value={query}
+        onChange={setQuery}
+        label={t('practice.filters.search')}
+        placeholder={t('practice.filters.searchPlaceholder')}
+      />
+      <LayoutGroup id="diff">
+        <div className="no-scrollbar flex gap-1.5 overflow-x-auto" role="group" aria-label={t('practice.filters.difficulty')}>
+          {(['all', ...DIFF_ORDER] as const).map((d) => (
+            <Chip key={d} selected={difficulty === d} onClick={() => setDifficulty(d)} layoutGroup="diff" className="!h-8 !px-3 !text-xs">
+              {d === 'all' ? t('practice.filters.anyLevel') : t(`difficulty.${d}`)}
+            </Chip>
+          ))}
+        </div>
+      </LayoutGroup>
+      <Select label={t('common.sortBy')} hideLabel value={sort} onValueChange={(v) => setSort(v as Sort)} className="md:w-40">
+        <option value="popular">{t('practice.sort.popular')}</option>
+        <option value="new">{t('practice.sort.new')}</option>
+        <option value="easiest">{t('practice.sort.easiest')}</option>
+      </Select>
+      <Switch
+        checked={notDone}
+        onChange={setNotDone}
+        label={<span className="text-sm">{t('practice.filters.notDone')}</span>}
+        className="md:min-w-[200px]"
+      />
+    </div>
+  )
 
   return (
     <Page>
@@ -87,62 +136,67 @@ export default function PracticeLibraryPage() {
         />
 
         <div className="mt-10">
-          {daily ? <DailyChallengeBanner template={daily} done={dailyDone} /> : <Skeleton className="h-72 rounded-[30px]" />}
+          {daily ? (
+            <DailyChallengeBanner template={daily} done={dailyDone} />
+          ) : isLoading || dailyQuery.isPending ? (
+            <Skeleton className="h-72 rounded-[30px]" />
+          ) : null}
         </div>
 
-        {/* ---------- filters ---------- */}
+        {/* ---------- filters ----------
+            Desktop: the whole block sticks. Phone: only one row of category chips and a "Filters" button
+            stick (the full block was 262 px, a third of the screen); search, level, sort and "not done"
+            open in a sheet. */}
         <div className="sticky top-[76px] z-30 mt-12 rounded-[26px] border border-line bg-card/85 p-3 shadow-paper backdrop-blur-xl md:top-[92px] md:p-4">
-          <LayoutGroup id="cat">
-            <div
-              className="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
-              role="group"
-              aria-label={t('practice.filters.category')}
-            >
-              <Chip selected={category === 'all'} onClick={() => setCategory('all')} layoutGroup="cat">
-                {t('common.all')}
-              </Chip>
-              {TEMPLATE_CATEGORIES.map((c) => (
-                <Chip key={c} selected={category === c} onClick={() => setCategory(c)} layoutGroup="cat">
-                  {t(`practice.categories.${c}`)}
+          <div className="flex items-center gap-2">
+            <LayoutGroup id="cat">
+              <div
+                className="no-scrollbar -mx-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 pb-1"
+                role="group"
+                aria-label={t('practice.filters.category')}
+              >
+                <Chip selected={category === 'all'} onClick={() => setCategory('all')} layoutGroup="cat">
+                  {t('common.all')}
                 </Chip>
-              ))}
-            </div>
-          </LayoutGroup>
-          <div className="mt-3 grid gap-3 md:grid-cols-[1fr_auto_auto_auto] md:items-center">
-            <SearchBar
-              value={query}
-              onChange={setQuery}
-              label={t('practice.filters.search')}
-              placeholder={t('practice.filters.searchPlaceholder')}
-            />
-            <LayoutGroup id="diff">
-              <div className="no-scrollbar flex gap-1.5 overflow-x-auto" role="group" aria-label={t('practice.filters.difficulty')}>
-                {(['all', ...DIFF_ORDER] as const).map((d) => (
-                  <Chip
-                    key={d}
-                    selected={difficulty === d}
-                    onClick={() => setDifficulty(d)}
-                    layoutGroup="diff"
-                    className="!h-8 !px-3 !text-xs"
-                  >
-                    {d === 'all' ? t('practice.filters.anyLevel') : t(`difficulty.${d}`)}
+                {TEMPLATE_CATEGORIES.map((c) => (
+                  <Chip key={c} selected={category === c} onClick={() => setCategory(c)} layoutGroup="cat">
+                    {t(`practice.categories.${c}`)}
                   </Chip>
                 ))}
               </div>
             </LayoutGroup>
-            <Select label={t('common.sortBy')} hideLabel value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="md:w-40">
-              <option value="popular">{t('practice.sort.popular')}</option>
-              <option value="new">{t('practice.sort.new')}</option>
-              <option value="easiest">{t('practice.sort.easiest')}</option>
-            </Select>
-            <Switch
-              checked={notDone}
-              onChange={setNotDone}
-              label={<span className="text-sm">{t('practice.filters.notDone')}</span>}
-              className="md:min-w-[200px]"
-            />
+            {!wide && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="shrink-0"
+                icon={<SlidersHorizontal size={16} />}
+                onClick={() => setFiltersOpen(true)}
+              >
+                {t('common.filters')}
+                {activeInSheet > 0 && (
+                  <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1 text-[11px] font-bold text-paper tabular-nums">
+                    {activeInSheet}
+                  </span>
+                )}
+              </Button>
+            )}
           </div>
+          {wide && <div className="mt-3">{moreFilters}</div>}
         </div>
+        {!wide && (
+          <Sheet open={filtersOpen} onClose={() => setFiltersOpen(false)} title={t('common.filters')}>
+            <div className="flex flex-col gap-4">{moreFilters}</div>
+            <div className="mt-5 flex gap-3">
+              <Button variant="outline" className="flex-1" onClick={reset}>
+                {t('practice.empty.reset')}
+              </Button>
+              <Button className="flex-1" onClick={() => setFiltersOpen(false)}>
+                {t('common.done')}
+              </Button>
+            </div>
+          </Sheet>
+        )}
 
         <p className="mt-6 text-sm text-ink-faint" aria-live="polite">
           {t('practice.count', { count: list.length })}

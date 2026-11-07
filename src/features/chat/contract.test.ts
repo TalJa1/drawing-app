@@ -94,9 +94,26 @@ it('critique caps strengths and priorities at 2', () => {
   expect(chatCardSchema.safeParse({ ...card, priorities: ['a', 'b', 'c'] }).success).toBe(false)
 })
 
-it('history cards: invalid cards are dropped, valid ones kept', () => {
-  expect(parseHistoryCards([palette, { type: 'lesson', slug: 'missing-lesson' }, { type: 'palette', colors: [] }, null])).toEqual([palette])
+it('history cards: malformed cards are dropped, well-formed ones kept', () => {
+  expect(parseHistoryCards([palette, { type: 'lesson', slug: '' }, { type: 'palette', colors: [] }, null])).toEqual([palette])
   expect(parseHistoryCards(null)).toEqual([])
+})
+
+// The catalog lives on the server (the backend only emits ids it knows), so the shape check does not keep its own copy of the ids:
+// a well-formed id the app does not have is kept and the card simply is not shown (ChatCards).
+it('template and lesson cards keep any well-formed id; only the shape is checked here', () => {
+  const lesson = { type: 'lesson', slug: 'a-lesson-the-app-has-not-loaded' }
+  const template = { type: 'template', templateId: 'a-template-the-app-has-not-loaded' }
+  expect(chatCardSchema.parse(lesson)).toEqual(lesson)
+  expect(chatCardSchema.parse(template)).toEqual(template)
+  expect(parseHistoryCards([lesson, template])).toEqual([lesson, template])
+  for (const bad of [
+    { type: 'lesson', slug: '' },
+    { type: 'template', templateId: 'x'.repeat(81) },
+    { type: 'lesson', slug: 7 },
+  ]) {
+    expect(chatCardSchema.safeParse(bad).success).toBe(false)
+  }
 })
 
 it('parses every stream event shape', () => {
@@ -122,7 +139,11 @@ it('idea cards accept an optional catalog templateId', () => {
   expect(Object.hasOwn(plain, 'templateId')).toBe(false)
 })
 
-it.each(['invented', '', null, 7])('an idea with an unusable templateId %j keeps the idea without a guide', (templateId) => {
+it('an idea keeps a well-formed templateId the app has not loaded (the guide is simply not offered then)', () => {
+  expect(chatCardSchema.parse({ ...idea, templateId: 'invented' })).toEqual({ ...idea, templateId: 'invented' })
+})
+
+it.each(['', null, 7, 'x'.repeat(81)])('an idea with an unusable templateId %j keeps the idea without a guide', (templateId) => {
   const result = chatCardSchema.safeParse({ ...idea, templateId })
   expect(result.success).toBe(true)
   expect(result.success && result.data.type === 'idea' && result.data.templateId).toBeUndefined()

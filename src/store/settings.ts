@@ -20,7 +20,7 @@ interface SettingsState {
   customCursor: boolean
   drawing: DrawingPrefs
   onboardingDone: boolean
-  /** Developer flag: make the mock API fail ~20% of the time */
+  /** Developer switch, read only by the fake AI transports (mock chat, mock judge): make them fail with `upstream`. Never saved. */
   simulateErrors: boolean
   setTheme: (t: ThemePref) => void
   setLanguage: (l: Lang) => void
@@ -29,7 +29,6 @@ interface SettingsState {
   setCustomCursor: (on: boolean) => void
   setDrawing: (p: Partial<DrawingPrefs>) => void
   setOnboardingDone: (v: boolean) => void
-  setSimulateErrors: (v: boolean) => void
 }
 
 function initialLanguage(): Lang {
@@ -48,7 +47,7 @@ export const useSettings = create<SettingsState>()(
       motion: 'system',
       sound: false,
       customCursor: true,
-      drawing: { defaultTool: 'pencil', pressure: true, smoothing: 0.35 },
+      drawing: { defaultTool: 'pencil', pressure: true, smoothing: 0 },
       onboardingDone: false,
       simulateErrors: false,
       setTheme: (theme) => set({ theme }),
@@ -58,8 +57,21 @@ export const useSettings = create<SettingsState>()(
       setCustomCursor: (customCursor) => set({ customCursor }),
       setDrawing: (p) => set((s) => ({ drawing: { ...s.drawing, ...p } })),
       setOnboardingDone: (onboardingDone) => set({ onboardingDone }),
-      setSimulateErrors: (simulateErrors) => set({ simulateErrors }),
     }),
-    { name: STORE_KEYS.settings, storage: persistStorage, version: 1 },
+    {
+      name: STORE_KEYS.settings,
+      storage: persistStorage,
+      version: 3,
+      // `simulateErrors` lives in memory only: a switch left on must not outlive the page.
+      partialize: ({ simulateErrors: _memoryOnly, ...saved }) => (void _memoryOnly, saved),
+      // v2: stroke smoothing defaults to 0 (no lag behind the pointer). Only the old default is reset; custom values survive.
+      // v3: the developer flag "simulate server hiccups" is gone; a copy an older version saved is dropped.
+      migrate: (persisted, version) => {
+        const { simulateErrors: _gone, ...s } = (persisted ?? {}) as Partial<SettingsState> & { simulateErrors?: boolean }
+        void _gone
+        if (version < 2 && s.drawing?.smoothing === 0.35) return { ...s, drawing: { ...s.drawing, smoothing: 0 } } as SettingsState
+        return s as SettingsState
+      },
+    },
   ),
 )

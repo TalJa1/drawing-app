@@ -1,14 +1,23 @@
 /* ------------------------------------------------------------------
-   Mock AI judge. Scores are derived from real image heuristics computed
-   by the studio (coverage, spill, hue harmony, value range…) plus a little
-   seeded jitter, so better drawings genuinely score higher.
-   Replace `scoreArtwork` with a call to the real AI scoring endpoint.
+   Scoring. A drawing is judged by the server (`scoreArtwork`). The judge below (`buildScore` and
+   its parts) is the old local one. It stays as the reference the server's judge is tested against
+   (the back-end's parity tests read this file and `mocks/judgeFeedback.ts`) and for its own tests;
+   nothing that scores a user's drawing calls it.
    ------------------------------------------------------------------ */
-import type { ArtworkAnalysis, Localized, RankLabel, ScoreResult, SubScores } from '@/types'
+import type { ArtworkAnalysis, Localized, RankLabel, RewardSummary, ScoreResult, SubScores } from '@/types'
 import { seeded } from '@/lib/random'
 import { GENERAL, JUDGE_NOTES, STRENGTHS, TIPS, WEAKNESSES, type SubKey } from '@/mocks/judgeFeedback'
-import { useCollection } from '@/store/collection'
-import { ApiError, simulate } from './client'
+import type { components } from './schema'
+import type { Assert, Wire } from './contract'
+import { request } from './client'
+import { syncProgress } from './progress'
+
+type ScoreOut = components['schemas']['ScoreOut']
+
+// The server's score must be usable as the app's `ScoreResult` (its `rank` is a plain string on the
+// wire, which the app narrows), and the reward as the app's `RewardSummary`.
+export type ScoreOnTheWire = Assert<Omit<Wire<ScoreOut>, 'reward' | 'rank'>, Omit<ScoreResult, 'rank'>>
+export type ScoreKeysInTheApp = Assert<keyof ScoreResult, keyof Omit<ScoreOut, 'reward'>>
 
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n))
 const r1 = (n: number) => Math.round(Math.max(0, Math.min(100, n)))
@@ -128,13 +137,14 @@ export function buildScore(artworkId: string, a: ArtworkAnalysis): ScoreResult {
   }
 }
 
-/** POST /artworks/:id/score — the "AI judge". Takes 2.5–4 s like a real model. */
-export async function scoreArtwork(artworkId: string): Promise<ScoreResult> {
-  await simulate({ latency: [2500, 4000] })
-  const art = useCollection.getState().artworks.find((a) => a.id === artworkId)
-  if (!art) throw new ApiError('Artwork not found', 404, 'not_found')
-  if (!art.analysis) throw new ApiError('Nothing to score', 422, 'missing_analysis')
-  const result = buildScore(artworkId, art.analysis)
-  useCollection.getState().patch(artworkId, { score: result })
-  return result
+export interface ScoredArtwork {
+  score: ScoreResult
+  reward: RewardSummary
+}
+
+/** POST /artworks/:id/score — the server judges the drawing it saved and pays the XP for it. */
+export async function scoreArtwork(artworkId: string): Promise<ScoredArtwork> {
+  const { reward, ...score } = await request<ScoreOut>('POST', `/artworks/${encodeURIComponent(artworkId)}/score`)
+  await syncProgress().catch(() => {}) // the score stands even if the refresh does not get through
+  return { score: score as ScoreResult, reward }
 }

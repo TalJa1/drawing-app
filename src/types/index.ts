@@ -46,8 +46,13 @@ export interface Template {
   minutes: number
   /** Level required to unlock (1 = always open) */
   unlockLevel: number
-  /** Raw SVG markup (viewBox 0 0 1200 900). Replaceable by `imageUrl` later. */
+  /** Raw SVG markup (viewBox 0 0 1200 900). Always sent: the studio colours and draws on it. */
   svg: string
+  /**
+   * Server-relative path of the template's 1200×900 PNG (opaque white background), e.g.
+   * "/api/v1/templates/fox/image". Absent until the server has the file; thumbnails prefer it
+   * and fall back to `svg`.
+   */
   imageUrl?: string
   suggestedPalette: string[]
   popularity: number
@@ -97,15 +102,13 @@ export interface Artwork {
   timeSpent: number
   width: number
   height: number
-  /** Key of the image blob in IndexedDB (or a URL once a server exists) */
+  /** The picture's address on the API (`/api/v1/artworks/:id/image`); `acquireImage` loads it with the token */
   imageKey: string
   thumbKey: string
   favourite: boolean
   medium: string
   analysis?: ArtworkAnalysis
   score?: ScoreResult
-  /** true for seeded demo artworks */
-  demo?: boolean
 }
 
 export interface SubScores {
@@ -190,10 +193,7 @@ export interface LeaderboardEntry {
   xp: number
   weeklyXp: number
   level: number
-  country: string
-  isFriend: boolean
   isCurrentUser?: boolean
-  sample: true | false
 }
 
 export interface RewardSummary {
@@ -344,10 +344,17 @@ export interface LessonSection {
   callout?: Localized
 }
 
+/** A quiz question as the API serves it. The right answer is NOT part of it: it is revealed after submitting. */
 export interface QuizQuestion {
   id: string
   prompt: Localized
   options: Localized[]
+}
+
+/** What the server keeps for a question and reveals once a quiz is submitted. */
+export interface QuizKey {
+  id: string
+  /** index of the right option */
   answer: number
   explain: Localized
 }

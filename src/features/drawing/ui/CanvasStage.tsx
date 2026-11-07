@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useStudio } from '@/store/studio'
 import type { DrawingEngine } from '../engine/Engine'
 import { BRUSH_TOOLS, SHAPE_TOOLS } from '../engine/types'
+import { cursorKindOf } from '../tools'
 import { useEngineVersion } from '../useEngine'
 
 /** The drawing surface: view canvas + brush cursor + pointer plumbing. */
@@ -54,6 +55,9 @@ export function CanvasStage({ engine, description }: { engine: DrawingEngine; de
     const c = cursorRef.current
     const w = wrapRef.current
     if (!c || !w) return
+    // holding Space turns any tool into the hand for as long as it is held; the custom cursor follows
+    const kind = engine.isPanningMode() ? 'hand' : cursorKindOf(tool)
+    if (w.dataset.cursorKind !== kind) w.dataset.cursorKind = kind
     if (e.pointerType === 'touch' || !brushLike || engine.isPanningMode()) {
       c.style.opacity = '0'
       return
@@ -66,7 +70,13 @@ export function CanvasStage({ engine, description }: { engine: DrawingEngine; de
   const d = Math.max(4, size * zoom)
 
   return (
-    <div ref={wrapRef} className="relative h-full w-full overflow-hidden" data-cursor="brush">
+    <div
+      ref={wrapRef}
+      className="relative h-full w-full overflow-hidden"
+      data-cursor="brush"
+      data-cursor-kind={cursorKindOf(tool)}
+      data-brush-ink="off"
+    >
       <canvas
         ref={canvasRef}
         role="img"

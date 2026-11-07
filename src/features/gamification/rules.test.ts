@@ -172,6 +172,17 @@ describe('rewards & challenges', () => {
     expect(new Set(a.map((c) => c.challenge.id)).size).toBe(5)
   })
 
+  it('keeps one key for a special event that runs across New Year', () => {
+    const special = (iso: string) => activeChallenges(new Date(iso)).find((c) => c.challenge.kind === 'special')!
+    const dec = special('2026-12-20T10:00:00')
+    const jan = special('2027-01-02T10:00:00')
+    expect(dec.challenge.id).toBe(jan.challenge.id)
+    expect(jan.periodKey).toBe(dec.periodKey) // same season, same key: progress and claims carry over
+    expect(special('2027-12-05T10:00:00').periodKey).not.toBe(dec.periodKey) // next winter is a new one
+    // an event inside a single year is untouched
+    expect(special('2026-10-21T10:00:00').periodKey).toMatch(/^2026-/)
+  })
+
   it('progresses and completes matching challenges', () => {
     const now = new Date('2026-10-21T10:00:00')
     const daily = activeChallenges(now)[0]

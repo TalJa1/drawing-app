@@ -4,31 +4,17 @@ import { Upload } from 'lucide-react'
 import { Modal } from '@/components/Modal'
 import { Button } from '@/components/Button'
 import { useArtworks } from '@/api/queries'
-import { getImageBlob, getImageUrl } from '@/api/artworks'
+import { getImageBlob } from '@/api/artworks'
+import { ArtworkImage } from '@/features/collection/ArtworkImage'
 import { toast } from '@/store/ui'
 import { AttachmentError, prepareImage } from '../attachments'
 import type { PreparedImage } from '../attachments'
 import { useReducedMotion } from '@/app/theme'
 import { useChatVisibility } from '../motion'
 
+/** The account's picture is fetched with the token, only near the screen, and let go of far from it (see ArtworkImage). */
 function Thumbnail({ imageKey, alt }: { imageKey: string; alt: string }) {
-  const [image, setImage] = useState<{ key: string; url: string } | null>(null)
-  useEffect(() => {
-    let alive = true
-    void getImageUrl(imageKey)
-      .then((url) => {
-        if (alive && url) setImage({ key: imageKey, url })
-      })
-      .catch(() => undefined)
-    return () => {
-      alive = false
-    }
-  }, [imageKey])
-  return image?.key === imageKey ? (
-    <img src={image.url} alt="" className="aspect-[4/3] w-full rounded-lg object-cover" />
-  ) : (
-    <div className="skeleton aspect-[4/3] w-full rounded-lg" aria-label={alt} />
-  )
+  return <ArtworkImage imageKey={imageKey} alt={alt} aspect={4 / 3} className="rounded-lg" lazy />
 }
 
 export function AttachmentPicker({

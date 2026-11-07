@@ -41,6 +41,17 @@ export function useCoarsePointer(): boolean {
   return useSyncExternalStore(coarseSub, media('(pointer: coarse)'), () => false)
 }
 
+/**
+ * True when the brush cursor is in use: the setting is on and the device has a fine pointer. While it is, the page's
+ * own pointer hides the system's, so anything the browser draws outside the page (the pop-up of a native <select>)
+ * would show the system arrow: those controls are drawn by the app instead (see components/Select).
+ */
+export function useCustomCursorActive(): boolean {
+  const enabled = useSettings((s) => s.customCursor)
+  const coarse = useCoarsePointer()
+  return enabled && !coarse
+}
+
 /** Mirrors the resolved theme/motion onto <html> for CSS. */
 export function useDocumentPrefs(): void {
   const theme = useResolvedTheme()

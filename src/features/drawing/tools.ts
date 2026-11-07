@@ -16,6 +16,7 @@ import {
   ZoomIn,
   type LucideIcon,
 } from 'lucide-react'
+import type { CursorKind } from '@/components/toolCursors'
 import type { ToolId } from './engine/types'
 
 export interface ToolDef {
@@ -42,6 +43,15 @@ export const TOOLS: ToolDef[] = [
   { id: 'hand', icon: Hand, shortcut: 'Space', group: 'nav' },
   { id: 'zoom', icon: ZoomIn, shortcut: 'Z', group: 'nav' },
 ]
+
+/** The cursor sprite of a tool: its own picture, the calligraphic brush (the default cursor) for watercolour, an instrument for each shape tool. */
+export function cursorKindOf(tool: ToolId): CursorKind {
+  if (tool === 'watercolour') return 'brush'
+  if (tool === 'line') return 'ruler'
+  if (tool === 'rect') return 'square'
+  if (tool === 'ellipse') return 'compass'
+  return tool
+}
 
 export const TOOL_MAP = Object.fromEntries(TOOLS.map((t) => [t.id, t])) as Record<ToolId, ToolDef>
 

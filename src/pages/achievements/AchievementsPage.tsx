@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { Check, Gift, Snowflake, Users } from 'lucide-react'
+import { Check, Gift, Snowflake } from 'lucide-react'
 import type { Badge, BadgeCategory } from '@/types'
 import { Page, SectionHeading, Reveal } from '@/components/Layout'
 import { Tabs } from '@/components/Tabs'
@@ -28,8 +28,33 @@ import { msUntilMidnight, formatDuration } from '@/lib/date'
 import { useProgress } from '@/store/progress'
 import { presentReward, toast } from '@/store/ui'
 import { ApiError } from '@/api/client'
+import { apiErrorKey } from '@/api/artworks'
 
 const CATS: (BadgeCategory | 'all')[] = ['all', 'practice', 'score', 'streak', 'learning', 'colour', 'exploration', 'secret']
+
+/** Claim answers that have a sentence of their own here; the rest use the shared ones (offline, too many requests...). */
+const CLAIM_ERRORS = ['already_claimed', 'incomplete', 'not_found']
+
+/** The i18n key of what to tell the person when claiming failed (the server's own text is English only). */
+function claimErrorKey(e: unknown): string {
+  return e instanceof ApiError && CLAIM_ERRORS.includes(e.code) ? `achievements.claimError.${e.code}` : apiErrorKey(e)
+}
+
+/** A list that could not be loaded: said plainly, with a way to ask again (never shown as "nothing here"). */
+function LoadFailed({ onRetry }: { onRetry: () => void }) {
+  const { t } = useTranslation()
+  return (
+    <div
+      role="alert"
+      className="paper flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-line p-5 shadow-paper"
+    >
+      <p className="text-ink-soft">{t('common.errorGeneric')}</p>
+      <Button size="sm" variant="outline" onClick={onRetry}>
+        {t('common.retry')}
+      </Button>
+    </div>
+  )
+}
 
 function LevelHero() {
   const { t } = useTranslation()
@@ -113,9 +138,10 @@ function LevelHero() {
 function Challenges() {
   const { t } = useTranslation()
   const L = useL()
-  const { data, isLoading } = useChallenges()
+  const { data, isLoading, isError, refetch } = useChallenges()
   const claim = useClaimChallenge()
   const now = useNow(1000)
+  if (isError && !data) return <LoadFailed onRetry={() => void refetch()} />
   if (isLoading || !data) return <Skeleton className="h-64 rounded-[22px]" />
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -197,7 +223,7 @@ function Challenges() {
                           toast({ title: t('achievements.claimedToast', { xp: c.challenge.xp }), tone: 'gold' })
                           presentReward(r)
                         },
-                        onError: (e) => toast({ title: e instanceof ApiError ? e.message : t('common.errorGeneric'), tone: 'error' }),
+                        onError: (e) => toast({ title: t(claimErrorKey(e)), tone: 'error' }),
                       },
                     )
                   }
@@ -255,11 +281,12 @@ function StreakCard() {
 function BadgeWall() {
   const { t, i18n } = useTranslation()
   const L = useL()
-  const { data, isLoading } = useAchievements()
+  const { data, isLoading, isError, refetch } = useAchievements()
   const [cat, setCat] = useState<BadgeCategory | 'all'>('all')
   const [open, setOpen] = useState<(Badge & { unlockedAt?: string }) | null>(null)
   const badges = useMemo(() => (data?.badges ?? []).filter((b) => cat === 'all' || b.category === cat), [data, cat])
   const unlocked = (data?.badges ?? []).filter((b) => b.unlockedAt).length
+  if (isError && !data) return <LoadFailed onRetry={() => void refetch()} />
   return (
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -294,9 +321,7 @@ function BadgeWall() {
                     'group flex h-full w-full flex-col items-center rounded-[22px] border p-4 text-center transition-shadow',
                     got ? 'paper border-line shadow-paper hover:shadow-lift' : 'border-dashed border-line-strong',
                   )}
-                  aria-label={
-                    hidden ? t('achievements.secretBadge') : `${L(b.name)} — ${got ? t('achievements.unlocked') : t('achievements.locked')}`
-                  }
+                  aria-label={`${hidden ? t('achievements.secretBadge') : L(b.name)} ${t(`rarity.${b.rarity}`)} — ${got ? t('achievements.unlocked') : t('achievements.locked')}`}
                 >
                   <BadgeMedal
                     badge={b}
@@ -304,7 +329,10 @@ function BadgeWall() {
                     size={76}
                     className="transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-3"
                   />
-                  <p className={cn('mt-3 font-display text-base leading-tight', !got && 'text-ink-faint')}>{hidden ? '???' : L(b.name)}</p>
+                  <p className={cn('mt-3 font-display text-base leading-tight', !got && 'text-ink-faint')}>
+                    {hidden ? <span aria-hidden data-mask="???" className="before:content-[attr(data-mask)]" /> : L(b.name)}
+                  </p>
+                  {/* a space between the two lines: the visible text is "<name> <rarity>", which the button's name has to contain */}{' '}
                   <p
                     className={cn(
                       'mt-1 text-[10.5px] font-semibold uppercase tracking-wider',
@@ -346,8 +374,7 @@ function BadgeWall() {
 function Leaderboard() {
   const { t } = useTranslation()
   const [scope, setScope] = useState<'weekly' | 'all'>('weekly')
-  const [filter, setFilter] = useState<'global' | 'friends'>('global')
-  const { data, isLoading } = useLeaderboard(scope, filter)
+  const { data, isLoading, isError, refetch } = useLeaderboard(scope)
   return (
     <Card className="p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -361,23 +388,19 @@ function Leaderboard() {
             { id: 'all', label: t('achievements.allTime') },
           ]}
         />
-        <Tabs
-          ariaLabel={t('achievements.audience')}
-          value={filter}
-          onChange={setFilter}
-          size="sm"
-          items={[
-            { id: 'global', label: t('achievements.global') },
-            { id: 'friends', label: t('achievements.friends'), icon: <Users size={14} /> },
-          ]}
-        />
       </div>
-      {isLoading || !data ? (
+      {isError && !data ? (
+        <div className="mt-5">
+          <LoadFailed onRetry={() => void refetch()} />
+        </div>
+      ) : isLoading || !data ? (
         <div className="mt-5 space-y-2">
           {Array.from({ length: 6 }, (_, i) => (
             <Skeleton key={i} className="h-12" />
           ))}
         </div>
+      ) : data.length === 0 ? (
+        <p className="mt-5 text-ink-soft">{t('achievements.leaderboardEmpty')}</p>
       ) : (
         <ol className="mt-5 space-y-1.5">
           {data.map((e, i) => (
@@ -395,7 +418,7 @@ function Leaderboard() {
                   i === 0 ? 'text-gold-deep dark:text-gold' : 'text-ink-faint',
                 )}
               >
-                {i + 1}
+                {e.id}
               </span>
               <Avatar seed={e.avatarSeed} size={34} />
               <span className="min-w-0 flex-1 truncate font-medium">
@@ -410,7 +433,7 @@ function Leaderboard() {
           ))}
         </ol>
       )}
-      <p className="mt-4 text-xs text-ink-faint">{t('achievements.sampleNote')}</p>
+      {data?.length === 1 && data[0].isCurrentUser && <p className="mt-4 text-sm text-ink-soft">{t('achievements.leaderboardAlone')}</p>}
     </Card>
   )
 }

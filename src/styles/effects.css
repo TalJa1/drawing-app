@@ -134,6 +134,49 @@
   );
   animation: shimmer 1.6s ease-in-out infinite;
 }
+/* Tooltip bubble: fades in when it is mounted and out again when it is closed (the component unmounts it 170 ms
+   later, so a closed bubble takes no room in the page: it used to stay, invisible, and widen /learn on a phone). */
+.tooltip-in {
+  animation: tooltip-in 0.15s ease-out both;
+}
+.tooltip-out {
+  animation: tooltip-in 0.15s ease-in reverse both;
+}
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Select list (components/Select.tsx): grows out of its control. Only opacity and transform, so it runs on the
+   compositor; `--pop-shift` and the transform-origin are set inline by the component (up or down placement). */
+.select-pop-in {
+  animation: select-pop 0.14s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.select-pop-out {
+  animation: select-pop 0.1s ease-in reverse both;
+}
+@keyframes select-pop {
+  from {
+    opacity: 0;
+    transform: translateY(var(--pop-shift, -6px)) scale(0.97);
+  }
+}
+
+/* Art-form wheel (/learn): the ring turns, every picture turns back. `rotate` is the individual transform property,
+   so it composes with the `translate` that centres each picture on its place on the ring. */
+.wheel-turn {
+  animation: wheel-turn 180s linear infinite;
+}
+.wheel-hold {
+  animation: wheel-turn 180s linear infinite reverse;
+}
+@keyframes wheel-turn {
+  to {
+    rotate: 360deg;
+  }
+}
+
 @keyframes shimmer {
   to {
     transform: translateX(100%);
@@ -351,16 +394,21 @@ html[data-motion='reduce'] *::after {
   outline-offset: 2px;
 }
 
-/* ---------- Custom paint-dot cursor (fine pointers only) ---------- */
+/* ---------- Brush cursor (fine pointers only; canvases are created by CustomCursor) ---------- */
 html.art-cursor,
 html.art-cursor * {
-  cursor: none;
+  cursor: none !important;
 }
-html.art-cursor input:not([type='range']):not([type='checkbox']):not([type='color']),
-html.art-cursor textarea,
-html.art-cursor [contenteditable='true'] {
-  cursor: text;
+/* watercolour ink layer: multiplies onto light surfaces, screens onto dark ones */
+.art-brush-ink {
+  mix-blend-mode: multiply;
 }
-html.art-cursor [data-cursor='brush'] {
-  cursor: crosshair;
+html[data-theme='dark'] .art-brush-ink {
+  mix-blend-mode: screen;
+}
+@media print {
+  .art-brush-ink,
+  .art-brush-cursor {
+    display: none !important;
+  }
 }

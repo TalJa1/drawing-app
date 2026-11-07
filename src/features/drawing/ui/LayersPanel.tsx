@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowDown, ArrowUp, Eye, EyeOff, Lock, LockOpen, Plus, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { IconButton } from '@/components/IconButton'
+import { SelectControl } from '@/components/Select'
 import type { DrawingEngine } from '../engine/Engine'
 import type { BlendMode, Layer } from '../engine/types'
 import { useEngineVersion } from '../useEngine'
@@ -24,6 +25,7 @@ function Thumb({ layer, version }: { layer: Layer; version: number }) {
 }
 
 export function LayersPanel({ engine }: { engine: DrawingEngine }) {
+  const blendId = useId()
   const { t } = useTranslation()
   const version = useEngineVersion(engine)
   const [renaming, setRenaming] = useState<string | null>(null)
@@ -172,20 +174,17 @@ export function LayersPanel({ engine }: { engine: DrawingEngine }) {
             />
             <span className="w-9 tabular-nums text-ink">{Math.round(active.opacity * 100)}%</span>
           </label>
-          <label className="flex items-center gap-3 text-xs font-medium text-ink-soft">
-            {t('studio.layers.blend')}
-            <select
+          <div className="flex items-center gap-3 text-xs font-medium text-ink-soft">
+            <span id={blendId}>{t('studio.layers.blend')}</span>
+            <SelectControl
+              size="sm"
+              className="flex-1"
+              aria-labelledby={blendId}
               value={active.blend}
-              onChange={(e) => engine.setLayerProps(active.id, { blend: e.target.value as BlendMode })}
-              className="h-8 flex-1 rounded-full border border-line-strong bg-card px-3 text-xs text-ink"
-            >
-              {BLENDS.map((b) => (
-                <option key={b} value={b}>
-                  {t(`studio.blend.${b}`)}
-                </option>
-              ))}
-            </select>
-          </label>
+              onValueChange={(v) => engine.setLayerProps(active.id, { blend: v as BlendMode })}
+              options={BLENDS.map((b) => ({ value: b, label: t(`studio.blend.${b}`) }))}
+            />
+          </div>
           <button
             type="button"
             onClick={() => setRenaming(active.id)}

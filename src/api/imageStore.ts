@@ -72,22 +72,3 @@ export async function listKeys(prefix = ''): Promise<string[]> {
   }
   return [...new Set(all)].filter((k) => k.startsWith(prefix))
 }
-
-/* ---------- object-URL cache for <img> tags ---------- */
-const urlCache = new Map<string, string>()
-
-export async function fileUrl(key: string): Promise<string | null> {
-  const cached = urlCache.get(key)
-  if (cached) return cached
-  const v = await getFile<Blob | string>(key)
-  if (!v) return null
-  const url = typeof v === 'string' ? v : URL.createObjectURL(v)
-  urlCache.set(key, url)
-  return url
-}
-
-export function forgetUrl(key: string): void {
-  const u = urlCache.get(key)
-  if (u?.startsWith('blob:')) URL.revokeObjectURL(u)
-  urlCache.delete(key)
-}

@@ -1,0 +1,698 @@
+{
+  "badges": [
+    {
+      "id": "first-stroke",
+      "name": {
+        "en": "First Stroke",
+        "vi": "Nét cọ đầu tiên"
+      },
+      "description": {
+        "en": "Finish your very first artwork.",
+        "vi": "Hoàn thành tác phẩm đầu tiên của bạn."
+      },
+      "category": "practice",
+      "rarity": "common",
+      "icon": "brush",
+      "xp": 20
+    },
+    {
+      "id": "sketchbook-habit",
+      "name": {
+        "en": "Sketchbook Habit",
+        "vi": "Thói quen phác thảo"
+      },
+      "description": {
+        "en": "Create 5 artworks.",
+        "vi": "Tạo 5 tác phẩm."
+      },
+      "category": "practice",
+      "rarity": "common",
+      "icon": "book",
+      "xp": 20
+    },
+    {
+      "id": "prolific",
+      "name": {
+        "en": "Prolific Painter",
+        "vi": "Họa sĩ chăm chỉ"
+      },
+      "description": {
+        "en": "Create 25 artworks.",
+        "vi": "Tạo 25 tác phẩm."
+      },
+      "category": "practice",
+      "rarity": "rare",
+      "icon": "layers",
+      "xp": 50
+    },
+    {
+      "id": "century",
+      "name": {
+        "en": "Century Canvas",
+        "vi": "Trăm bức tranh"
+      },
+      "description": {
+        "en": "Create 100 artworks.",
+        "vi": "Tạo 100 tác phẩm."
+      },
+      "category": "practice",
+      "rarity": "legendary",
+      "icon": "crown",
+      "xp": 250
+    },
+    {
+      "id": "free-spirit",
+      "name": {
+        "en": "Free Spirit",
+        "vi": "Tâm hồn tự do"
+      },
+      "description": {
+        "en": "Save your first free drawing.",
+        "vi": "Lưu bức vẽ tự do đầu tiên."
+      },
+      "category": "practice",
+      "rarity": "common",
+      "icon": "feather",
+      "xp": 20
+    },
+    {
+      "id": "template-tourist",
+      "name": {
+        "en": "Template Tourist",
+        "vi": "Du khách mẫu vẽ"
+      },
+      "description": {
+        "en": "Colour templates from 5 different categories.",
+        "vi": "Tô màu mẫu thuộc 5 chủ đề khác nhau."
+      },
+      "category": "practice",
+      "rarity": "rare",
+      "icon": "compass",
+      "xp": 50
+    },
+    {
+      "id": "grand-tour",
+      "name": {
+        "en": "Grand Tour",
+        "vi": "Chuyến du hành lớn"
+      },
+      "description": {
+        "en": "Colour a template from every category.",
+        "vi": "Tô màu ít nhất một mẫu ở mọi chủ đề."
+      },
+      "category": "practice",
+      "rarity": "epic",
+      "icon": "globe",
+      "xp": 100
+    },
+    {
+      "id": "daily-devotee",
+      "name": {
+        "en": "Daily Devotee",
+        "vi": "Tín đồ mỗi ngày"
+      },
+      "description": {
+        "en": "Complete 5 daily challenges.",
+        "vi": "Hoàn thành 5 thử thách hằng ngày."
+      },
+      "category": "practice",
+      "rarity": "rare",
+      "icon": "calendar",
+      "xp": 50
+    },
+    {
+      "id": "speed-painter",
+      "name": {
+        "en": "Speed Painter",
+        "vi": "Họa sĩ tốc hành"
+      },
+      "description": {
+        "en": "Score 60+ in under five minutes.",
+        "vi": "Đạt 60+ điểm trong chưa đầy năm phút."
+      },
+      "category": "practice",
+      "rarity": "rare",
+      "icon": "timer",
+      "xp": 50
+    },
+    {
+      "id": "marathon",
+      "name": {
+        "en": "Marathon Brush",
+        "vi": "Cọ vẽ marathon"
+      },
+      "description": {
+        "en": "Spend 5 hours drawing in total.",
+        "vi": "Vẽ tổng cộng 5 giờ."
+      },
+      "category": "practice",
+      "rarity": "epic",
+      "icon": "clock",
+      "xp": 100
+    },
+    {
+      "id": "rising-brush",
+      "name": {
+        "en": "Rising Brush",
+        "vi": "Cọ vẽ đang lên"
+      },
+      "description": {
+        "en": "Score 60 or more.",
+        "vi": "Đạt từ 60 điểm trở lên."
+      },
+      "category": "score",
+      "rarity": "common",
+      "icon": "trending",
+      "xp": 20
+    },
+    {
+      "id": "gallery-worthy",
+      "name": {
+        "en": "Gallery Worthy",
+        "vi": "Xứng tầm triển lãm"
+      },
+      "description": {
+        "en": "Score 75 or more.",
+        "vi": "Đạt từ 75 điểm trở lên."
+      },
+      "category": "score",
+      "rarity": "common",
+      "icon": "frame",
+      "xp": 20
+    },
+    {
+      "id": "first-masterpiece",
+      "name": {
+        "en": "First Masterpiece",
+        "vi": "Kiệt tác đầu tay"
+      },
+      "description": {
+        "en": "Score 90 or more.",
+        "vi": "Đạt từ 90 điểm trở lên."
+      },
+      "category": "score",
+      "rarity": "rare",
+      "icon": "star",
+      "xp": 50
+    },
+    {
+      "id": "ten-masterpieces",
+      "name": {
+        "en": "Ten Masterpieces",
+        "vi": "Mười kiệt tác"
+      },
+      "description": {
+        "en": "Score 90+ ten times.",
+        "vi": "Đạt 90+ điểm mười lần."
+      },
+      "category": "score",
+      "rarity": "legendary",
+      "icon": "trophy",
+      "xp": 250
+    },
+    {
+      "id": "perfectionist",
+      "name": {
+        "en": "Perfectionist",
+        "vi": "Người cầu toàn"
+      },
+      "description": {
+        "en": "Score 95 or more.",
+        "vi": "Đạt từ 95 điểm trở lên."
+      },
+      "category": "score",
+      "rarity": "epic",
+      "icon": "gem",
+      "xp": 100
+    },
+    {
+      "id": "hot-streak",
+      "name": {
+        "en": "Hot Streak",
+        "vi": "Chuỗi nóng bỏng"
+      },
+      "description": {
+        "en": "Three scores of 80+ in a row.",
+        "vi": "Ba lần liên tiếp đạt 80+ điểm."
+      },
+      "category": "score",
+      "rarity": "rare",
+      "icon": "flame",
+      "xp": 50
+    },
+    {
+      "id": "on-fire",
+      "name": {
+        "en": "On Fire",
+        "vi": "Bùng cháy"
+      },
+      "description": {
+        "en": "Five scores of 80+ in a row.",
+        "vi": "Năm lần liên tiếp đạt 80+ điểm."
+      },
+      "category": "score",
+      "rarity": "epic",
+      "icon": "zap",
+      "xp": 100
+    },
+    {
+      "id": "comeback",
+      "name": {
+        "en": "The Comeback",
+        "vi": "Màn lội ngược dòng"
+      },
+      "description": {
+        "en": "Beat your previous score on a template by 25 points.",
+        "vi": "Vượt điểm cũ của một mẫu thêm 25 điểm."
+      },
+      "category": "score",
+      "rarity": "rare",
+      "icon": "refresh",
+      "xp": 50
+    },
+    {
+      "id": "warm-up",
+      "name": {
+        "en": "Warm-up",
+        "vi": "Khởi động"
+      },
+      "description": {
+        "en": "Create three days in a row.",
+        "vi": "Sáng tác ba ngày liên tiếp."
+      },
+      "category": "streak",
+      "rarity": "common",
+      "icon": "sun",
+      "xp": 20
+    },
+    {
+      "id": "week-warrior",
+      "name": {
+        "en": "Week Warrior",
+        "vi": "Chiến binh tuần lễ"
+      },
+      "description": {
+        "en": "Keep a 7-day streak.",
+        "vi": "Giữ chuỗi 7 ngày."
+      },
+      "category": "streak",
+      "rarity": "rare",
+      "icon": "shield",
+      "xp": 50
+    },
+    {
+      "id": "fortnight",
+      "name": {
+        "en": "Fortnight of Colour",
+        "vi": "Hai tuần sắc màu"
+      },
+      "description": {
+        "en": "Keep a 14-day streak.",
+        "vi": "Giữ chuỗi 14 ngày."
+      },
+      "category": "streak",
+      "rarity": "epic",
+      "icon": "mountain",
+      "xp": 100
+    },
+    {
+      "id": "moon-cycle",
+      "name": {
+        "en": "Moon Cycle",
+        "vi": "Một tuần trăng"
+      },
+      "description": {
+        "en": "Keep a 30-day streak.",
+        "vi": "Giữ chuỗi 30 ngày."
+      },
+      "category": "streak",
+      "rarity": "legendary",
+      "icon": "moon",
+      "xp": 250
+    },
+    {
+      "id": "weekend-artist",
+      "name": {
+        "en": "Weekend Artist",
+        "vi": "Họa sĩ cuối tuần"
+      },
+      "description": {
+        "en": "Create something on a Saturday or Sunday.",
+        "vi": "Sáng tác vào thứ Bảy hoặc Chủ nhật."
+      },
+      "category": "streak",
+      "rarity": "common",
+      "icon": "coffee",
+      "xp": 20
+    },
+    {
+      "id": "first-lesson",
+      "name": {
+        "en": "First Lesson",
+        "vi": "Bài học đầu tiên"
+      },
+      "description": {
+        "en": "Complete a lesson.",
+        "vi": "Hoàn thành một bài học."
+      },
+      "category": "learning",
+      "rarity": "common",
+      "icon": "graduation",
+      "xp": 20
+    },
+    {
+      "id": "bookworm",
+      "name": {
+        "en": "Bookworm",
+        "vi": "Mọt sách"
+      },
+      "description": {
+        "en": "Complete 10 lessons.",
+        "vi": "Hoàn thành 10 bài học."
+      },
+      "category": "learning",
+      "rarity": "rare",
+      "icon": "library",
+      "xp": 50
+    },
+    {
+      "id": "scholar",
+      "name": {
+        "en": "Scholar of the Atelier",
+        "vi": "Học giả xưởng vẽ"
+      },
+      "description": {
+        "en": "Complete every lesson.",
+        "vi": "Hoàn thành tất cả bài học."
+      },
+      "category": "learning",
+      "rarity": "legendary",
+      "icon": "scroll",
+      "xp": 250
+    },
+    {
+      "id": "quiz-starter",
+      "name": {
+        "en": "Quiz Starter",
+        "vi": "Khởi đầu trắc nghiệm"
+      },
+      "description": {
+        "en": "Pass your first quiz.",
+        "vi": "Vượt qua bài trắc nghiệm đầu tiên."
+      },
+      "category": "learning",
+      "rarity": "common",
+      "icon": "check",
+      "xp": 20
+    },
+    {
+      "id": "quiz-champion",
+      "name": {
+        "en": "Quiz Champion",
+        "vi": "Vô địch trắc nghiệm"
+      },
+      "description": {
+        "en": "Ace 5 quizzes with a perfect score.",
+        "vi": "Đạt điểm tuyệt đối 5 bài trắc nghiệm."
+      },
+      "category": "learning",
+      "rarity": "epic",
+      "icon": "medal",
+      "xp": 100
+    },
+    {
+      "id": "flash-memory",
+      "name": {
+        "en": "Flash Memory",
+        "vi": "Trí nhớ chớp nhoáng"
+      },
+      "description": {
+        "en": "Review 50 flashcards.",
+        "vi": "Ôn 50 thẻ ghi nhớ."
+      },
+      "category": "learning",
+      "rarity": "rare",
+      "icon": "cards",
+      "xp": 50
+    },
+    {
+      "id": "style-spotter",
+      "name": {
+        "en": "Style Spotter",
+        "vi": "Nhận diện phong cách"
+      },
+      "description": {
+        "en": "Reach a streak of 5 in Spot the Style.",
+        "vi": "Đạt chuỗi 5 trong Đoán Phong Cách."
+      },
+      "category": "learning",
+      "rarity": "rare",
+      "icon": "eye",
+      "xp": 50
+    },
+    {
+      "id": "eagle-eye",
+      "name": {
+        "en": "Eagle Eye",
+        "vi": "Mắt đại bàng"
+      },
+      "description": {
+        "en": "Reach a streak of 15 in Spot the Style.",
+        "vi": "Đạt chuỗi 15 trong Đoán Phong Cách."
+      },
+      "category": "learning",
+      "rarity": "epic",
+      "icon": "scan",
+      "xp": 100
+    },
+    {
+      "id": "colour-whisperer",
+      "name": {
+        "en": "Colour Whisperer",
+        "vi": "Người thì thầm với màu"
+      },
+      "description": {
+        "en": "Earn a colour score of 90+ five times.",
+        "vi": "Đạt điểm màu 90+ năm lần."
+      },
+      "category": "colour",
+      "rarity": "epic",
+      "icon": "palette",
+      "xp": 100
+    },
+    {
+      "id": "colour-curious",
+      "name": {
+        "en": "Colour Curious",
+        "vi": "Tò mò sắc màu"
+      },
+      "description": {
+        "en": "Experiment in the Colour Lab.",
+        "vi": "Thử nghiệm trong Phòng Thí Nghiệm Màu."
+      },
+      "category": "colour",
+      "rarity": "common",
+      "icon": "droplet",
+      "xp": 20
+    },
+    {
+      "id": "palette-courier",
+      "name": {
+        "en": "Palette Courier",
+        "vi": "Người đưa bảng màu"
+      },
+      "description": {
+        "en": "Send 3 palettes to the studio.",
+        "vi": "Gửi 3 bảng màu tới xưởng vẽ."
+      },
+      "category": "colour",
+      "rarity": "common",
+      "icon": "send",
+      "xp": 20
+    },
+    {
+      "id": "rainbow",
+      "name": {
+        "en": "Rainbow Maker",
+        "vi": "Người tạo cầu vồng"
+      },
+      "description": {
+        "en": "Use seven or more distinct hues in one artwork.",
+        "vi": "Dùng từ bảy sắc độ khác nhau trong một tác phẩm."
+      },
+      "category": "colour",
+      "rarity": "rare",
+      "icon": "rainbow",
+      "xp": 50
+    },
+    {
+      "id": "monochrome",
+      "name": {
+        "en": "Monochrome Master",
+        "vi": "Bậc thầy đơn sắc"
+      },
+      "description": {
+        "en": "Score 75+ using two hues or fewer.",
+        "vi": "Đạt 75+ điểm chỉ với tối đa hai sắc độ."
+      },
+      "category": "colour",
+      "rarity": "rare",
+      "icon": "contrast",
+      "xp": 50
+    },
+    {
+      "id": "time-traveller",
+      "name": {
+        "en": "Time Traveller",
+        "vi": "Du hành thời gian"
+      },
+      "description": {
+        "en": "Visit every art movement in the Atlas.",
+        "vi": "Ghé thăm mọi trào lưu nghệ thuật trong Atlas."
+      },
+      "category": "exploration",
+      "rarity": "epic",
+      "icon": "hourglass",
+      "xp": 100
+    },
+    {
+      "id": "explorer-of-forms",
+      "name": {
+        "en": "Explorer of Forms",
+        "vi": "Nhà thám hiểm loại hình"
+      },
+      "description": {
+        "en": "Visit every art form in the Atlas.",
+        "vi": "Ghé thăm mọi loại hình nghệ thuật trong Atlas."
+      },
+      "category": "exploration",
+      "rarity": "epic",
+      "icon": "shapes",
+      "xp": 100
+    },
+    {
+      "id": "portrait-gallery",
+      "name": {
+        "en": "Portrait Gallery",
+        "vi": "Phòng tranh chân dung"
+      },
+      "description": {
+        "en": "Read about 10 artists.",
+        "vi": "Tìm hiểu 10 nghệ sĩ."
+      },
+      "category": "exploration",
+      "rarity": "rare",
+      "icon": "users",
+      "xp": 50
+    },
+    {
+      "id": "muse-friend",
+      "name": {
+        "en": "Friend of the Muse",
+        "vi": "Bạn của nàng thơ"
+      },
+      "description": {
+        "en": "Send 10 messages to the AI muse.",
+        "vi": "Gửi 10 tin nhắn cho nàng thơ AI."
+      },
+      "category": "exploration",
+      "rarity": "common",
+      "icon": "message",
+      "xp": 20
+    },
+    {
+      "id": "curator",
+      "name": {
+        "en": "Curator",
+        "vi": "Người giám tuyển"
+      },
+      "description": {
+        "en": "Download 5 artworks.",
+        "vi": "Tải xuống 5 tác phẩm."
+      },
+      "category": "exploration",
+      "rarity": "common",
+      "icon": "download",
+      "xp": 20
+    },
+    {
+      "id": "word-collector",
+      "name": {
+        "en": "Word Collector",
+        "vi": "Người sưu tầm từ"
+      },
+      "description": {
+        "en": "Open the glossary.",
+        "vi": "Mở bảng thuật ngữ."
+      },
+      "category": "exploration",
+      "rarity": "common",
+      "icon": "type",
+      "xp": 20
+    },
+    {
+      "id": "night-owl",
+      "name": {
+        "en": "Night Owl",
+        "vi": "Cú đêm"
+      },
+      "description": {
+        "en": "Create an artwork between midnight and 5 am.",
+        "vi": "Sáng tác từ nửa đêm đến 5 giờ sáng."
+      },
+      "category": "secret",
+      "rarity": "rare",
+      "icon": "owl",
+      "secret": true,
+      "xp": 50
+    },
+    {
+      "id": "early-bird",
+      "name": {
+        "en": "Early Bird",
+        "vi": "Chim sớm"
+      },
+      "description": {
+        "en": "Create an artwork between 5 and 7 am.",
+        "vi": "Sáng tác từ 5 đến 7 giờ sáng."
+      },
+      "category": "secret",
+      "rarity": "rare",
+      "icon": "sunrise",
+      "secret": true,
+      "xp": 50
+    },
+    {
+      "id": "bold-minimalist",
+      "name": {
+        "en": "Bold Minimalist",
+        "vi": "Tối giản táo bạo"
+      },
+      "description": {
+        "en": "Submit an (almost) empty canvas. Brave!",
+        "vi": "Nộp một bức tranh (gần như) trống. Thật dũng cảm!"
+      },
+      "category": "secret",
+      "rarity": "common",
+      "icon": "square",
+      "secret": true,
+      "xp": 20
+    },
+    {
+      "id": "lucky-sevens",
+      "name": {
+        "en": "Lucky Sevens",
+        "vi": "Bảy bảy may mắn"
+      },
+      "description": {
+        "en": "Score exactly 77.",
+        "vi": "Đạt đúng 77 điểm."
+      },
+      "category": "secret",
+      "rarity": "epic",
+      "icon": "clover",
+      "secret": true,
+      "xp": 100
+    }
+  ]
+}

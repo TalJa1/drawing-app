@@ -14,9 +14,7 @@ import { LineChart } from '@/components/charts/LineChart'
 import { CalendarHeatmap } from '@/components/charts/CalendarHeatmap'
 import { Highlight } from '@/components/art/Brush'
 import { Washes } from '@/components/art/Washes'
-import { useArtworks, qk } from '@/api/queries'
-import { seedDemoData } from '@/api/demo'
-import { templateById } from '@/api/templates'
+import { useArtworks, useTemplateLookup } from '@/api/queries'
 import { useL } from '@/i18n/useL'
 import { cn } from '@/lib/utils'
 import { formatDate, formatMinutes } from '@/lib/date'
@@ -24,8 +22,6 @@ import { useProgress } from '@/store/progress'
 import { useLiveStreak } from '@/features/gamification/hooks'
 import { ArtworkImage } from '@/features/collection/ArtworkImage'
 import { Lightbox } from '@/features/collection/Lightbox'
-import { queryClient } from '@/app/queryClient'
-import { toast } from '@/store/ui'
 import { useNow } from '@/lib/hooks'
 
 type Tab = 'all' | 'practice' | 'free' | 'favourites'
@@ -70,7 +66,7 @@ function GalleryItem({ art, onOpen, index }: { art: Artwork; onOpen: () => void;
         >
           <div className="mat" style={{ '--mat-w': '10px' } as React.CSSProperties}>
             <div className="art relative overflow-hidden">
-              <ArtworkImage imageKey={art.thumbKey} alt={art.title} aspect={art.width / art.height} />
+              <ArtworkImage imageKey={art.thumbKey} alt={art.title} aspect={art.width / art.height} lazy />
               {art.favourite && (
                 <span className="absolute right-2 top-2 rounded-full bg-card/90 p-1.5 text-rose shadow">
                   <Heart size={13} className="fill-current" />
@@ -108,6 +104,7 @@ function GalleryItem({ art, onOpen, index }: { art: Artwork; onOpen: () => void;
 export default function CollectionPage() {
   const { t, i18n } = useTranslation()
   const L = useL()
+  const templateOf = useTemplateLookup()
   const { data, isLoading } = useArtworks()
   const [tab, setTab] = useState<Tab>('all')
   const [sort, setSort] = useState<Sort>('new')
@@ -115,7 +112,6 @@ export default function CollectionPage() {
   const [templateFilter, setTemplateFilter] = useState('all')
   const [open, setOpen] = useState<number | null>(null)
   const [table, setTable] = useState(false)
-  const [seeding, setSeeding] = useState(false)
   const progress = useProgress()
   const streak = useLiveStreak()
   const all = useMemo(() => data ?? [], [data])
@@ -146,17 +142,6 @@ export default function CollectionPage() {
 
   const history = progress.scoreHistory.slice(-20)
   const locale = i18n.language === 'vi' ? 'vi-VN' : 'en-GB'
-
-  const loadDemo = async () => {
-    setSeeding(true)
-    try {
-      await seedDemoData()
-      await queryClient.invalidateQueries({ queryKey: qk.artworks })
-      toast({ title: t('profile.demoLoaded'), tone: 'success' })
-    } finally {
-      setSeeding(false)
-    }
-  }
 
   return (
     <Page>
@@ -196,7 +181,7 @@ export default function CollectionPage() {
               hint={t('collection.statDays')}
             />
           </div>
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+          <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr] [&>*]:min-w-0">
             <Card className="p-5 sm:p-6">
               <div className="mb-2 flex items-center justify-between gap-3">
                 <h3 className="font-display text-xl">{t('collection.chartTitle')}</h3>
@@ -262,21 +247,21 @@ export default function CollectionPage() {
               />
             </div>
             <div className="grid grid-cols-3 gap-2 lg:w-[520px]">
-              <Select label={t('common.sortBy')} value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+              <Select label={t('common.sortBy')} value={sort} onValueChange={(v) => setSort(v as Sort)}>
                 <option value="new">{t('practice.sort.new')}</option>
                 <option value="old">{t('collection.sortOld')}</option>
                 <option value="score">{t('collection.sortScore')}</option>
               </Select>
-              <Select label={t('collection.date')} value={range} onChange={(e) => setRange(e.target.value as Range)}>
+              <Select label={t('collection.date')} value={range} onValueChange={(v) => setRange(v as Range)}>
                 <option value="all">{t('collection.anyTime')}</option>
                 <option value="7">{t('collection.last7')}</option>
                 <option value="30">{t('collection.last30')}</option>
               </Select>
-              <Select label={t('collection.template')} value={templateFilter} onChange={(e) => setTemplateFilter(e.target.value)}>
+              <Select label={t('collection.template')} value={templateFilter} onValueChange={(v) => setTemplateFilter(v)}>
                 <option value="all">{t('common.all')}</option>
                 {templatesUsed.map((id) => (
                   <option key={id} value={id}>
-                    {L(templateById(id)?.title)}
+                    {L(templateOf(id)?.title)}
                   </option>
                 ))}
               </Select>
@@ -300,9 +285,6 @@ export default function CollectionPage() {
                   <ButtonLink to="/practice" variant="pigment" icon={<Brush size={17} />}>
                     {t('collection.empty.cta')}
                   </ButtonLink>
-                  <Button variant="outline" onClick={() => void loadDemo()} disabled={seeding}>
-                    {seeding ? t('common.loading') : t('collection.empty.demo')}
-                  </Button>
                 </div>
               }
             />

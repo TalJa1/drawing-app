@@ -1,47 +1,11 @@
-import { useCollection } from '@/store/collection'
-import { useProgress } from '@/store/progress'
-import { useLearn } from '@/store/learn'
-import { useChat } from '@/store/chat'
-import { useSession, GUEST } from '@/store/session'
-import { useSettings } from '@/store/settings'
-import { STORE_KEYS } from '@/store/storage'
-import { simulate } from './client'
-import { deleteFile, listKeys } from './imageStore'
+import { request, ApiError } from './client'
 
-/** GET /me/export — everything we know about you, as JSON. */
+/** GET /me/export — everything the server keeps about the signed-in user, as a JSON file.
+    The server's answer is the file: nothing kept on this device is mixed in (plan UC-25). */
 export async function exportData(): Promise<Blob> {
-  await simulate({ latency: [300, 600], canFail: false })
-  const payload = {
-    exportedAt: new Date().toISOString(),
-    app: 'Art Spark',
-    user: useSession.getState().user,
-    settings: {
-      theme: useSettings.getState().theme,
-      language: useSettings.getState().language,
-      motion: useSettings.getState().motion,
-      drawing: useSettings.getState().drawing,
-    },
-    artworks: useCollection.getState().artworks,
-    // JSON.stringify drops the stores' action functions
-    progress: useProgress.getState(),
-    learning: useLearn.getState(),
-    conversations: useChat.getState().conversations,
+  const payload = await request<unknown>('GET', '/me/export')
+  if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) {
+    throw new ApiError('The server sent something we could not read.', 200, 'server_error')
   }
   return new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
-}
-
-/** DELETE /me — wipes all local data (images, drafts, stores). */
-export async function deleteAllData(): Promise<void> {
-  await simulate({ latency: [400, 800], canFail: false })
-  for (const k of await listKeys()) await deleteFile(k)
-  useCollection.getState().clear()
-  useProgress.getState().reset()
-  useLearn.getState().reset()
-  useChat.getState().reset()
-  useSession.setState({ user: GUEST, token: null })
-  try {
-    for (const k of Object.values(STORE_KEYS)) if (k !== STORE_KEYS.settings) localStorage.removeItem(k)
-  } catch {
-    /* storage blocked — in-memory state already cleared */
-  }
 }

@@ -11,22 +11,10 @@ export function loadSvgImage(svg: string): Promise<HTMLImageElement> {
   })
 }
 
-export function createCanvas(w: number, h: number): HTMLCanvasElement {
+function createCanvas(w: number, h: number): HTMLCanvasElement {
   const c = document.createElement('canvas')
   c.width = w
   c.height = h
-  return c
-}
-
-export async function svgToCanvas(svg: string, w: number, h: number, background?: string): Promise<HTMLCanvasElement> {
-  const img = await loadSvgImage(svg)
-  const c = createCanvas(w, h)
-  const ctx = c.getContext('2d')!
-  if (background) {
-    ctx.fillStyle = background
-    ctx.fillRect(0, 0, w, h)
-  }
-  ctx.drawImage(img, 0, 0, w, h)
   return c
 }
 
@@ -59,7 +47,7 @@ export function blobToDataUrl(blob: Blob): Promise<string> {
 
 /**
  * Colour a line-art template by giving its white-filled shapes pigment fills.
- * Used for demo artworks and the landing page showcase.
+ * Used for the landing page showcase.
  */
 export function colouriseTemplate(svg: string, palette: string[], rng: () => number, coverage = 1, sequence?: string[]): string {
   let i = 0

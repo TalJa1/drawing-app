@@ -1,0 +1,11 @@
+[
+  {
+    "id": "1",
+    "name": "Fixture Artist",
+    "avatarSeed": "Fixture Artist",
+    "xp": 0,
+    "weeklyXp": 0,
+    "level": 1,
+    "isCurrentUser": true
+  }
+]

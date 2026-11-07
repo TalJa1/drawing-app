@@ -81,10 +81,11 @@ export function Pill({
 }
 
 /** Difficulty shown as paint dots ●●○○ */
-export function DifficultyDots({ level, label }: { level: 1 | 2 | 3 | 4; label: string }) {
+/** Without `label` the dots are decorative (hidden from assistive tech): use that where the level is written next to them. */
+export function DifficultyDots({ level, label }: { level: 1 | 2 | 3 | 4; label?: string }) {
   const colours = ['var(--viridian)', 'var(--saffron)', 'var(--vermilion)', 'var(--ultramarine)']
   return (
-    <span className="inline-flex items-center gap-1" role="img" aria-label={label}>
+    <span className="inline-flex items-center gap-1" {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true })}>
       {[0, 1, 2, 3].map((i) => (
         <span
           key={i}

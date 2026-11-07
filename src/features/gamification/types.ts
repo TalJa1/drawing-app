@@ -82,7 +82,14 @@ export type ProgressEvent =
     }
   | { type: 'artworkSaved'; kind: 'free' | 'practice'; seconds: number }
   | { type: 'lessonCompleted'; slug: string; xp: number }
-  | { type: 'quizCompleted'; slug: string; correct: number; total: number }
+  | {
+      type: 'quizCompleted'
+      slug: string
+      correct: number
+      total: number
+      /** right answers of the best result BEFORE this one: only the XP of the difference is paid */
+      prevCorrect?: number
+    }
   | { type: 'viewed'; what: 'movement' | 'artForm' | 'artist'; slug: string }
   | { type: 'chatMessage' }
   | { type: 'download' }

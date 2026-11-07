@@ -16,10 +16,9 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import type { Artwork, Template } from '@/types'
-import { useArtwork, useTemplates, useUpdateArtwork } from '@/api/queries'
-import { getImageBlob, getImageUrl } from '@/api/artworks'
+import { useArtwork, useTemplateLookup, useTemplates, useUpdateArtwork } from '@/api/queries'
+import { acquireImage, getImageBlob } from '@/api/artworks'
 import { recordActivity } from '@/api/progress'
-import { templateById } from '@/api/templates'
 import { useL } from '@/i18n/useL'
 import { cn, copyText, downloadBlob } from '@/lib/utils'
 import { celebrate } from '@/lib/confetti'
@@ -49,9 +48,20 @@ function useImage(key: string | undefined) {
   useEffect(() => {
     if (!key) return
     let alive = true
-    void getImageUrl(key).then((u) => alive && setUrl(u))
+    let held: { release: () => void } | null = null
+    acquireImage(key)
+      .then((lease) => {
+        if (!alive) lease?.release()
+        else if (lease) {
+          held = lease
+          setUrl(lease.url)
+        }
+      })
+      .catch(() => {}) // the page shows its placeholder when there is no picture
     return () => {
       alive = false
+      held?.release()
+      setUrl(null) // never keep showing an address that may be revoked now
     }
   }, [key])
   return url
@@ -424,7 +434,8 @@ export default function PracticeResultPage() {
   const { artworkId = '' } = useParams()
   const { t } = useTranslation()
   const { data: artwork, isLoading, isError } = useArtwork(artworkId)
-  const template = templateById(artwork?.templateId)
+  const templateOf = useTemplateLookup()
+  const template = templateOf(artwork?.templateId)
 
   if (isLoading)
     return (

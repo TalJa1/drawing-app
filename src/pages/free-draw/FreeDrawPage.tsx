@@ -1,5 +1,6 @@
-import { useCallback, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown, Dices, Download, ImageDown, MessageCircle, Save } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -7,12 +8,15 @@ import { Studio, type StudioContext } from '@/features/drawing/ui/Studio'
 import type { BackgroundKind } from '@/features/drawing/engine/types'
 import { BACKGROUNDS } from '@/features/drawing/engine/types'
 import { Button } from '@/components/Button'
+import { PageLoader } from '@/components/PageLoader'
 import { Modal } from '@/components/Modal'
 import { TextField } from '@/components/Form'
 import { canvasToBlob, makeThumbnail } from '@/lib/raster'
 import { downloadBlob } from '@/lib/utils'
-import { saveArtwork } from '@/api/artworks'
+import { apiErrorKey, getArtwork, getImageBlob, saveArtwork } from '@/api/artworks'
 import { recordActivity } from '@/api/progress'
+import { loginState } from '@/features/auth/loginRedirect'
+import { useSession } from '@/store/session'
 import { INSPIRATION_PROMPTS } from '@/mocks/palettes'
 import { useL } from '@/i18n/useL'
 import { presentReward, toast } from '@/store/ui'
@@ -22,6 +26,9 @@ import { queryClient } from '@/app/queryClient'
 import { qk } from '@/api/queries'
 import { TraceGuidePanel, TraceGuideToggle } from '@/features/trace-guide/TraceGuideControl'
 import { useTraceGuide, useTraceGuideState } from '@/features/trace-guide/useTraceGuide'
+import { draftFromImage } from '@/features/drawing/engine/draftFromImage'
+import type { DrawingEngine } from '@/features/drawing/engine/Engine'
+import type { Artwork } from '@/types'
 
 const PRESETS = {
   classic: [1200, 900],
@@ -31,6 +38,10 @@ const PRESETS = {
   story: [1080, 1920],
 } as const
 type Preset = keyof typeof PRESETS
+
+/** The canvas size that is exactly the size of a saved picture, if there is one. */
+const presetFor = (a: Pick<Artwork, 'width' | 'height'>): Preset | undefined =>
+  (Object.keys(PRESETS) as Preset[]).find((p) => PRESETS[p][0] === a.width && PRESETS[p][1] === a.height)
 
 function DownloadMenu({ ctx }: { ctx: StudioContext }) {
   const { t } = useTranslation()
@@ -65,6 +76,7 @@ function DownloadMenu({ ctx }: { ctx: StudioContext }) {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={t('common.download')}
       >
         <span className="hidden sm:inline">{t('common.download')}</span>
       </Button>
@@ -87,12 +99,15 @@ function DownloadMenu({ ctx }: { ctx: StudioContext }) {
   )
 }
 
-export default function FreeDrawPage() {
+function FreeDraw({ source, notice }: { source?: Artwork; notice?: 'failed' | 'size' }) {
   const { t } = useTranslation()
   const L = useL()
   const navigate = useNavigate()
+  const { pathname, search } = useLocation()
   const [params] = useSearchParams()
-  const [preset, setPreset] = useState<Preset>((params.get('size') as Preset) in PRESETS ? (params.get('size') as Preset) : 'classic')
+  const [preset, setPreset] = useState<Preset>(
+    (source && presetFor(source)) || ((params.get('size') as Preset) in PRESETS ? (params.get('size') as Preset) : 'classic'),
+  )
   const [bg, setBg] = useState<BackgroundKind>('white')
   const [prompt, setPrompt] = useState(() => {
     const p = params.get('prompt')
@@ -102,15 +117,45 @@ export default function FreeDrawPage() {
   const [title, setTitle] = useState('')
   const [busy, setBusy] = useState(false)
   const [w, h] = PRESETS[preset]
+  // carrying on from a saved picture only makes sense at the size it was saved at
+  const here = source && source.width === w && source.height === h ? source : undefined
+  const [restoreFailed, setRestoreFailed] = useState(false)
+  const problem = restoreFailed ? 'failed' : notice
+  useEffect(() => {
+    if (problem) toast({ title: t(problem === 'size' ? 'freeDraw.fromSizeUnsupported' : 'freeDraw.fromFailed'), tone: 'error' })
+  }, [problem, t])
+
+  /** Put the saved picture on the canvas as its one layer. Keep it stable: the studio runs its setup again when it changes. */
+  const restoreSource = useCallback(
+    async (engine: DrawingEngine) => {
+      if (!here) return
+      try {
+        const image = await getImageBlob(here.imageKey)
+        if (!image) throw new Error('the picture is not available')
+        await engine.load(draftFromImage(image, here.width, here.height))
+        engine.markSaved() // loading it is not a change to autosave
+      } catch {
+        setRestoreFailed(true)
+      }
+    },
+    [here],
+  )
   const setDraftChat = useChat((s) => s.setDraft)
   const pending = useStudio((s) => s.pendingPalette)
-  const guide = useTraceGuide()
+  const { guide, loading: guideLoading } = useTraceGuide()
   const guideState = useTraceGuideState(guide)
 
   const inspire = useCallback(() => {
     const p = INSPIRATION_PROMPTS[Math.floor(Math.random() * INSPIRATION_PROMPTS.length)]
     setPrompt(p)
   }, [])
+
+  /** Saving belongs to an account: a guest keeps what is drawn (as a draft), signs in, and comes back. */
+  const askToSave = async (ctx: StudioContext) => {
+    if (useSession.getState().token) return setSaving(ctx)
+    await ctx.saveDraft()
+    navigate('/login', { state: loginState(pathname + search) })
+  }
 
   const save = async () => {
     if (!saving) return
@@ -119,7 +164,7 @@ export default function FreeDrawPage() {
       const canvas = saving.engine.composite()
       const image = await canvasToBlob(canvas, 'image/png')
       const thumbnail = await makeThumbnail(canvas)
-      await saveArtwork({
+      const { reward } = await saveArtwork({
         kind: 'free',
         title: title.trim() || (prompt ? L(prompt) : t('freeDraw.untitled')),
         image,
@@ -129,23 +174,19 @@ export default function FreeDrawPage() {
         timeSpent: saving.seconds,
         medium: t('freeDraw.medium'),
       })
-      const reward = await recordActivity({
-        type: 'artworkSaved',
-        kind: 'free',
-        seconds: saving.seconds,
-      })
       await saving.clearDraft()
       void queryClient.invalidateQueries({ queryKey: qk.artworks })
+      // only a NEW drawing pays: saving the very same picture again earns nothing, and says so by having no reward
       toast({
         title: t('freeDraw.saved'),
-        description: t('freeDraw.savedXp', { xp: reward.xpGained }),
+        description: reward ? t('freeDraw.savedXp', { xp: reward.xpGained }) : undefined,
         tone: 'success',
       })
-      presentReward(reward)
+      if (reward) presentReward(reward)
       setSaving(null)
       setTitle('')
-    } catch {
-      toast({ title: t('common.errorGeneric'), tone: 'error' })
+    } catch (e) {
+      toast({ title: t(apiErrorKey(e)), tone: 'error' })
     } finally {
       setBusy(false)
     }
@@ -253,30 +294,42 @@ export default function FreeDrawPage() {
 
   return (
     <>
-      <Studio
-        key={`${preset}:${guide?.id ?? 'plain'}`}
-        mode="free"
-        title={t('freeDraw.title')}
-        subtitle={pending ? t('freeDraw.withPalette', { name: pending.name }) : prompt ? L(prompt) : t('freeDraw.subtitle')}
-        width={w}
-        height={h}
-        background={bg}
-        draftKey={guide ? `free:${w}x${h}:guide:${guide.id}` : `free:${w}x${h}`}
-        onEngine={guide ? guideState.onEngine : undefined}
-        topExtra={guide ? <TraceGuideToggle state={guideState} /> : undefined}
-        backTo="/"
-        infoLabel={t('freeDraw.canvasTab')}
-        info={info}
-        description={t('freeDraw.description')}
-        primary={(ctx) => (
-          <>
-            <Button size="sm" variant="outline" icon={<Save size={16} />} onClick={() => setSaving(ctx)} disabled={ctx.engine.isEmpty()}>
-              <span className="hidden sm:inline">{t('freeDraw.saveToCollection')}</span>
-            </Button>
-            <DownloadMenu ctx={ctx} />
-          </>
-        )}
-      />
+      {guideLoading ? (
+        // A named guide comes from the server's list: open the canvas once, with or without the guide, not plain and then again.
+        <PageLoader />
+      ) : (
+        <Studio
+          key={`${preset}:${here?.id ?? guide?.id ?? 'plain'}`}
+          mode="free"
+          title={t('freeDraw.title')}
+          subtitle={pending ? t('freeDraw.withPalette', { name: pending.name }) : prompt ? L(prompt) : t('freeDraw.subtitle')}
+          width={w}
+          height={h}
+          background={bg}
+          draftKey={here ? `free:${w}x${h}:from:${here.id}` : guide ? `free:${w}x${h}:guide:${guide.id}` : `free:${w}x${h}`}
+          onEngine={here ? restoreSource : guide ? guideState.onEngine : undefined}
+          topExtra={guide ? <TraceGuideToggle state={guideState} /> : undefined}
+          backTo="/"
+          infoLabel={t('freeDraw.canvasTab')}
+          info={info}
+          description={t('freeDraw.description')}
+          primary={(ctx) => (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                icon={<Save size={16} />}
+                onClick={() => void askToSave(ctx)}
+                disabled={ctx.engine.isEmpty()}
+                aria-label={t('freeDraw.saveToCollection')}
+              >
+                <span className="hidden sm:inline">{t('freeDraw.saveToCollection')}</span>
+              </Button>
+              <DownloadMenu ctx={ctx} />
+            </>
+          )}
+        />
+      )}
       <Modal open={!!saving} onClose={() => setSaving(null)} title={t('freeDraw.saveTitle')} size="sm">
         <form
           onSubmit={(e) => {
@@ -300,4 +353,24 @@ export default function FreeDrawPage() {
       </Modal>
     </>
   )
+}
+
+/** `/free-draw?from=<id>` carries on from a saved free drawing; anything else opens a blank canvas. */
+export default function FreeDrawPage() {
+  const [params] = useSearchParams()
+  const fromId = params.get('from') ?? ''
+  const signedIn = useSession((s) => !!s.token)
+  const wanted = !!fromId && signedIn
+  const { data, isLoading, isError } = useQuery({
+    queryKey: qk.artwork(fromId),
+    queryFn: () => getArtwork(fromId),
+    enabled: wanted,
+    retry: 0,
+    staleTime: 0,
+  })
+  if (wanted && isLoading) return <PageLoader />
+  // only a free drawing, at one of the canvas sizes, can be carried on from
+  const usable = data && data.kind === 'free' && presetFor(data) ? data : undefined
+  const notice = !wanted ? undefined : isError || (data && data.kind !== 'free') ? 'failed' : data && !usable ? 'size' : undefined
+  return <FreeDraw key={usable?.id ?? 'plain'} source={usable} notice={notice} />
 }

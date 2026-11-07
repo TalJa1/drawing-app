@@ -1,0 +1,3858 @@
+[
+  {
+    "slug": "rule-of-thirds",
+    "title": {
+      "en": "The Rule of Thirds",
+      "vi": "Quy tắc một phần ba"
+    },
+    "summary": {
+      "en": "Place your subject off-centre to create balance, movement and breathing room.",
+      "vi": "Đặt chủ thể lệch tâm để tạo cân bằng, chuyển động và khoảng thở."
+    },
+    "topic": "composition",
+    "track": "beginner",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Why not the middle?",
+          "vi": "Sao không đặt ở giữa?"
+        },
+        "body": {
+          "en": "When a subject sits dead centre, the eye lands on it and stops. The picture feels **stable but static**, like a passport photo. Moving the subject slightly to one side creates a gentle imbalance that the eye wants to resolve — it travels from the subject into the empty space and back again. That journey is what makes a composition feel alive.\n\nThis does not mean centred compositions are wrong. Symmetry is powerful for calm, formal or iconic images. The rule of thirds is simply the most reliable starting point when you are unsure.",
+          "vi": "Khi chủ thể nằm chính giữa, mắt người xem dừng lại ở đó. Bức tranh **vững nhưng tĩnh**, giống ảnh hộ chiếu. Dời chủ thể sang một bên một chút tạo ra sự mất cân bằng nhẹ khiến mắt muốn “giải quyết” — nó di chuyển từ chủ thể sang khoảng trống rồi quay lại. Chính hành trình đó làm bố cục trở nên sống động.\n\nĐiều này không có nghĩa bố cục đối xứng là sai. Đối xứng rất mạnh cho hình ảnh tĩnh lặng, trang trọng hay mang tính biểu tượng. Quy tắc một phần ba chỉ là điểm khởi đầu đáng tin cậy nhất khi bạn còn phân vân."
+        }
+      },
+      {
+        "heading": {
+          "en": "Draw the grid",
+          "vi": "Vẽ lưới"
+        },
+        "body": {
+          "en": "Divide your page into three equal columns and three equal rows with two vertical and two horizontal lines. The four places where the lines cross are called **power points**. Place the most important thing — an eye, a sun, a boat — on or near one of them.\n\nUse the lines too: put the horizon on the upper or lower third rather than halfway, and let a tree or a figure stand along a vertical line.",
+          "vi": "Chia trang giấy thành ba cột và ba hàng bằng nhau với hai đường dọc và hai đường ngang. Bốn điểm giao nhau gọi là **điểm mạnh**. Đặt thứ quan trọng nhất — một con mắt, mặt trời, chiếc thuyền — ngay hoặc gần một trong các điểm đó.\n\nHãy dùng cả các đường kẻ: đặt đường chân trời ở một phần ba trên hoặc dưới thay vì chính giữa, và để cái cây hay nhân vật đứng dọc theo một đường thẳng đứng."
+        },
+        "diagram": "thirds",
+        "callout": {
+          "en": "Try it: in a landscape, give two-thirds of the space to whatever is most interesting — dramatic sky or detailed ground.",
+          "vi": "Thử ngay: trong phong cảnh, dành hai phần ba không gian cho phần thú vị nhất — bầu trời kịch tính hoặc mặt đất nhiều chi tiết."
+        }
+      },
+      {
+        "heading": {
+          "en": "Looking room",
+          "vi": "Khoảng nhìn"
+        },
+        "body": {
+          "en": "If your subject faces or moves in a direction, leave more space **in front** of it than behind. A runner placed on the left third, running right, has room to run into. Flip it, and the runner seems about to crash into the frame. This “looking room” is one of the easiest upgrades you can make to portraits and animal drawings.",
+          "vi": "Nếu chủ thể nhìn hoặc di chuyển theo một hướng, hãy chừa nhiều khoảng trống **phía trước** hơn phía sau. Người chạy đặt ở một phần ba bên trái, chạy sang phải, có chỗ để chạy tới. Đảo ngược lại, người đó như sắp đâm vào khung tranh. “Khoảng nhìn” là một trong những nâng cấp dễ nhất cho chân dung và tranh động vật."
+        }
+      },
+      {
+        "heading": {
+          "en": "Break it on purpose",
+          "vi": "Phá vỡ có chủ đích"
+        },
+        "body": {
+          "en": "Once the grid feels natural, experiment. Put a tiny figure in a vast empty corner to show loneliness, or centre a face for a confrontational stare. Rules in art are maps, not fences: learn where they lead, then choose your own path.",
+          "vi": "Khi lưới đã quen tay, hãy thử nghiệm. Đặt một nhân vật bé xíu ở góc trống mênh mông để gợi nỗi cô đơn, hoặc đặt gương mặt chính giữa cho ánh nhìn đối diện. Quy tắc trong nghệ thuật là bản đồ, không phải hàng rào: hãy học xem chúng dẫn tới đâu, rồi tự chọn đường đi."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pencil",
+      "palette": [
+        "#1B1A17",
+        "#2F80C4",
+        "#F2A93B"
+      ],
+      "prompt": {
+        "en": "Sketch a boat on a lake with the horizon on the lower third and the boat on a power point.",
+        "vi": "Phác chiếc thuyền trên hồ với đường chân trời ở một phần ba dưới và thuyền nằm ở một điểm mạnh."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "rule-of-thirds",
+      "questions": [
+        {
+          "id": "rule-of-thirds-q1",
+          "prompt": {
+            "en": "Where are the “power points” of the rule of thirds?",
+            "vi": "“Điểm mạnh” của quy tắc một phần ba nằm ở đâu?"
+          },
+          "options": [
+            {
+              "en": "At the four corners",
+              "vi": "Ở bốn góc"
+            },
+            {
+              "en": "Where the grid lines cross",
+              "vi": "Nơi các đường lưới giao nhau"
+            },
+            {
+              "en": "In the exact centre",
+              "vi": "Ở chính giữa"
+            },
+            {
+              "en": "Along the edges",
+              "vi": "Dọc các cạnh"
+            }
+          ]
+        },
+        {
+          "id": "rule-of-thirds-q2",
+          "prompt": {
+            "en": "Where should a horizon usually go?",
+            "vi": "Đường chân trời thường nên đặt ở đâu?"
+          },
+          "options": [
+            {
+              "en": "Exactly halfway",
+              "vi": "Chính giữa"
+            },
+            {
+              "en": "On the upper or lower third",
+              "vi": "Ở một phần ba trên hoặc dưới"
+            },
+            {
+              "en": "At the very bottom",
+              "vi": "Sát đáy tranh"
+            },
+            {
+              "en": "It does not matter",
+              "vi": "Không quan trọng"
+            }
+          ]
+        },
+        {
+          "id": "rule-of-thirds-q3",
+          "prompt": {
+            "en": "A cat looks to the right. Where should most empty space be?",
+            "vi": "Chú mèo nhìn sang phải. Phần lớn khoảng trống nên ở đâu?"
+          },
+          "options": [
+            {
+              "en": "Behind the cat (left)",
+              "vi": "Sau lưng mèo (bên trái)"
+            },
+            {
+              "en": "In front of the cat (right)",
+              "vi": "Trước mặt mèo (bên phải)"
+            },
+            {
+              "en": "Above the cat",
+              "vi": "Phía trên mèo"
+            },
+            {
+              "en": "Equal on both sides",
+              "vi": "Bằng nhau hai bên"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "golden-ratio",
+    "title": {
+      "en": "The Golden Ratio & Spiral",
+      "vi": "Tỷ lệ vàng & đường xoắn ốc"
+    },
+    "summary": {
+      "en": "A proportion of about 1 : 1.618 that artists have used to create graceful harmony.",
+      "vi": "Tỷ lệ khoảng 1 : 1,618 được nghệ sĩ dùng để tạo nên sự hài hòa thanh thoát."
+    },
+    "topic": "composition",
+    "track": "history",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "A special number",
+          "vi": "Một con số đặc biệt"
+        },
+        "body": {
+          "en": "Divide a line so that the whole line relates to the longer part exactly as the longer part relates to the shorter. The ratio you get is roughly **1.618**, called phi (φ) or the golden ratio. Renaissance thinkers called it the “divine proportion” and believed it expressed perfect harmony.\n\nYou can find approximations of it in nautilus shells, sunflower seed heads and the branching of trees — although many famous “golden” claims are exaggerated, which is a good reminder to test ideas with your own eyes.",
+          "vi": "Chia một đoạn thẳng sao cho cả đoạn so với phần dài đúng bằng phần dài so với phần ngắn. Tỷ lệ thu được xấp xỉ **1,618**, gọi là phi (φ) hay tỷ lệ vàng. Các nhà tư tưởng Phục Hưng gọi nó là “tỷ lệ thần thánh” và tin rằng nó thể hiện sự hài hòa hoàn hảo.\n\nBạn có thể thấy những xấp xỉ của nó trong vỏ ốc anh vũ, đĩa hạt hướng dương và cách cây phân nhánh — dù nhiều tuyên bố “tỷ lệ vàng” nổi tiếng bị phóng đại, đó là lời nhắc hãy kiểm chứng bằng chính mắt mình."
+        }
+      },
+      {
+        "heading": {
+          "en": "The golden spiral",
+          "vi": "Đường xoắn ốc vàng"
+        },
+        "body": {
+          "en": "Start with a golden rectangle, cut off a square, and the leftover rectangle is golden again. Repeat, then connect the corners with quarter circles, and a spiral appears. Artists use this spiral as a **path for the eye**: place the subject where the spiral tightens, and arrange other elements along its curve.",
+          "vi": "Bắt đầu với hình chữ nhật vàng, cắt đi một hình vuông, phần còn lại lại là hình chữ nhật vàng. Lặp lại rồi nối các góc bằng những cung phần tư, đường xoắn ốc xuất hiện. Nghệ sĩ dùng nó như **lối đi cho mắt**: đặt chủ thể nơi xoắn ốc cuộn chặt, và sắp xếp các yếu tố khác dọc theo đường cong."
+        },
+        "diagram": "golden",
+        "callout": {
+          "en": "The thirds grid is a simple cousin of the golden grid — the power points are just slightly closer to the centre in the golden version.",
+          "vi": "Lưới một phần ba là “người anh em” đơn giản của lưới vàng — ở bản vàng, các điểm mạnh chỉ gần tâm hơn một chút."
+        }
+      },
+      {
+        "heading": {
+          "en": "Using it without maths",
+          "vi": "Dùng mà không cần toán"
+        },
+        "body": {
+          "en": "You do not need a calculator. Ask: does my main subject sit roughly six-tenths across? Does a curve lead the eye inward towards it? Do the sizes of shapes step down gracefully — large, medium, small — rather than all being equal? That rhythm of unequal parts is the real lesson of the golden ratio.",
+          "vi": "Bạn không cần máy tính. Hãy hỏi: chủ thể chính có nằm khoảng sáu phần mười chiều ngang không? Có đường cong nào dẫn mắt vào trong về phía nó không? Kích thước các hình có giảm dần duyên dáng — lớn, vừa, nhỏ — thay vì bằng nhau không? Nhịp điệu của những phần không đều ấy mới là bài học thật sự của tỷ lệ vàng."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pen",
+      "palette": [
+        "#1B1A17",
+        "#C98B2B",
+        "#F6F1E7"
+      ],
+      "prompt": {
+        "en": "Draw a snail shell whose spiral leads to a tiny flower.",
+        "vi": "Vẽ vỏ ốc sên có đường xoắn dẫn tới một bông hoa nhỏ."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "golden-ratio",
+      "questions": [
+        {
+          "id": "golden-ratio-q1",
+          "prompt": {
+            "en": "The golden ratio is approximately…",
+            "vi": "Tỷ lệ vàng xấp xỉ bằng…"
+          },
+          "options": [
+            {
+              "en": "1 : 1.333",
+              "vi": "1 : 1,333"
+            },
+            {
+              "en": "1 : 1.618",
+              "vi": "1 : 1,618"
+            },
+            {
+              "en": "1 : 2",
+              "vi": "1 : 2"
+            },
+            {
+              "en": "1 : 3.14",
+              "vi": "1 : 3,14"
+            }
+          ]
+        },
+        {
+          "id": "golden-ratio-q2",
+          "prompt": {
+            "en": "How do artists typically use the golden spiral?",
+            "vi": "Nghệ sĩ thường dùng đường xoắn ốc vàng thế nào?"
+          },
+          "options": [
+            {
+              "en": "To choose colours",
+              "vi": "Để chọn màu"
+            },
+            {
+              "en": "As a path that guides the eye to the subject",
+              "vi": "Như lối dẫn mắt tới chủ thể"
+            },
+            {
+              "en": "To measure paper size",
+              "vi": "Để đo khổ giấy"
+            },
+            {
+              "en": "To mix paint",
+              "vi": "Để pha màu"
+            }
+          ]
+        },
+        {
+          "id": "golden-ratio-q3",
+          "prompt": {
+            "en": "What is the practical lesson of the golden ratio?",
+            "vi": "Bài học thực tế của tỷ lệ vàng là gì?"
+          },
+          "options": [
+            {
+              "en": "Everything must be measured exactly",
+              "vi": "Mọi thứ phải đo chính xác"
+            },
+            {
+              "en": "Use a rhythm of unequal sizes and off-centre placement",
+              "vi": "Dùng nhịp điệu kích thước không đều và đặt lệch tâm"
+            },
+            {
+              "en": "Always centre the subject",
+              "vi": "Luôn đặt chủ thể chính giữa"
+            },
+            {
+              "en": "Only use squares",
+              "vi": "Chỉ dùng hình vuông"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "leading-lines",
+    "title": {
+      "en": "Leading Lines",
+      "vi": "Đường dẫn"
+    },
+    "summary": {
+      "en": "Roads, rivers and fences can steer the viewer’s eye exactly where you want it.",
+      "vi": "Con đường, dòng sông và hàng rào có thể dẫn mắt người xem đúng nơi bạn muốn."
+    },
+    "topic": "composition",
+    "track": "beginner",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "The eye follows lines",
+          "vi": "Mắt đi theo đường nét"
+        },
+        "body": {
+          "en": "Our eyes are lazy travellers: they follow the easiest path. A road vanishing into the distance, a river curving through fields or a row of lanterns all pull the gaze along their length. If those lines end at your subject, the viewer arrives there without effort.",
+          "vi": "Mắt chúng ta là lữ khách lười biếng: nó đi theo con đường dễ nhất. Con đường mất hút phía xa, dòng sông uốn qua cánh đồng hay hàng đèn lồng đều kéo ánh nhìn theo chiều dài của chúng. Nếu những đường đó kết thúc ở chủ thể, người xem sẽ đến đó mà không cần cố gắng."
+        },
+        "diagram": "leading"
+      },
+      {
+        "heading": {
+          "en": "Kinds of leading lines",
+          "vi": "Các loại đường dẫn"
+        },
+        "body": {
+          "en": "**Straight lines** feel direct and strong. **S-curves** feel graceful and slow, perfect for rivers and paths. **Diagonals** add energy and movement, while **converging lines** (like train tracks) create depth. Even implied lines count — the direction a person is looking, or a row of stepping stones.",
+          "vi": "**Đường thẳng** tạo cảm giác trực tiếp và mạnh mẽ. **Đường cong chữ S** duyên dáng và chậm rãi, hợp với sông và lối đi. **Đường chéo** thêm năng lượng và chuyển động, còn **đường hội tụ** (như đường ray) tạo chiều sâu. Cả đường ngầm cũng tính — hướng nhìn của một người, hay hàng đá bước qua suối."
+        },
+        "callout": {
+          "en": "Watch out for lines that lead the eye out of the picture. A road running straight off the corner can drain attention away.",
+          "vi": "Cẩn thận với những đường dẫn mắt ra khỏi tranh. Con đường chạy thẳng ra góc có thể làm sự chú ý trôi mất."
+        }
+      },
+      {
+        "heading": {
+          "en": "Practice on templates",
+          "vi": "Luyện tập với mẫu"
+        },
+        "body": {
+          "en": "Open the Countryside Cottage template. The winding road is a leading line — colour it in a lighter value than the grass so it really glows, and notice how it delivers your eye straight to the cottage door.",
+          "vi": "Mở mẫu Ngôi nhà đồng quê. Con đường uốn lượn là một đường dẫn — tô nó sáng hơn bãi cỏ để nó thật nổi bật, và để ý cách nó đưa mắt bạn thẳng tới cửa ngôi nhà."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "marker",
+      "palette": [
+        "#2E8B6F",
+        "#F2A93B",
+        "#C98B2B",
+        "#2F80C4"
+      ],
+      "prompt": {
+        "en": "Draw a winding path that leads to a tiny house on a hill.",
+        "vi": "Vẽ con đường uốn lượn dẫn tới ngôi nhà nhỏ trên đồi."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "leading-lines",
+      "questions": [
+        {
+          "id": "leading-lines-q1",
+          "prompt": {
+            "en": "What does an S-curve usually feel like?",
+            "vi": "Đường cong chữ S thường gợi cảm giác gì?"
+          },
+          "options": [
+            {
+              "en": "Harsh and aggressive",
+              "vi": "Gay gắt và hung hăng"
+            },
+            {
+              "en": "Graceful and slow",
+              "vi": "Duyên dáng và chậm rãi"
+            },
+            {
+              "en": "Flat and boring",
+              "vi": "Phẳng lặng và nhàm chán"
+            },
+            {
+              "en": "Chaotic",
+              "vi": "Hỗn loạn"
+            }
+          ]
+        },
+        {
+          "id": "leading-lines-q2",
+          "prompt": {
+            "en": "Which is an implied leading line?",
+            "vi": "Đâu là một đường dẫn ngầm?"
+          },
+          "options": [
+            {
+              "en": "A painted fence",
+              "vi": "Hàng rào được vẽ"
+            },
+            {
+              "en": "The direction a character is looking",
+              "vi": "Hướng nhìn của nhân vật"
+            },
+            {
+              "en": "A railway track",
+              "vi": "Đường ray"
+            },
+            {
+              "en": "A river",
+              "vi": "Dòng sông"
+            }
+          ]
+        },
+        {
+          "id": "leading-lines-q3",
+          "prompt": {
+            "en": "What is the risk of a line running off the corner?",
+            "vi": "Đường chạy ra góc tranh có rủi ro gì?"
+          },
+          "options": [
+            {
+              "en": "It leads the eye out of the picture",
+              "vi": "Nó dẫn mắt ra khỏi tranh"
+            },
+            {
+              "en": "It makes colours dull",
+              "vi": "Nó làm màu xỉn"
+            },
+            {
+              "en": "Nothing",
+              "vi": "Không có gì"
+            },
+            {
+              "en": "It adds depth",
+              "vi": "Nó thêm chiều sâu"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "hue-value-saturation",
+    "title": {
+      "en": "Hue, Value & Saturation",
+      "vi": "Sắc tướng, sắc độ & độ bão hòa"
+    },
+    "summary": {
+      "en": "The three dials of every colour — and why value matters most.",
+      "vi": "Ba “núm vặn” của mọi màu sắc — và vì sao sắc độ quan trọng nhất."
+    },
+    "topic": "colour",
+    "track": "colour",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Hue: the colour family",
+          "vi": "Sắc tướng: họ màu"
+        },
+        "body": {
+          "en": "**Hue** is what we usually mean by “colour”: red, orange, yellow, green, blue, violet and everything between. On a colour wheel, hue is the position around the circle. Changing hue changes the colour’s identity — a red apple becomes a green apple.",
+          "vi": "**Sắc tướng** là điều ta thường gọi là “màu”: đỏ, cam, vàng, lục, lam, tím và mọi thứ ở giữa. Trên vòng màu, sắc tướng là vị trí quanh vòng tròn. Thay đổi sắc tướng là thay đổi bản chất màu — quả táo đỏ thành táo xanh."
+        },
+        "diagram": "wheel"
+      },
+      {
+        "heading": {
+          "en": "Value: light and dark",
+          "vi": "Sắc độ: sáng và tối"
+        },
+        "body": {
+          "en": "**Value** is how light or dark a colour is. Yellow is naturally light; violet is naturally dark. Value does most of the work of making things look three-dimensional — a painting with correct values reads well even in black and white. Squint at your work: if everything merges into one grey mush, your values are too similar.",
+          "vi": "**Sắc độ** là màu sáng hay tối đến đâu. Vàng tự nhiên sáng; tím tự nhiên tối. Sắc độ đảm nhận phần lớn việc tạo cảm giác ba chiều — một bức tranh đúng sắc độ vẫn rõ ràng dù chuyển sang đen trắng. Hãy nheo mắt nhìn: nếu mọi thứ hòa thành một mảng xám, các sắc độ của bạn quá giống nhau."
+        },
+        "diagram": "value",
+        "callout": {
+          "en": "Pro habit: take a black-and-white photo of your painting. It reveals value problems instantly.",
+          "vi": "Thói quen chuyên nghiệp: chụp ảnh đen trắng bức tranh. Nó lộ ngay vấn đề sắc độ."
+        }
+      },
+      {
+        "heading": {
+          "en": "Saturation: intensity",
+          "vi": "Độ bão hòa: cường độ"
+        },
+        "body": {
+          "en": "**Saturation** (or chroma) is how pure or vivid a colour is. Fully saturated colours shout; desaturated colours whisper and feel grey or muted. Mix a colour with its complement or with grey to lower saturation. Great paintings usually save their most saturated colour for the focal point and keep most areas calmer.",
+          "vi": "**Độ bão hòa** (hay độ thuần) là màu tinh khiết, rực rỡ đến đâu. Màu bão hòa cao “la hét”; màu bão hòa thấp “thì thầm”, trông xám hoặc trầm. Pha màu với màu bổ túc hoặc với xám để giảm độ bão hòa. Tranh đẹp thường dành màu rực nhất cho tiêu điểm và giữ phần lớn diện tích êm dịu hơn."
+        }
+      },
+      {
+        "heading": {
+          "en": "Putting the dials together",
+          "vi": "Kết hợp các núm vặn"
+        },
+        "body": {
+          "en": "Every colour you pick in the studio’s colour panel is a choice on all three dials: the wheel sets hue, and the square sets saturation (left–right) and value (top–bottom). Try changing just one dial at a time and watch how differently the same object reads.",
+          "vi": "Mỗi màu bạn chọn trong bảng màu của xưởng vẽ là một lựa chọn trên cả ba núm: vòng màu đặt sắc tướng, còn ô vuông đặt độ bão hòa (trái–phải) và sắc độ (trên–dưới). Thử thay đổi từng núm một và xem cùng một vật thể hiện khác nhau thế nào."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "marker",
+      "palette": [
+        "#1F3A5F",
+        "#4F7CAC",
+        "#9DC3E6",
+        "#E8EEF2"
+      ],
+      "prompt": {
+        "en": "Paint a still life using only one hue in four values.",
+        "vi": "Vẽ tĩnh vật chỉ dùng một sắc tướng với bốn sắc độ."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "hue-value-saturation",
+      "questions": [
+        {
+          "id": "hue-value-saturation-q1",
+          "prompt": {
+            "en": "Which property describes how light or dark a colour is?",
+            "vi": "Thuộc tính nào mô tả màu sáng hay tối?"
+          },
+          "options": [
+            {
+              "en": "Hue",
+              "vi": "Sắc tướng"
+            },
+            {
+              "en": "Value",
+              "vi": "Sắc độ"
+            },
+            {
+              "en": "Saturation",
+              "vi": "Độ bão hòa"
+            },
+            {
+              "en": "Temperature",
+              "vi": "Nhiệt độ màu"
+            }
+          ]
+        },
+        {
+          "id": "hue-value-saturation-q2",
+          "prompt": {
+            "en": "How can you lower a colour’s saturation?",
+            "vi": "Làm sao giảm độ bão hòa của một màu?"
+          },
+          "options": [
+            {
+              "en": "Add more of the same colour",
+              "vi": "Thêm cùng màu đó"
+            },
+            {
+              "en": "Mix in its complement or grey",
+              "vi": "Pha thêm màu bổ túc hoặc xám"
+            },
+            {
+              "en": "Use a bigger brush",
+              "vi": "Dùng cọ to hơn"
+            },
+            {
+              "en": "Paint faster",
+              "vi": "Vẽ nhanh hơn"
+            }
+          ]
+        },
+        {
+          "id": "hue-value-saturation-q3",
+          "prompt": {
+            "en": "Why photograph your painting in black and white?",
+            "vi": "Vì sao chụp tranh của bạn ở chế độ đen trắng?"
+          },
+          "options": [
+            {
+              "en": "To check values",
+              "vi": "Để kiểm tra sắc độ"
+            },
+            {
+              "en": "To check hues",
+              "vi": "Để kiểm tra sắc tướng"
+            },
+            {
+              "en": "To save ink",
+              "vi": "Để tiết kiệm mực"
+            },
+            {
+              "en": "For social media",
+              "vi": "Để đăng mạng xã hội"
+            }
+          ]
+        },
+        {
+          "id": "hue-value-saturation-q4",
+          "prompt": {
+            "en": "Where do great paintings often place their most saturated colour?",
+            "vi": "Tranh đẹp thường đặt màu bão hòa nhất ở đâu?"
+          },
+          "options": [
+            {
+              "en": "Everywhere equally",
+              "vi": "Đều khắp nơi"
+            },
+            {
+              "en": "At the focal point",
+              "vi": "Ở tiêu điểm"
+            },
+            {
+              "en": "In the corners",
+              "vi": "Ở các góc"
+            },
+            {
+              "en": "In the background",
+              "vi": "Ở hậu cảnh"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "warm-and-cool",
+    "title": {
+      "en": "Warm & Cool Colours",
+      "vi": "Màu nóng & màu lạnh"
+    },
+    "summary": {
+      "en": "Colour temperature creates mood, depth and light.",
+      "vi": "Nhiệt độ màu tạo nên tâm trạng, chiều sâu và ánh sáng."
+    },
+    "topic": "colour",
+    "track": "colour",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Two halves of the wheel",
+          "vi": "Hai nửa vòng màu"
+        },
+        "body": {
+          "en": "Split the colour wheel in two. Reds, oranges and yellows feel **warm** — like fire, sunlight and spice. Blues, greens and violets feel **cool** — like water, shade and distance. These associations are so strong that a room painted blue can actually feel a degree or two cooler.",
+          "vi": "Chia đôi vòng màu. Đỏ, cam và vàng tạo cảm giác **nóng** — như lửa, nắng và gia vị. Lam, lục và tím tạo cảm giác **lạnh** — như nước, bóng râm và khoảng cách. Những liên tưởng này mạnh đến mức một căn phòng sơn xanh có thể khiến ta thấy mát hơn một hai độ."
+        },
+        "diagram": "warmcool"
+      },
+      {
+        "heading": {
+          "en": "Temperature inside a colour",
+          "vi": "Nhiệt độ bên trong một màu"
+        },
+        "body": {
+          "en": "Temperature is also **relative**. A lemon yellow is cooler than a golden yellow; an ultramarine blue (leaning violet) is warmer than a cerulean blue (leaning green). Professional painters often keep a warm and a cool version of each primary on their palette.",
+          "vi": "Nhiệt độ cũng mang tính **tương đối**. Vàng chanh lạnh hơn vàng nghệ; xanh ultramarine (ngả tím) ấm hơn xanh cerulean (ngả lục). Họa sĩ chuyên nghiệp thường có một bản nóng và một bản lạnh của mỗi màu cơ bản trên bảng màu."
+        }
+      },
+      {
+        "heading": {
+          "en": "Warm light, cool shadow",
+          "vi": "Ánh sáng ấm, bóng lạnh"
+        },
+        "body": {
+          "en": "In sunlight, lit surfaces lean warm and shadows lean cool — the shadows pick up blue from the sky. The Impressionists built whole paintings on this idea, painting violet shadows on golden haystacks. Indoors under lamplight, it often flips: cool light from a window, warm shadows.",
+          "vi": "Dưới nắng, mặt được chiếu sáng ngả ấm còn bóng ngả lạnh — bóng nhận màu xanh từ bầu trời. Các họa sĩ Ấn tượng xây cả bức tranh trên ý tưởng này, vẽ bóng tím trên đống rơm vàng óng. Trong nhà dưới đèn, thường ngược lại: ánh sáng lạnh từ cửa sổ, bóng ấm."
+        },
+        "callout": {
+          "en": "Warm colours seem to advance; cool colours seem to recede. Use this for depth: warm foreground, cool distance.",
+          "vi": "Màu nóng như tiến lại gần; màu lạnh như lùi ra xa. Dùng điều này để tạo chiều sâu: tiền cảnh nóng, phía xa lạnh."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "watercolour",
+      "palette": [
+        "#F2A93B",
+        "#E4572E",
+        "#3A3FA8",
+        "#2F80C4",
+        "#F6F1E7"
+      ],
+      "prompt": {
+        "en": "Paint an orange in sunlight with a cool violet-blue shadow.",
+        "vi": "Vẽ quả cam dưới nắng với bóng đổ màu xanh tím lạnh."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "warm-and-cool",
+      "questions": [
+        {
+          "id": "warm-and-cool-q1",
+          "prompt": {
+            "en": "Which group is warm?",
+            "vi": "Nhóm nào là màu nóng?"
+          },
+          "options": [
+            {
+              "en": "Blue, green, violet",
+              "vi": "Lam, lục, tím"
+            },
+            {
+              "en": "Red, orange, yellow",
+              "vi": "Đỏ, cam, vàng"
+            },
+            {
+              "en": "Black, grey, white",
+              "vi": "Đen, xám, trắng"
+            },
+            {
+              "en": "Teal, navy, mint",
+              "vi": "Xanh mòng két, xanh navy, bạc hà"
+            }
+          ]
+        },
+        {
+          "id": "warm-and-cool-q2",
+          "prompt": {
+            "en": "In sunlight outdoors, shadows usually lean…",
+            "vi": "Ngoài trời nắng, bóng thường ngả…"
+          },
+          "options": [
+            {
+              "en": "Warm",
+              "vi": "Nóng"
+            },
+            {
+              "en": "Cool",
+              "vi": "Lạnh"
+            },
+            {
+              "en": "Pure black",
+              "vi": "Đen tuyền"
+            },
+            {
+              "en": "Neon",
+              "vi": "Neon"
+            }
+          ]
+        },
+        {
+          "id": "warm-and-cool-q3",
+          "prompt": {
+            "en": "To push a mountain into the distance, you would make it…",
+            "vi": "Để đẩy ngọn núi ra xa, bạn sẽ làm nó…"
+          },
+          "options": [
+            {
+              "en": "Warmer",
+              "vi": "Ấm hơn"
+            },
+            {
+              "en": "Cooler",
+              "vi": "Lạnh hơn"
+            },
+            {
+              "en": "More saturated",
+              "vi": "Bão hòa hơn"
+            },
+            {
+              "en": "Darker and red",
+              "vi": "Tối hơn và đỏ"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "colour-schemes",
+    "title": {
+      "en": "Colour Schemes",
+      "vi": "Các phối màu"
+    },
+    "summary": {
+      "en": "Complementary, analogous and triadic harmonies — recipes for colours that belong together.",
+      "vi": "Phối bổ túc, tương đồng và bộ ba — công thức cho những màu hợp nhau."
+    },
+    "topic": "colour",
+    "track": "colour",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Complementary",
+          "vi": "Bổ túc"
+        },
+        "body": {
+          "en": "Colours **opposite** each other on the wheel — red and green, blue and orange, yellow and violet — are complements. Side by side they make each other vibrate with intensity. Use one as the main colour and a small amount of the other as an accent: a red boat on a green lake.",
+          "vi": "Những màu **đối diện** nhau trên vòng màu — đỏ và lục, lam và cam, vàng và tím — là màu bổ túc. Đặt cạnh nhau chúng làm nhau rung lên rực rỡ. Hãy dùng một màu làm chủ đạo và một ít màu kia làm điểm nhấn: chiếc thuyền đỏ trên hồ xanh."
+        },
+        "diagram": "schemes"
+      },
+      {
+        "heading": {
+          "en": "Analogous",
+          "vi": "Tương đồng"
+        },
+        "body": {
+          "en": "Three or four **neighbours** on the wheel — yellow, yellow-orange, orange — create calm, unified harmony, like a sunset or autumn leaves. Analogous schemes are forgiving and beautiful for beginners; add value contrast so they do not become flat.",
+          "vi": "Ba hoặc bốn màu **láng giềng** trên vòng màu — vàng, vàng cam, cam — tạo sự hài hòa êm dịu, thống nhất, như hoàng hôn hay lá thu. Phối tương đồng dễ dùng và đẹp với người mới; hãy thêm tương phản sắc độ để không bị phẳng."
+        }
+      },
+      {
+        "heading": {
+          "en": "Triadic and split-complementary",
+          "vi": "Bộ ba và bổ túc chia"
+        },
+        "body": {
+          "en": "**Triadic** schemes use three colours evenly spaced (like red, yellow, blue) for bold, playful energy — let one dominate. **Split-complementary** takes a base colour plus the two neighbours of its complement: lively like complementary, but easier to balance.",
+          "vi": "Phối **bộ ba** dùng ba màu cách đều nhau (như đỏ, vàng, lam) cho năng lượng mạnh mẽ, vui tươi — hãy để một màu chiếm ưu thế. **Bổ túc chia** lấy một màu gốc cộng hai láng giềng của màu bổ túc: sinh động như bổ túc nhưng dễ cân bằng hơn."
+        },
+        "callout": {
+          "en": "Try the 60–30–10 rule: 60% main colour, 30% secondary, 10% accent.",
+          "vi": "Thử quy tắc 60–30–10: 60% màu chính, 30% màu phụ, 10% điểm nhấn."
+        }
+      },
+      {
+        "heading": {
+          "en": "Explore in the Colour Lab",
+          "vi": "Khám phá trong Phòng thí nghiệm màu"
+        },
+        "body": {
+          "en": "The Colour Lab generates all of these schemes from any base colour and previews them on a little illustration. Find a scheme you love, then send it straight to the studio.",
+          "vi": "Phòng thí nghiệm màu tạo tất cả các phối này từ bất kỳ màu gốc nào và xem trước trên một hình minh họa nhỏ. Tìm phối màu bạn thích rồi gửi thẳng tới xưởng vẽ."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "marker",
+      "palette": [
+        "#2F80C4",
+        "#F2A93B",
+        "#E4572E",
+        "#1F3A5F"
+      ],
+      "prompt": {
+        "en": "Colour a butterfly with a complementary scheme: blue wings, orange accents.",
+        "vi": "Tô bướm theo phối bổ túc: cánh xanh, điểm nhấn cam."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "colour-schemes",
+      "questions": [
+        {
+          "id": "colour-schemes-q1",
+          "prompt": {
+            "en": "Complementary colours are…",
+            "vi": "Màu bổ túc là…"
+          },
+          "options": [
+            {
+              "en": "Next to each other on the wheel",
+              "vi": "Cạnh nhau trên vòng màu"
+            },
+            {
+              "en": "Opposite each other on the wheel",
+              "vi": "Đối diện nhau trên vòng màu"
+            },
+            {
+              "en": "Shades of one hue",
+              "vi": "Các sắc độ của một màu"
+            },
+            {
+              "en": "Black and white",
+              "vi": "Đen và trắng"
+            }
+          ]
+        },
+        {
+          "id": "colour-schemes-q2",
+          "prompt": {
+            "en": "Which is an analogous set?",
+            "vi": "Đâu là bộ màu tương đồng?"
+          },
+          "options": [
+            {
+              "en": "Red, green",
+              "vi": "Đỏ, lục"
+            },
+            {
+              "en": "Yellow, orange, red-orange",
+              "vi": "Vàng, cam, đỏ cam"
+            },
+            {
+              "en": "Red, yellow, blue",
+              "vi": "Đỏ, vàng, lam"
+            },
+            {
+              "en": "Blue, orange",
+              "vi": "Lam, cam"
+            }
+          ]
+        },
+        {
+          "id": "colour-schemes-q3",
+          "prompt": {
+            "en": "In the 60–30–10 rule, the 10% is…",
+            "vi": "Trong quy tắc 60–30–10, 10% là…"
+          },
+          "options": [
+            {
+              "en": "The background",
+              "vi": "Nền"
+            },
+            {
+              "en": "The accent",
+              "vi": "Điểm nhấn"
+            },
+            {
+              "en": "The shadows",
+              "vi": "Bóng"
+            },
+            {
+              "en": "White",
+              "vi": "Màu trắng"
+            }
+          ]
+        },
+        {
+          "id": "colour-schemes-q4",
+          "prompt": {
+            "en": "Red, yellow and blue together form a…",
+            "vi": "Đỏ, vàng và lam cùng nhau tạo thành phối…"
+          },
+          "options": [
+            {
+              "en": "Triadic scheme",
+              "vi": "Bộ ba"
+            },
+            {
+              "en": "Analogous scheme",
+              "vi": "Tương đồng"
+            },
+            {
+              "en": "Monochrome",
+              "vi": "Đơn sắc"
+            },
+            {
+              "en": "Split-complementary",
+              "vi": "Bổ túc chia"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "colour-psychology",
+    "title": {
+      "en": "Colour Psychology",
+      "vi": "Tâm lý học màu sắc"
+    },
+    "summary": {
+      "en": "How colours carry emotion and meaning — and how culture changes the message.",
+      "vi": "Màu sắc mang cảm xúc và ý nghĩa thế nào — và văn hóa thay đổi thông điệp ra sao."
+    },
+    "topic": "colour",
+    "track": "colour",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Colours speak before words",
+          "vi": "Màu sắc lên tiếng trước lời nói"
+        },
+        "body": {
+          "en": "Before a viewer recognises a single object, colour has already set the mood. **Reds** feel energetic, passionate or urgent. **Blues** feel calm, trustworthy or melancholy. **Yellows** feel joyful and attention-grabbing, **greens** fresh and natural, **violets** mysterious or regal, and **neutrals** quiet and sophisticated.",
+          "vi": "Trước khi người xem nhận ra bất kỳ vật thể nào, màu sắc đã thiết lập tâm trạng. **Đỏ** gợi năng lượng, đam mê hoặc khẩn cấp. **Lam** gợi bình yên, tin cậy hoặc u buồn. **Vàng** vui tươi và thu hút, **lục** tươi mát và tự nhiên, **tím** bí ẩn hoặc vương giả, còn **trung tính** tĩnh lặng và tinh tế."
+        },
+        "diagram": "psychology"
+      },
+      {
+        "heading": {
+          "en": "Culture matters",
+          "vi": "Văn hóa quan trọng"
+        },
+        "body": {
+          "en": "Meanings are not universal. In Vietnam and much of East Asia, **red** means luck and celebration — think Tết envelopes and lanterns — while in some Western contexts it can signal danger. **White** is worn at weddings in many Western countries but is associated with mourning in parts of Asia. Always consider who your audience is.",
+          "vi": "Ý nghĩa không phổ quát. Ở Việt Nam và phần lớn Đông Á, **đỏ** là may mắn và lễ hội — hãy nghĩ tới bao lì xì và đèn lồng ngày Tết — trong khi ở một số bối cảnh phương Tây nó có thể báo hiệu nguy hiểm. **Trắng** được mặc trong đám cưới ở nhiều nước phương Tây nhưng gắn với tang lễ ở một số nơi tại châu Á. Luôn cân nhắc khán giả của bạn là ai."
+        }
+      },
+      {
+        "heading": {
+          "en": "Mood through palette",
+          "vi": "Tâm trạng qua bảng màu"
+        },
+        "body": {
+          "en": "Picasso’s Blue Period paintings feel sorrowful because of their palette, not just their subjects. Try painting the same scene twice: once in warm, saturated colours and once in cool, muted ones. The story changes even though nothing else does.",
+          "vi": "Tranh thời kỳ Xanh của Picasso buồn bã vì bảng màu, không chỉ vì đề tài. Thử vẽ cùng một cảnh hai lần: một lần với màu nóng bão hòa và một lần với màu lạnh trầm. Câu chuyện thay đổi dù không có gì khác thay đổi."
+        },
+        "callout": {
+          "en": "Use the AI Chat’s Colour Advisor mode and ask for “a palette that feels nostalgic” to see this in action.",
+          "vi": "Dùng chế độ Cố vấn màu của AI Chat và hỏi “một bảng màu gợi hoài niệm” để thấy điều này."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "watercolour",
+      "palette": [
+        "#3A3FA8",
+        "#5B7DB1",
+        "#9C978E",
+        "#E8EEF2"
+      ],
+      "prompt": {
+        "en": "Paint a rainy window scene that feels peaceful, not sad.",
+        "vi": "Vẽ khung cửa sổ ngày mưa mang cảm giác bình yên, không buồn."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "colour-psychology",
+      "questions": [
+        {
+          "id": "colour-psychology-q1",
+          "prompt": {
+            "en": "In Vietnamese culture, red is strongly associated with…",
+            "vi": "Trong văn hóa Việt Nam, màu đỏ gắn liền với…"
+          },
+          "options": [
+            {
+              "en": "Mourning",
+              "vi": "Tang lễ"
+            },
+            {
+              "en": "Luck and celebration",
+              "vi": "May mắn và lễ hội"
+            },
+            {
+              "en": "Illness",
+              "vi": "Bệnh tật"
+            },
+            {
+              "en": "Winter",
+              "vi": "Mùa đông"
+            }
+          ]
+        },
+        {
+          "id": "colour-psychology-q2",
+          "prompt": {
+            "en": "A palette of cool, muted blues tends to feel…",
+            "vi": "Bảng màu xanh lạnh, trầm thường gợi cảm giác…"
+          },
+          "options": [
+            {
+              "en": "Energetic",
+              "vi": "Năng động"
+            },
+            {
+              "en": "Calm or melancholy",
+              "vi": "Bình yên hoặc u buồn"
+            },
+            {
+              "en": "Angry",
+              "vi": "Giận dữ"
+            },
+            {
+              "en": "Festive",
+              "vi": "Lễ hội"
+            }
+          ]
+        },
+        {
+          "id": "colour-psychology-q3",
+          "prompt": {
+            "en": "Why should you consider your audience when choosing colours?",
+            "vi": "Vì sao nên cân nhắc khán giả khi chọn màu?"
+          },
+          "options": [
+            {
+              "en": "Colour meanings vary between cultures",
+              "vi": "Ý nghĩa màu khác nhau giữa các nền văn hóa"
+            },
+            {
+              "en": "Some people cannot see colour at all",
+              "vi": "Ai cũng không thấy màu"
+            },
+            {
+              "en": "It is a legal requirement",
+              "vi": "Đó là yêu cầu pháp lý"
+            },
+            {
+              "en": "It is not important",
+              "vi": "Không quan trọng"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "light-and-shadow",
+    "title": {
+      "en": "Light & Shadow",
+      "vi": "Ánh sáng & bóng tối"
+    },
+    "summary": {
+      "en": "Highlight, core shadow, reflected light and cast shadow — the anatomy of a lit object.",
+      "vi": "Điểm sáng, bóng lõi, ánh phản quang và bóng đổ — giải phẫu của một vật được chiếu sáng."
+    },
+    "topic": "light",
+    "track": "beginner",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "One light, many zones",
+          "vi": "Một nguồn sáng, nhiều vùng"
+        },
+        "body": {
+          "en": "Shine a lamp on a ball and you will see a predictable family of tones. The **highlight** is the brightest spot facing the light. The **light side** gradually darkens until the **terminator** — the line where light turns away. Just past it sits the darkest band, the **core shadow**. Near the bottom, a little **reflected light** bounces back from the table. Finally, the ball throws a **cast shadow** onto the surface.",
+          "vi": "Chiếu đèn vào quả bóng và bạn sẽ thấy một họ tông màu có thể đoán trước. **Điểm sáng** là chỗ sáng nhất hướng về nguồn sáng. **Mặt sáng** tối dần tới **đường phân giới** — nơi ánh sáng quay đi. Ngay sau đó là dải tối nhất, **bóng lõi**. Gần đáy, một chút **ánh phản quang** dội lại từ mặt bàn. Cuối cùng, quả bóng tạo **bóng đổ** lên bề mặt."
+        },
+        "diagram": "shadow"
+      },
+      {
+        "heading": {
+          "en": "Common mistakes",
+          "vi": "Lỗi thường gặp"
+        },
+        "body": {
+          "en": "Beginners often make reflected light too bright, which makes objects look hollow. Keep it **darker than any part of the light side**. Another mistake is a cast shadow with a uniform edge: real cast shadows are sharpest and darkest right where the object touches the ground (the **occlusion shadow**) and soften as they stretch away.",
+          "vi": "Người mới thường làm ánh phản quang quá sáng, khiến vật trông rỗng. Hãy giữ nó **tối hơn mọi phần của mặt sáng**. Lỗi khác là bóng đổ có viền đều: bóng đổ thật sắc và đậm nhất ngay chỗ vật chạm đất (**bóng tiếp xúc**) rồi mềm dần khi kéo xa."
+        },
+        "callout": {
+          "en": "Squint! Squinting simplifies a scene into big light and shadow shapes.",
+          "vi": "Nheo mắt! Nheo mắt đơn giản hóa cảnh thành các mảng sáng tối lớn."
+        }
+      },
+      {
+        "heading": {
+          "en": "Light tells a story",
+          "vi": "Ánh sáng kể chuyện"
+        },
+        "body": {
+          "en": "Low, side lighting feels dramatic (think Baroque). Soft, overhead light feels calm. Light from below feels eerie. Decide where your light comes from before you begin, and keep it consistent across every object in the picture.",
+          "vi": "Ánh sáng thấp, chiếu ngang tạo kịch tính (như Baroque). Ánh sáng dịu từ trên xuống tạo bình yên. Ánh sáng từ dưới lên gợi rùng rợn. Hãy quyết định nguồn sáng trước khi bắt đầu và giữ nhất quán cho mọi vật trong tranh."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "chalk",
+      "palette": [
+        "#1B1A17",
+        "#6A6358",
+        "#C9C1B0",
+        "#F6F1E7"
+      ],
+      "prompt": {
+        "en": "Draw an egg lit from the upper left, with all five tonal zones.",
+        "vi": "Vẽ quả trứng được chiếu sáng từ trên bên trái, đủ năm vùng tông."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "light-and-shadow",
+      "questions": [
+        {
+          "id": "light-and-shadow-q1",
+          "prompt": {
+            "en": "Which is the darkest part of a lit sphere (excluding the cast shadow)?",
+            "vi": "Phần tối nhất của khối cầu được chiếu sáng (không tính bóng đổ) là?"
+          },
+          "options": [
+            {
+              "en": "Highlight",
+              "vi": "Điểm sáng"
+            },
+            {
+              "en": "Core shadow",
+              "vi": "Bóng lõi"
+            },
+            {
+              "en": "Reflected light",
+              "vi": "Ánh phản quang"
+            },
+            {
+              "en": "Light side",
+              "vi": "Mặt sáng"
+            }
+          ]
+        },
+        {
+          "id": "light-and-shadow-q2",
+          "prompt": {
+            "en": "Reflected light should be…",
+            "vi": "Ánh phản quang nên…"
+          },
+          "options": [
+            {
+              "en": "Brighter than the highlight",
+              "vi": "Sáng hơn điểm sáng"
+            },
+            {
+              "en": "Darker than the light side",
+              "vi": "Tối hơn mặt sáng"
+            },
+            {
+              "en": "Pure white",
+              "vi": "Trắng tinh"
+            },
+            {
+              "en": "Ignored",
+              "vi": "Bỏ qua"
+            }
+          ]
+        },
+        {
+          "id": "light-and-shadow-q3",
+          "prompt": {
+            "en": "Where is a cast shadow darkest and sharpest?",
+            "vi": "Bóng đổ đậm và sắc nhất ở đâu?"
+          },
+          "options": [
+            {
+              "en": "Far from the object",
+              "vi": "Xa vật"
+            },
+            {
+              "en": "Where the object touches the surface",
+              "vi": "Nơi vật chạm bề mặt"
+            },
+            {
+              "en": "At its edges only",
+              "vi": "Chỉ ở mép"
+            },
+            {
+              "en": "Everywhere equally",
+              "vi": "Đều khắp nơi"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "one-point-perspective",
+    "title": {
+      "en": "One-Point Perspective",
+      "vi": "Phối cảnh một điểm tụ"
+    },
+    "summary": {
+      "en": "Draw roads, corridors and rooms that recede convincingly towards a single vanishing point.",
+      "vi": "Vẽ con đường, hành lang và căn phòng lùi xa thuyết phục về một điểm tụ duy nhất."
+    },
+    "topic": "perspective",
+    "track": "beginner",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Horizon and vanishing point",
+          "vi": "Đường chân trời và điểm tụ"
+        },
+        "body": {
+          "en": "Draw a horizontal line across the page: the **horizon line**, which always sits at your eye level. Put a dot on it — the **vanishing point**. In one-point perspective, every line going straight away from you converges to that dot, while lines facing you stay perfectly horizontal or vertical.",
+          "vi": "Kẻ một đường ngang qua trang: **đường chân trời**, luôn nằm ngang tầm mắt bạn. Chấm một điểm lên đó — **điểm tụ**. Trong phối cảnh một điểm tụ, mọi đường đi thẳng ra xa bạn đều hội tụ về điểm đó, còn những đường đối diện bạn giữ nguyên nằm ngang hoặc thẳng đứng."
+        },
+        "diagram": "onepoint"
+      },
+      {
+        "heading": {
+          "en": "Building a box",
+          "vi": "Dựng một chiếc hộp"
+        },
+        "body": {
+          "en": "Draw a rectangle (the front face). From each corner, draw light lines to the vanishing point. Decide how deep the box is and draw a smaller rectangle between those lines — parallel to the first. Erase the guides. Repeat for houses along a street, and suddenly you have a town.",
+          "vi": "Vẽ một hình chữ nhật (mặt trước). Từ mỗi góc, kẻ nhẹ các đường về điểm tụ. Quyết định độ sâu của hộp và vẽ một hình chữ nhật nhỏ hơn giữa các đường đó — song song với hình đầu. Xóa đường dựng. Lặp lại cho các ngôi nhà dọc phố, và bỗng nhiên bạn có cả một thị trấn."
+        },
+        "callout": {
+          "en": "Objects above the horizon show their bottoms; objects below show their tops.",
+          "vi": "Vật phía trên đường chân trời lộ mặt đáy; vật phía dưới lộ mặt trên."
+        }
+      },
+      {
+        "heading": {
+          "en": "Where to use it",
+          "vi": "Dùng khi nào"
+        },
+        "body": {
+          "en": "One-point perspective is perfect when you look straight down a road, railway, corridor or into a room. Renaissance painters loved it — in Leonardo’s Last Supper, the perspective lines meet right at the central figure’s head.",
+          "vi": "Phối cảnh một điểm tụ hoàn hảo khi bạn nhìn thẳng xuống con đường, đường ray, hành lang hoặc vào một căn phòng. Họa sĩ Phục Hưng rất yêu thích nó — trong Bữa tiệc ly của Leonardo, các đường phối cảnh gặp nhau ngay tại đầu nhân vật trung tâm."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "line",
+      "palette": [
+        "#1B1A17",
+        "#2F80C4",
+        "#C98B2B"
+      ],
+      "prompt": {
+        "en": "Draw a straight road lined with lamp posts that shrink towards one vanishing point.",
+        "vi": "Vẽ con đường thẳng với hàng cột đèn nhỏ dần về một điểm tụ."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "one-point-perspective",
+      "questions": [
+        {
+          "id": "one-point-perspective-q1",
+          "prompt": {
+            "en": "The horizon line always sits at…",
+            "vi": "Đường chân trời luôn nằm ở…"
+          },
+          "options": [
+            {
+              "en": "The top of the page",
+              "vi": "Đỉnh trang"
+            },
+            {
+              "en": "The viewer’s eye level",
+              "vi": "Ngang tầm mắt người xem"
+            },
+            {
+              "en": "The bottom of the page",
+              "vi": "Đáy trang"
+            },
+            {
+              "en": "The centre of an object",
+              "vi": "Tâm vật thể"
+            }
+          ]
+        },
+        {
+          "id": "one-point-perspective-q2",
+          "prompt": {
+            "en": "In one-point perspective, lines going straight away from you…",
+            "vi": "Trong phối cảnh một điểm tụ, đường đi thẳng ra xa bạn…"
+          },
+          "options": [
+            {
+              "en": "Stay parallel",
+              "vi": "Song song"
+            },
+            {
+              "en": "Converge to the vanishing point",
+              "vi": "Hội tụ về điểm tụ"
+            },
+            {
+              "en": "Curve",
+              "vi": "Cong"
+            },
+            {
+              "en": "Disappear",
+              "vi": "Biến mất"
+            }
+          ]
+        },
+        {
+          "id": "one-point-perspective-q3",
+          "prompt": {
+            "en": "A box below the horizon shows its…",
+            "vi": "Chiếc hộp dưới đường chân trời lộ ra…"
+          },
+          "options": [
+            {
+              "en": "Top",
+              "vi": "Mặt trên"
+            },
+            {
+              "en": "Bottom",
+              "vi": "Mặt đáy"
+            },
+            {
+              "en": "Nothing",
+              "vi": "Không gì"
+            },
+            {
+              "en": "Back only",
+              "vi": "Chỉ mặt sau"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "two-point-perspective",
+    "title": {
+      "en": "Two-Point Perspective",
+      "vi": "Phối cảnh hai điểm tụ"
+    },
+    "summary": {
+      "en": "Turn the corner: draw buildings and objects seen at an angle.",
+      "vi": "Rẽ góc: vẽ tòa nhà và đồ vật nhìn theo góc xiên."
+    },
+    "topic": "perspective",
+    "track": "beginner",
+    "difficulty": "advanced",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Two vanishing points",
+          "vi": "Hai điểm tụ"
+        },
+        "body": {
+          "en": "When you look at the corner of a building, neither side faces you squarely. Each side recedes to its own vanishing point, placed far apart on the horizon — often off the page. Vertical lines stay vertical.",
+          "vi": "Khi nhìn vào góc một tòa nhà, không mặt nào đối diện bạn hoàn toàn. Mỗi mặt lùi về điểm tụ riêng, đặt cách xa nhau trên đường chân trời — thường nằm ngoài trang giấy. Các đường thẳng đứng vẫn giữ thẳng đứng."
+        },
+        "diagram": "twopoint"
+      },
+      {
+        "heading": {
+          "en": "Start with the nearest edge",
+          "vi": "Bắt đầu từ cạnh gần nhất"
+        },
+        "body": {
+          "en": "Draw one vertical line: the corner closest to you. Connect its top and bottom to both vanishing points. Choose the width of each side with two more verticals, then connect their tops back to the opposite vanishing points to close the roof. Windows and doors follow the same guide lines.",
+          "vi": "Vẽ một đường thẳng đứng: góc gần bạn nhất. Nối đỉnh và chân nó tới cả hai điểm tụ. Chọn chiều rộng mỗi mặt bằng hai đường thẳng đứng nữa, rồi nối đỉnh của chúng về điểm tụ đối diện để khép mái. Cửa sổ và cửa ra vào đi theo cùng các đường dựng."
+        },
+        "callout": {
+          "en": "Vanishing points too close together cause distortion. Spread them wide, even onto scrap paper taped beside your page.",
+          "vi": "Điểm tụ quá gần nhau gây méo hình. Hãy đặt xa nhau, kể cả trên tờ giấy nháp dán cạnh trang vẽ."
+        }
+      },
+      {
+        "heading": {
+          "en": "Practice with the city",
+          "vi": "Luyện với thành phố"
+        },
+        "body": {
+          "en": "Look at the City at Night template: the front buildings are drawn flat on, but try sketching the same skyline from a street corner in two-point perspective in Free Draw. It is the most useful perspective for architecture and urban sketching.",
+          "vi": "Xem mẫu Thành phố về đêm: các tòa nhà được vẽ nhìn thẳng, nhưng hãy thử phác cùng đường chân trời đó từ một góc phố bằng phối cảnh hai điểm tụ trong Vẽ tự do. Đây là phối cảnh hữu ích nhất cho kiến trúc và ký họa đô thị."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "line",
+      "palette": [
+        "#1B1A17",
+        "#3A3FA8",
+        "#F2A93B"
+      ],
+      "prompt": {
+        "en": "Draw a street-corner café in two-point perspective.",
+        "vi": "Vẽ quán cà phê góc phố bằng phối cảnh hai điểm tụ."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "two-point-perspective",
+      "questions": [
+        {
+          "id": "two-point-perspective-q1",
+          "prompt": {
+            "en": "How many vanishing points does a building corner view need?",
+            "vi": "Góc nhìn góc tòa nhà cần mấy điểm tụ?"
+          },
+          "options": [
+            {
+              "en": "One",
+              "vi": "Một"
+            },
+            {
+              "en": "Two",
+              "vi": "Hai"
+            },
+            {
+              "en": "Three",
+              "vi": "Ba"
+            },
+            {
+              "en": "None",
+              "vi": "Không"
+            }
+          ]
+        },
+        {
+          "id": "two-point-perspective-q2",
+          "prompt": {
+            "en": "What do vertical lines do in two-point perspective?",
+            "vi": "Đường thẳng đứng trong phối cảnh hai điểm tụ thì sao?"
+          },
+          "options": [
+            {
+              "en": "Converge upward",
+              "vi": "Hội tụ lên trên"
+            },
+            {
+              "en": "Stay vertical",
+              "vi": "Giữ thẳng đứng"
+            },
+            {
+              "en": "Tilt left",
+              "vi": "Nghiêng trái"
+            },
+            {
+              "en": "Curve",
+              "vi": "Cong"
+            }
+          ]
+        },
+        {
+          "id": "two-point-perspective-q3",
+          "prompt": {
+            "en": "What causes distortion?",
+            "vi": "Điều gì gây méo hình?"
+          },
+          "options": [
+            {
+              "en": "Vanishing points too close together",
+              "vi": "Điểm tụ quá gần nhau"
+            },
+            {
+              "en": "Using a ruler",
+              "vi": "Dùng thước"
+            },
+            {
+              "en": "A low horizon",
+              "vi": "Đường chân trời thấp"
+            },
+            {
+              "en": "Thin lines",
+              "vi": "Nét mảnh"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 70
+  },
+  {
+    "slug": "proportion",
+    "title": {
+      "en": "Measuring Proportion",
+      "vi": "Đo tỷ lệ"
+    },
+    "summary": {
+      "en": "Use your pencil as a ruler to compare sizes and get shapes right.",
+      "vi": "Dùng bút chì làm thước để so sánh kích thước và vẽ đúng hình."
+    },
+    "topic": "drawing",
+    "track": "beginner",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Sight-size measuring",
+          "vi": "Đo bằng mắt"
+        },
+        "body": {
+          "en": "Hold your pencil at arm’s length, elbow locked, one eye closed. Align the tip with the top of an object and slide your thumb down to the bottom. That length is your **unit**. Now compare: is the object twice as tall as it is wide? Is the handle one-third of the mug’s height? Comparisons beat guesses every time.",
+          "vi": "Cầm bút chì duỗi thẳng tay, khóa khuỷu, nhắm một mắt. Đặt đầu bút ngang đỉnh vật và trượt ngón cái xuống đáy. Độ dài đó là **đơn vị** của bạn. Giờ hãy so sánh: vật cao gấp đôi chiều rộng không? Quai cốc bằng một phần ba chiều cao không? So sánh luôn thắng đoán mò."
+        },
+        "diagram": "proportion"
+      },
+      {
+        "heading": {
+          "en": "Angles and plumb lines",
+          "vi": "Góc và dây dọi"
+        },
+        "body": {
+          "en": "Use the pencil to copy angles too: tilt it to match the slope of a roof, then carry that angle to your paper. Hold it perfectly vertical (a **plumb line**) to see what lines up — is the nose above the corner of the mouth? Does the chair leg sit under the table edge?",
+          "vi": "Dùng bút chì để chép góc nữa: nghiêng bút theo độ dốc mái nhà rồi mang góc đó xuống giấy. Giữ bút thẳng đứng tuyệt đối (**dây dọi**) để xem điều gì thẳng hàng — mũi có nằm trên khóe miệng không? Chân ghế có nằm dưới mép bàn không?"
+        },
+        "callout": {
+          "en": "Measure big shapes first, details last. A perfectly drawn eye in the wrong place is still wrong.",
+          "vi": "Đo mảng lớn trước, chi tiết sau. Con mắt vẽ hoàn hảo nhưng sai vị trí vẫn là sai."
+        }
+      },
+      {
+        "heading": {
+          "en": "Trust what you see",
+          "vi": "Tin vào điều bạn thấy"
+        },
+        "body": {
+          "en": "Our brains “correct” what we see based on what we know — so we draw eyes too high on a face and hands too small. Measuring breaks that habit. The template studio’s line-art overlay is a great training tool: compare your trace against the reference and notice where your instincts drift.",
+          "vi": "Não chúng ta “sửa” những gì ta thấy dựa trên những gì ta biết — nên ta vẽ mắt quá cao trên mặt và tay quá nhỏ. Đo đạc phá vỡ thói quen đó. Lớp nét mẫu trong xưởng vẽ là công cụ luyện tập tuyệt vời: so nét đồ của bạn với hình mẫu và để ý chỗ bản năng bị lệch."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pencil",
+      "palette": [
+        "#1B1A17",
+        "#6A6358"
+      ],
+      "prompt": {
+        "en": "Draw a mug and measure: how many handle-widths fit in its height?",
+        "vi": "Vẽ chiếc cốc và đo: chiều cao bằng bao nhiêu lần bề rộng quai?"
+      }
+    },
+    "quiz": {
+      "lessonSlug": "proportion",
+      "questions": [
+        {
+          "id": "proportion-q1",
+          "prompt": {
+            "en": "When sight-measuring, your arm should be…",
+            "vi": "Khi đo bằng mắt, cánh tay bạn nên…"
+          },
+          "options": [
+            {
+              "en": "Bent",
+              "vi": "Gập"
+            },
+            {
+              "en": "Fully extended with the elbow locked",
+              "vi": "Duỗi thẳng, khóa khuỷu"
+            },
+            {
+              "en": "Behind your back",
+              "vi": "Sau lưng"
+            },
+            {
+              "en": "Resting on the table",
+              "vi": "Đặt trên bàn"
+            }
+          ]
+        },
+        {
+          "id": "proportion-q2",
+          "prompt": {
+            "en": "What should you measure first?",
+            "vi": "Nên đo gì trước?"
+          },
+          "options": [
+            {
+              "en": "Small details",
+              "vi": "Chi tiết nhỏ"
+            },
+            {
+              "en": "Big overall shapes",
+              "vi": "Mảng lớn tổng thể"
+            },
+            {
+              "en": "Shadows",
+              "vi": "Bóng"
+            },
+            {
+              "en": "Colours",
+              "vi": "Màu sắc"
+            }
+          ]
+        },
+        {
+          "id": "proportion-q3",
+          "prompt": {
+            "en": "A plumb line helps you check…",
+            "vi": "Dây dọi giúp bạn kiểm tra…"
+          },
+          "options": [
+            {
+              "en": "Colour",
+              "vi": "Màu"
+            },
+            {
+              "en": "Vertical alignments",
+              "vi": "Sự thẳng hàng theo chiều dọc"
+            },
+            {
+              "en": "Texture",
+              "vi": "Chất cảm"
+            },
+            {
+              "en": "Paper size",
+              "vi": "Khổ giấy"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "line-quality",
+    "title": {
+      "en": "Line Quality",
+      "vi": "Chất lượng nét vẽ"
+    },
+    "summary": {
+      "en": "Thick, thin, light, dark: how varying your line brings drawings to life.",
+      "vi": "Dày, mảnh, nhạt, đậm: biến đổi nét vẽ để bản vẽ sống động."
+    },
+    "topic": "drawing",
+    "track": "beginner",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "A line can say a lot",
+          "vi": "Một nét có thể nói nhiều điều"
+        },
+        "body": {
+          "en": "A line of uniform weight looks mechanical, like a diagram. Vary pressure and the same contour suddenly describes **weight, light and distance**. Thicker, darker lines feel closer and heavier; thinner, lighter lines feel distant or lit.",
+          "vi": "Nét có độ dày đều trông máy móc, như sơ đồ. Thay đổi lực nhấn và cùng một đường viền bỗng diễn tả **trọng lượng, ánh sáng và khoảng cách**. Nét dày, đậm cảm giác gần và nặng; nét mảnh, nhạt cảm giác xa hoặc được chiếu sáng."
+        },
+        "diagram": "line"
+      },
+      {
+        "heading": {
+          "en": "Where to thicken",
+          "vi": "Làm dày ở đâu"
+        },
+        "body": {
+          "en": "Thicken lines on the **shadow side** of an object, where two forms **overlap**, and at the **bottom** where things rest on the ground. Thin them on the light side and in the distance. Inking artists call this “line weight” and use it to make flat drawings pop.",
+          "vi": "Làm dày nét ở **phía bóng** của vật, chỗ hai khối **chồng lên nhau**, và ở **đáy** nơi vật chạm đất. Làm mảnh ở phía sáng và ở xa. Họa sĩ đi nét gọi đây là “độ nặng nét” và dùng nó để bản vẽ phẳng trở nên nổi khối."
+        },
+        "callout": {
+          "en": "In the studio, turn on pen pressure (Profile → Drawing) or slide the size while you draw to practise.",
+          "vi": "Trong xưởng vẽ, bật lực nhấn bút (Hồ sơ → Vẽ) hoặc kéo cỡ cọ khi vẽ để luyện tập."
+        }
+      },
+      {
+        "heading": {
+          "en": "Confident strokes",
+          "vi": "Nét vẽ tự tin"
+        },
+        "body": {
+          "en": "Hairy, scratchy lines come from many tiny hesitant strokes. Instead, move from your **shoulder**, not your wrist, and draw each line in one smooth pass. Ghost the motion in the air first, then commit. It is fine if it is wrong — draw the next one better.",
+          "vi": "Nét lông xù, nham nhở đến từ nhiều nét nhỏ do dự. Thay vào đó, di chuyển từ **vai**, không phải cổ tay, và vẽ mỗi nét bằng một lượt mượt mà. Thử động tác trên không trước, rồi quyết đoán. Sai cũng không sao — nét sau vẽ tốt hơn."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pen",
+      "palette": [
+        "#1B1A17"
+      ],
+      "prompt": {
+        "en": "Ink the Garden Butterfly template using thick lines on the shadow side only.",
+        "vi": "Đi nét mẫu Bướm trong vườn, chỉ làm dày nét ở phía bóng."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "line-quality",
+      "questions": [
+        {
+          "id": "line-quality-q1",
+          "prompt": {
+            "en": "Thicker, darker lines tend to feel…",
+            "vi": "Nét dày, đậm thường gợi cảm giác…"
+          },
+          "options": [
+            {
+              "en": "Further away",
+              "vi": "Xa hơn"
+            },
+            {
+              "en": "Closer and heavier",
+              "vi": "Gần và nặng hơn"
+            },
+            {
+              "en": "Lit by the sun",
+              "vi": "Được nắng chiếu"
+            },
+            {
+              "en": "Transparent",
+              "vi": "Trong suốt"
+            }
+          ]
+        },
+        {
+          "id": "line-quality-q2",
+          "prompt": {
+            "en": "Where should you usually thicken a line?",
+            "vi": "Thường nên làm dày nét ở đâu?"
+          },
+          "options": [
+            {
+              "en": "On the light side",
+              "vi": "Ở phía sáng"
+            },
+            {
+              "en": "Where forms overlap and on the shadow side",
+              "vi": "Chỗ khối chồng nhau và phía bóng"
+            },
+            {
+              "en": "Only in the sky",
+              "vi": "Chỉ trên bầu trời"
+            },
+            {
+              "en": "Never",
+              "vi": "Không bao giờ"
+            }
+          ]
+        },
+        {
+          "id": "line-quality-q3",
+          "prompt": {
+            "en": "Smooth, confident lines come from moving your…",
+            "vi": "Nét mượt, tự tin đến từ việc di chuyển…"
+          },
+          "options": [
+            {
+              "en": "Fingertips only",
+              "vi": "Chỉ đầu ngón tay"
+            },
+            {
+              "en": "Shoulder and arm",
+              "vi": "Vai và cánh tay"
+            },
+            {
+              "en": "Paper",
+              "vi": "Tờ giấy"
+            },
+            {
+              "en": "Eyes",
+              "vi": "Đôi mắt"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "contour-drawing",
+    "title": {
+      "en": "Contour & Blind Contour",
+      "vi": "Vẽ đường viền & vẽ mù"
+    },
+    "summary": {
+      "en": "Train hand–eye coordination by drawing edges slowly — sometimes without looking.",
+      "vi": "Luyện phối hợp tay–mắt bằng cách vẽ chậm các đường viền — đôi khi không nhìn giấy."
+    },
+    "topic": "drawing",
+    "track": "beginner",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "The edge is a journey",
+          "vi": "Đường viền là một hành trình"
+        },
+        "body": {
+          "en": "Contour drawing means tracing the edges of a form — outside and inside — with a single, slow, continuous line. Imagine an ant crawling along the edge of your hand and your pencil following it at exactly the same speed.",
+          "vi": "Vẽ đường viền là lần theo các mép của một khối — bên ngoài lẫn bên trong — bằng một nét liền, chậm rãi. Hãy tưởng tượng một chú kiến bò dọc mép bàn tay bạn và bút chì theo sau với đúng tốc độ đó."
+        },
+        "diagram": "contour"
+      },
+      {
+        "heading": {
+          "en": "Blind contour",
+          "vi": "Vẽ đường viền mù"
+        },
+        "body": {
+          "en": "Now try it **without looking at the paper** at all. Keep your eyes on the object. The result will look wonderfully strange — and that is the point. Blind contour silences the part of your brain that draws symbols (“an eye looks like an almond”) and forces you to really see.",
+          "vi": "Giờ hãy thử **không nhìn vào giấy** chút nào. Giữ mắt trên vật mẫu. Kết quả sẽ kỳ lạ một cách tuyệt vời — và đó chính là mục đích. Vẽ mù làm im lặng phần não vẽ theo ký hiệu (“mắt trông như hạt hạnh nhân”) và buộc bạn phải thật sự nhìn."
+        },
+        "callout": {
+          "en": "Do three 2-minute blind contours as a warm-up before any practice session.",
+          "vi": "Làm ba bản vẽ mù 2 phút để khởi động trước mỗi buổi luyện tập."
+        }
+      },
+      {
+        "heading": {
+          "en": "Modified contour",
+          "vi": "Vẽ đường viền bán mù"
+        },
+        "body": {
+          "en": "Finally, allow yourself a quick glance at the paper every few seconds to reconnect, but keep 80% of your attention on the subject. This is how many professional sketchers work on location.",
+          "vi": "Cuối cùng, cho phép bạn liếc nhanh xuống giấy vài giây một lần để định vị lại, nhưng giữ 80% sự chú ý trên vật mẫu. Nhiều họa sĩ ký họa chuyên nghiệp làm việc ngoài hiện trường theo cách này."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pen",
+      "palette": [
+        "#1B1A17",
+        "#C93C6B"
+      ],
+      "prompt": {
+        "en": "Draw a houseplant using one continuous line — don’t lift the pen!",
+        "vi": "Vẽ chậu cây bằng một nét liền — không nhấc bút!"
+      }
+    },
+    "quiz": {
+      "lessonSlug": "contour-drawing",
+      "questions": [
+        {
+          "id": "contour-drawing-q1",
+          "prompt": {
+            "en": "In blind contour drawing you…",
+            "vi": "Khi vẽ đường viền mù, bạn…"
+          },
+          "options": [
+            {
+              "en": "Close your eyes",
+              "vi": "Nhắm mắt"
+            },
+            {
+              "en": "Look only at the subject, not the paper",
+              "vi": "Chỉ nhìn vật mẫu, không nhìn giấy"
+            },
+            {
+              "en": "Trace a photo",
+              "vi": "Đồ theo ảnh"
+            },
+            {
+              "en": "Use a ruler",
+              "vi": "Dùng thước"
+            }
+          ]
+        },
+        {
+          "id": "contour-drawing-q2",
+          "prompt": {
+            "en": "What is the purpose of blind contour?",
+            "vi": "Mục đích của vẽ mù là gì?"
+          },
+          "options": [
+            {
+              "en": "To make perfect drawings",
+              "vi": "Để vẽ hoàn hảo"
+            },
+            {
+              "en": "To train real observation over symbols",
+              "vi": "Để luyện quan sát thật thay vì vẽ ký hiệu"
+            },
+            {
+              "en": "To save paper",
+              "vi": "Để tiết kiệm giấy"
+            },
+            {
+              "en": "To draw faster",
+              "vi": "Để vẽ nhanh hơn"
+            }
+          ]
+        },
+        {
+          "id": "contour-drawing-q3",
+          "prompt": {
+            "en": "A contour line should be drawn…",
+            "vi": "Nét đường viền nên được vẽ…"
+          },
+          "options": [
+            {
+              "en": "Fast and scratchy",
+              "vi": "Nhanh và nham nhở"
+            },
+            {
+              "en": "Slowly and continuously",
+              "vi": "Chậm và liền mạch"
+            },
+            {
+              "en": "With many short dashes",
+              "vi": "Bằng nhiều nét đứt ngắn"
+            },
+            {
+              "en": "In colour only",
+              "vi": "Chỉ bằng màu"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "hatching-cross-hatching",
+    "title": {
+      "en": "Hatching & Cross-Hatching",
+      "vi": "Đánh nét & đánh nét chéo"
+    },
+    "summary": {
+      "en": "Build value with parallel and crossing lines — the engraver’s secret.",
+      "vi": "Tạo sắc độ bằng các nét song song và giao nhau — bí quyết của thợ khắc."
+    },
+    "topic": "technique",
+    "track": "beginner",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Parallel lines make tone",
+          "vi": "Nét song song tạo tông"
+        },
+        "body": {
+          "en": "**Hatching** is a group of parallel lines. From a distance the lines merge into a tone: closer lines read darker, wider spacing reads lighter. Keep the lines evenly spaced and roughly the same direction within an area.",
+          "vi": "**Đánh nét** là một nhóm các nét song song. Từ xa, các nét hòa thành một tông: nét sát nhau trông đậm hơn, giãn cách rộng trông nhạt hơn. Giữ các nét cách đều và cùng hướng trong một vùng."
+        },
+        "diagram": "hatching"
+      },
+      {
+        "heading": {
+          "en": "Layering directions",
+          "vi": "Chồng lớp theo hướng"
+        },
+        "body": {
+          "en": "For darker values, add a second layer at an angle — **cross-hatching**. Add a third and fourth layer for the deepest shadows. Dürer and Rembrandt built entire etchings this way, with no smudging at all.",
+          "vi": "Để có sắc độ đậm hơn, thêm lớp thứ hai theo một góc — **đánh nét chéo**. Thêm lớp thứ ba, thứ tư cho bóng sâu nhất. Dürer và Rembrandt dựng cả bức khắc axit theo cách này, không hề chà mờ."
+        },
+        "callout": {
+          "en": "Curve your hatching to follow the form (“contour hatching”) — it makes round objects feel round.",
+          "vi": "Cong nét theo khối (“đánh nét theo đường viền”) — vật tròn sẽ trông tròn."
+        }
+      },
+      {
+        "heading": {
+          "en": "Value scale exercise",
+          "vi": "Bài tập thang sắc độ"
+        },
+        "body": {
+          "en": "Draw a strip of five boxes. Leave the first white, then fill each next box with one more layer of hatching. Your goal is a smooth step from white to near-black. Then shade a simple sphere using only hatching.",
+          "vi": "Vẽ một dải năm ô. Để trống ô đầu, rồi mỗi ô tiếp theo thêm một lớp nét. Mục tiêu là các bước chuyển mượt từ trắng đến gần đen. Sau đó tô bóng một khối cầu chỉ bằng đánh nét."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pen",
+      "palette": [
+        "#1B1A17",
+        "#4A3426"
+      ],
+      "prompt": {
+        "en": "Shade the Afternoon Teapot using only hatching — no solid fills.",
+        "vi": "Tô bóng mẫu Ấm trà buổi chiều chỉ bằng đánh nét — không tô đặc."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "hatching-cross-hatching",
+      "questions": [
+        {
+          "id": "hatching-cross-hatching-q1",
+          "prompt": {
+            "en": "How do you make a hatched area darker?",
+            "vi": "Làm sao làm vùng đánh nét đậm hơn?"
+          },
+          "options": [
+            {
+              "en": "Space lines further apart",
+              "vi": "Giãn nét xa hơn"
+            },
+            {
+              "en": "Place lines closer or add crossing layers",
+              "vi": "Đặt nét gần hơn hoặc thêm lớp giao nhau"
+            },
+            {
+              "en": "Use a lighter pencil",
+              "vi": "Dùng bút chì nhạt hơn"
+            },
+            {
+              "en": "Erase",
+              "vi": "Tẩy"
+            }
+          ]
+        },
+        {
+          "id": "hatching-cross-hatching-q2",
+          "prompt": {
+            "en": "Contour hatching means…",
+            "vi": "Đánh nét theo đường viền nghĩa là…"
+          },
+          "options": [
+            {
+              "en": "Hatching outside the object",
+              "vi": "Đánh nét bên ngoài vật"
+            },
+            {
+              "en": "Curving hatch lines to follow the form",
+              "vi": "Uốn cong nét theo khối"
+            },
+            {
+              "en": "Only outlining",
+              "vi": "Chỉ vẽ viền"
+            },
+            {
+              "en": "Using colour",
+              "vi": "Dùng màu"
+            }
+          ]
+        },
+        {
+          "id": "hatching-cross-hatching-q3",
+          "prompt": {
+            "en": "Cross-hatching adds layers…",
+            "vi": "Đánh nét chéo thêm các lớp…"
+          },
+          "options": [
+            {
+              "en": "In the same direction",
+              "vi": "Cùng hướng"
+            },
+            {
+              "en": "At different angles",
+              "vi": "Ở các góc khác nhau"
+            },
+            {
+              "en": "Of colour",
+              "vi": "Màu"
+            },
+            {
+              "en": "Of eraser marks",
+              "vi": "Vết tẩy"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "blending",
+    "title": {
+      "en": "Blending & Gradients",
+      "vi": "Hòa trộn & chuyển sắc"
+    },
+    "summary": {
+      "en": "Smooth transitions from light to dark, and from one colour to another.",
+      "vi": "Chuyển tiếp mượt mà từ sáng sang tối, và từ màu này sang màu khác."
+    },
+    "topic": "technique",
+    "track": "beginner",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Layer, don’t press",
+          "vi": "Chồng lớp, đừng nhấn mạnh"
+        },
+        "body": {
+          "en": "Smooth gradients are built from many **light layers**, not one heavy one. Start with gentle pressure everywhere, then add layers only where it needs to be darker. Pressing hard early crushes the paper’s texture and makes later blending impossible.",
+          "vi": "Chuyển sắc mượt được tạo từ nhiều **lớp nhẹ**, không phải một lớp đậm. Bắt đầu nhấn nhẹ khắp nơi, rồi chỉ thêm lớp ở chỗ cần đậm hơn. Nhấn mạnh quá sớm sẽ làm bẹp vân giấy và khiến việc hòa trộn sau đó không thể."
+        },
+        "diagram": "blending"
+      },
+      {
+        "heading": {
+          "en": "Blending colours",
+          "vi": "Hòa trộn màu"
+        },
+        "body": {
+          "en": "To blend two colours, overlap them in the middle zone and let each fade out as it crosses into the other. In this studio, the **Watercolour** brush builds up softly, the **Airbrush** gives smooth sprays, and the **Smudge** tool pulls colours into each other like a fingertip.",
+          "vi": "Để hòa hai màu, chồng chúng ở vùng giữa và để mỗi màu nhạt dần khi lấn sang màu kia. Trong xưởng vẽ này, cọ **Màu nước** đắp lên mềm mại, **Cọ phun** cho vệt phun mịn, và công cụ **Làm nhòe** kéo các màu vào nhau như đầu ngón tay."
+        },
+        "callout": {
+          "en": "Lower brush opacity to 20–30% for gentle, controllable blends.",
+          "vi": "Giảm độ đục cọ xuống 20–30% để hòa màu nhẹ nhàng, dễ kiểm soát."
+        }
+      },
+      {
+        "heading": {
+          "en": "Keep some edges hard",
+          "vi": "Giữ lại vài cạnh sắc"
+        },
+        "body": {
+          "en": "Over-blending makes everything look soft and plastic. Keep crisp edges where forms turn sharply or overlap, and blend where surfaces curve gently. The contrast between soft and hard edges is what makes a rendering feel real.",
+          "vi": "Hòa trộn quá mức khiến mọi thứ mềm nhũn như nhựa. Giữ cạnh sắc ở chỗ khối chuyển hướng gắt hoặc chồng lên nhau, và hòa trộn ở chỗ bề mặt cong nhẹ. Sự tương phản giữa cạnh mềm và cạnh sắc khiến bản vẽ trông thật."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "airbrush",
+      "palette": [
+        "#3A3FA8",
+        "#C93C6B",
+        "#F2A93B"
+      ],
+      "prompt": {
+        "en": "Paint a sunset sky that blends from violet to rose to gold.",
+        "vi": "Vẽ bầu trời hoàng hôn chuyển từ tím sang hồng sang vàng."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "blending",
+      "questions": [
+        {
+          "id": "blending-q1",
+          "prompt": {
+            "en": "Smooth gradients come from…",
+            "vi": "Chuyển sắc mượt đến từ…"
+          },
+          "options": [
+            {
+              "en": "One heavy layer",
+              "vi": "Một lớp đậm"
+            },
+            {
+              "en": "Many light layers",
+              "vi": "Nhiều lớp nhẹ"
+            },
+            {
+              "en": "Erasing",
+              "vi": "Tẩy xóa"
+            },
+            {
+              "en": "Pressing hard first",
+              "vi": "Nhấn mạnh trước"
+            }
+          ]
+        },
+        {
+          "id": "blending-q2",
+          "prompt": {
+            "en": "Why keep some edges hard?",
+            "vi": "Vì sao giữ lại vài cạnh sắc?"
+          },
+          "options": [
+            {
+              "en": "To save time",
+              "vi": "Để tiết kiệm thời gian"
+            },
+            {
+              "en": "Contrast of soft and hard edges looks real",
+              "vi": "Tương phản cạnh mềm/sắc trông thật"
+            },
+            {
+              "en": "Because blending is wrong",
+              "vi": "Vì hòa trộn là sai"
+            },
+            {
+              "en": "It is required",
+              "vi": "Bắt buộc"
+            }
+          ]
+        },
+        {
+          "id": "blending-q3",
+          "prompt": {
+            "en": "Which opacity helps gentle blending?",
+            "vi": "Độ đục nào giúp hòa trộn nhẹ nhàng?"
+          },
+          "options": [
+            {
+              "en": "100%",
+              "vi": "100%"
+            },
+            {
+              "en": "20–30%",
+              "vi": "20–30%"
+            },
+            {
+              "en": "0%",
+              "vi": "0%"
+            },
+            {
+              "en": "Opacity does not matter",
+              "vi": "Không quan trọng"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "texture",
+    "title": {
+      "en": "Drawing Texture",
+      "vi": "Vẽ chất cảm"
+    },
+    "summary": {
+      "en": "Make fur feel soft, bark feel rough and glass feel smooth.",
+      "vi": "Làm lông thú mềm mại, vỏ cây sần sùi và thủy tinh trơn láng."
+    },
+    "topic": "technique",
+    "track": "beginner",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Texture is pattern + light",
+          "vi": "Chất cảm là hoa văn + ánh sáng"
+        },
+        "body": {
+          "en": "Every surface texture is a pattern of tiny highlights and shadows. Rough bark has deep, irregular shadows; smooth glass has sharp, bright reflections and almost no texture marks. Ask: what shape are the little shadows, and how close together?",
+          "vi": "Mỗi chất cảm bề mặt là một hoa văn của những điểm sáng và bóng tí hon. Vỏ cây sần có bóng sâu, không đều; thủy tinh trơn có phản chiếu sắc sáng và gần như không có dấu chất cảm. Hãy hỏi: những bóng nhỏ có hình gì, và gần nhau đến đâu?"
+        },
+        "diagram": "texture"
+      },
+      {
+        "heading": {
+          "en": "A texture library",
+          "vi": "Thư viện chất cảm"
+        },
+        "body": {
+          "en": "**Fur:** short flicked strokes following growth direction. **Wood:** long wavy lines with occasional knots. **Stone:** irregular cracks and speckles. **Fabric:** soft folds with gentle tone changes. **Metal:** strong contrast, sharp reflections. Keep a page in your sketchbook for these.",
+          "vi": "**Lông:** nét hất ngắn theo hướng lông mọc. **Gỗ:** nét lượn dài với vài mắt gỗ. **Đá:** vết nứt và đốm không đều. **Vải:** nếp gấp mềm với tông chuyển nhẹ. **Kim loại:** tương phản mạnh, phản chiếu sắc nét. Hãy dành một trang sổ phác cho những chất cảm này."
+        },
+        "callout": {
+          "en": "Texture is strongest at the edges between light and shadow and fades in full light.",
+          "vi": "Chất cảm rõ nhất ở ranh giới sáng tối và mờ dần ở vùng sáng hoàn toàn."
+        }
+      },
+      {
+        "heading": {
+          "en": "Less is more",
+          "vi": "Ít mà nhiều"
+        },
+        "body": {
+          "en": "You do not need to draw every hair. Render texture in a few key areas and let the viewer’s imagination fill in the rest — the Chalk brush in the studio adds instant grain that suggests texture with very little effort.",
+          "vi": "Bạn không cần vẽ từng sợi lông. Thể hiện chất cảm ở vài vùng chủ chốt và để trí tưởng tượng người xem lấp đầy phần còn lại — cọ Phấn trong xưởng vẽ thêm vân hạt tức thì, gợi chất cảm mà không tốn nhiều công."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "chalk",
+      "palette": [
+        "#4A3426",
+        "#C98B2B",
+        "#E8DCC0",
+        "#1B1A17"
+      ],
+      "prompt": {
+        "en": "Colour the Night Owl, giving its feathers a soft, flicked texture.",
+        "vi": "Tô mẫu Cú đêm, tạo chất cảm lông mềm bằng nét hất."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "texture",
+      "questions": [
+        {
+          "id": "texture-q1",
+          "prompt": {
+            "en": "Which surface has sharp, bright reflections and few texture marks?",
+            "vi": "Bề mặt nào có phản chiếu sắc sáng và ít dấu chất cảm?"
+          },
+          "options": [
+            {
+              "en": "Bark",
+              "vi": "Vỏ cây"
+            },
+            {
+              "en": "Glass",
+              "vi": "Thủy tinh"
+            },
+            {
+              "en": "Wool",
+              "vi": "Len"
+            },
+            {
+              "en": "Stone",
+              "vi": "Đá"
+            }
+          ]
+        },
+        {
+          "id": "texture-q2",
+          "prompt": {
+            "en": "How should fur strokes be drawn?",
+            "vi": "Nét vẽ lông nên thế nào?"
+          },
+          "options": [
+            {
+              "en": "Long straight lines",
+              "vi": "Nét thẳng dài"
+            },
+            {
+              "en": "Short flicks following growth direction",
+              "vi": "Nét hất ngắn theo hướng mọc"
+            },
+            {
+              "en": "Dots only",
+              "vi": "Chỉ chấm"
+            },
+            {
+              "en": "Circles",
+              "vi": "Vòng tròn"
+            }
+          ]
+        },
+        {
+          "id": "texture-q3",
+          "prompt": {
+            "en": "Where is texture usually most visible?",
+            "vi": "Chất cảm thường rõ nhất ở đâu?"
+          },
+          "options": [
+            {
+              "en": "In full light",
+              "vi": "Vùng sáng hoàn toàn"
+            },
+            {
+              "en": "At the light–shadow boundary",
+              "vi": "Ranh giới sáng–tối"
+            },
+            {
+              "en": "In deep shadow",
+              "vi": "Vùng tối sâu"
+            },
+            {
+              "en": "On the outline only",
+              "vi": "Chỉ trên viền"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "negative-space",
+    "title": {
+      "en": "Negative Space",
+      "vi": "Không gian âm"
+    },
+    "summary": {
+      "en": "Draw the gaps between things and the things will draw themselves.",
+      "vi": "Vẽ khoảng trống giữa các vật và chính các vật sẽ tự hiện ra."
+    },
+    "topic": "drawing",
+    "track": "beginner",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Positive and negative",
+          "vi": "Dương và âm"
+        },
+        "body": {
+          "en": "The object you draw is **positive space**; the space around and between it is **negative space**. Both are shapes. When we draw a chair, we fuss over the legs; when we draw the odd-shaped gaps between the legs, the chair often appears more accurately than ever.",
+          "vi": "Vật bạn vẽ là **không gian dương**; khoảng trống quanh và giữa nó là **không gian âm**. Cả hai đều là hình. Khi vẽ cái ghế, ta loay hoay với chân ghế; khi vẽ những khoảng trống hình thù kỳ lạ giữa các chân, cái ghế thường hiện ra chính xác hơn bao giờ hết."
+        },
+        "diagram": "negative"
+      },
+      {
+        "heading": {
+          "en": "Why it works",
+          "vi": "Vì sao hiệu quả"
+        },
+        "body": {
+          "en": "The gaps have no name, so your brain cannot replace them with a symbol — you are forced to observe their true shape. Artists like Matisse designed entire cut-outs around the dance between positive and negative shapes.",
+          "vi": "Khoảng trống không có tên, nên não bạn không thể thay chúng bằng ký hiệu — bạn buộc phải quan sát hình dạng thật. Những nghệ sĩ như Matisse thiết kế cả bộ tranh cắt giấy quanh điệu nhảy giữa hình dương và hình âm."
+        },
+        "callout": {
+          "en": "Logo designers love negative space: look for hidden arrows and animals in famous logos.",
+          "vi": "Nhà thiết kế logo rất thích không gian âm: hãy tìm mũi tên và con vật ẩn trong các logo nổi tiếng."
+        }
+      },
+      {
+        "heading": {
+          "en": "Try it",
+          "vi": "Thử ngay"
+        },
+        "body": {
+          "en": "Pick a plant with several leaves. Instead of drawing the leaves, fill in only the shapes of the background you can see between them with a dark marker. The leaves will emerge as light silhouettes.",
+          "vi": "Chọn một chậu cây nhiều lá. Thay vì vẽ lá, chỉ tô kín các hình nền bạn thấy giữa chúng bằng bút dạ đậm. Những chiếc lá sẽ hiện lên như bóng sáng."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "marker",
+      "palette": [
+        "#1B1A17",
+        "#2E8B6F"
+      ],
+      "prompt": {
+        "en": "Fill only the background between leaves and stems to reveal a plant.",
+        "vi": "Chỉ tô nền giữa lá và cành để làm hiện ra chậu cây."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "negative-space",
+      "questions": [
+        {
+          "id": "negative-space-q1",
+          "prompt": {
+            "en": "Negative space is…",
+            "vi": "Không gian âm là…"
+          },
+          "options": [
+            {
+              "en": "A dark colour",
+              "vi": "Một màu tối"
+            },
+            {
+              "en": "The space around and between objects",
+              "vi": "Khoảng trống quanh và giữa các vật"
+            },
+            {
+              "en": "A mistake",
+              "vi": "Một lỗi"
+            },
+            {
+              "en": "Shadow",
+              "vi": "Bóng tối"
+            }
+          ]
+        },
+        {
+          "id": "negative-space-q2",
+          "prompt": {
+            "en": "Why does drawing negative shapes improve accuracy?",
+            "vi": "Vì sao vẽ hình âm giúp chính xác hơn?"
+          },
+          "options": [
+            {
+              "en": "They are smaller",
+              "vi": "Chúng nhỏ hơn"
+            },
+            {
+              "en": "The brain has no symbol for them, so you observe",
+              "vi": "Não không có ký hiệu cho chúng nên bạn phải quan sát"
+            },
+            {
+              "en": "They are always squares",
+              "vi": "Chúng luôn là hình vuông"
+            },
+            {
+              "en": "They need no measuring",
+              "vi": "Không cần đo"
+            }
+          ]
+        },
+        {
+          "id": "negative-space-q3",
+          "prompt": {
+            "en": "Which artist famously played with positive and negative shapes in cut-outs?",
+            "vi": "Nghệ sĩ nào nổi tiếng chơi với hình dương và âm trong tranh cắt giấy?"
+          },
+          "options": [
+            {
+              "en": "Rembrandt",
+              "vi": "Rembrandt"
+            },
+            {
+              "en": "Matisse",
+              "vi": "Matisse"
+            },
+            {
+              "en": "Turner",
+              "vi": "Turner"
+            },
+            {
+              "en": "Courbet",
+              "vi": "Courbet"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "gesture-drawing",
+    "title": {
+      "en": "Gesture Drawing",
+      "vi": "Vẽ dáng"
+    },
+    "summary": {
+      "en": "Capture the energy of a pose in 30 seconds — movement first, details never.",
+      "vi": "Bắt năng lượng của một tư thế trong 30 giây — chuyển động trước, chi tiết không cần."
+    },
+    "topic": "figure",
+    "track": "beginner",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "The line of action",
+          "vi": "Đường hành động"
+        },
+        "body": {
+          "en": "Every pose has a main flow: one curving line from the head through the spine to the weight-bearing foot. Find this **line of action** first. A C-curve feels relaxed; an S-curve feels graceful; a straight diagonal feels dynamic.",
+          "vi": "Mỗi tư thế có một dòng chảy chính: một đường cong từ đầu qua cột sống tới bàn chân chịu lực. Hãy tìm **đường hành động** này trước. Đường cong chữ C gợi thư giãn; chữ S gợi duyên dáng; đường chéo thẳng gợi năng động."
+        },
+        "diagram": "gesture"
+      },
+      {
+        "heading": {
+          "en": "Speed is the teacher",
+          "vi": "Tốc độ là người thầy"
+        },
+        "body": {
+          "en": "Set a timer for 30 seconds per pose. Because you cannot finish, you are forced to choose what matters: the tilt of the shoulders, the twist of the hips, the reach of an arm. Do ten in a row, then a few 2-minute poses.",
+          "vi": "Đặt hẹn giờ 30 giây mỗi tư thế. Vì không thể hoàn thành, bạn buộc phải chọn điều quan trọng: độ nghiêng của vai, độ xoắn của hông, tầm vươn của cánh tay. Vẽ liền mười cái, rồi vài tư thế 2 phút."
+        },
+        "callout": {
+          "en": "Draw people in cafés, parks and on the bus. Nobody stays still — perfect gesture practice!",
+          "vi": "Vẽ người ở quán cà phê, công viên và trên xe buýt. Không ai đứng yên — hoàn hảo để luyện vẽ dáng!"
+        }
+      },
+      {
+        "heading": {
+          "en": "Shoulders and hips",
+          "vi": "Vai và hông"
+        },
+        "body": {
+          "en": "When someone stands with their weight on one leg, the hips tilt one way and the shoulders tilt the opposite way — the classical **contrapposto**. Two quick tilted lines for shoulders and hips instantly make a figure stand naturally.",
+          "vi": "Khi ai đó dồn trọng lượng lên một chân, hông nghiêng một phía còn vai nghiêng phía ngược lại — tư thế **contrapposto** cổ điển. Hai đường nghiêng nhanh cho vai và hông lập tức khiến nhân vật đứng tự nhiên."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pencil",
+      "palette": [
+        "#1B1A17",
+        "#E4572E"
+      ],
+      "prompt": {
+        "en": "Draw 10 stick-figure gestures of a dancer, 30 seconds each.",
+        "vi": "Vẽ 10 dáng người que của vũ công, mỗi dáng 30 giây."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "gesture-drawing",
+      "questions": [
+        {
+          "id": "gesture-drawing-q1",
+          "prompt": {
+            "en": "What should you find first in a gesture drawing?",
+            "vi": "Điều đầu tiên cần tìm trong bản vẽ dáng là gì?"
+          },
+          "options": [
+            {
+              "en": "The eyes",
+              "vi": "Đôi mắt"
+            },
+            {
+              "en": "The line of action",
+              "vi": "Đường hành động"
+            },
+            {
+              "en": "Clothing folds",
+              "vi": "Nếp áo"
+            },
+            {
+              "en": "Fingers",
+              "vi": "Ngón tay"
+            }
+          ]
+        },
+        {
+          "id": "gesture-drawing-q2",
+          "prompt": {
+            "en": "In contrapposto, the shoulders and hips…",
+            "vi": "Trong contrapposto, vai và hông…"
+          },
+          "options": [
+            {
+              "en": "Tilt the same way",
+              "vi": "Nghiêng cùng phía"
+            },
+            {
+              "en": "Tilt in opposite directions",
+              "vi": "Nghiêng ngược chiều"
+            },
+            {
+              "en": "Stay level",
+              "vi": "Giữ ngang"
+            },
+            {
+              "en": "Point forward",
+              "vi": "Hướng về trước"
+            }
+          ]
+        },
+        {
+          "id": "gesture-drawing-q3",
+          "prompt": {
+            "en": "Why time poses at 30 seconds?",
+            "vi": "Vì sao giới hạn mỗi dáng 30 giây?"
+          },
+          "options": [
+            {
+              "en": "To force you to choose what matters",
+              "vi": "Để buộc bạn chọn điều quan trọng"
+            },
+            {
+              "en": "To finish details",
+              "vi": "Để hoàn thiện chi tiết"
+            },
+            {
+              "en": "Because models get tired",
+              "vi": "Vì người mẫu mệt"
+            },
+            {
+              "en": "It is a rule",
+              "vi": "Đó là luật"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "drawing-faces",
+    "title": {
+      "en": "Drawing Faces",
+      "vi": "Vẽ gương mặt"
+    },
+    "summary": {
+      "en": "Classic proportions: where the eyes, nose and mouth really sit.",
+      "vi": "Tỷ lệ kinh điển: mắt, mũi và miệng thật sự nằm ở đâu."
+    },
+    "topic": "figure",
+    "track": "beginner",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "The halfway surprise",
+          "vi": "Bất ngờ ở chính giữa"
+        },
+        "body": {
+          "en": "Draw an egg shape for the head. The **eyes sit halfway** down — not near the top, as most beginners draw them. The space between the eyes is about one eye-width. The bottom of the nose sits halfway between the eyes and chin, and the mouth about a third of the way from nose to chin.",
+          "vi": "Vẽ hình quả trứng cho đầu. **Mắt nằm ở chính giữa** chiều cao — không phải gần đỉnh như phần lớn người mới vẽ. Khoảng cách giữa hai mắt bằng khoảng một con mắt. Chân mũi nằm giữa mắt và cằm, còn miệng cách mũi khoảng một phần ba quãng từ mũi tới cằm."
+        },
+        "diagram": "face"
+      },
+      {
+        "heading": {
+          "en": "Ears and neck",
+          "vi": "Tai và cổ"
+        },
+        "body": {
+          "en": "The ears line up roughly between the eyebrows and the bottom of the nose. The neck is wider than most people think — it starts below the ears, not the chin. These guidelines work for front views; in profile, the ear sits just behind the centre of the head.",
+          "vi": "Tai thẳng hàng khoảng giữa lông mày và chân mũi. Cổ rộng hơn nhiều người nghĩ — nó bắt đầu dưới tai, không phải dưới cằm. Các đường hướng dẫn này đúng cho góc nhìn thẳng; khi nhìn nghiêng, tai nằm ngay sau tâm đầu."
+        },
+        "callout": {
+          "en": "Proportions are averages. The fun of portraiture is noticing how each real face differs from them.",
+          "vi": "Tỷ lệ chỉ là trung bình. Niềm vui của vẽ chân dung là nhận ra mỗi gương mặt thật khác tỷ lệ chuẩn thế nào."
+        }
+      },
+      {
+        "heading": {
+          "en": "Expression",
+          "vi": "Biểu cảm"
+        },
+        "body": {
+          "en": "Emotion lives mostly around the **eyes and mouth**. Raised inner brows read as worry; lowered brows read as anger; crinkled lower lids make a real smile. Practise by drawing the same face with five different expressions.",
+          "vi": "Cảm xúc chủ yếu nằm quanh **mắt và miệng**. Đầu lông mày trong nhướng lên là lo lắng; lông mày hạ xuống là giận dữ; mí dưới nheo lại tạo nụ cười thật. Luyện tập bằng cách vẽ cùng một gương mặt với năm biểu cảm khác nhau."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pencil",
+      "palette": [
+        "#1B1A17",
+        "#E8C4A8",
+        "#C93C6B"
+      ],
+      "prompt": {
+        "en": "Colour the Simple Portrait template, then sketch it again with a surprised expression.",
+        "vi": "Tô mẫu Chân dung đơn giản, rồi phác lại với biểu cảm ngạc nhiên."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "drawing-faces",
+      "questions": [
+        {
+          "id": "drawing-faces-q1",
+          "prompt": {
+            "en": "Where do the eyes sit on the head?",
+            "vi": "Mắt nằm ở đâu trên đầu?"
+          },
+          "options": [
+            {
+              "en": "Near the top",
+              "vi": "Gần đỉnh"
+            },
+            {
+              "en": "About halfway down",
+              "vi": "Khoảng giữa chiều cao"
+            },
+            {
+              "en": "Near the chin",
+              "vi": "Gần cằm"
+            },
+            {
+              "en": "A quarter down",
+              "vi": "Một phần tư từ trên xuống"
+            }
+          ]
+        },
+        {
+          "id": "drawing-faces-q2",
+          "prompt": {
+            "en": "The space between the eyes is about…",
+            "vi": "Khoảng cách giữa hai mắt khoảng…"
+          },
+          "options": [
+            {
+              "en": "One eye-width",
+              "vi": "Một bề rộng mắt"
+            },
+            {
+              "en": "Two eye-widths",
+              "vi": "Hai bề rộng mắt"
+            },
+            {
+              "en": "A nose length",
+              "vi": "Một chiều dài mũi"
+            },
+            {
+              "en": "Half an eye",
+              "vi": "Nửa con mắt"
+            }
+          ]
+        },
+        {
+          "id": "drawing-faces-q3",
+          "prompt": {
+            "en": "The ears line up between…",
+            "vi": "Tai thẳng hàng giữa…"
+          },
+          "options": [
+            {
+              "en": "Eyes and mouth",
+              "vi": "Mắt và miệng"
+            },
+            {
+              "en": "Eyebrows and bottom of the nose",
+              "vi": "Lông mày và chân mũi"
+            },
+            {
+              "en": "Hairline and eyes",
+              "vi": "Chân tóc và mắt"
+            },
+            {
+              "en": "Mouth and chin",
+              "vi": "Miệng và cằm"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "drawing-hands",
+    "title": {
+      "en": "Drawing Hands",
+      "vi": "Vẽ bàn tay"
+    },
+    "summary": {
+      "en": "Box the palm, chain the fingers, and the hardest subject becomes manageable.",
+      "vi": "Đóng hộp lòng bàn tay, nối xích ngón tay, và chủ đề khó nhất trở nên dễ xử lý."
+    },
+    "topic": "figure",
+    "track": "beginner",
+    "difficulty": "advanced",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Mitten first",
+          "vi": "Vẽ găng tay trước"
+        },
+        "body": {
+          "en": "Start with a simple **mitten shape**: a slightly squashed square for the palm, a block for the fingers together, and a separate wedge for the thumb. Get this big shape and its angle right before splitting the fingers.",
+          "vi": "Bắt đầu với **hình găng tay** đơn giản: một hình vuông hơi dẹt cho lòng bàn tay, một khối cho các ngón chụm lại và một hình nêm riêng cho ngón cái. Đúng hình lớn và góc nghiêng trước khi tách ngón."
+        },
+        "diagram": "hand"
+      },
+      {
+        "heading": {
+          "en": "Fingers in arcs",
+          "vi": "Ngón tay theo cung"
+        },
+        "body": {
+          "en": "Knuckles do not line up straight — they form a gentle **arc**, with the middle finger longest. Each finger has three segments that shrink towards the tip. Draw fingers as chains of short cylinders and they will bend convincingly.",
+          "vi": "Các đốt ngón không thẳng hàng — chúng tạo thành một **cung** nhẹ, ngón giữa dài nhất. Mỗi ngón có ba đốt nhỏ dần về đầu ngón. Vẽ ngón tay như chuỗi hình trụ ngắn, chúng sẽ uốn cong thuyết phục."
+        },
+        "callout": {
+          "en": "The palm is about as long as the middle finger.",
+          "vi": "Lòng bàn tay dài khoảng bằng ngón giữa."
+        }
+      },
+      {
+        "heading": {
+          "en": "Your best model",
+          "vi": "Người mẫu tốt nhất"
+        },
+        "body": {
+          "en": "You always carry a model: your other hand. Draw it every day in a new pose — holding a cup, pointing, relaxed. Leonardo and Dürer filled pages with hand studies; even masters needed the practice.",
+          "vi": "Bạn luôn mang theo một người mẫu: bàn tay còn lại. Vẽ nó mỗi ngày với tư thế mới — cầm cốc, chỉ tay, thả lỏng. Leonardo và Dürer vẽ kín nhiều trang nghiên cứu bàn tay; cả bậc thầy cũng cần luyện tập."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pencil",
+      "palette": [
+        "#1B1A17",
+        "#E8C4A8"
+      ],
+      "prompt": {
+        "en": "Draw your own hand as a mitten shape, then refine the fingers.",
+        "vi": "Vẽ bàn tay bạn dưới dạng găng tay, rồi tinh chỉnh các ngón."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "drawing-hands",
+      "questions": [
+        {
+          "id": "drawing-hands-q1",
+          "prompt": {
+            "en": "What simple shape should you start a hand with?",
+            "vi": "Nên bắt đầu vẽ bàn tay bằng hình đơn giản nào?"
+          },
+          "options": [
+            {
+              "en": "A circle",
+              "vi": "Hình tròn"
+            },
+            {
+              "en": "A mitten",
+              "vi": "Găng tay"
+            },
+            {
+              "en": "A triangle",
+              "vi": "Tam giác"
+            },
+            {
+              "en": "Five lines",
+              "vi": "Năm đường thẳng"
+            }
+          ]
+        },
+        {
+          "id": "drawing-hands-q2",
+          "prompt": {
+            "en": "The knuckles form…",
+            "vi": "Các đốt ngón tạo thành…"
+          },
+          "options": [
+            {
+              "en": "A straight line",
+              "vi": "Đường thẳng"
+            },
+            {
+              "en": "A gentle arc",
+              "vi": "Một cung nhẹ"
+            },
+            {
+              "en": "A zigzag",
+              "vi": "Đường zíc zắc"
+            },
+            {
+              "en": "A circle",
+              "vi": "Vòng tròn"
+            }
+          ]
+        },
+        {
+          "id": "drawing-hands-q3",
+          "prompt": {
+            "en": "The palm is about as long as…",
+            "vi": "Lòng bàn tay dài khoảng bằng…"
+          },
+          "options": [
+            {
+              "en": "The thumb",
+              "vi": "Ngón cái"
+            },
+            {
+              "en": "The middle finger",
+              "vi": "Ngón giữa"
+            },
+            {
+              "en": "The forearm",
+              "vi": "Cẳng tay"
+            },
+            {
+              "en": "Two fingers",
+              "vi": "Hai ngón tay"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 70
+  },
+  {
+    "slug": "basic-anatomy",
+    "title": {
+      "en": "Basic Figure Proportions",
+      "vi": "Tỷ lệ cơ thể cơ bản"
+    },
+    "summary": {
+      "en": "The “eight heads” figure and the simple shapes underneath the body.",
+      "vi": "Hình người “tám đầu” và các khối đơn giản bên dưới cơ thể."
+    },
+    "topic": "figure",
+    "track": "beginner",
+    "difficulty": "advanced",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Measuring in heads",
+          "vi": "Đo bằng đầu"
+        },
+        "body": {
+          "en": "Artists measure the body in **head-heights**. An average adult is about 7½ heads tall; artists often draw 8 for elegance (heroic figures use 8½). Halfway down the figure is the hip joint. The elbows line up with the waist, and the fingertips reach mid-thigh.",
+          "vi": "Họa sĩ đo cơ thể bằng **chiều cao đầu**. Người trưởng thành trung bình cao khoảng 7,5 đầu; họa sĩ thường vẽ 8 đầu cho thanh thoát (nhân vật anh hùng dùng 8,5). Điểm giữa cơ thể là khớp hông. Khuỷu tay ngang eo, đầu ngón tay chạm giữa đùi."
+        },
+        "diagram": "anatomy"
+      },
+      {
+        "heading": {
+          "en": "Simple masses",
+          "vi": "Khối đơn giản"
+        },
+        "body": {
+          "en": "Think of the ribcage as an egg, the pelvis as a bowl, and the limbs as tapered cylinders joined by ball joints. Moving these three masses — head, ribcage, pelvis — independently gives poses life.",
+          "vi": "Hãy coi lồng ngực là quả trứng, xương chậu là cái bát, và tay chân là các hình trụ thuôn nối bằng khớp cầu. Chuyển động ba khối — đầu, lồng ngực, xương chậu — một cách độc lập sẽ thổi sức sống vào tư thế."
+        },
+        "callout": {
+          "en": "Children are about 4–6 heads tall — big heads are part of what makes them look young.",
+          "vi": "Trẻ em cao khoảng 4–6 đầu — đầu to là một phần khiến các em trông nhỏ tuổi."
+        }
+      },
+      {
+        "heading": {
+          "en": "Combine with gesture",
+          "vi": "Kết hợp với vẽ dáng"
+        },
+        "body": {
+          "en": "Start with a gesture line, hang the three masses on it, add limbs as cylinders, then check proportions in head-units. This build-up method is used by animators and illustrators everywhere.",
+          "vi": "Bắt đầu với đường dáng, treo ba khối lên đó, thêm tay chân dạng hình trụ, rồi kiểm tra tỷ lệ theo đơn vị đầu. Phương pháp dựng hình này được các họa sĩ hoạt hình và minh họa khắp nơi sử dụng."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pencil",
+      "palette": [
+        "#1B1A17",
+        "#2F80C4"
+      ],
+      "prompt": {
+        "en": "Draw an 8-head figure using egg, bowl and cylinder shapes.",
+        "vi": "Vẽ hình người 8 đầu bằng khối trứng, bát và hình trụ."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "basic-anatomy",
+      "questions": [
+        {
+          "id": "basic-anatomy-q1",
+          "prompt": {
+            "en": "How many heads tall do artists often draw an adult?",
+            "vi": "Họa sĩ thường vẽ người lớn cao bao nhiêu đầu?"
+          },
+          "options": [
+            {
+              "en": "4",
+              "vi": "4"
+            },
+            {
+              "en": "6",
+              "vi": "6"
+            },
+            {
+              "en": "8",
+              "vi": "8"
+            },
+            {
+              "en": "12",
+              "vi": "12"
+            }
+          ]
+        },
+        {
+          "id": "basic-anatomy-q2",
+          "prompt": {
+            "en": "The elbows line up with…",
+            "vi": "Khuỷu tay ngang với…"
+          },
+          "options": [
+            {
+              "en": "The shoulders",
+              "vi": "Vai"
+            },
+            {
+              "en": "The waist",
+              "vi": "Eo"
+            },
+            {
+              "en": "The knees",
+              "vi": "Đầu gối"
+            },
+            {
+              "en": "The chin",
+              "vi": "Cằm"
+            }
+          ]
+        },
+        {
+          "id": "basic-anatomy-q3",
+          "prompt": {
+            "en": "The pelvis can be simplified as…",
+            "vi": "Xương chậu có thể đơn giản hóa thành…"
+          },
+          "options": [
+            {
+              "en": "A bowl",
+              "vi": "Cái bát"
+            },
+            {
+              "en": "A triangle",
+              "vi": "Tam giác"
+            },
+            {
+              "en": "A cylinder",
+              "vi": "Hình trụ"
+            },
+            {
+              "en": "A star",
+              "vi": "Ngôi sao"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 70
+  },
+  {
+    "slug": "still-life",
+    "title": {
+      "en": "Still Life Basics",
+      "vi": "Tĩnh vật cơ bản"
+    },
+    "summary": {
+      "en": "Arrange, light and draw everyday objects — the classic training ground.",
+      "vi": "Sắp đặt, chiếu sáng và vẽ đồ vật thường ngày — sân tập kinh điển."
+    },
+    "topic": "subject",
+    "track": "beginner",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Arranging a set-up",
+          "vi": "Sắp đặt bố cục"
+        },
+        "body": {
+          "en": "Choose 3–5 objects of **different sizes, shapes and textures** — a mug, an apple, a crumpled cloth. Overlap some so they relate to each other, vary their heights, and avoid lining them up like soldiers. Odd numbers usually look more natural than even ones.",
+          "vi": "Chọn 3–5 đồ vật **khác nhau về kích thước, hình dạng và chất cảm** — một chiếc cốc, một quả táo, một mảnh vải nhàu. Để vài vật chồng lên nhau để chúng liên kết, thay đổi chiều cao, và tránh xếp thẳng hàng như lính. Số lẻ thường trông tự nhiên hơn số chẵn."
+        },
+        "diagram": "stilllife"
+      },
+      {
+        "heading": {
+          "en": "One strong light",
+          "vi": "Một nguồn sáng mạnh"
+        },
+        "body": {
+          "en": "Use a single lamp from the side, slightly above. Turn off other lights. Clear shadows make forms readable and give you a beautiful light–dark pattern to design with.",
+          "vi": "Dùng một đèn duy nhất chiếu từ bên hông, hơi cao. Tắt các đèn khác. Bóng rõ ràng giúp khối dễ đọc và cho bạn một mẫu sáng–tối đẹp để thiết kế."
+        },
+        "callout": {
+          "en": "Still life painters through history — Caravaggio, Chardin, Cézanne — used simple fruit and pots to explore big ideas.",
+          "vi": "Họa sĩ tĩnh vật qua các thời đại — Caravaggio, Chardin, Cézanne — dùng trái cây và bình gốm giản dị để khám phá những ý tưởng lớn."
+        }
+      },
+      {
+        "heading": {
+          "en": "Drawing order",
+          "vi": "Thứ tự vẽ"
+        },
+        "body": {
+          "en": "1) Lightly block in big shapes and check proportions. 2) Map the shadow shapes. 3) Add mid-tones. 4) Finish with darkest darks and brightest highlights. Resist detailing one object before the whole picture is established.",
+          "vi": "1) Phác nhẹ các mảng lớn và kiểm tra tỷ lệ. 2) Vẽ hình các mảng bóng. 3) Thêm tông trung gian. 4) Kết thúc với vùng tối nhất và điểm sáng nhất. Đừng vội làm chi tiết một vật trước khi toàn bộ bức tranh được định hình."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "marker",
+      "palette": [
+        "#E4572E",
+        "#F2A93B",
+        "#2E8B6F",
+        "#F6F1E7",
+        "#4A3426"
+      ],
+      "prompt": {
+        "en": "Colour the Fruit Bowl template with one light source from the left.",
+        "vi": "Tô mẫu Bát trái cây với một nguồn sáng từ bên trái."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "still-life",
+      "questions": [
+        {
+          "id": "still-life-q1",
+          "prompt": {
+            "en": "A good still-life set-up uses objects that are…",
+            "vi": "Bố cục tĩnh vật tốt dùng đồ vật…"
+          },
+          "options": [
+            {
+              "en": "All identical",
+              "vi": "Giống hệt nhau"
+            },
+            {
+              "en": "Varied in size, shape and texture",
+              "vi": "Đa dạng kích thước, hình dạng, chất cảm"
+            },
+            {
+              "en": "In a straight line",
+              "vi": "Xếp thẳng hàng"
+            },
+            {
+              "en": "Always even in number",
+              "vi": "Luôn số chẵn"
+            }
+          ]
+        },
+        {
+          "id": "still-life-q2",
+          "prompt": {
+            "en": "How many light sources are best for learning?",
+            "vi": "Bao nhiêu nguồn sáng tốt nhất khi học?"
+          },
+          "options": [
+            {
+              "en": "One",
+              "vi": "Một"
+            },
+            {
+              "en": "Three",
+              "vi": "Ba"
+            },
+            {
+              "en": "None",
+              "vi": "Không"
+            },
+            {
+              "en": "As many as possible",
+              "vi": "Càng nhiều càng tốt"
+            }
+          ]
+        },
+        {
+          "id": "still-life-q3",
+          "prompt": {
+            "en": "What comes last in the drawing order?",
+            "vi": "Điều gì đến cuối cùng trong thứ tự vẽ?"
+          },
+          "options": [
+            {
+              "en": "Big shapes",
+              "vi": "Mảng lớn"
+            },
+            {
+              "en": "Shadow shapes",
+              "vi": "Hình bóng"
+            },
+            {
+              "en": "Darkest darks and brightest highlights",
+              "vi": "Vùng tối nhất và điểm sáng nhất"
+            },
+            {
+              "en": "Proportions",
+              "vi": "Tỷ lệ"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "landscape-basics",
+    "title": {
+      "en": "Landscape Basics",
+      "vi": "Phong cảnh cơ bản"
+    },
+    "summary": {
+      "en": "Foreground, middle ground and background: building depth outdoors.",
+      "vi": "Tiền cảnh, trung cảnh và hậu cảnh: tạo chiều sâu ngoài trời."
+    },
+    "topic": "subject",
+    "track": "beginner",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Three planes",
+          "vi": "Ba lớp cảnh"
+        },
+        "body": {
+          "en": "Divide your landscape into **foreground** (detailed, large, strong contrast), **middle ground** (the main subject, medium detail) and **background** (simple shapes, soft edges, low contrast). Overlapping these planes instantly creates depth.",
+          "vi": "Chia phong cảnh thành **tiền cảnh** (chi tiết, lớn, tương phản mạnh), **trung cảnh** (chủ thể chính, chi tiết vừa) và **hậu cảnh** (hình đơn giản, cạnh mềm, tương phản thấp). Chồng các lớp này lên nhau lập tức tạo chiều sâu."
+        },
+        "diagram": "landscape"
+      },
+      {
+        "heading": {
+          "en": "Sky first",
+          "vi": "Bầu trời trước"
+        },
+        "body": {
+          "en": "The sky is the light source of every outdoor scene — it decides the mood. Paint or colour it first, and let its colour echo in water, shadows and distant hills so the whole picture feels unified.",
+          "vi": "Bầu trời là nguồn sáng của mọi cảnh ngoài trời — nó quyết định tâm trạng. Hãy vẽ hoặc tô nó trước, và để màu của nó vang lại trên mặt nước, bóng và đồi xa để cả bức tranh thống nhất."
+        },
+        "callout": {
+          "en": "Clouds are not white cotton balls: their undersides are grey-violet and their tops catch warm light.",
+          "vi": "Mây không phải bông gòn trắng: mặt dưới xám tím còn đỉnh mây bắt ánh sáng ấm."
+        }
+      },
+      {
+        "heading": {
+          "en": "Simplify nature",
+          "vi": "Đơn giản hóa thiên nhiên"
+        },
+        "body": {
+          "en": "You cannot draw every leaf. Group trees into big shapes with a light side and a shadow side, and suggest detail only near the focal point. The Mountain Lake template shows clear planes you can practise on.",
+          "vi": "Bạn không thể vẽ từng chiếc lá. Gom cây thành mảng lớn có phía sáng và phía bóng, và chỉ gợi chi tiết gần tiêu điểm. Mẫu Hồ trên núi có các lớp cảnh rõ ràng để bạn luyện tập."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "watercolour",
+      "palette": [
+        "#9DC3E6",
+        "#2E8B6F",
+        "#3A3FA8",
+        "#F2A93B",
+        "#F6F1E7"
+      ],
+      "prompt": {
+        "en": "Colour the Mountain Lake: crisp foreground pines, soft blue mountains.",
+        "vi": "Tô mẫu Hồ trên núi: thông tiền cảnh sắc nét, núi xa xanh mềm."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "landscape-basics",
+      "questions": [
+        {
+          "id": "landscape-basics-q1",
+          "prompt": {
+            "en": "Which plane has the most detail and contrast?",
+            "vi": "Lớp cảnh nào có nhiều chi tiết và tương phản nhất?"
+          },
+          "options": [
+            {
+              "en": "Background",
+              "vi": "Hậu cảnh"
+            },
+            {
+              "en": "Middle ground",
+              "vi": "Trung cảnh"
+            },
+            {
+              "en": "Foreground",
+              "vi": "Tiền cảnh"
+            },
+            {
+              "en": "Sky",
+              "vi": "Bầu trời"
+            }
+          ]
+        },
+        {
+          "id": "landscape-basics-q2",
+          "prompt": {
+            "en": "Why paint the sky first?",
+            "vi": "Vì sao vẽ bầu trời trước?"
+          },
+          "options": [
+            {
+              "en": "It is the easiest",
+              "vi": "Nó dễ nhất"
+            },
+            {
+              "en": "It sets the light and mood for everything",
+              "vi": "Nó định ánh sáng và tâm trạng cho mọi thứ"
+            },
+            {
+              "en": "It dries fastest",
+              "vi": "Nó khô nhanh nhất"
+            },
+            {
+              "en": "Tradition only",
+              "vi": "Chỉ là truyền thống"
+            }
+          ]
+        },
+        {
+          "id": "landscape-basics-q3",
+          "prompt": {
+            "en": "The undersides of clouds are usually…",
+            "vi": "Mặt dưới của mây thường…"
+          },
+          "options": [
+            {
+              "en": "Pure white",
+              "vi": "Trắng tinh"
+            },
+            {
+              "en": "Grey-violet",
+              "vi": "Xám tím"
+            },
+            {
+              "en": "Bright yellow",
+              "vi": "Vàng chói"
+            },
+            {
+              "en": "Black",
+              "vi": "Đen"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "watercolour-basics",
+    "title": {
+      "en": "Watercolour Basics",
+      "vi": "Màu nước cơ bản"
+    },
+    "summary": {
+      "en": "Wet-on-wet, wet-on-dry and glazing — the three moves of watercolour.",
+      "vi": "Ướt chồng ướt, ướt trên khô và láng màu — ba thao tác của màu nước."
+    },
+    "topic": "technique",
+    "track": "colour",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Wet-on-wet",
+          "vi": "Ướt chồng ướt"
+        },
+        "body": {
+          "en": "Wet the paper first, then drop in colour. It blooms and spreads with soft, unpredictable edges — perfect for skies, mist and backgrounds. Control comes from how wet the paper is: shiny-wet spreads wildly, damp spreads gently.",
+          "vi": "Làm ướt giấy trước, rồi nhỏ màu vào. Màu nở và lan với cạnh mềm, khó đoán — hoàn hảo cho bầu trời, sương mù và nền. Sự kiểm soát đến từ độ ướt của giấy: ướt bóng thì lan mạnh, ẩm thì lan nhẹ."
+        },
+        "diagram": "watercolour"
+      },
+      {
+        "heading": {
+          "en": "Wet-on-dry and glazing",
+          "vi": "Ướt trên khô và láng màu"
+        },
+        "body": {
+          "en": "Paint on dry paper for **crisp edges** and details. Once a layer is completely dry, a thin transparent layer on top — a **glaze** — shifts the colour underneath without lifting it. Blue glazed over yellow makes a luminous green.",
+          "vi": "Vẽ trên giấy khô để có **cạnh sắc** và chi tiết. Khi một lớp đã khô hoàn toàn, một lớp mỏng trong suốt phủ lên — **láng màu** — sẽ đổi màu bên dưới mà không làm trôi nó. Xanh láng trên vàng tạo màu lục rực sáng."
+        },
+        "callout": {
+          "en": "Save your whites! In watercolour, white comes from the paper, so plan highlights before you paint.",
+          "vi": "Giữ màu trắng! Trong màu nước, màu trắng đến từ giấy, nên hãy tính trước điểm sáng trước khi vẽ."
+        }
+      },
+      {
+        "heading": {
+          "en": "Light to dark",
+          "vi": "Từ sáng đến tối"
+        },
+        "body": {
+          "en": "Because watercolour is transparent, you work from **light to dark**. Start with pale washes over large areas, then build darker shapes in layers. The Watercolour brush in the studio imitates this: low opacity, soft bleeding edges, and colour that deepens where strokes overlap.",
+          "vi": "Vì màu nước trong suốt, bạn làm từ **sáng đến tối**. Bắt đầu với lớp loang nhạt trên diện rộng, rồi đắp dần các mảng đậm hơn. Cọ Màu nước trong xưởng vẽ mô phỏng điều này: độ đục thấp, cạnh loang mềm, và màu đậm dần ở chỗ nét chồng nhau."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "watercolour",
+      "palette": [
+        "#2F80C4",
+        "#F2A93B",
+        "#C93C6B",
+        "#2E8B6F"
+      ],
+      "prompt": {
+        "en": "Paint three overlapping circles in watercolour and watch new colours appear where they overlap.",
+        "vi": "Vẽ ba vòng tròn màu nước chồng nhau và xem màu mới xuất hiện ở chỗ giao."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "watercolour-basics",
+      "questions": [
+        {
+          "id": "watercolour-basics-q1",
+          "prompt": {
+            "en": "Which technique creates soft, spreading edges?",
+            "vi": "Kỹ thuật nào tạo cạnh mềm, loang?"
+          },
+          "options": [
+            {
+              "en": "Wet-on-dry",
+              "vi": "Ướt trên khô"
+            },
+            {
+              "en": "Wet-on-wet",
+              "vi": "Ướt chồng ướt"
+            },
+            {
+              "en": "Dry brush",
+              "vi": "Cọ khô"
+            },
+            {
+              "en": "Hatching",
+              "vi": "Đánh nét"
+            }
+          ]
+        },
+        {
+          "id": "watercolour-basics-q2",
+          "prompt": {
+            "en": "Where does white come from in traditional watercolour?",
+            "vi": "Màu trắng trong màu nước truyền thống đến từ đâu?"
+          },
+          "options": [
+            {
+              "en": "White paint",
+              "vi": "Màu trắng"
+            },
+            {
+              "en": "The paper",
+              "vi": "Tờ giấy"
+            },
+            {
+              "en": "Water",
+              "vi": "Nước"
+            },
+            {
+              "en": "An eraser",
+              "vi": "Cục tẩy"
+            }
+          ]
+        },
+        {
+          "id": "watercolour-basics-q3",
+          "prompt": {
+            "en": "Watercolour is usually built…",
+            "vi": "Màu nước thường được đắp…"
+          },
+          "options": [
+            {
+              "en": "Dark to light",
+              "vi": "Từ tối đến sáng"
+            },
+            {
+              "en": "Light to dark",
+              "vi": "Từ sáng đến tối"
+            },
+            {
+              "en": "All at once",
+              "vi": "Một lần"
+            },
+            {
+              "en": "Only in black",
+              "vi": "Chỉ bằng đen"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  },
+  {
+    "slug": "atmospheric-perspective",
+    "title": {
+      "en": "Atmospheric Perspective",
+      "vi": "Phối cảnh khí quyển"
+    },
+    "summary": {
+      "en": "Why distant mountains look blue and pale — and how to paint distance with colour.",
+      "vi": "Vì sao núi xa trông xanh và nhạt — và cách vẽ khoảng cách bằng màu sắc."
+    },
+    "topic": "colour",
+    "track": "colour",
+    "difficulty": "intermediate",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "Air has colour",
+          "vi": "Không khí có màu"
+        },
+        "body": {
+          "en": "The air between you and a distant object is full of moisture and dust that scatter light. The further away something is, the more air you see through. So distant objects become **lighter, bluer, less saturated and less detailed**. Leonardo called this the “perspective of disappearance”.",
+          "vi": "Không khí giữa bạn và vật ở xa chứa đầy hơi ẩm và bụi làm tán xạ ánh sáng. Vật càng xa, bạn nhìn qua càng nhiều không khí. Vì vậy vật ở xa trở nên **sáng hơn, xanh hơn, ít bão hòa hơn và ít chi tiết hơn**. Leonardo gọi đây là “phối cảnh của sự tan biến”."
+        },
+        "diagram": "atmos"
+      },
+      {
+        "heading": {
+          "en": "Four dials of distance",
+          "vi": "Bốn núm vặn khoảng cách"
+        },
+        "body": {
+          "en": "As things recede: **value** moves towards the sky’s value; **saturation** drops; **hue** shifts towards blue (or towards the sky colour at sunset); **edges** soften. Turn all four dials gradually across your planes.",
+          "vi": "Khi vật lùi xa: **sắc độ** tiến gần sắc độ bầu trời; **độ bão hòa** giảm; **sắc tướng** ngả về xanh (hoặc về màu trời lúc hoàng hôn); **cạnh** mềm đi. Xoay dần cả bốn núm qua các lớp cảnh."
+        },
+        "callout": {
+          "en": "Chinese ink painters suggest vast distance with nothing but paler ink and blank paper — the same principle.",
+          "vi": "Họa sĩ thủy mặc Trung Hoa gợi khoảng cách bao la chỉ bằng mực nhạt hơn và giấy trắng — cùng một nguyên lý."
+        }
+      },
+      {
+        "heading": {
+          "en": "Layer it digitally",
+          "vi": "Chồng lớp bằng kỹ thuật số"
+        },
+        "body": {
+          "en": "In Free Draw, use separate layers for each mountain range. Paint the furthest first in a pale blue-grey, then each nearer range a little darker and warmer. Lower the opacity of distant layers to fake the haze.",
+          "vi": "Trong Vẽ tự do, dùng lớp riêng cho mỗi dãy núi. Vẽ dãy xa nhất trước bằng xanh xám nhạt, rồi mỗi dãy gần hơn đậm và ấm hơn một chút. Giảm độ đục của các lớp xa để giả lập lớp sương."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "airbrush",
+      "palette": [
+        "#E8EEF2",
+        "#A9C2D4",
+        "#5F7F99",
+        "#2C3E50",
+        "#2E8B6F"
+      ],
+      "prompt": {
+        "en": "Paint four mountain ranges, each nearer one darker and warmer.",
+        "vi": "Vẽ bốn dãy núi, dãy càng gần càng đậm và ấm hơn."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "atmospheric-perspective",
+      "questions": [
+        {
+          "id": "atmospheric-perspective-q1",
+          "prompt": {
+            "en": "Distant objects tend to look…",
+            "vi": "Vật ở xa thường trông…"
+          },
+          "options": [
+            {
+              "en": "Darker and more saturated",
+              "vi": "Tối hơn và bão hòa hơn"
+            },
+            {
+              "en": "Lighter, bluer and less saturated",
+              "vi": "Sáng hơn, xanh hơn và ít bão hòa hơn"
+            },
+            {
+              "en": "Redder",
+              "vi": "Đỏ hơn"
+            },
+            {
+              "en": "Sharper",
+              "vi": "Sắc nét hơn"
+            }
+          ]
+        },
+        {
+          "id": "atmospheric-perspective-q2",
+          "prompt": {
+            "en": "What happens to edges as objects recede?",
+            "vi": "Cạnh của vật thế nào khi lùi xa?"
+          },
+          "options": [
+            {
+              "en": "They get sharper",
+              "vi": "Sắc hơn"
+            },
+            {
+              "en": "They soften",
+              "vi": "Mềm đi"
+            },
+            {
+              "en": "They turn black",
+              "vi": "Thành đen"
+            },
+            {
+              "en": "Nothing",
+              "vi": "Không đổi"
+            }
+          ]
+        },
+        {
+          "id": "atmospheric-perspective-q3",
+          "prompt": {
+            "en": "Who called it the “perspective of disappearance”?",
+            "vi": "Ai gọi đây là “phối cảnh của sự tan biến”?"
+          },
+          "options": [
+            {
+              "en": "Monet",
+              "vi": "Monet"
+            },
+            {
+              "en": "Leonardo da Vinci",
+              "vi": "Leonardo da Vinci"
+            },
+            {
+              "en": "Hokusai",
+              "vi": "Hokusai"
+            },
+            {
+              "en": "Warhol",
+              "vi": "Warhol"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 55
+  },
+  {
+    "slug": "reading-a-painting",
+    "title": {
+      "en": "How to Read a Painting",
+      "vi": "Cách “đọc” một bức tranh"
+    },
+    "summary": {
+      "en": "A four-step method for looking at any artwork in a museum — or on your phone.",
+      "vi": "Phương pháp bốn bước để ngắm bất kỳ tác phẩm nào trong bảo tàng — hay trên điện thoại."
+    },
+    "topic": "history",
+    "track": "history",
+    "difficulty": "beginner",
+    "minutes": 3,
+    "sections": [
+      {
+        "heading": {
+          "en": "1. Look slowly",
+          "vi": "1. Nhìn chậm"
+        },
+        "body": {
+          "en": "Most museum visitors spend under 30 seconds per artwork. Give one painting **three full minutes**. First impressions: what do you notice first? Where does your eye go next? How does it make you feel?",
+          "vi": "Phần lớn khách tham quan bảo tàng dành chưa tới 30 giây cho mỗi tác phẩm. Hãy dành cho một bức tranh **trọn ba phút**. Ấn tượng đầu tiên: bạn chú ý điều gì trước? Mắt bạn đi đâu tiếp theo? Nó khiến bạn cảm thấy thế nào?"
+        },
+        "diagram": "thirds"
+      },
+      {
+        "heading": {
+          "en": "2. Describe and 3. Analyse",
+          "vi": "2. Mô tả và 3. Phân tích"
+        },
+        "body": {
+          "en": "**Describe** what is literally there: people, objects, colours, setting, brushwork. Then **analyse** how it is built: composition, light, palette, scale, technique. Use the vocabulary from your lessons — leading lines, warm and cool, chiaroscuro, negative space.",
+          "vi": "**Mô tả** những gì thực sự có: người, vật, màu sắc, bối cảnh, nét cọ. Rồi **phân tích** cách nó được dựng: bố cục, ánh sáng, bảng màu, kích thước, kỹ thuật. Hãy dùng từ vựng từ các bài học — đường dẫn, nóng và lạnh, sáng tối, không gian âm."
+        },
+        "callout": {
+          "en": "Read the wall label last, not first — so your own eyes do the discovering.",
+          "vi": "Đọc nhãn tranh sau cùng, không phải đầu tiên — để chính mắt bạn khám phá."
+        }
+      },
+      {
+        "heading": {
+          "en": "4. Interpret and connect",
+          "vi": "4. Diễn giải và kết nối"
+        },
+        "body": {
+          "en": "Finally, **interpret**: what might it mean? Then connect it to its **context** — when and where was it made, which movement, what was happening in the world? A Đông Hồ pig print makes far more sense once you know it was a New Year wish for abundance.",
+          "vi": "Cuối cùng, **diễn giải**: nó có thể mang ý nghĩa gì? Rồi kết nối với **bối cảnh** — được làm khi nào, ở đâu, thuộc trào lưu nào, thế giới lúc đó ra sao? Tranh lợn Đông Hồ dễ hiểu hơn nhiều khi bạn biết đó là lời chúc Tết sung túc."
+        }
+      }
+    ],
+    "tryIt": {
+      "tool": "pencil",
+      "palette": [
+        "#1B1A17",
+        "#C98B2B"
+      ],
+      "prompt": {
+        "en": "Pick a painting from the Art Atlas and sketch its composition in big shapes only.",
+        "vi": "Chọn một bức tranh trong Atlas Nghệ thuật và phác bố cục chỉ bằng mảng lớn."
+      }
+    },
+    "quiz": {
+      "lessonSlug": "reading-a-painting",
+      "questions": [
+        {
+          "id": "reading-a-painting-q1",
+          "prompt": {
+            "en": "What is the first step when reading a painting?",
+            "vi": "Bước đầu tiên khi đọc một bức tranh là gì?"
+          },
+          "options": [
+            {
+              "en": "Read the label",
+              "vi": "Đọc nhãn"
+            },
+            {
+              "en": "Look slowly and notice first impressions",
+              "vi": "Nhìn chậm và ghi nhận ấn tượng đầu"
+            },
+            {
+              "en": "Take a photo",
+              "vi": "Chụp ảnh"
+            },
+            {
+              "en": "Check the price",
+              "vi": "Xem giá"
+            }
+          ]
+        },
+        {
+          "id": "reading-a-painting-q2",
+          "prompt": {
+            "en": "When should you read the wall label?",
+            "vi": "Khi nào nên đọc nhãn tranh?"
+          },
+          "options": [
+            {
+              "en": "Before looking",
+              "vi": "Trước khi nhìn"
+            },
+            {
+              "en": "After your own looking",
+              "vi": "Sau khi tự quan sát"
+            },
+            {
+              "en": "Never",
+              "vi": "Không bao giờ"
+            },
+            {
+              "en": "Only if confused",
+              "vi": "Chỉ khi bối rối"
+            }
+          ]
+        },
+        {
+          "id": "reading-a-painting-q3",
+          "prompt": {
+            "en": "“Analyse” means looking at…",
+            "vi": "“Phân tích” nghĩa là xem xét…"
+          },
+          "options": [
+            {
+              "en": "How the work is built: composition, light, palette",
+              "vi": "Cách tác phẩm được dựng: bố cục, ánh sáng, bảng màu"
+            },
+            {
+              "en": "Who owns it",
+              "vi": "Ai sở hữu nó"
+            },
+            {
+              "en": "The frame only",
+              "vi": "Chỉ khung tranh"
+            },
+            {
+              "en": "Its weight",
+              "vi": "Trọng lượng"
+            }
+          ]
+        }
+      ]
+    },
+    "xp": 40
+  }
+]

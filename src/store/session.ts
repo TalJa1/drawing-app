@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import type { User } from '@/types'
 import { persistStorage, STORE_KEYS } from './storage'
 
-/** Guest profile used until someone (fake-)signs in. */
+/** Guest profile used until someone signs in. */
 export const GUEST: User = {
   id: 'guest',
   email: '',
@@ -29,12 +29,15 @@ export const useSession = create<SessionState>()(
       token: null,
       setSession: (user, token) => set({ user, token }),
       updateProfile: (p) => set((s) => ({ user: { ...s.user, ...p } })),
-      signOut: () =>
-        set((s) => ({
-          token: null,
-          user: { ...GUEST, displayName: s.user.displayName, avatarSeed: s.user.avatarSeed },
-        })),
+      // back to the plain guest: nothing of the account that left stays on screen
+      signOut: () => set({ token: null, user: GUEST }),
     }),
-    { name: STORE_KEYS.session, storage: persistStorage, version: 1 },
+    {
+      name: STORE_KEYS.session,
+      storage: persistStorage,
+      // v2: sign-in is real. A v1 session came from the mock login; its token means nothing to the server.
+      version: 2,
+      migrate: () => ({ user: GUEST, token: null }),
+    },
   ),
 )

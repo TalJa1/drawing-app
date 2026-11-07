@@ -6,8 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, BookOpen, Brush, Check, Clock, Copy, LockKeyhole, PenLine, Send } from 'lucide-react'
 import type { ChatCard } from '@/types'
-import { TEMPLATE_MAP } from '@/mocks/templates'
-import { LESSON_MAP } from '@/mocks/lessons'
+import { useLessonLookup, useTemplateLookup } from '@/api/queries'
 import { useL } from '@/i18n/useL'
 import { cn, copyText, svgToDataUrl } from '@/lib/utils'
 import { contrastRatio, readableOn } from '@/lib/color'
@@ -27,7 +26,9 @@ function paletteSpans(count: number): number[] {
 
 export function ChatCardView({ card, animate = false, conversationId }: { card: ChatCard; animate?: boolean; conversationId?: string }) {
   const { t } = useTranslation()
-  if ((card.type === 'lesson' && !LESSON_MAP[card.slug]) || (card.type === 'template' && !TEMPLATE_MAP[card.templateId])) return null
+  const templateOf = useTemplateLookup()
+  const lessonOf = useLessonLookup()
+  if ((card.type === 'lesson' && !lessonOf(card.slug)) || (card.type === 'template' && !templateOf(card.templateId))) return null
   return (
     <div className="w-full min-w-0" data-card-type={card.type}>
       <p className="mb-2 text-[11px] font-semibold text-ink-faint">{t(`chat.cards.source.${card.type}`)}</p>
@@ -42,6 +43,8 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
   const reduced = useReducedMotion()
   const navigate = useNavigate()
   const setPalette = useStudio((s) => s.setPendingPalette)
+  const templateOf = useTemplateLookup()
+  const lessonOf = useLessonLookup()
   const { level } = useLevel()
   const titleId = useId()
   const [copied, setCopied] = useState<{ color: string } | null>(null)
@@ -138,7 +141,7 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
   }
 
   if (card.type === 'template') {
-    const tpl = TEMPLATE_MAP[card.templateId]
+    const tpl = templateOf(card.templateId)
     if (!tpl) return null
     const locked = tpl.unlockLevel > level
     const action = 'inline-flex min-h-11 items-center justify-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold'
@@ -179,7 +182,7 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
   }
 
   if (card.type === 'idea') {
-    const guide = card.templateId ? TEMPLATE_MAP[card.templateId] : undefined
+    const guide = card.templateId ? templateOf(card.templateId) : undefined
     const traceable = guide !== undefined && guide.unlockLevel <= level
     return (
       <div className="w-full rounded-2xl border border-line bg-card p-4 shadow-paper">
@@ -206,7 +209,7 @@ function CardContent({ card, animate, conversationId }: { card: ChatCard; animat
 
   if (card.type === 'critique') return <CritiqueCard card={card} animate={animate} conversationId={conversationId} />
 
-  const lesson = LESSON_MAP[card.slug]
+  const lesson = lessonOf(card.slug)
   if (!lesson) return null
   return (
     <Link

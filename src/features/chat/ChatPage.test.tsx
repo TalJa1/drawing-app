@@ -30,8 +30,8 @@ vi.mock('@/api/queries', () => ({
 }))
 vi.mock('@/api/artworks', () => ({
   getImageBlob: vi.fn(async () => new Blob(['image'])),
-  getImageUrl: vi.fn(async () => 'blob:cached-thumb'),
 }))
+vi.mock('@/features/collection/ArtworkImage', () => ({ ArtworkImage: () => null }))
 vi.mock('./attachments', async (original) => ({ ...(await original<typeof import('./attachments')>()), prepareImage: vi.fn() }))
 
 beforeEach(() => {

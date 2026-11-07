@@ -85,17 +85,18 @@ export function CelebrationHost() {
         <p className="mt-3 text-sm font-semibold uppercase tracking-widest text-gold-deep dark:text-gold">
           {t(`rarity.${badge.rarity}`)} · +{badge.xp} XP
         </p>
-        <div className="mt-8 flex gap-3">
+        {/* Stacked: the modal is at most 384 px wide, and "Xem tất cả huy hiệu" does not fit in half of it. */}
+        <div className="mt-8 flex flex-col gap-3">
+          <Button variant="gold" size="lg" className="w-full" onClick={shift} data-autofocus>
+            {t('celebrate.continue')}
+          </Button>
           <Link
             to="/achievements"
             onClick={shift}
-            className="inline-flex h-12 flex-1 items-center justify-center rounded-full border border-line-strong font-medium"
+            className="inline-flex h-12 w-full items-center justify-center rounded-full border border-line-strong font-medium"
           >
             {t('celebrate.seeAll')}
           </Link>
-          <Button variant="gold" size="lg" className="flex-1" onClick={shift} data-autofocus>
-            {t('celebrate.continue')}
-          </Button>
         </div>
       </div>
     </Modal>

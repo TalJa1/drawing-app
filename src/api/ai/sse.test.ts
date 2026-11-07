@@ -55,13 +55,26 @@ it('drops a card event that fails card rules and keeps streaming', async () => {
   expect(
     await collect(
       body(
-        'event: card\ndata: {"type":"card","card":{"type":"lesson","slug":"not-in-the-app"}}\n\n',
+        'event: card\ndata: {"type":"card","card":{"type":"lesson","slug":""}}\n\n',
         'data: {"type":"card","card":{"type":"palette","name":"bad","colors":["red"]}}\n\n',
         'data: {"type":"token","text":"continue"}\n\ndata: {"type":"done","finish":"completed"}\n\n',
       ),
     ),
   ).toEqual([
     { type: 'token', text: 'continue' },
+    { type: 'done', finish: 'completed' },
+  ])
+})
+it('passes on a well-formed card whose id this app has not loaded (the screen decides whether to show it)', async () => {
+  expect(
+    await collect(
+      body(
+        'data: {"type":"card","card":{"type":"template","templateId":"not-in-the-app-yet"}}\n\n',
+        'data: {"type":"done","finish":"completed"}\n\n',
+      ),
+    ),
+  ).toEqual([
+    { type: 'card', card: { type: 'template', templateId: 'not-in-the-app-yet' } },
     { type: 'done', finish: 'completed' },
   ])
 })

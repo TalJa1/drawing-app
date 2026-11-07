@@ -5,6 +5,11 @@ import { useStudio } from '@/store/studio'
 import { Tooltip } from '@/components/Tooltip'
 import { TOOLS } from '../tools'
 
+/* On a short window the single column (about 766 px tall) ran off the screen and over the tool-options bar;
+   below 760 px of height the rail becomes two columns of tools instead (no scrolling: that would clip the
+   tooltips). The `[@media(max-height:760px)]:` classes below are written out in full on purpose: Tailwind
+   only generates a class it can find as a complete string in the source. */
+
 /** Vertical tool rail (desktop) / horizontal dock (mobile). */
 export function ToolRail({ orientation = 'vertical', className }: { orientation?: 'vertical' | 'horizontal'; className?: string }) {
   const { t } = useTranslation()
@@ -20,7 +25,9 @@ export function ToolRail({ orientation = 'vertical', className }: { orientation?
       aria-orientation={orientation}
       className={cn(
         'paper flex items-center gap-1 border border-line shadow-lift',
-        vertical ? 'flex-col rounded-[22px] p-1.5' : 'no-scrollbar overflow-x-auto rounded-[20px] p-1.5',
+        vertical
+          ? 'flex-col rounded-[22px] p-1.5 [@media(max-height:760px)]:grid [@media(max-height:760px)]:grid-cols-[repeat(2,44px)]'
+          : 'no-scrollbar overflow-x-auto rounded-[20px] p-1.5',
         className,
       )}
       data-tour="tools"
@@ -54,8 +61,13 @@ export function ToolRail({ orientation = 'vertical', className }: { orientation?
           </button>
         )
         return (
-          <div key={def.id} className={cn('flex shrink-0', vertical ? 'flex-col items-center' : 'items-center')}>
-            {sep && <span aria-hidden className={cn('bg-line', vertical ? 'my-1 h-px w-6' : 'mx-1 h-6 w-px')} />}
+          <div
+            key={def.id}
+            className={cn('flex shrink-0', vertical ? 'flex-col items-center [@media(max-height:760px)]:contents' : 'items-center')}
+          >
+            {sep && (
+              <span aria-hidden className={cn('bg-line', vertical ? 'my-1 h-px w-6 [@media(max-height:760px)]:hidden' : 'mx-1 h-6 w-px')} />
+            )}
             {vertical ? (
               <Tooltip label={t(`studio.tools.${def.id}`)} shortcut={def.shortcut} side="right">
                 {btn}

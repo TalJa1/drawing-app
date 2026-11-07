@@ -38,7 +38,10 @@
           text-align: center;
           background: var(--sp-bg);
           color: var(--sp-ink);
-          font-family: Georgia, 'Times New Roman', serif;
+          /* No Georgia: on Windows it has no glyph for the letter ề, so its accent was drawn apart from the letter
+             until the real font arrived (measured on Chromium 152). Times New Roman draws it correctly. Only system fonts
+             here on purpose: naming Fraunces first delayed the first paint by ~130 ms (measured, 4x slower CPU). */
+          font-family: 'Times New Roman', 'Liberation Serif', serif;
         "
       >
         <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">
@@ -85,6 +88,62 @@
             document.getElementById('splash-sub').textContent = 'Đang mở xưởng vẽ Art Spark…'
           }
         } catch (e) {}
+      </script>
+      <script>
+        // If the app cannot start (a file of it failed to load, or never answers), the splash would stay for ever.
+        // Say so, and offer a reload: right away when the browser reports a failed script, after 10 s otherwise.
+        ;(function () {
+          var vi = false
+          try {
+            vi = (JSON.parse(localStorage.getItem('artspark:settings') || '{}').state || {}).language === 'vi'
+          } catch (e) {}
+          var text = vi
+            ? {
+                failed: 'Xưởng vẽ chưa mở được: một phần của ứng dụng không tải được. Kiểm tra kết nối rồi thử lại.',
+                slow: 'Đang mở lâu hơn bình thường… Nếu vẫn không được, hãy tải lại trang.',
+                button: 'Tải lại',
+              }
+            : {
+                failed: "The studio didn't open: part of the app couldn't be loaded. Check your connection and try again.",
+                slow: 'Still opening the studio… this is taking longer than usual. If nothing happens, reload the page.',
+                button: 'Reload',
+              }
+          var failed = false
+          function offer(message) {
+            var splash = document.getElementById('splash')
+            if (!splash) return // the app is up: nothing to say
+            var sub = document.getElementById('splash-sub')
+            if (sub) {
+              sub.textContent = message
+              sub.setAttribute('role', 'status')
+            }
+            if (document.getElementById('splash-retry')) return
+            var b = document.createElement('button')
+            b.id = 'splash-retry'
+            b.type = 'button'
+            b.textContent = text.button
+            b.style.cssText =
+              'height:44px;padding:0 22px;border:0;border-radius:999px;background:var(--sp-ink);color:var(--sp-bg);font:500 1rem system-ui,sans-serif;cursor:pointer'
+            b.onclick = function () {
+              location.reload()
+            }
+            splash.appendChild(b)
+          }
+          window.addEventListener(
+            'error',
+            function (e) {
+              var t = e.target
+              if (t && t.tagName === 'SCRIPT') {
+                failed = true
+                offer(text.failed)
+              }
+            },
+            true,
+          )
+          setTimeout(function () {
+            if (!failed) offer(text.slow)
+          }, 10000)
+        })()
       </script>
     </div>
     <script type="module" src="/src/main.tsx"></script>

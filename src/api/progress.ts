@@ -1,17 +1,45 @@
-/* Gamification endpoints. The server would run the same pure rules
-   (features/gamification/rules.ts) and return a RewardSummary. */
+/* Gamification endpoints. For a signed-in user the server is the one that decides XP, badges and
+   streaks (the same rules as features/gamification/rules.ts); the events not connected yet, and a
+   guest's activity, still run those rules here on the device. */
 import type { Badge, Challenge, LeaderboardEntry, RewardSummary } from '@/types'
-import { activeChallenges, applyEvent, challengeKey, levelFromXp, type RulesContext } from '@/features/gamification/rules'
-import type { ProgressEvent } from '@/features/gamification/types'
-import { BADGES } from '@/mocks/badges'
+import { applyEvent, levelFromXp, type RulesContext } from '@/features/gamification/rules'
+import type { ProgressEvent, ProgressStats, StreakState } from '@/features/gamification/types'
 import { LESSONS } from '@/mocks/lessons'
 import { MOVEMENTS } from '@/mocks/movements'
 import { ART_FORMS } from '@/mocks/artForms'
 import { TEMPLATE_CATEGORIES } from '@/mocks/templates'
-import { LEADERBOARD_SAMPLE } from '@/mocks/leaderboard'
 import { progressSnapshot, useProgress } from '@/store/progress'
 import { useSession } from '@/store/session'
-import { ApiError, simulate } from './client'
+import type { components } from './schema'
+import type { Assert, Wire } from './contract'
+import { ApiError, request } from './client'
+
+type ProgressOut = components['schemas']['ProgressOut']
+type StatsOut = components['schemas']['StatsOut']
+type StreakOut = components['schemas']['StreakOut']
+
+// The server's shape (from its OpenAPI) must match what the app keeps; if one side changes without the
+// other, `tsc` fails here. (`categoriesTried` is a plain list of strings on the wire; the app narrows it.)
+export type StatsKeysOnTheWire = Assert<keyof StatsOut, keyof ProgressStats>
+export type StatsKeysInTheApp = Assert<keyof ProgressStats, keyof StatsOut>
+export type StatsOnTheWire = Assert<Omit<Wire<StatsOut>, 'categoriesTried'>, Omit<ProgressStats, 'categoriesTried'>>
+
+// Same idea for the challenge, badge and ranking answers. Only the names of the fields are compared here (the
+// server says `string` where the app narrows to a few words), in both directions.
+type ChallengeOut = components['schemas']['ChallengeOut']
+type ChallengeStatusOut = components['schemas']['ChallengeStatusOut']
+type BadgeOut = components['schemas']['BadgeOut']
+type LeaderboardEntryOut = components['schemas']['LeaderboardEntryOut']
+export type ChallengeKeysOnTheWire = Assert<keyof ChallengeOut, keyof Challenge>
+export type ChallengeKeysInTheApp = Assert<keyof Challenge, keyof ChallengeOut>
+export type ChallengeStatusKeysOnTheWire = Assert<keyof ChallengeStatusOut, keyof ChallengeStatus>
+export type ChallengeStatusKeysInTheApp = Assert<keyof ChallengeStatus, keyof ChallengeStatusOut>
+export type BadgeKeysOnTheWire = Assert<keyof BadgeOut, keyof Badge | 'unlockedAt'>
+export type BadgeKeysInTheApp = Assert<keyof Badge | 'unlockedAt', keyof BadgeOut>
+export type RankingKeysOnTheWire = Assert<keyof LeaderboardEntryOut, keyof LeaderboardEntry>
+export type RankingKeysInTheApp = Assert<keyof LeaderboardEntry, keyof LeaderboardEntryOut>
+// (no `Wire` here: `lastDay` is always sent, as a date or null, and the app keeps it as that)
+export type StreakOnTheWire = Assert<Omit<StreakOut, 'live'>, StreakState>
 
 export function rulesContext(now = new Date()): RulesContext {
   return {
@@ -25,9 +53,88 @@ export function rulesContext(now = new Date()): RulesContext {
   }
 }
 
+let syncCount = 0
+
+/**
+ * GET /me/progress — makes the account's numbers the ones this device shows. Challenges are not part of
+ * that answer (they have their own endpoints), so the ones kept here stay as they are.
+ * Rejects when the server cannot be reached; callers that already have what they came for ignore that.
+ */
+export async function syncProgress(): Promise<void> {
+  const token = useSession.getState().token
+  if (!token) return
+  const mine = ++syncCount
+  const p = await request<ProgressOut>('GET', '/me/progress')
+  // an answer is dropped when a newer refresh was started meanwhile, or when someone else signed in
+  if (mine !== syncCount || useSession.getState().token !== token) return
+  if (typeof p?.xp !== 'number' || !p.stats || !p.streak) {
+    throw new ApiError('The server sent something we could not read.', 200, 'server_error')
+  }
+  const { live: _live, ...streak } = p.streak
+  void _live
+  useProgress.getState().replace({
+    xp: p.xp,
+    badges: p.badges,
+    streak: streak as StreakState,
+    activity: p.activity,
+    stats: p.stats as ProgressStats,
+    scoreHistory: p.scoreHistory,
+    challenges: useProgress.getState().challenges,
+  })
+}
+
+function nothingEarned(): RewardSummary {
+  const p = useProgress.getState()
+  const level = levelFromXp(p.xp)
+  return {
+    xpGained: 0,
+    xpBefore: p.xp,
+    xpAfter: p.xp,
+    levelBefore: level,
+    levelAfter: level,
+    newBadges: [],
+    streak: p.streak.current,
+    streakExtended: false,
+    completedChallenges: [],
+  }
+}
+
+/** Events the server decides by itself, when a drawing is saved or scored: the app never reports them. */
+const DECIDED_BY_THE_SERVER = new Set<ProgressEvent['type']>(['artworkSaved', 'artworkScored'])
+
+/**
+ * What only the browser can witness (a page was viewed, a file was downloaded...): for a signed-in person the
+ * server counts these (POST /progress/events). Not in it, on purpose: chat messages (the chat is outside the
+ * backend, so the server refuses them) and lessons and quizzes (lot 4c) — those still run on the device.
+ */
+const REPORTED_TO_THE_SERVER = new Set<ProgressEvent['type']>([
+  'download',
+  'viewed',
+  'flashcardReviewed',
+  'spotStyle',
+  'colorLab',
+  'paletteSent',
+  'glossary',
+])
+
 /** POST /progress/events — record an activity, get XP/badges back. */
 export async function recordActivity(event: ProgressEvent): Promise<RewardSummary> {
-  await simulate({ latency: [60, 180], canFail: false })
+  const signedIn = !!useSession.getState().token
+  if (signedIn && DECIDED_BY_THE_SERVER.has(event.type)) {
+    throw new ApiError('The server decides that by itself when the drawing is saved or scored.', 422, 'event_not_allowed')
+  }
+  if (signedIn && REPORTED_TO_THE_SERVER.has(event.type)) {
+    // what was just done (a download, a page seen) is already done: if the server cannot count it (offline, too
+    // many events a minute...) the person is not told off for it, they just earn nothing this time
+    try {
+      const reward = await request<RewardSummary>('POST', '/progress/events', { body: event })
+      await syncProgress().catch(() => {}) // the reward stands even if the refresh does not get through
+      return reward
+    } catch {
+      return nothingEarned()
+    }
+  }
+  // a guest, or an event the account does not count yet: the rules run here
   const { data, reward } = applyEvent(progressSnapshot(), event, rulesContext())
   useProgress.getState().replace(data)
   return reward
@@ -41,63 +148,35 @@ export interface ChallengeStatus {
   theme?: string[]
 }
 
-/** GET /challenges */
+/** A list that is not a list is the server's fault, not "no challenges": better a retry button than an empty page. */
+function listOf<T>(data: unknown): T[] {
+  if (!Array.isArray(data)) throw new ApiError('The server sent something we could not read.', 200, 'server_error')
+  return data as T[]
+}
+
+/** GET /challenges — what is on for this account today and this week, with its progress. */
 export async function getChallenges(): Promise<ChallengeStatus[]> {
-  await simulate({ latency: [250, 600] })
-  return challengeStatuses()
+  return listOf<ChallengeStatus>(await request<unknown>('GET', '/challenges'))
 }
 
-export function challengeStatuses(now = new Date()): ChallengeStatus[] {
-  const saved = useProgress.getState().challenges
-  return activeChallenges(now).map((a) => {
-    const s = saved[challengeKey(a)] ?? { progress: 0, claimed: false }
-    return { challenge: a.challenge, periodKey: a.periodKey, progress: s.progress, claimed: s.claimed, theme: a.theme }
-  })
-}
-
-/** POST /challenges/:id/claim */
+/** POST /challenges/:id/claim — the server checks it is done and pays what the definition says. */
 export async function claimChallenge(challengeId: string, periodKey: string): Promise<RewardSummary> {
-  await simulate({ latency: [300, 700] })
-  const st = challengeStatuses().find((c) => c.challenge.id === challengeId && c.periodKey === periodKey)
-  if (!st) throw new ApiError('Challenge not active', 404, 'not_found')
-  if (st.claimed) throw new ApiError('Already claimed', 409, 'already_claimed')
-  if (st.progress < st.challenge.target) throw new ApiError('Not complete yet', 422, 'incomplete')
-  return recordActivity({ type: 'challengeClaimed', challengeId, periodKey, xp: st.challenge.xp })
+  const reward = await request<RewardSummary>('POST', `/challenges/${encodeURIComponent(challengeId)}/claim`, { body: { periodKey } })
+  await syncProgress().catch(() => {}) // the reward stands even if the refresh does not get through
+  return reward
 }
 
 export interface AchievementsResponse {
   badges: (Badge & { unlockedAt?: string })[]
 }
 
-/** GET /achievements */
+/** GET /achievements — every badge, with the time this account unlocked it. */
 export async function getAchievements(): Promise<AchievementsResponse> {
-  await simulate({ latency: [250, 600] })
-  const owned = useProgress.getState().badges
-  return { badges: BADGES.map((b) => ({ ...b, unlockedAt: owned[b.id] })) }
+  const res = await request<AchievementsResponse>('GET', '/achievements')
+  return { badges: listOf<AchievementsResponse['badges'][number]>(res?.badges) }
 }
 
-/** GET /leaderboard?scope=weekly|all&filter=global|friends */
-export async function getLeaderboard(scope: 'weekly' | 'all', filter: 'global' | 'friends'): Promise<LeaderboardEntry[]> {
-  await simulate({ latency: [400, 900] })
-  const user = useSession.getState().user
-  const p = useProgress.getState()
-  const weekAgo = Date.now() - 7 * 86_400_000
-  const weeklyXp = p.scoreHistory
-    .filter((h) => new Date(h.at).getTime() > weekAgo)
-    .reduce((s, h) => s + Math.round(10 + h.overall * 0.9), 0)
-  const me: LeaderboardEntry = {
-    id: user.id,
-    name: user.displayName,
-    avatarSeed: user.avatarSeed,
-    xp: p.xp,
-    weeklyXp,
-    level: levelFromXp(p.xp),
-    country: 'VN',
-    isFriend: true,
-    isCurrentUser: true,
-    sample: false,
-  }
-  const others = LEADERBOARD_SAMPLE.filter((e) => filter === 'global' || e.isFriend).map((e) => ({ ...e, level: levelFromXp(e.xp) }))
-  const key = scope === 'weekly' ? 'weeklyXp' : 'xp'
-  return [...others, me].sort((a, b) => b[key] - a[key])
+/** GET /leaderboard?scope=weekly|all — real people only, best first, `id` is the rank. */
+export async function getLeaderboard(scope: 'weekly' | 'all'): Promise<LeaderboardEntry[]> {
+  return listOf<LeaderboardEntry>(await request<unknown>('GET', `/leaderboard?scope=${scope}`))
 }

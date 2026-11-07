@@ -44,14 +44,24 @@ export function useMediaQuery(query: string): boolean {
   return match
 }
 
+/* Dialogs can overlap (the collection's "delete this artwork?" sits inside the artwork's own dialog) and can close in
+   any order — an exiting dialog keeps its last props until its animation ends, so its lock is released late. Each
+   lock therefore only counts itself: the page is locked while at least one lock is held, and gets back what it had
+   before the FIRST lock when the LAST one is released. Handing each lock its own "previous value" would let a late
+   release put 'hidden' back and leave the page unscrollable. */
+let locks = 0
+let before = ''
+
 /** Lock body scroll while `locked` is true. */
 export function useScrollLock(locked: boolean) {
   useEffect(() => {
     if (!locked) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    if (locks++ === 0) {
+      before = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+    }
     return () => {
-      document.body.style.overflow = prev
+      if (--locks === 0) document.body.style.overflow = before
     }
   }, [locked])
 }

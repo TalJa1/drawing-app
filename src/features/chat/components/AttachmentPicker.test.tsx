@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { AttachmentPicker } from './AttachmentPicker'
-import { getImageBlob, getImageUrl } from '@/api/artworks'
+import { getImageBlob } from '@/api/artworks'
 import { AttachmentError, prepareImage } from '../attachments'
 import { useToasts } from '@/store/ui'
 import { installDomStubs, renderChat } from '../test-utils'
@@ -8,7 +8,10 @@ import { installDomStubs, renderChat } from '../test-utils'
 vi.mock('@/api/queries', () => ({
   useArtworks: () => ({ data: [{ id: 'art', title: 'My art', thumbKey: 'thumb-key', imageKey: 'full-key' }] }),
 }))
-vi.mock('@/api/artworks', () => ({ getImageBlob: vi.fn(), getImageUrl: vi.fn() }))
+vi.mock('@/api/artworks', () => ({ getImageBlob: vi.fn() }))
+vi.mock('@/features/collection/ArtworkImage', () => ({
+  ArtworkImage: ({ imageKey, lazy }: { imageKey: string; lazy?: boolean }) => <div data-testid="thumb" data-key={imageKey} data-lazy={String(!!lazy)} />,
+}))
 vi.mock('../attachments', async (original) => ({ ...(await original<typeof import('../attachments')>()), prepareImage: vi.fn() }))
 const prepared = {
   id: 'a_1',
@@ -25,7 +28,6 @@ beforeEach(() => {
   vi.clearAllMocks()
   useToasts.setState({ toasts: [] })
   vi.mocked(getImageBlob).mockResolvedValue(new Blob(['image']))
-  vi.mocked(getImageUrl).mockResolvedValue('blob:cached-thumb')
   vi.mocked(prepareImage).mockResolvedValue(prepared)
 })
 afterEach(() => vi.unstubAllGlobals())
@@ -36,7 +38,8 @@ const setup = async () => {
 }
 it('picker uses imageKey for analysis and thumbKey for the grid', async () => {
   const onPick = await setup()
-  await waitFor(() => expect(getImageUrl).toHaveBeenCalledWith('thumb-key'))
+  expect(screen.getAllByTestId('thumb')[0]).toHaveAttribute('data-key', 'thumb-key')
+  expect(screen.getAllByTestId('thumb')[0]).toHaveAttribute('data-lazy', 'true')
   fireEvent.click(screen.getByRole('button', { name: 'My art' }))
   await waitFor(() => expect(onPick).toHaveBeenCalledWith(prepared))
   expect(getImageBlob).toHaveBeenCalledWith('full-key')

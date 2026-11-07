@@ -2,10 +2,15 @@ import type { ChatStreamEvent } from '@/types'
 import type { ChatTurnRequest } from '@/features/chat/contract'
 import { chatCardSchema } from '@/features/chat/contract'
 import { buildReply } from '@/api/chat'
+import { getTemplates } from '@/api/templates'
+import { queryClient } from '@/app/queryClient'
+import { TEMPLATES } from '@/mocks/templates'
 import { useSettings } from '@/store/settings'
 import { AiTransportError } from './errors'
 import { createMockTransport, mockTransport } from './mockTransport'
 import { getChatTransport } from './transport'
+
+vi.mock('@/api/templates', () => ({ getTemplates: vi.fn() }))
 
 const request: ChatTurnRequest = {
   protocolVersion: 1,
@@ -20,9 +25,16 @@ const request: ChatTurnRequest = {
   learner: null,
 }
 
+// the mock loads its template source on demand; load it before the fake clock starts so a timer run cannot outrun the import
+beforeAll(async () => {
+  await Promise.all([import('@/app/queryClient'), import('@/api/queries')])
+})
+
 beforeEach(() => {
   vi.useFakeTimers()
   useSettings.setState({ simulateErrors: false })
+  queryClient.clear()
+  vi.mocked(getTemplates).mockReset().mockResolvedValue(TEMPLATES)
 })
 afterEach(() => {
   vi.useRealTimers()
@@ -85,4 +97,25 @@ it('mock palettes contain no duplicate hex (case-insensitive)', () => {
     expect(palettes).toHaveLength(3)
     for (const card of palettes) expect(new Set(card.colors.map((c) => c.toLowerCase())).size).toBe(card.colors.length)
   }
+})
+
+async function cardTypesFor(text: string) {
+  const types: string[] = []
+  const run = (async () => {
+    for await (const event of mockTransport.streamTurn({ ...request, mode: 'ideas', message: { text, images: [] } }, new AbortController().signal)) {
+      if (event.type === 'card') types.push(event.card.type)
+    }
+  })()
+  await vi.runAllTimersAsync()
+  await run
+  return types
+}
+
+it('suggests a template card only from the templates the server has', async () => {
+  expect(await cardTypesFor('Give me 5 drawing ideas for beginners')).toContain('template')
+  queryClient.clear()
+  vi.mocked(getTemplates).mockRejectedValue(new Error('offline'))
+  const offline = await cardTypesFor('Give me 5 drawing ideas for beginners')
+  expect(offline).toContain('idea')
+  expect(offline).not.toContain('template')
 })

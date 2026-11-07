@@ -10,6 +10,7 @@ import { Button } from '@/components/Button'
 import { copyText } from '@/lib/utils'
 import { toast } from '@/store/ui'
 import { useChat } from '@/store/chat'
+import { useLessonLookup, useTemplateLookup } from '@/api/queries'
 import { useL } from '@/i18n/useL'
 import { replyClipboardText } from '../clipboardText'
 import { useMuse } from '../useMuse'
@@ -17,7 +18,9 @@ import { useMuse } from '../useMuse'
 export function MessageActions({ message, conversationId, last }: { message: ChatMessage; conversationId: string; last: boolean }) {
   const { t } = useTranslation()
   const L = useL()
-  const clipboard = replyClipboardText(message, t, L)
+  const templateOf = useTemplateLookup()
+  const lessonOf = useLessonLookup()
+  const clipboard = replyClipboardText(message, t, L, { templateOf, lessonOf })
   const { retry, regenerate, phase } = useMuse()
   const reduced = useReducedMotion()
   const [copied, setCopied] = useState(false)

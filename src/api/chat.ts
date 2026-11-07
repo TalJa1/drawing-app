@@ -1,5 +1,5 @@
 // Mock reply builder used only by the development mock transport.
-import type { ChatAttachment, ChatCard, ChatMode, Lang } from '@/types'
+import type { ChatAttachment, ChatCard, ChatMode, Lang, Template } from '@/types'
 import { seeded, shuffle } from '@/lib/random'
 import { fuzzyIncludes, matchesPhrase } from '@/lib/utils'
 import { hexToHsl, hslToHex, scheme } from '@/lib/color'
@@ -14,7 +14,6 @@ import {
   type Intent,
 } from '@/mocks/chatReplies'
 import { MOVEMENTS } from '@/mocks/movements'
-import { TEMPLATES } from '@/mocks/templates'
 import { PALETTES } from '@/mocks/palettes'
 
 export interface ChatRequest {
@@ -80,8 +79,11 @@ function harmonyPalettes(base: string, lang: Lang, label: string): ChatCard[] {
   }))
 }
 
-/** Pure reply builder (unit-testable). */
-export function buildReply(req: ChatRequest): ChatReply {
+/**
+ * Pure reply builder (unit-testable). `templates` is the server's list: the template card is only
+ * offered from it, so a reply never points at a template the app does not have.
+ */
+export function buildReply(req: ChatRequest, templates: readonly Template[] = []): ChatReply {
   const { message, mode, lang } = req
   const rng = seeded(`${message}|${mode}|${req.seed ?? ''}`)
   const intent = detectIntent(message, mode, !!req.attachments?.length)
@@ -129,11 +131,8 @@ export function buildReply(req: ChatRequest): ChatReply {
           minutes: i.minutes,
         }),
       )
-      const t = shuffle(
-        rng,
-        TEMPLATES.filter((x) => x.difficulty === 'beginner'),
-      )[0]
-      cards.push({ type: 'template', templateId: t.id })
+      const starters = templates.filter((x) => x.difficulty === 'beginner')
+      if (starters.length) cards.push({ type: 'template', templateId: shuffle(rng, starters)[0].id })
       break
     }
     case 'colour': {
@@ -200,7 +199,7 @@ export function buildReply(req: ChatRequest): ChatReply {
         'Each day you complete keeps your streak flame burning. 🔥 You’ve got this!',
         'Mỗi ngày hoàn thành sẽ giữ ngọn lửa chuỗi của bạn cháy sáng. 🔥 Bạn làm được mà!',
       )}`
-      cards.push({ type: 'template', templateId: 'sunflower' })
+      if (templates.some((x) => x.id === 'sunflower')) cards.push({ type: 'template', templateId: 'sunflower' })
       break
     case 'feedback': {
       const hasImg = !!req.attachments?.length

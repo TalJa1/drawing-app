@@ -112,10 +112,16 @@ export function activeChallenges(now: Date): ActiveChallenge[] {
   }
   const month = now.getMonth()
   const special = SPECIAL_EVENTS.find((e) => e.months.includes(month)) ?? SPECIAL_EVENTS[0]
+  // The period key is `<year>-<id>`, and progress / "already claimed" are stored under it. An event that
+  // runs across New Year (months [11, 0], i.e. Dec + Jan) must keep ONE key for the whole season, or on
+  // 1 Jan the key changes and the player starts the same event again (progress lost, reward claimable twice).
+  // So in January the season belongs to the year it started in (December of the previous year).
+  const wrapsNewYear = special.months.includes(11) && special.months.includes(0)
+  const seasonYear = wrapsNewYear && month === 0 ? now.getFullYear() - 1 : now.getFullYear()
   return [
     { challenge: daily, periodKey: day },
     ...weekly.map((w) => ({ challenge: w, periodKey: week })),
-    { challenge: special, periodKey: `${now.getFullYear()}-${special.id}`, theme: special.theme },
+    { challenge: special, periodKey: `${seasonYear}-${special.id}`, theme: special.theme },
   ]
 }
 
@@ -227,6 +233,9 @@ export function evaluateBadges(d: ProgressData, e: ProgressEvent, ctx: RulesCont
 const addUnique = <T>(arr: T[], v: T) => (arr.includes(v) ? arr : [...arr, v])
 
 /** Base XP an event is worth before badges/challenges. */
+/** XP of a quiz result: 40 for the share of right answers, plus 20 when all are right. */
+const quizXp = (correct: number, total: number) => Math.round((correct / total) * 40) + (correct === total ? 20 : 0)
+
 export function baseXp(e: ProgressEvent): number {
   switch (e.type) {
     case 'artworkScored':
@@ -236,7 +245,8 @@ export function baseXp(e: ProgressEvent): number {
     case 'lessonCompleted':
       return e.xp
     case 'quizCompleted':
-      return Math.round((e.correct / e.total) * 40) + (e.correct === e.total ? 20 : 0)
+      // only what is new is paid: a lesson never gives more than the XP of its best result
+      return quizXp(e.correct, e.total) - quizXp(e.prevCorrect ?? 0, e.total)
     case 'spotStyle':
       return Math.min(5, e.streak)
     case 'flashcardReviewed':

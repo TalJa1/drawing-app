@@ -11,6 +11,11 @@ import { useChat } from '@/store/chat'
 import { contrastRatio } from '@/lib/color'
 
 vi.mock('@/features/gamification/hooks', () => ({ useLevel: () => ({ level: 1 }) }))
+// the cards look templates and lessons up in what the server sent; here the same content is handed over directly
+vi.mock('@/api/queries', () => ({
+  useTemplateLookup: () => (id: string | undefined) => (id ? TEMPLATE_MAP[id] : undefined),
+  useLessonLookup: () => (slug: string | undefined) => (slug ? LESSON_MAP[slug] : undefined),
+}))
 vi.mock('@/api/progress', () => ({ recordActivity: vi.fn(async () => null) }))
 vi.mock('@/lib/utils', async (original) => ({ ...(await original<object>()), copyText: vi.fn(async () => true) }))
 

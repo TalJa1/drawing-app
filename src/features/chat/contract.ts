@@ -1,7 +1,5 @@
 import { z } from 'zod'
 import type { ChatCard, ChatMode, ChatStreamEvent, Lang } from '@/types'
-import { LESSON_MAP } from '@/mocks/lessons'
-import { TEMPLATE_MAP } from '@/mocks/templates'
 
 export const PROTOCOL_VERSION = 1
 export const LIMITS = {
@@ -46,19 +44,18 @@ export const chatCardSchema: z.ZodType<ChatCard> = z.discriminatedUnion('type', 
     })
     .refine((c) => new Set(c.colors.map((hex) => hex.toLowerCase())).size === c.colors.length, 'Duplicate colours')
     .refine((c) => !c.roles || c.roles.length === c.colors.length, 'Roles must match colours'),
-  z.strictObject({ type: z.literal('template'), templateId: shortId.refine((id) => Object.hasOwn(TEMPLATE_MAP, id)), reason }),
-  z.strictObject({ type: z.literal('lesson'), slug: shortId.refine((id) => Object.hasOwn(LESSON_MAP, id)), reason }),
+  // The ids are checked against the catalog by the server (the backend only emits ones it knows) and by the screen, which shows a
+  // card only when the id is in the loaded list; the shape check keeps no copy of the catalog.
+  z.strictObject({ type: z.literal('template'), templateId: shortId, reason }),
+  z.strictObject({ type: z.literal('lesson'), slug: shortId, reason }),
   z.strictObject({
     type: z.literal('idea'),
     title: boundedString(1, 60),
     description: boundedString(1, 220),
     difficulty: z.enum(['beginner', 'intermediate', 'advanced', 'master']),
     minutes: z.number().int().min(5).max(120),
-    // An unknown guide drops only the guide, never the idea itself.
-    templateId: shortId
-      .refine((id) => Object.hasOwn(TEMPLATE_MAP, id))
-      .optional()
-      .catch(undefined),
+    // A malformed guide id drops only the guide, never the idea itself.
+    templateId: shortId.optional().catch(undefined),
   }),
   z.strictObject({
     type: z.literal('critique'),

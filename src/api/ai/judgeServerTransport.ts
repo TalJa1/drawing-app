@@ -16,7 +16,7 @@ export const serverJudgeTransport: JudgeTransport = {
   async requestFeedback(req, signal) {
     let response: Response
     try {
-      response = await fetch(`${API_BASE}/v1/ai/judge/feedback`, {
+      response = await fetch(`${API_BASE}/ai/judge/feedback`, {
         method: 'POST',
         signal,
         headers: { ...authHeaders(), 'Content-Type': 'application/json', 'X-Request-ID': req.requestId },

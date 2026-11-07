@@ -51,7 +51,7 @@
     "practice": "Luyện tập",
     "freeDraw": "Vẽ tự do",
     "learn": "Học vẽ",
-    "chat": "Trò chuyện AI",
+    "chat": "Nàng thơ AI",
     "collection": "Bộ sưu tập",
     "achievements": "Thành tích",
     "profile": "Hồ sơ",
@@ -62,6 +62,7 @@
     "signOut": "Đăng xuất",
     "guestMode": "Chế độ khách — lưu trên thiết bị này",
     "accountMenu": "Menu tài khoản",
+    "accountMenuLevel": "Menu tài khoản, cấp {{level}}",
     "openMenu": "Mở menu",
     "menu": "Menu",
     "primary": "Điều hướng chính",
@@ -75,7 +76,7 @@
       "practice": "Luyện tập",
       "freeDraw": "Vẽ",
       "learn": "Học",
-      "chat": "Nàng thơ",
+      "chat": "Nàng thơ AI",
       "collection": "Phòng tranh"
     }
   },
@@ -98,7 +99,21 @@
     "boundaryTitle": "Ối — một hũ màu vừa bị đổ.",
     "boundaryBody": "Một phần của trang này không hiển thị được. Tác phẩm đã lưu của bạn vẫn an toàn. Hãy thử lại hoặc quay về xưởng vẽ.",
     "tryAgain": "Thử lại",
-    "goHome": "Về trang chủ"
+    "goHome": "Về trang chủ",
+    "api": {
+      "template_locked": "Mẫu này chưa mở khóa. Hãy vẽ thêm để đạt cấp cần thiết.",
+      "rate_limited": "Bạn thao tác quá nhanh. Vui lòng đợi một lát rồi thử lại.",
+      "payload_too_large": "Bức tranh này quá lớn để lưu.",
+      "unsupported_media_type": "Định dạng ảnh này chưa được hỗ trợ.",
+      "not_found": "Không tìm thấy bức tranh này. Có thể nó đã bị xóa.",
+      "missing_analysis": "Bức vẽ này chưa có gì để chấm điểm.",
+      "not_scorable": "Chỉ bức vẽ luyện tập mới được chấm điểm.",
+      "scoring_not_configured": "Hiện chưa thể chấm điểm. Bức vẽ của bạn đã được lưu.",
+      "unauthorized": "Vui lòng đăng nhập lại để tiếp tục.",
+      "network_error": "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.",
+      "timeout": "Máy chủ phản hồi quá lâu. Hãy thử lại sau giây lát.",
+      "service_unavailable": "Xưởng vẽ đang bận. Vui lòng thử lại sau giây lát."
+    }
   },
   "gamification": {
     "streakDays_one": "Chuỗi {{count}} ngày",
@@ -124,13 +139,13 @@
     "legendary": "Huyền thoại"
   },
   "auth": {
-    "signedOut": "Đã đăng xuất. Phòng tranh của bạn vẫn ở trên thiết bị này.",
-    "mockNote": "Bản xem trước giao diện: email và mật khẩu bất kỳ đều dùng được, và không có gì rời khỏi thiết bị này.",
+    "signedOut": "Đã đăng xuất. Phòng tranh của bạn được giữ trong tài khoản.",
     "artAlt": "Một bức tranh ấn tượng tạo sinh",
     "artNote": "chào mừng tới xưởng vẽ",
     "loginTitleA": "Chào mừng",
     "loginTitleB": "trở lại",
     "loginLede": "Cầm cọ lên ngay tại nơi bạn đã dừng.",
+    "needAccount": "Tranh của bạn được lưu trong tài khoản. Hãy đăng nhập, bạn sẽ được đưa quay lại ngay.",
     "registerTitleA": "Gia nhập",
     "registerTitleB": "xưởng vẽ",
     "registerLede": "Tạo tài khoản để giữ phòng tranh, chuỗi ngày và huy hiệu ở một nơi.",
@@ -149,12 +164,14 @@
     "errors": {
       "emailRequired": "Vui lòng nhập email.",
       "emailInvalid": "Email này trông chưa đúng lắm.",
-      "passwordShort": "Mật khẩu cần ít nhất 6 ký tự.",
       "passwordShort8": "Mật khẩu cần ít nhất 8 ký tự.",
       "nameShort": "Tên họa sĩ cần ít nhất 2 ký tự.",
       "nameLong": "Tên họa sĩ nên dưới 40 ký tự.",
       "mismatch": "Hai mật khẩu không khớp.",
-      "invalid": "Email và mật khẩu không khớp. (Mẹo: trong bản xem trước, mọi mật khẩu trừ “wrongpass” đều dùng được.)"
+      "invalid": "Email và mật khẩu không khớp.",
+      "emailTaken": "Email này đã được đăng ký. Hãy đăng nhập hoặc dùng email khác.",
+      "rateLimited": "Bạn đã thử quá nhiều lần. Vui lòng đợi một lúc rồi thử lại.",
+      "offline": "Không kết nối được máy chủ. Hãy kiểm tra mạng rồi thử lại."
     }
   },
   "styleguide": {
@@ -165,7 +182,7 @@
     "note": "trang ẩn — chỉ dành cho người làm",
     "pigments": "Bột màu",
     "type": "Kiểu chữ",
-    "body": "Văn bản dùng Inter với khoảng cách dòng rộng rãi. Tiêu đề dùng Fraunces, một kiểu chữ có chân mềm mại với nét nghiêng như viết tay. Ghi chú viết tay dùng Caveat.",
+    "body": "Văn bản dùng Inter với khoảng cách dòng rộng rãi. Tiêu đề dùng Fraunces, một kiểu chữ có chân mềm mại với nét nghiêng như viết tay. Ghi chú viết tay dùng Dancing Script.",
     "hand": "ghi chú của họa sĩ bên lề",
     "buttons": "Nút & nút biểu tượng",
     "tooltip": "Chú thích hiện khi di chuột hoặc focus",
@@ -236,10 +253,10 @@
     "redo": "Làm lại",
     "zoomIn": "Phóng to",
     "zoomOut": "Thu nhỏ",
-    "zoomReset": "Đặt lại thu phóng 100%",
+    "zoomReset": "{{zoom}}% — đặt lại thu phóng về 100%",
     "fit": "Vừa màn hình",
-    "clear": "Xóa lớp",
-    "clearTitle": "Xóa lớp này?",
+    "clear": "Xóa nét vẽ trên lớp",
+    "clearTitle": "Xóa nét vẽ trên lớp này?",
     "clearBody": "Mọi thứ trên lớp hiện tại sẽ bị xóa. Bạn vẫn có thể hoàn tác.",
     "timer": "Thời gian vẽ",
     "saveDraft": "Lưu nháp",
@@ -259,7 +276,7 @@
       "title": "Lớp",
       "count": "{{count}}/{{max}} lớp",
       "add": "Thêm lớp",
-      "delete": "Xóa lớp",
+      "delete": "Xóa lớp này",
       "moveUp": "Đưa lớp lên",
       "moveDown": "Đưa lớp xuống",
       "rename": "Đổi tên lớp",
@@ -313,7 +330,8 @@
       "start": "Bắt đầu sáng tác",
       "tools": {
         "title": "Cọ vẽ của bạn ở đây",
-        "body": "Bút chì, bút kim, bút dạ, màu nước, cọ phun, phấn, thùng sơn và hơn thế. Mỗi loại có cỡ và cảm giác riêng — di chuột để xem phím tắt."
+        "body": "Bút chì, bút kim, bút dạ, màu nước, cọ phun, phấn, thùng sơn và hơn thế. Mỗi loại có cỡ và cảm giác riêng — di chuột để xem phím tắt.",
+        "bodyTouch": "Bút chì, bút kim, bút dạ, màu nước, cọ phun, phấn, thùng sơn và hơn thế. Mỗi loại có cỡ và cảm giác riêng."
       },
       "options": {
         "title": "Tinh chỉnh từng công cụ",
@@ -374,6 +392,8 @@
     "medium": "Kỹ thuật số · vẽ tự do",
     "saved": "Đã lưu vào bộ sưu tập",
     "savedXp": "+{{xp}} XP vì hoàn thành một tác phẩm",
+    "fromFailed": "Chưa mở lại được tranh này. Bạn thử lại sau nhé.",
+    "fromSizeUnsupported": "Khổ giấy của tranh này không còn trong danh sách, nên mình mở một trang trống.",
     "guide": {
       "toggle": "Hình mờ để vẽ theo",
       "title": "Hình mờ: {{name}}",
@@ -492,7 +512,7 @@
     "breadcrumb": "Đường dẫn",
     "eyebrow": "Phán quyết của giám khảo",
     "overallAria": "Tổng điểm {{score}} trên 100",
-    "stampRing": "Art Spark ✦ Giám khảo AI",
+    "stampRing": "Art Spark ✦ AI",
     "similarity": "Độ giống",
     "colour": "Màu sắc",
     "radarTitle": "Phân tích điểm theo sáu tiêu chí",
@@ -605,18 +625,18 @@
     "fromTemplate": "Mẫu: {{title}}",
     "judgeScore": "Điểm giám khảo",
     "viewResult": "Xem kết quả đầy đủ",
-    "notJudged": "Tranh vẽ tự do không được chấm điểm — chỉ để vui thôi.",
     "reopen": "Mở trong xưởng vẽ",
+    "redraw": "Vẽ lại",
+    "notJudged": "Tranh vẽ tự do không được chấm điểm — chỉ để vui thôi.",
     "deleteTitle": "Xóa tác phẩm này?",
-    "deleteBody": "Tác phẩm sẽ bị xóa khỏi phòng tranh trên thiết bị này. XP và huy hiệu vẫn được giữ.",
+    "deleteBody": "Tác phẩm sẽ bị xóa khỏi phòng tranh của bạn. XP và huy hiệu vẫn được giữ.",
     "deleted": "Đã xóa tác phẩm",
     "achievementsLink": "Muốn săn huy hiệu? Ghé",
     "empty": {
       "title": "Mọi kiệt tác đều bắt đầu từ một nét vẽ dũng cảm.",
       "body": "Phòng tranh đang chờ tác phẩm đầu tiên. Hãy tô một mẫu hoặc thả hồn trong Vẽ tự do.",
       "note": "khung tranh đã được lau sáng bóng…",
-      "cta": "Tô mẫu đầu tiên",
-      "demo": "Xem trước với tranh mẫu"
+      "cta": "Tô mẫu đầu tiên"
     }
   },
   "achievements": {
@@ -662,20 +682,23 @@
     "unlockedOn": "Mở khóa ngày {{date}}",
     "notYet": "Chưa mở khóa",
     "leaderboard": "Bảng xếp hạng",
-    "audience": "Phạm vi",
     "weekly": "Tuần này",
     "allTime": "Mọi thời đại",
-    "global": "Toàn cầu",
-    "friends": "Bạn bè",
     "you": "bạn",
-    "sampleNote": "Những họa sĩ khác trên bảng này là người dùng mẫu hư cấu — bảng xếp hạng thật sẽ có khi có tài khoản."
+    "leaderboardAlone": "Hiện chỉ có mình bạn trên bảng. Những người khác sẽ xuất hiện ở đây khi họ tham gia và kiếm XP.",
+    "leaderboardEmpty": "Ở mục này chưa có ai kiếm được XP.",
+    "claimError": {
+      "already_claimed": "Bạn đã nhận phần thưởng này rồi.",
+      "incomplete": "Thử thách này chưa hoàn thành. Hãy tiếp tục nhé!",
+      "not_found": "Thử thách này không còn nữa."
+    }
   },
   "profile": {
     "eyebrow": "Hồ sơ",
     "titleA": "Góc nhỏ",
     "titleB": "của họa sĩ",
     "lede": "Chọn diện mạo, chỉnh xưởng vẽ theo tay bạn, và giữ dữ liệu trong tay chính bạn.",
-    "guestNudge": "Bạn đang vẽ với tư cách khách — mọi thứ được lưu trên thiết bị này. Đăng nhập để đồng bộ phòng tranh giữa các thiết bị (sẽ có khi kết nối máy chủ thật).",
+    "guestNudge": "Bạn đang vẽ với tư cách khách — tiến trình được lưu trên thiết bị này. Hãy đăng nhập để giữ tranh trong tài khoản và xem trên mọi thiết bị.",
     "avatar": "Ảnh đại diện của bạn",
     "chooseAvatar": "Chọn ảnh đại diện",
     "avatarOption": "Ảnh đại diện {{name}}",
@@ -711,19 +734,8 @@
     "tour": "Xem lại hướng dẫn xưởng vẽ",
     "tourHint": "Phát lại phần hướng dẫn nhanh khi bạn mở xưởng vẽ lần tới.",
     "data": "Dữ liệu của bạn",
-    "demo": "Dữ liệu mẫu",
-    "demoHint": "Lấp đầy phòng tranh bằng tác phẩm, điểm số và chuỗi ngày mẫu để xem trước ứng dụng khi đã dùng nhiều.",
-    "demoLoaded": "Đã tải phòng tranh mẫu",
-    "demoCleared": "Đã xóa dữ liệu mẫu",
-    "simulateErrors": "Giả lập lỗi máy chủ (nhà phát triển)",
-    "simulateErrorsHint": "Khiến API giả thỉnh thoảng lỗi để bạn xem các trạng thái lỗi.",
     "export": "Xuất dữ liệu (JSON)",
-    "exported": "Đã tải xuống dữ liệu của bạn",
-    "deleteAll": "Xóa toàn bộ dữ liệu cục bộ",
-    "deleteTitle": "Xóa tất cả?",
-    "deleteBody": "Thao tác này xóa tác phẩm, bản nháp, XP, huy hiệu, bài học và cuộc trò chuyện khỏi thiết bị. Không thể hoàn tác.",
-    "deleteConfirm": "Xóa tất cả",
-    "deleted": "Đã xóa toàn bộ dữ liệu cục bộ. Một trang mới đang chờ bạn."
+    "exported": "Đã tải xuống dữ liệu của bạn"
   },
   "learn": {
     "tracks": {
@@ -810,6 +822,7 @@
     "done": "Xong",
     "bookmark": "Lưu bài học",
     "unbookmark": "Bỏ lưu",
+    "bookmarkFailed": "Chưa cập nhật được danh sách bài đã lưu. Bạn thử lại nhé.",
     "noSaved": "Chưa có bài nào — nhấn biểu tượng đánh dấu ở bài học bất kỳ để lưu.",
     "toolsTitleA": "Chơi với",
     "toolsTitleB": "điều bạn học",
@@ -884,6 +897,7 @@
     "readTime_one": "{{count}} phút đọc",
     "readTime_other": "{{count}} phút đọc",
     "lessonComplete": "Hoàn thành bài học!",
+    "completeFailed": "Chưa ghi nhận được việc bạn đã hoàn thành bài này. Mở lại bài để thử lần nữa.",
     "lessonXp": "+{{xp}} XP — làm thêm trắc nghiệm để nhận nữa nhé",
     "tryItNow": "Thử ngay",
     "openStudio": "Mở xưởng vẽ với {{tool}}",
@@ -898,7 +912,11 @@
       "progress": "{{n}}/{{total}}",
       "correct": "Chính xác!",
       "notQuite": "Chưa đúng lắm.",
-      "finish": "Xem điểm"
+      "finish": "Xem điểm",
+      "review": "Xem lại các câu trả lời",
+      "yourAnswer": "Bạn chọn",
+      "rightAnswer": "Đáp án đúng",
+      "notSent": "Câu trả lời của bạn chưa được gửi."
     },
     "diagram": {
       "hue": "Sắc tướng",
@@ -1015,7 +1033,8 @@
       "tapToFlip": "chạm để lật",
       "again2": "Ôn lại",
       "knew": "Mình đã thuộc",
-      "sessionDone": "Hoàn thành phiên học"
+      "sessionDone": "Hoàn thành phiên học",
+      "answerFailed": "Chưa lưu được câu trả lời. Bạn thử lại nhé."
     },
     "spot": {
       "eyebrow": "Đoán phong cách",
@@ -1217,7 +1236,7 @@
     "h1a": "Vẽ.",
     "h1b": "Tô màu.",
     "h1c": "Truyền cảm hứng.",
-    "lede": "Đồ theo những bản nét đẹp, tô theo cách của bạn, và nhận nhận xét ấm áp, thẳng thắn từ giám khảo AI. Rồi dạo quanh Atlas Nghệ thuật — mọi cách con người từng tạo nên nghệ thuật.",
+    "lede": "Đồ theo những bản nét đẹp, tô theo cách của bạn, và nhận những nhận xét ấm áp, thẳng thắn từ giám khảo AI. Rồi dạo quanh Atlas Nghệ thuật — mọi cách con người từng tạo nên nghệ thuật.",
     "ctaDraw": "Bắt đầu vẽ",
     "ctaLearn": "Khám phá nghệ thuật",
     "ctaFree": "Mở một trang trắng",
@@ -1225,7 +1244,7 @@
     "heroArtAlt": "Chú cáo đã tô màu trong khung vàng",
     "doodleLabel": "Bảng vẽ nháp — vẽ bằng chuột hoặc ngón tay",
     "doodleHint": "vẽ thử ở đây — mực sẽ khô dần",
-    "doodleArrow": "thử mình đi!",
+    "doodleArrow": "thử đi nào!",
     "howEyebrow": "Cách hoạt động",
     "howTitleA": "Từ trang trắng",
     "howTitleB": "tới bức tường phòng tranh",
@@ -1308,7 +1327,20 @@
     "wallTitleA": "Được tạo với",
     "wallTitleB": "Art Spark",
     "wallLede": "Một bức tường tác phẩm mẫu — mẫu đã tô màu và tranh mang tinh thần các trào lưu lớn.",
-    "wallLabels": ["Bến cảng buổi sáng", "Cá koi lúc chiều tà", "Con sóng lặng", "Mandala hoa sen", "Khu vườn vàng", "Tĩnh vật, vỡ mảnh"],
+    "wallLabels": [
+      "Bến cảng buổi sáng",
+      "Cá koi lúc chiều tà",
+      "Con sóng lặng",
+      "Mandala hoa sen",
+      "Khu vườn vàng",
+      "Tĩnh vật, vỡ mảnh",
+      "Ngọn hải đăng lúc bình minh",
+      "Hoa văn dân gian",
+      "Công viên bằng những chấm màu",
+      "Ấm trà buổi sớm",
+      "Nhịp chấm",
+      "Bố cục không tên"
+    ],
     "sampleArtwork": "Tác phẩm mẫu",
     "voicesEyebrow": "Cảm nhận",
     "voicesTitleA": "Thói quen nhỏ,",

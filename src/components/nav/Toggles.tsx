@@ -51,7 +51,9 @@ export function LanguageSwitch({ className }: { className?: string }) {
           key={l}
           type="button"
           aria-pressed={lang === l}
-          aria-label={l === 'en' ? 'English' : 'Tiếng Việt'}
+          // The name starts with the letters that are on the button (WCAG 2.5.3 Label in Name), so voice control
+          // ("click EN") works; the language's own name follows.
+          aria-label={l === 'en' ? 'EN — English' : 'VI — Tiếng Việt'}
           onClick={() => setLanguage(l)}
           className={cn(
             'relative z-10 h-full rounded-full px-2.5 uppercase transition-colors',
